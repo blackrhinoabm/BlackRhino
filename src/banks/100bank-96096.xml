@@ -1,0 +1,9 @@
+<bank identifier='96'>
+    <parameter type='changing' name='pReal' value='0.998' validity='0-1000'></parameter>
+    <parameter type='changing' name='rhoReal' value='0.02' validity='0-1000'></parameter>
+    <parameter type='changing' name='pFinancial' value='1.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='rhoFinancial' value='0.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='thetaBank' value='1.67' validity='0-1000'></parameter>
+    <parameter type='changing' name='xiBank' value='1.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='gammaBank' value='2.0' validity='0-1000'></parameter>
+</bank>
