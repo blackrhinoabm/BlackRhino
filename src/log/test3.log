@@ -46,3 +46,21 @@
 11/13/2015 13:09:06   ....measurement finished
 11/13/2015 13:09:06 FINISHED logging for run: src/environments/test3.xml 
 
+11/13/2015 14:28:37 START logging for run: src/environments/test3.xml
+11/13/2015 14:28:37   environment file read: src/environments/test3.xml
+11/13/2015 14:28:37   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 14:28:37   read network of contracts: src/networks/full-3_banks
+11/13/2015 14:28:37   created the network of contracts with 3 nodes and 6 links
+11/13/2015 14:28:37   created the network of exposures with 3 nodes
+11/13/2015 14:28:37   measurement started...
+11/13/2015 14:28:37   STARTED with run 0
+11/13/2015 14:28:37   environment file read: src/environments/test3.xml
+11/13/2015 14:28:37   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 14:28:37   read network of contracts: src/networks/full-3_banks
+11/13/2015 14:28:37   created the network of contracts with 3 nodes and 6 links
+11/13/2015 14:28:37   created the network of exposures with 3 nodes
+11/13/2015 14:28:37     time: 0: <bank 0 is insolvent: 0.039391569438 < 0.08>
+11/13/2015 14:28:37   DONE
+11/13/2015 14:28:37   ....measurement finished
+11/13/2015 14:28:37 FINISHED logging for run: src/environments/test3.xml 
+
