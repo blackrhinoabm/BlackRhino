@@ -1,0 +1,48 @@
+11/13/2015 12:52:38 START logging for run: src/environments/test3.xml
+11/13/2015 12:52:38   environment file read: src/environments/test3.xml
+11/13/2015 12:52:38   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 12:52:38     ERROR: no .gexf contractsNetworkFile found: networks/full-3_banks
+11/13/2015 12:52:38     ERROR: check your test3.xml file.
+11/13/2015 12:53:30 START logging for run: src/environments/test3.xml
+11/13/2015 12:53:30   environment file read: src/environments/test3.xml
+11/13/2015 12:53:30   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 12:53:30   read network of contracts: src/networks/full-3_banks
+11/13/2015 12:53:30   created the network of contracts with 3 nodes and 6 links
+11/13/2015 12:53:30   created the network of exposures with 3 nodes
+11/13/2015 12:53:30   measurement started...
+11/13/2015 13:08:32 START logging for run: src/environments/test3.xml
+11/13/2015 13:08:32   environment file read: src/environments/test3.xml
+11/13/2015 13:08:32   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 13:08:32   read network of contracts: src/networks/full-3_banks
+11/13/2015 13:08:32   created the network of contracts with 3 nodes and 6 links
+11/13/2015 13:08:32   created the network of exposures with 3 nodes
+11/13/2015 13:08:32   measurement started...
+11/13/2015 13:08:32   STARTED with run 0
+11/13/2015 13:08:32   environment file read: src/environments/test3.xml
+11/13/2015 13:08:32   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 13:08:32   read network of contracts: src/networks/full-3_banks
+11/13/2015 13:08:32   created the network of contracts with 3 nodes and 6 links
+11/13/2015 13:08:32   created the network of exposures with 3 nodes
+11/13/2015 13:08:32     time: 0: <bank 0 is insolvent: 0.069694599741 < 0.08>
+11/13/2015 13:08:32   DONE
+11/13/2015 13:08:32   ....measurement finished
+11/13/2015 13:08:32 FINISHED logging for run: src/environments/test3.xml 
+
+11/13/2015 13:09:06 START logging for run: src/environments/test3.xml
+11/13/2015 13:09:06   environment file read: src/environments/test3.xml
+11/13/2015 13:09:06   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 13:09:06   read network of contracts: src/networks/full-3_banks
+11/13/2015 13:09:06   created the network of contracts with 3 nodes and 6 links
+11/13/2015 13:09:06   created the network of exposures with 3 nodes
+11/13/2015 13:09:06   measurement started...
+11/13/2015 13:09:06   STARTED with run 0
+11/13/2015 13:09:06   environment file read: src/environments/test3.xml
+11/13/2015 13:09:06   banks read from directory: C:\\black_rhino\\src\\banks\\
+11/13/2015 13:09:06   read network of contracts: src/networks/full-3_banks
+11/13/2015 13:09:06   created the network of contracts with 3 nodes and 6 links
+11/13/2015 13:09:06   created the network of exposures with 3 nodes
+11/13/2015 13:09:06     time: 0: <bank 2 is insolvent: 0.069694599741 < 0.08>
+11/13/2015 13:09:06   DONE
+11/13/2015 13:09:06   ....measurement finished
+11/13/2015 13:09:06 FINISHED logging for run: src/environments/test3.xml 
+

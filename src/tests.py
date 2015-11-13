@@ -61,8 +61,8 @@ class Tests(object):
 
     def bank__get_parameters_from_file(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_parameters_from_file \n"
         text += "  XXX \n"
@@ -107,8 +107,8 @@ class Tests(object):
 
     def bank__apply_sifi_surcharge(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.apply_sifi_surcharge \n"
         text += "  XXX \n"
@@ -153,8 +153,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__update_maturity(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.update_maturity() \n"
         text += "  It is successfull if the maturity of all transactions is reduced by one \n"
@@ -199,8 +199,8 @@ class Tests(object):
     # bank__update_risk_aversion
     # -------------------------------------------------------------------------
     def bank__update_risk_aversion(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -243,8 +243,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_interest(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_interest() \n"
         text += "  It is successfull if calculated interest equals the\n"
@@ -306,8 +306,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__liquidate_due_transactions(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.liquidate_due_transactions() \n"
         text += "  It is successful if the maturity of the investments is 0 and  \n"
@@ -361,8 +361,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_new_deposits(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_new_deposits \n"
         text += "  It returns the change of the deposits of the bank (250). \n"
@@ -415,8 +415,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__transfer_required_deposits(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.transfer_required_deposits \n"
         text += "  first we delete the required deposits of the standard bank, \n"
@@ -470,8 +470,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__reduce_banking_capital(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.reduce_banking_capital \n"
         text += "  It returns the reduced banking capital. \n"
@@ -521,8 +521,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__check_solvency(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.check_solvency \n"
@@ -580,8 +580,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__check_liquidity(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.check_liquidity \n"
         text += "  Within this test Q is set < 0.0 so that \n"
@@ -633,8 +633,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__calculate_liquidity_demand(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.calculate_liquidity_demand \n"
         text += "  It will calculate the liquidity demand for the standard bank according to its \n"
@@ -693,8 +693,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_central_bank_liquidity(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.get_central_bank_liquidity \n"
@@ -750,8 +750,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__liquidate_assets(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.liquidate_assets \n"
@@ -809,8 +809,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__transfer_investments(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.transfer_investments \n"
@@ -863,8 +863,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__transfer_excess_reserves(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.transfer_excess_reserves \n"
         text += "  It is successful  if the excess reserves of our standard bank are increase. \n"
@@ -913,8 +913,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__calculate_optimal_investment_volume(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.calculate_optimal_investment_volume \n"
@@ -964,8 +964,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__initialize_transactions(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.initialize_transactions \n"
@@ -1018,8 +1018,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_initial_banking_capital(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
         # from state import State
 
         text = "This test checks bank.get_initial_banking_capital \n"
@@ -1074,8 +1074,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_account(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account \n"
         text += "  The purpose of this method is to establish an account for our bank which contains  \n"
@@ -1145,8 +1145,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__get_account_num_transactions(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account_num_transactions \n"
         text += "  The purpose of this method is to count the numbers of transaction for   \n"
@@ -1216,8 +1216,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__add_transaction(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.add_transaction \n"
         text += "  The most simple way to test this function is to assign an new    \n"
@@ -1264,8 +1264,8 @@ class Tests(object):
     # -------------------------------------------------------------------------
     def bank__purge_accounts(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.purge_accounts \n"
         text += "  Checking if after the purge_accounts the total amount    \n"
@@ -1348,8 +1348,8 @@ class Tests(object):
 
     def bank__change_deposits(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.change_deposits \n"
         text += "  suppose that the change in depostits = 10.0 \n"
@@ -1399,8 +1399,8 @@ class Tests(object):
 
     def bank__initialize_standard_bank(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment  # needed for the bankDirectory
+        from src.bank import Bank
+        from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.initialize_standard_bank() \n"
         text += "  It is successfull if a standart Bank with 2 asstets (I = 100),\n"
@@ -1448,8 +1448,8 @@ class Tests(object):
 
     def environment__initialize(self, args):
         import os
-        from src.black_rhino.bank import Bank
-        from src.black_rhino.environment import Environment
+        from src.bank import Bank
+        from src.environment import Environment
 
         text = "This test checks environment.initialize \n"
         text += "  It is successfull if a standart Bank with 2 asstets (I = 100),\n"
@@ -1507,8 +1507,8 @@ class Tests(object):
     # network__do_interbank_trades
     # -------------------------------------------------------------------------
     def network__do_interbank_trades(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1556,8 +1556,8 @@ class Tests(object):
     # network__remove_inactive_bank
     # -------------------------------------------------------------------------
     def network__remove_inactive_bank(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1614,8 +1614,8 @@ class Tests(object):
     # test_updater
     # -------------------------------------------------------------------------
     def updater__updater(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1653,8 +1653,8 @@ class Tests(object):
     # test_updater1
     # -------------------------------------------------------------------------
     def updater__updater1(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1706,9 +1706,9 @@ class Tests(object):
         import logging
         import networkx as nx
 
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.runner import Runner
-        from src.black_rhino.measurement import Measurement
+        from src.environment import Environment
+        from src.runner import Runner
+        from src.measurement import Measurement
 
         #
         # INITIALIZATION
@@ -1753,8 +1753,8 @@ class Tests(object):
     # test_state
     # -------------------------------------------------------------------------
     def test_state(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1790,8 +1790,8 @@ class Tests(object):
     # liquidate_assets
     # -------------------------------------------------------------------------
     def updater__liquidate_assets(self, args):
-        from src.black_rhino.environment import Environment
-        from src.black_rhino.updater import Updater
+        from src.environment import Environment
+        from src.updater import Updater
 
         #
         # INITIALIZATION
@@ -1837,7 +1837,7 @@ class Tests(object):
     # bank__test1
     # -------------------------------------------------------------------------
     def bank__test1(self, args):
-        from src.black_rhino.environment import Environment
+        from src.environment import Environment
 
         text = "This test checks the environment.initializer \n"
         text += "  It is successfull if a bank has been generate and \n"

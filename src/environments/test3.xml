@@ -2,10 +2,10 @@
     <!-- simulation parameters -->
     <parameter type='numSweeps' value='100'></parameter>
     <parameter type='numSimulations' value='1'></parameter>
-    <parameter type='numBanks' value='50'></parameter>
-    <parameter type='bankDirectory' value='C:\\Python27\\src\\black_rhino\\banks\\3'></parameter>
+    <parameter type='numBanks' value='3'></parameter>
+    <parameter type='bankDirectory' value='C:\\black_rhino\\src\\banks\\'></parameter>
     <parameter type='graphType' value='gexf'></parameter>
-    <parameter type='contractsNetworkFile' value='networks/full-3_banks'></parameter>
+    <parameter type='contractsNetworkFile' value='src/networks/full-3_banks'></parameter>
     <!-- parameters determining the payment flow of banks -->
     <parameter type='changing' name='rb' value='0.02' validity='0-1000'></parameter>
     <parameter type='changing' name='rd' value='0.04' validity='0-1000'></parameter>

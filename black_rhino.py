@@ -35,11 +35,11 @@ if __name__ == '__main__':
     import logging
     import networkx as nx
 
-    from src.black_rhino.environment import Environment
-    from src.black_rhino.runner import Runner
-    from src.black_rhino.measurement import Measurement
+    from src.environment import Environment
+    from src.runner import Runner
+    from src.measurement import Measurement
 
-    args = ['./black_rhino.py',  "black_rhino/environments/", "test3",  "black_rhino/log/",  "black_rhino/measurements/"]
+    args = ['./black_rhino.py',  "src/environments/", "test3",  "src/log/",  "src/measurements/"]
     # args = sys.argv
 
     if len(args) != 5:
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 #
 # UPDATE STEP
 #
-    for i in range(environment.parameters.numSimulations):
+    for i in range(environment.static_parameters["numSimulations"]):
         logging.info('  STARTED with run %s',  str(i))
         environment.initialize(environment_directory,  identifier)
         # check that environment file has been read correctly

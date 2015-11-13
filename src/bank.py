@@ -331,7 +331,7 @@ class Bank(BaseAgent):
     # transfer_required_deposits
     # -------------------------------------------------------------------------
     def transfer_required_deposits(self):
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
 
         transaction = Transaction()
         value = round(float(self.parameters["r"]*self.get_account("D")), 4)
@@ -473,7 +473,7 @@ class Bank(BaseAgent):
     # -------------------------------------------------------------------------
     def transfer_investments(self,  environment):
         from random import Random
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
 
         random = Random()
 
@@ -539,7 +539,7 @@ class Bank(BaseAgent):
     # transfer_excess_reserves
     # -------------------------------------------------------------------------
     def transfer_excess_reserves(self):
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
         availableVolume = self.parameters["Q"]
         plannedVolume = self.parameters["gamma"]*(1.0-self.parameters["lamb"])*self.parameters["V"]
         transactionVolume = round(min(plannedVolume,  availableVolume), 4)
@@ -592,7 +592,7 @@ class Bank(BaseAgent):
     # initialize_transactions
     # -------------------------------------------------------------------------
     def initialize_transactions(self, environment):
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
         from random import Random
         random = Random()
 
@@ -707,7 +707,7 @@ class Bank(BaseAgent):
     # add_transaction
     # -------------------------------------------------------------------------
     def add_transaction(self,  type,  fromID,  toID,  value,  interest,  maturity, timeOfDefault):
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
         transaction = Transaction()
         transaction.this_transaction(type,  fromID,  toID,  value,  interest,  maturity,  timeOfDefault)
         self.accounts.append(transaction)
@@ -760,7 +760,7 @@ class Bank(BaseAgent):
     # which can be used to make the tests more handy
     # -------------------------------------------------------------------------
     def initialize_standard_bank(self):
-        from src.black_rhino.transaction import Transaction
+        from src.transaction import Transaction
 
         self.parameters["identifier"] = "0"  # identifier
         self.parameters["V"] = 250.0  # planned optimal portfolio volume of the bank

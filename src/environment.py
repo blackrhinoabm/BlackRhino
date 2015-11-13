@@ -33,7 +33,7 @@ from abmtemplate.baseconfig import BaseConfig
 class Environment(BaseConfig):
     # from state import State
     # from parameters import Parameters
-    from src.black_rhino.network import Network
+    from src.network import Network
 
     #
     # VARIABLES
@@ -374,7 +374,7 @@ class Environment(BaseConfig):
     # in the previous simulation
     # -------------------------------------------------------------------------
     def initialize_banks_from_files(self,  bankDirectory, state,  time):
-        from src.black_rhino.bank import Bank
+        from src.bank import Bank
         # this routine is called more than once, so we have to reset the list of banks each time
         self.banks = []
 
