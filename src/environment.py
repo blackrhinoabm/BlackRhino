@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import logging
 import os
 import networkx as nx
-from abmtemplate.baseconfig import BaseConfig
+from abm_template.src.baseconfig import BaseConfig
 
 
 # -------------------------------------------------------------------------

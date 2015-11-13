@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from src.updater import Updater
 from src.shock import Shock
-from abmtemplate.baserunner import BaseRunner
+from abm_template.src.baserunner import BaseRunner
 
 # -------------------------------------------------------------------------
 #

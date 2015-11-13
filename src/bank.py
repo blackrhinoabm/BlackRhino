@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 import math
-from abmtemplate.baseagent import BaseAgent
+from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
 #

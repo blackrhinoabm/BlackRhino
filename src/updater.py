@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from abmtemplate.basemodel import BaseModel
+from abm_template.src.basemodel import BaseModel
 
 # -------------------------------------------------------------------------
 #  class Updater
