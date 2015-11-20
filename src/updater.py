@@ -212,7 +212,7 @@ class Updater(BaseModel):
             bank.liquidate_assets(environment.initial_assets,  current_assets, environment.get_state(time),  debug,  time)
 
             # transfer investments to firms
-            bank.parameters["Q"] = bank.Lp  # transfer available liquidity to Q
+            bank.parameters["Q"] = bank.parameters["Lp"]  # transfer available liquidity to Q
             bank.parameters["Lp"] = 0.0
             bank.transfer_investments(environment.get_state(time))  # state is needed to determine the probability that a loan defaults
             bank.transfer_excess_reserves()
