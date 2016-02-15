@@ -3,6 +3,8 @@
 # -*- coding: utf-8 -*-
 
 """
+This is a minimal example.
+
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
 
