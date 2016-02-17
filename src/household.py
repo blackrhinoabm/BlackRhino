@@ -5,7 +5,7 @@
 """
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
-Paweł Fiedor (pawel@fiedor.eu)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ class Household(BaseAgent):
     accounts = []  # all accounts of a bank
 
     parameters["rd"] = 0.0  # interest rate on deposits
-    parameters["min_income"] = 0.0  # minimum added income every step
-    parameters["max_income"] = 0.0  # maximum added income every step
+    parameters["labour"] = 0.0  # labour to sell every step
+    parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0
 
 #
@@ -116,8 +116,8 @@ class Household(BaseAgent):
         text = "<household identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
         text += "    <parameter name='rd' value='" + str(self.parameters["rd"]) + "'></parameter>\n"
-        text += "    <parameter name='min_income' value='" + str(self.parameters["min_income"]) + "'></parameter>\n"
-        text += "    <parameter name='max_income' value='" + str(self.parameters["max_income"]) + "'></parameter>\n"
+        text += "    <parameter name='labour' value='" + str(self.parameters["labour"]) + "'></parameter>\n"
+        text += "    <parameter name='ps' value='" + str(self.parameters["ps"]) + "'></parameter>\n"
         text += "    <transactions>\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
@@ -144,10 +144,10 @@ class Household(BaseAgent):
             for subelement in element:
                 name = subelement.attrib['name']
                 value = subelement.attrib['value']
-                if (name == 'min_income'):
-                    self.parameters["min_income"] = float(value)
-                if (name == 'max_income'):
-                    self.parameters["max_income"] = float(value)
+                if (name == 'labour'):
+                    self.parameters["labour"] = float(value)
+                if (name == 'ps'):
+                    self.parameters["ps"] = float(value)
 
             # self.initialize_transactions(environment)
         except:
@@ -232,16 +232,30 @@ class Household(BaseAgent):
     def initialize_standard_household(self, environment):
         from src.transaction import Transaction
 
-        self.parameters["identifier"] = "0"  # identifier
+        self.identifier = "0"  # identifier
         self.parameters["rd"] = 0.02  # interest rate on deposits
-        self.parameters["min_income"] = 0.00  # minimum added income every step
-        self.parameters["max_income"] = 20.00  # maximum added income every step
+        self.parameters["labour"] = 24.00  # labour to sell per step
+        self.parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
 
         # deposits - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
-        value = 250.0
+        value = 200.0
         transaction = Transaction()
         transaction.this_transaction("D",  self.identifier, environment.banks[0:1][0], value, self.parameters["rd"],  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+
+        # money - cash and equivalents
+        value = 50.0
+        transaction = Transaction()
+        transaction.this_transaction("M", self.identifier, self.identifier, value, 0,  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+
+        # manhours - labour to sell
+        value = 240.0
+        transaction = Transaction()
+        transaction.this_transaction("H", self.identifier, self.identifier, value, 0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 

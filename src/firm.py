@@ -5,7 +5,7 @@
 """
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
-Paweł Fiedor (pawel@fiedor.eu)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,8 +42,7 @@ class Firm(BaseAgent):
     accounts = []  # all accounts of a bank
 
     parameters["rl"] = 0.0  # interest rate on loans
-    parameters["min_investments"] = 0.0  # minimum loan demand every step
-    parameters["max_investments"] = 0.0  # maximum loan demand every step
+    parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
     parameters["active"] = 0
 
 #
@@ -116,8 +115,7 @@ class Firm(BaseAgent):
         text = "<firm identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
         text += "    <parameter type='changing' name='rl' value='" + str(self.parameters["rl"]) + "'></parameter>\n"
-        text += "    <parameter name='min_investments' value='" + str(self.parameters["min_investments"]) + "'></parameter>\n"
-        text += "    <parameter name='max_investments' value='" + str(self.parameters["max_investments"]) + "'></parameter>\n"
+        text += "    <parameter name='productivity' value='" + str(self.parameters["productivity"]) + "'></parameter>\n"
         text += "    <transactions>\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
@@ -144,10 +142,8 @@ class Firm(BaseAgent):
             for subelement in element:
                 name = subelement.attrib['name']
                 value = subelement.attrib['value']
-                if (name == 'min_investments'):
-                    self.parameters["min_investments"] = float(value)
-                if (name == 'max_investments'):
-                    self.parameters["max_investments"] = float(value)
+                if (name == 'productivity'):
+                    self.parameters["productivity"] = float(value)
 
             # self.initialize_transactions(environment)
         except:
@@ -232,16 +228,29 @@ class Firm(BaseAgent):
     def initialize_standard_firm(self, environment):
         from src.transaction import Transaction
 
-        self.parameters["identifier"] = "0"  # identifier
+        self.identifier = "0"  # identifier
         self.parameters["rl"] = 0.05
-        self.parameters["min_investments"] = -20.00  # minimum added loan demand every step
-        self.parameters["max_investments"] = 20.00  # maximum added loan demand every step
+        self.parameters["productivity"] = 1.20  # how much goods do we get from 1 unit of labour
 
         # loans - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
         value = 250.0
         transaction = Transaction()
         transaction.this_transaction("L", environment.banks[0:1][0], self.identifier, value,  self.parameters["rl"],  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+
+        # money - cash and equivalents
+        value = 200.0
+        transaction = Transaction()
+        transaction.this_transaction("M", self.identifier, self.identifier, value,  0,  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+
+        # goods - unique production
+        value = 50.0
+        transaction = Transaction()
+        transaction.this_transaction("G", self.identifier, self.identifier, value,  0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 

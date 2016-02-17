@@ -1,0 +1,4 @@
+<bank identifier='0'>
+    <parameter name='labour' value='24.00'></parameter>
+    <parameter name='ps' value='0.45'></parameter>
+</bank>

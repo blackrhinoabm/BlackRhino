@@ -5,7 +5,7 @@
 """
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
-Paweł Fiedor (pawel@fiedor.eu)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ class Bank(BaseAgent):
         liabilities = 0.0
 
         for transaction in self.accounts:
-            if (transaction.transactionType == "L"):
+            if (transaction.transactionType == "L" or transaction.transactionType == "M"):
                 assets = assets + transaction.transactionValue
             if (transaction.transactionType == "D"):
                 liabilities = liabilities + transaction.transactionValue
@@ -229,7 +229,7 @@ class Bank(BaseAgent):
     def initialize_standard_bank(self, environment):
         from src.transaction import Transaction
 
-        self.parameters["identifier"] = "0"
+        self.identifier = "0"
         self.parameters["rd"] = 0.01
         self.parameters["rl"] = 0.05
 
@@ -241,9 +241,16 @@ class Bank(BaseAgent):
         self.accounts.append(transaction)
         del transaction
 
+        # money - cash and equivalents
+        value = 100.0
+        transaction = Transaction()
+        transaction.this_transaction("M",  self.identifier, self.identifier,  value,  0,  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+
         # loans - we get the first firm from the list of firms
         # if there are no firms it will be a blank which is fine for testing
-        value = 250.0
+        value = 150.0
         transaction = Transaction()
         transaction.this_transaction("L",  self.identifier, environment.firms[0:1][0],  value,  self.parameters["rl"],  0, -1)
         self.accounts.append(transaction)

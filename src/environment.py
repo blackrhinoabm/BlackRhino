@@ -21,7 +21,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 import os
-import networkx as nx
 from abm_template.src.baseconfig import BaseConfig
 
 
@@ -33,7 +32,6 @@ from abm_template.src.baseconfig import BaseConfig
 class Environment(BaseConfig):
     # from state import State
     # from parameters import Parameters
-    from src.network import Network
 
     #
     # VARIABLES
@@ -243,54 +241,20 @@ class Environment(BaseConfig):
         # VARIABLES
         #
         # parameters determining the cash flow of banks
-        self.static_parameters["rb"] = 0.0  # interbank interest rate
+        self.static_parameters["rl"] = 0.0  # interbank interest rate
         self.static_parameters["rd"] = 0.0  # interest rate on deposits
-        # parameters for the central bank
-        self.static_parameters["collateralQuality"] = 0.0  # the fraction of a bank's portfolio that the central bank accepts as collateral
-        # firm parameters
-        self.static_parameters["successProbabilityFirms"] = 0.0  # probability of successful credit
-        self.static_parameters["positiveReturnFirms"] = 0.0  # return for a successful credit
-        self.static_parameters["firmLoanMaturity"] = 0.0  # maturity of loans to firms
-        # household parameters
-        self.static_parameters["scaleFactorHouseholds"] = 0.0  # scaling factor for deposit fluctuations
-        # bank parameters
-        self.static_parameters["dividendLevel"] = 0.0  # dividend level as paid out by banks
-        self.static_parameters["pBank"] = 0.0  # bank's assumed credit success probability
-        self.static_parameters["rhoBank"] = 0.0  # expected return of banks
-        self.static_parameters["pFinancial"] = 0.0  # bank's assumed credit success probability
-        self.static_parameters["rhoFinancial"] = 0.0  # expected return of banks
-        self.static_parameters["thetaBank"] = 0.0  # bank's risk aversion parameter
-        self.static_parameters["xiBank"] = 0.0  # scaling factor for CRRA
-        self.static_parameters["gammaBank"] = 0.0  # fraction of interbank lending in overall balance sheet
-        self.static_parameters["assetNumber"] = 0  # number of assets in the economy
-        self.static_parameters["interbankLoanMaturity"] = 0.0  # the maturity of interbank loans
-        # simulation specific parameters
-        self.static_parameters["shockType"] = 0  # type of shock that hits the system in the current state
-        self.static_parameters["liquidationDiscountFactor"] = 0.0  # the discount factor delta in exp(-delta x) when liquidating assets
-        self.static_parameters["riskAversionDiscountFactor"] = 0.0  # the risk aversion discount when there was no default in the previous period
-        self.static_parameters["riskAversionAmplificationFactor"] = 0.0  # the risk aversion amplification when there *was* a default in the previous or current period
-        # regulation specific parameters
-        self.static_parameters["r"] = 0.0  # minimum required deposit rate
-        self.static_parameters["sifiSurchargeFactor"] = 1.0  # the surcharge on banking capital that SIFIs have to hold
-        self.static_parameters["liquidityCoverageRatio"] = 0.0  # the fraction of assets that must have a high liquidation value
-        self.static_parameters["netStableFundingRatio"] = 0.0  # the fraction of deposits that must have low volatility
-        self.static_parameters["leverageRatio"] = 0.0  # the minimal ratio of banking capital to total assets
-        self.static_parameters["requiredCapitalRatio"] = 0.08  # the required capital ratio for banks
-
-        # bookkeeping parameters
-        self.static_parameters["insolvencyHistory"] = []  # [num, time] the number of bank insolvencies and when they occured
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_environment_file(environment_filename)
         logging.info("  environment file read: %s",  environment_filename)
 
         # then read in all the banks
-        if (self.static_parameters["bankDirectory"] != ""):
-            if (self.static_parameters["bankDirectory"] != "none"):  # none is used for tests only
-                self.initialize_banks_from_files(self.static_parameters["bankDirectory"],  self.get_state(0), 0)
-                logging.info("  banks read from directory: %s",  self.static_parameters["bankDirectory"])
-        else:
-            logging.error("ERROR: no bankDirectory given in %s\n",  environment_filename)
+        # if (self.static_parameters["bankDirectory"] != ""):
+        #    if (self.static_parameters["bankDirectory"] != "none"):  # none is used for tests only
+        #        self.initialize_banks_from_files(self.static_parameters["bankDirectory"],  self.get_state(0), 0)
+        #        logging.info("  banks read from directory: %s",  self.static_parameters["bankDirectory"])
+        # else:
+        #    logging.error("ERROR: no bankDirectory given in %s\n",  environment_filename)
 
         self.initial_assets = 0.0  # the initial assets are needed to determine the fire-sale price in bank.liquidate_assets
         for bank in self.banks:
@@ -299,11 +263,11 @@ class Environment(BaseConfig):
         # finally, create the network
         # note: this has to be done after creating the banks, as they are
         # passed to the network as node objects
-        self.network.identifier = self.identifier
-        self.network.initialize_networks(self)
+        #self.network.identifier = self.identifier
+        #self.network.initialize_networks(self)
 
         # when there is a SIFI surcharge, implement it now on the banking capital
-        self.apply_sifi_surcharge()
+        #self.apply_sifi_surcharge()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -331,10 +295,10 @@ class Environment(BaseConfig):
                 self.static_parameters["bankDirectory"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'graphType'):
                 self.static_parameters["graphType"] = str(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'graphParameter1'):
-                self.static_parameters["graphParameter1"] = float(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'graphParameter2'):
-                self.static_parameters["graphParameter2"] = float(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'rd'):
+                self.static_parameters["rd"] = float(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'rl'):
+                self.static_parameters["rl"] = float(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'contractsNetworkFile'):
                 self.static_parameters["contractsNetworkFile"] = str(subelement.attrib['value'])
             # now also read in the parameters that can change during the simulation

@@ -5,7 +5,7 @@
 """
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
-Paweł Fiedor (pawel@fiedor.eu)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,7 +56,386 @@ class Tests(object):
 #  TESTS FOR BANK.PY
 # -------------------------------------------------------------------------
 
-# START_HERE
+    # -------------------------------------------------------------------------
+    # bank__get_identifier
+    # -------------------------------------------------------------------------
+
+    def bank__get_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.get_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "Identifier: "
+        text += bank.get_identifier()
+        print(text)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__set_identifier
+    # -------------------------------------------------------------------------
+
+    def bank__set_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.set_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "Original identifier: "
+        text += bank.get_identifier()
+        print(text)
+        bank.set_identifier("new_ident")
+        text = "New identifier: "
+        text += bank.get_identifier()
+        print(text)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__get_parameters
+    # -------------------------------------------------------------------------
+
+    def bank__get_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.get_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "Parameters:"
+        print(text)
+        print(bank.get_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__set_parameters
+    # -------------------------------------------------------------------------
+
+    def bank__set_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.set_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "Original parameters:"
+        print(text)
+        print(bank.get_parameters())
+        text = "New parameters:"
+        print(text)
+        bank.set_parameters({'rd': 0.44, 'rl': 0.55, 'active': 1})
+        print(bank.get_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__get_state_variables
+    # -------------------------------------------------------------------------
+
+    def bank__get_state_variables(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.get_state_variables \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_state_variables in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "State variables:"
+        print(text)
+        print(bank.get_state_variables())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__set_state_variables
+    # -------------------------------------------------------------------------
+
+    def bank__set_state_variables(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.set_state_variables \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_state_variables in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        text = "Original state variables:"
+        print(text)
+        print(bank.get_state_variables())
+        text = "New state variables:"
+        print(text)
+        bank.set_state_variables({'test': 0.66})
+        print(bank.get_state_variables())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__str
+    # -------------------------------------------------------------------------
+
+    def bank__str(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.str \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__str in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        print(bank.__str__())
+
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # bank__get_parameters_from_file
@@ -65,19 +444,18 @@ class Tests(object):
     def bank__get_parameters_from_file(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_parameters_from_file \n"
-        text += "  XXX \n"
-        text += "  XXX tricky one, havent tried yet\n"
-        text += "  XXX \n"
         self.print_info(text)
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -85,1014 +463,119 @@ class Tests(object):
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
+        # generate a household
+        household = Household()
+        environment.households.append(household)
 
-        #
-        # TEST CODE
-        #
-
-        # tricky one, havent tried yet
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__apply_sifi_surcharge
-    # -------------------------------------------------------------------------
-
-    def bank__apply_sifi_surcharge(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.apply_sifi_surcharge \n"
-        text += "  XXX \n"
-        text += "  XXX tricky one, havent tried yet\n"
-        text += "  XXX \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__apply_sifi_surcharge in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        # generate a firm
+        firm = Firm()
+        environment.firms.append(firm)
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-
-        # tricky one, havent tried yet
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__update_maturity
-    # -------------------------------------------------------------------------
-    def bank__update_maturity(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.update_maturity() \n"
-        text += "  It is successfull if the maturity of all transactions is reduced by one \n"
-        text += "  when the bank is printed the second time. \n"
-        text += "  Note that for investments also the time of default has to be reduced by one.\n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__update_maturity in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        print bank
-        bank.update_maturity()
-        print bank
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__update_risk_aversion
-    # -------------------------------------------------------------------------
-    def bank__update_risk_aversion(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__update_risk_aversion in run: %s',  environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        # first test: a bank in t=0 defaults, check that risk aversion in t=1 increases
-        environment.banks[0].reduce_banking_capital(10.0)
-        environment.banks[0].check_solvency(environment.get_state(0),  "info", 0)
-        print environment.get_state(0)
-        environment.banks[1].update_risk_aversion(environment.get_state(1), 1)
-        print environment.banks[1]
-        # second test: check that risk aversion in t=2 decreases
-        environment.banks[1].update_risk_aversion(environment.get_state(2), 2)
-        print environment.banks[1]
-        environment.banks[1].update_risk_aversion(environment.get_state(3), 3)
-        print environment.banks[1]
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test bank__update_risk_aversion in run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__get_interest
-    # -------------------------------------------------------------------------
-    def bank__get_interest(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.get_interest() \n"
-        text += "  It is successfull if calculated interest equals the\n"
-        text += "  difference for interest on assets and interest on liabilities. \n"
-        text += "  Note that BC will not recieve any interest.\n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_interest in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        interestCalculated = 0.0
-        interestAssets = 0.0
-        interestLiabilities = 0.0
-        print "Bank:"
-        print bank
-
-        print "Transactions:"
-        for transaction in bank.accounts:
-            print transaction.transactionType, transaction.transactionValue, transaction.transactionInterest
-            if (transaction.transactionType == "I" or transaction.transactionType == "E" or transaction.transactionType == "rD"):  # we have an asset
-                interestAssets += transaction.transactionValue*transaction.transactionInterest
-            else:  # we have a liability
-                interestLiabilities -= transaction.transactionValue*transaction.transactionInterest
-
-        for type in ["I",  "E",  "D",  "rD",  "LC",  "L",  "BC"]:
-            interestCalculated += bank.get_interest(type)
-
-        print "Interest: " + str(interestCalculated) + " = " + str(interestAssets) + " + " + str(interestLiabilities)
-        # print transaction.transactionType, transaction.transactionValue, transaction.transactionInterest
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__liquidate_due_transactions
-    # -------------------------------------------------------------------------
-    def bank__liquidate_due_transactions(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.liquidate_due_transactions() \n"
-        text += "  It is successful if the maturity of the investments is 0 and  \n"
-        text += "  if the two investment the retrun their respective vaule \n"
-        text += "  (which should be 200 in total for the standard bank). \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__liquidate_due_transactions in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        for transaction in bank.accounts:
-            if (transaction.transactionType == "I"):
-                transaction.transactionMaturity = 0.0   # first lower maturity to 0
-                print bank                                              # and check maturity
-
-        VolumeCalculated = 0.0
-        print VolumeCalculated
-
-        for type in ["I"]:                                      # now apply the liquidate function and compare voulmes
-            VolumeCalculated += bank.liquidate_due_transactions(type)
-        print VolumeCalculated
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__get_new_deposits
-    # -------------------------------------------------------------------------
-    def bank__get_new_deposits(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.get_new_deposits \n"
-        text += "  It returns the change of the deposits of the bank (250). \n"
-        text += "  With a scaleFactor of 0.02 this change should fluctuate  \n"
-        text += "  randomly between +5 and -5. \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_new_deposits in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        DepositsChange = 0.0
-        scaleFactor = 0.02
-
-        for transaction in bank.accounts:               # print Deposits
-            if (transaction.transactionType == "D"):
-                print transaction.transactionType, transaction.transactionValue
-
-        for type in ["D"]:                              # now apply the get_new_deposits function and print return value
-            DepositsChange += bank.get_new_deposits(scaleFactor)
-            print DepositsChange
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__transfer_required_deposits
-    # -------------------------------------------------------------------------
-    def bank__transfer_required_deposits(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.transfer_required_deposits \n"
-        text += "  first we delete the required deposits of the standard bank, \n"
-        text += "  afterwards we calculate  the new rD using the respective function. \n"
-        text += "  for r=0.05 the output should be -12.5 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__transfer_required_deposits in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        for transaction in bank.accounts:
-            if (transaction.transactionType == "rD"):
-                transaction.transactionValue = 0.0   # first elimnate the rD of standard bank
-                print bank                                              # and check bank
-
-        ReqDep = 0.0
-        print ReqDep
-
-        for type in ["rD"]:                              # now apply the transfer_required_deposits and print new rD value
-            ReqDep += bank.transfer_required_deposits()
-            print ReqDep
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__reduce_banking_capital
-    # -------------------------------------------------------------------------
-    def bank__reduce_banking_capital(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.reduce_banking_capital \n"
-        text += "  It returns the reduced banking capital. \n"
-        text += "  Suppose the banking capital of our standard bank is \n"
-        text += "  reduced by 5, so the new BC will be 40 - 5 = 35 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__reduce_banking_capital in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        value = 5.0
-
-        for transaction in bank.accounts:
-            if (transaction.transactionType == "BC"):
-                print transaction.transactionValue
-                bank.reduce_banking_capital(value)
-                print transaction.transactionValue
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__check_solvency
-    # -------------------------------------------------------------------------
-    def bank__check_solvency(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.check_solvency \n"
-        text += "  Within this test the required_capital_ratio is set extremely  \n"
-        text += "  high so that our standard bank will fail to meet its \n"
-        text += "  capital requirement. Subsequently 'active' will be set to -1 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__check_solvency in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-
-        # for the standard Bank BC/ I = 40 / 200 = 0.2
-        # in order to make sure that the bank will not meet their requirements
-        # we set requiredCapitalRatio = 0.9
-        # state = State()
-        environment.static_parameters["requiredCapitalRatio"] = 0.9
-        required_capital_ratio = environment.static_parameters["requiredCapitalRatio"]
-        print environment.print_state()
-
-        # for bank in bankDirectory:
-        bank.check_solvency(environment,  "info",  0)
-        print bank
-
-        # and check if "active" is now -1
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__check_liquidity
-    # -------------------------------------------------------------------------
-    def bank__check_liquidity(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.check_liquidity \n"
-        text += "  Within this test Q is set < 0.0 so that \n"
-        text += "  our standard bank will become illiquid. \n"
-        text += "  Subsequently 'active' will be set to -1 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__check_liquidity in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-
-        # nom we just assume that
-        bank.parameters["Q"] = -1.0
-
-        # for bank in bankDirectory:
-        bank.check_liquidity()
-
-        print bank
-        # and check if "active" is now -1
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__calculate_liquidity_demand
-    # -------------------------------------------------------------------------
-    def bank__calculate_liquidity_demand(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.calculate_liquidity_demand \n"
-        text += "  It will calculate the liquidity demand for the standard bank according to its \n"
-        text += "  parameters and the formulas used in bank.calculate_liquidity_demand \n"
-        text += "  As a reminder the parameters for the standard bank are: \n"
+        bank.get_parameters_from_file(bankFilename, environment)
+
+        # test whether the parameters are read properly
+        text = "Identifier, interest rate on deposits and loans have been read as follows: \n"
+        text += "Identifier: "
+        text += bank.identifier
         text += "\n"
-        text += "       gamma = 0.8                                \n"
-        text += "       lamb = 0.5                                 \n"
-        text += "       V = 250                                     \n"
-        text += "       Q = 0.0                                     \n"
+        text += "Rate on loans: "
+        text += str(bank.parameters["rl"])
         text += "\n"
-        text += "  The formulas for bank.calculate_liquidity_demand are: \n"
+        text += "Rate on deposits: "
+        text += str(bank.parameters["rd"])
         text += "\n"
-        text += "       Ip = gamma * lamb * V = 0.8 * 0,5 * 250.0 = 100.0  \n"
-        text += "       Ep = gamma * (1.0 - lamb) * V = 0.8 * 0,5 * 250.0 = 100.0 \n"
-        text += "       Lp = Q - ((Ip-I) + (Ep-E)) = 0.0 - ((100-200) + (90-100)) \n"
-        text += "\n"
-        text += "  The result should be Lp = 90.0 \n"
         self.print_info(text)
 
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__calculate_liquidity_demand in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        bank.calculate_liquidity_demand()
-        print "Ip= " + str(bank.parameters["Ip"]) + "; Ep= " + str(bank.parameters["Ep"]) + "; I= " + str(bank.get_account("I")) + "; E= " + str(bank.get_account("E"))
-        print "Lp= " + str(bank.parameters["Lp"])
-
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # bank__get_central_bank_liquidity
+    # bank__check_consistency
     # -------------------------------------------------------------------------
-    def bank__get_central_bank_liquidity(self, args):
+
+    def bank__check_consistency(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
 
-        text = "This test checks bank.get_central_bank_liquidity \n"
-        text += "  First we have to set Lp < 0.0 in order to set the bank in a position of \n"
-        text += "  liquidity shortage (Lp = -50.0). Now suppose that the CB regards only 0.8 of the \n"
-        text += "  bank's assets as safe (collateralQuality = 0.8). For I = 200.0 the bank should get \n"
-        text += "  enough liquidity (up to 160.0). As a result LC should increase to LC = 60.0 and \n"
-        text += "  Lp should be 0 again. \n"
+        text = "This test checks bank.check_consitency \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_central_bank_liquidity in run: %s',  environment_directory + identifier + ".xml")
+        logging.info('START logging for test bank__check_consistency in run: %s',  environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
 
-        #
-        # TEST CODE
-        #
-        # state = State()
-        environment.static_parameters["collateralQuality"] = 0.8           # make sure that the lokal values are used
-        environment.static_parameters["rb"] = 0.02
-
-        # now suppose we are in a liquidity shortage of Lp = -50.0
-        bank.parameters["Lp"] = -50.0
-
-        bank.get_central_bank_liquidity(environment)
-        print bank
-        print "Lp= " + str(bank.parameters["Lp"])
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__liquidate_assets
-    # -------------------------------------------------------------------------
-    def bank__liquidate_assets(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.liquidate_assets \n"
-        text += "  First we have to set Lp < 0.0 in order to set the bank in a position of \n"
-        text += "  liquidity shortage (Lp = -10.0). Suppose that the liquidity discount factor will be 0.05 \n"
-        text += "  and for Ip we have to assume e.g. 250 in order to trigger the loop in the code. \n"
-        text += "  The requiredCapitalRatio is = 0.08 for the standard bank \n"
-        text += " \n"
-        text += "  Under the current circumstances (bug?) this will lead to Lp = -160.0 in the first loop \n"
-        text += "  and liquidation price of 0.9608. Both assets have to be sold now and the \n"
-        text += "  BC will be decreased from 40.0 to 32.16. Lp will now be 32. 16 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__liquidate_assets in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
+        bank.initialize_standard_bank(environment)
 
-        #
-        # TEST CODE
-        #
-        # state = State()
-        environment.static_parameters["liquidationDiscountFactor"] = 0.05
-
-        bank.parameters["Lp"] = - 10.0        # let's assume for argument sake that banks are short in liquidity Lp = -10.0
-        bank.parameters["Ip"] = 250.0         # but want to increase their planned investment  Ip = 250.0
-        # the requiredCapitalRatio is = 0.08
-
-        bank.liquidate_assets(200.0,  200.0,  environment,  "info",  0)
-        print bank
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__transfer_investments
-    # -------------------------------------------------------------------------
-    def bank__transfer_investments(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.transfer_investments \n"
-        text += "  Note that you should first look at bank.calculate_optimal_investment_volume to better) \n"
-        text += "  understand this. If we assume pReal = 0.98 than we will will receive lamb = 0.3014 and V = 13.5635  \n"
-        text += "  Moreover, for our standard bank the avaiable liquditiy Q should be roughly 105 (reserves + interest gains)  \n"
-        text += "  The requiredCapitalRatio is = 0.08 for the standard bank \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__transfer_investments in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        # state = State()
-        bank.parameters["pReal"] = 0.98                       # we have to assign this value for pReal so that we recieve
-        # lamb = 0.3014 and V = 13.5635
-        # see also bank__calculate_optimal_investment_volume for details
-        bank.parameters["Q"] = 105.0                          # Q should be roughly 105 (reserves + interest gains)
-        bank.parameters["averageTransactionSize"] = 200.0     # For our standard Bank the averageTransactionSize is 200
-
-        bank.transfer_investments(environment)
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__transfer_excess_reserves
-    # -------------------------------------------------------------------------
-    def bank__transfer_excess_reserves(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.transfer_excess_reserves \n"
-        text += "  It is successful  if the excess reserves of our standard bank are increase. \n"
-        text += "  Under the assumption that our banks faces a liquidity surplus (available volume)  \n"
-        text += "  of Q = +100.0 the balance sheet of our bank should get an additional transaction-position \n"
-        text += "  of E with a value of 100.0 \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__transfer_excess_reserves in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        bank.parameters["Q"] = 100.0                          # assume a available volume of Q = 100 (in order to trigger the mehthode)
-
-        bank.transfer_excess_reserves()         # call the mehtode
-
-        print bank                              # check result
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__calculate_optimal_investment_volume
-    # -------------------------------------------------------------------------
-    def bank__calculate_optimal_investment_volume(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.calculate_optimal_investment_volume \n"
-        text += "  First of all we have to change pReal in order to ensure that mu will be >0 so that \n"
-        text += "  lamb will also be >0 and <1 . Now for our standard bank mu will now be 0.0197, sigma2= 0.0105, \n"
-        text += "  lamb = 0.3014 and V = 13.5635. As we have no leverage ratio for our standard Bank the \n"
-        text += "  result should be V = 13.5635  \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__calculate_optimal_investment_volume in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        # state = State()
-        bank.parameters["pReal"] = 0.98                       # we have to assign this value for pReal so that we recieve
-        # lamb = 0.3014 and V = 13.5635
-        bank.calculate_optimal_investment_volume(environment)
-        print "optimal investment volume = " + str(bank.parameters["V"])
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__initialize_transactions
-    # -------------------------------------------------------------------------
-    def bank__initialize_transactions(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.initialize_transactions \n"
-        text += "  This method is supposed to create the transactions of banks in BlackRihno. \n"
-        text += "  The simplest way to test it is to initialize the standard bank, then to call the \n"
-        text += "  method and check whether transactions have been added to our standard bank. \n"
-        text += "   \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__initialize_transactions in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        # print bank
-        # state = State()
-        environment.static_parameters["successProbabilityFirms"] = 0.5             # we assign this values in order to check if the
-        environment.static_parameters["firmLoanMaturity"] = 100.0                  # random function works
-
-        print bank
-        bank.initialize_transactions(environment)
-        print bank
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__get_initial_banking_capital
-    # -------------------------------------------------------------------------
-    def bank__get_initial_banking_capital(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-        # from state import State
-
-        text = "This test checks bank.get_initial_banking_capital \n"
-        text += "  This method is supposed to create a return value which will be used as a. \n"
-        text += "  initial banking capital value. As the required capital ratio is 0.9 and  \n"
-        text += "  our Investments are 200 the result should be 225.0 \n"
-        text += "   \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_initial_banking_capital in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-        # state = State()
-        environment.static_parameters["requiredCapitalRatio"] = 0.9
-        required_capital_ratio = environment.static_parameters["requiredCapitalRatio"]
-
-        initial_banking_capital = 0.0
-        print initial_banking_capital
-
-        for type in ["I"]:                              # now apply the initial_banking_capital and print the new value
-            initial_banking_capital += bank.get_initial_banking_capital(required_capital_ratio)
-            print initial_banking_capital
+        print("Checking consistency of the standard bank: ")
+        print(bank.check_consistency())
+        print("Adding additional deposits without adding appropriate cash/loans.")
+        bank.add_transaction("D",  environment.households[0:1][0],  bank.identifier,  150,  bank.parameters["rd"],  0, -1)
+        print("Checking consistency of the standard bank: ")
+        print(bank.check_consistency())
 
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # bank__get_account
     # -------------------------------------------------------------------------
+
     def bank__get_account(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account \n"
         text += "  The purpose of this method is to establish an account for our bank which contains  \n"
         text += "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
-        text += "  and stores them in one volume. As our Banks holds 300.0 assets (2* I = 100, E = 90, D = 250) \n"
-        text += "  and 300 liabilites the total volume of our account should be 600.0 \n"
+        text += "  and stores them in one volume. As our Banks holds 250.0 assets \n"
+        text += "  and 250 liabilites the total volume of our account should be 500.0 \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -1100,70 +583,64 @@ class Tests(object):
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
+        bank.initialize_standard_bank(environment)
 
         account = 0.0                                           # counting all types in account together
         print bank                                              # and checking how much is the total
         # volume of the account
-        for type in ["I",  "E",  "rD",  "BC",  "D",  "LC",  "L"]:
-                        if type == "I":
-                                account += bank.get_account(type)
-                                print "I = " + str(account)
-                        if type == "E":
-                                account += bank.get_account(type)
-                                print "I+E = " + str(account)
-                        if type == "rD":
-                                account += bank.get_account(type)
-                                print "I+E+rD = " + str(account)
-                        if type == "BC":
-                                account += bank.get_account(type)
-                                print "I+E+rD+BC = " + str(account)
+        for type in ["D",  "M",  "L"]:
                         if type == "D":
                                 account += bank.get_account(type)
-                                print "I+E+rD+BC+D = " + str(account)
-                        if type == "LC":
+                                print "D = " + str(account)
+                        if type == "M":
                                 account += bank.get_account(type)
-                                print "I+E+rD+BC+D+LC = " + str(account)
+                                print "D+M = " + str(account)
                         if type == "L":
                                 account += bank.get_account(type)
-                                print "I+E+rD+BC+D+LC+L = " + str(account)
+                                print "D+M+L = " + str(account)
 
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # bank__get_account_num_transactions
     # -------------------------------------------------------------------------
+
     def bank__get_account_num_transactions(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account_num_transactions \n"
         text += "  The purpose of this method is to count the numbers of transaction for   \n"
-        text += "  accounts banks hold. Our standard bank has 7 transactions by default. \n"
-        text += "  (2* I + E + rD + BC + D + LC). As long as our bank does not have e.g. \n"
-        text += "  an L the number of transactions should be 7.0 \n"
+        text += "  accounts banks hold. Our standard bank has 3 transactions by default. \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -1171,55 +648,53 @@ class Tests(object):
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
+        bank.initialize_standard_bank(environment)
 
         num_transactions = 0.0          # counting all types in account together
+        print(bank)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["I",  "E",  "rD",  "BC",  "D",  "LC",  "L"]:
-                        if type == "I":
-                                num_transactions += bank.get_account_num_transactions(type)
-                                print "I = " + str(num_transactions)
-                        if type == "E":
-                                num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E = " + str(num_transactions)
-                        if type == "rD":
-                                num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E+rD = " + str(num_transactions)
-                        if type == "BC":
-                                num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E+rD+BC = " + str(num_transactions)
+        for type in ["D",  "M",  "L"]:
                         if type == "D":
                                 num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E+rD+BC+D = " + str(num_transactions)
-                        if type == "LC":
+                                print "D = " + str(num_transactions)
+                        if type == "M":
                                 num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E+rD+BC+D+LC = " + str(num_transactions)
+                                print "D+M = " + str(num_transactions)
                         if type == "L":
                                 num_transactions += bank.get_account_num_transactions(type)
-                                print "I+E+rD+BC+D+LC+L = " + str(num_transactions)
+                                print "D+M+L = " + str(num_transactions)
 
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # bank__add_transaction
     # -------------------------------------------------------------------------
+
     def bank__add_transaction(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.add_transaction \n"
@@ -1229,13 +704,12 @@ class Tests(object):
         text += '  (type = "D",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -1243,65 +717,83 @@ class Tests(object):
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
+        bank.initialize_standard_bank(environment)
 
-        #
-        # TEST CODE
-        #
-        bank.add_transaction("D",  -1,  bank.identifier,  10,  0.09,  0, -1)
+        print(bank)
+        print("Adding new transaction: \n")
+        bank.add_transaction("D",  environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
         print bank
 
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # bank__purge_accounts
+    # bank__clear_accounts
     # -------------------------------------------------------------------------
-    def bank__purge_accounts(self, args):
+
+    def bank__clear_accounts(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
-        text = "This test checks bank.purge_accounts \n"
-        text += "  Checking if after the purge_accounts the total amount    \n"
-        text += "  of transactions in the bank stays the same.  \n"
+        text = "This test checks bank.clear_accounts \n"
+        text += "  Checking if after the clear_accounts the total amount    \n"
+        text += "  of transactions in zero.  \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__purge_accounts in run: %s', environment_directory + identifier + ".xml")
+        logging.info('START logging for test bank__clear_accounts in run: %s',  environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
+        bank.initialize_standard_bank(environment)
 
-        #
-        # TEST CODE
-        #
         account = 0.0
         tranx = 0
 
@@ -1312,7 +804,92 @@ class Tests(object):
         print tranx
         print account
 
-        bank.add_transaction("LC", -1,  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("D", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+
+        account = 0.0
+        tranx = 0
+
+        for transaction in bank.accounts:
+            account = account + transaction.transactionValue
+            tranx = tranx + 1
+
+        print tranx
+        print account
+
+        bank.clear_accounts()
+
+        account = 0.0
+        tranx = 0
+
+        for transaction in bank.accounts:
+            account = account + transaction.transactionValue
+            tranx = tranx + 1
+
+        print tranx
+        print account
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__purge_accounts
+    # -------------------------------------------------------------------------
+
+    def bank__purge_accounts(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.purge_accounts \n"
+        text += "  Checking if after the purge_accounts the total amount    \n"
+        text += "  of transactions in the bank stays the same.  \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__purge_accounts in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bankDirectory from the environment
+        bankDirectory = environment.static_parameters["bankDirectory"]
+        # and loop over all banks in the directory
+        listing = os.listdir(bankDirectory)
+        bankFilename = bankDirectory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        bank.initialize_standard_bank(environment)
+
+        account = 0.0
+        tranx = 0
+
+        for transaction in bank.accounts:
+            account = account + transaction.transactionValue
+            tranx = tranx + 1
+
+        print tranx
+        print account
+
+        bank.add_transaction("D", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -1336,64 +913,6 @@ class Tests(object):
         print tranx
         print account
 
-        # for transaction in bank.accounts:
-        #    if transaction.transactionType == "I":
-        #        print account
-        #        bank.purge_accounts()
-        #        account += bank.accounts
-        #        print account
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__change_deposits
-    # -------------------------------------------------------------------------
-
-    def bank__change_deposits(self, args):
-        import os
-        from src.bank import Bank
-        from src.environment import Environment  # needed for the bankDirectory
-
-        text = "This test checks bank.change_deposits \n"
-        text += "  suppose that the change in depostits = 10.0 \n"
-        text += "  then the new deposits should be 260.0  \n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__change_deposits in run: %s',  environment_directory + identifier + ".xml")
-
-        # Construct bank filename
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
-        # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
-
-        # generate the bank
-        bank = Bank()
-        bank.initialize_standard_bank()
-
-        #
-        # TEST CODE
-        #
-
-        change = 10.0
-
-        for transaction in bank.accounts:
-            if (transaction.transactionType == "D"):
-                print "Old Deposits = " + str(transaction.transactionValue)
-                bank.change_deposits(change)
-                print "New Deposits = " + str(transaction.transactionValue)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -1403,20 +922,18 @@ class Tests(object):
     def bank__initialize_standard_bank(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
-        text = "This test checks bank.initialize_standard_bank() \n"
-        text += "  It is successfull if a standart Bank with 2 asstets (I = 100),\n"
-        text += "  E = 90, D = 250  and pReal = 0,9 etc. has been created.\n"
-        text += "  See 'initialize_standard_bank' in bank.py for details.\n"
+        text = "This test checks bank.initialize_standard_bank \n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -1424,22 +941,32 @@ class Tests(object):
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
+
         # get the bankDirectory from the environment
         bankDirectory = environment.static_parameters["bankDirectory"]
         # and loop over all banks in the directory
         listing = os.listdir(bankDirectory)
         bankFilename = bankDirectory + listing[0]
 
-        #
-        # TEST CODE
-        #
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank()
-        print bank
+        bank.initialize_standard_bank(environment)
+
+        print(bank)
+
     # -------------------------------------------------------------------------
+
+# BELOW IT'S THE OLD STUFF
 
 # -------------------------------------------------------------------------
 #  TESTS FOR ENVIRONMENT.PY
