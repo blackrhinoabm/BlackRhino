@@ -4,6 +4,8 @@
     <parameter type='numSimulations' value='1'></parameter>
     <parameter type='numBanks' value='3'></parameter>
     <parameter type='bankDirectory' value='src\\banks\\'></parameter>
+    <parameter type='firmDirectory' value='src\\firms\\'></parameter>
+    <parameter type='householdDirectory' value='src\\households\\'></parameter>
     <!-- parameters determining the payment flow of banks -->
     <parameter type='rl' value='0.06'></parameter>
     <parameter type='rd' value='0.02'></parameter>

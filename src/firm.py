@@ -41,7 +41,6 @@ class Firm(BaseAgent):
     state_variables = {}
     accounts = []  # all accounts of a bank
 
-    parameters["rl"] = 0.0  # interest rate on loans
     parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
     parameters["active"] = 0
 
@@ -114,7 +113,6 @@ class Firm(BaseAgent):
     def __str__(self):
         text = "<firm identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <parameter type='changing' name='rl' value='" + str(self.parameters["rl"]) + "'></parameter>\n"
         text += "    <parameter name='productivity' value='" + str(self.parameters["productivity"]) + "'></parameter>\n"
         text += "    <transactions>\n"
         for transaction in self.accounts:
@@ -135,8 +133,6 @@ class Firm(BaseAgent):
             xmlText = open(firmFilename).read()
             element = ElementTree.XML(xmlText)
             self.identifier = element.attrib['identifier']
-
-            self.parameters["rl"] = environment.static_parameters["rl"]
 
             # loop over all entries in the xml file
             for subelement in element:
@@ -229,14 +225,13 @@ class Firm(BaseAgent):
         from src.transaction import Transaction
 
         self.identifier = "0"  # identifier
-        self.parameters["rl"] = 0.05
         self.parameters["productivity"] = 1.20  # how much goods do we get from 1 unit of labour
 
         # loans - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
         value = 250.0
         transaction = Transaction()
-        transaction.this_transaction("L", environment.banks[0:1][0], self.identifier, value,  self.parameters["rl"],  0, -1)
+        transaction.this_transaction("L", environment.banks[0:1][0], self.identifier, value,  environment.static_parameters["rl"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 

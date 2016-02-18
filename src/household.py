@@ -41,7 +41,6 @@ class Household(BaseAgent):
     state_variables = {}
     accounts = []  # all accounts of a bank
 
-    parameters["rd"] = 0.0  # interest rate on deposits
     parameters["labour"] = 0.0  # labour to sell every step
     parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0
@@ -115,7 +114,6 @@ class Household(BaseAgent):
     def __str__(self):
         text = "<household identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <parameter name='rd' value='" + str(self.parameters["rd"]) + "'></parameter>\n"
         text += "    <parameter name='labour' value='" + str(self.parameters["labour"]) + "'></parameter>\n"
         text += "    <parameter name='ps' value='" + str(self.parameters["ps"]) + "'></parameter>\n"
         text += "    <transactions>\n"
@@ -134,11 +132,9 @@ class Household(BaseAgent):
         from xml.etree import ElementTree
 
         try:
-            xmlText = open(bankFilename).read()
+            xmlText = open(householdFilename).read()
             element = ElementTree.XML(xmlText)
             self.identifier = element.attrib['identifier']
-
-            self.parameters["rd"] = environment.static_parameters["rd"]
 
             # loop over all entries in the xml file
             for subelement in element:
@@ -151,7 +147,7 @@ class Household(BaseAgent):
 
             # self.initialize_transactions(environment)
         except:
-            logging.error("    ERROR: %s could not be parsed",  bankFilename)
+            logging.error("    ERROR: %s could not be parsed",  householdFilename)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -233,7 +229,6 @@ class Household(BaseAgent):
         from src.transaction import Transaction
 
         self.identifier = "0"  # identifier
-        self.parameters["rd"] = 0.02  # interest rate on deposits
         self.parameters["labour"] = 24.00  # labour to sell per step
         self.parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
 
@@ -241,7 +236,7 @@ class Household(BaseAgent):
         # if there are no banks it will be a blank which is fine for testing
         value = 200.0
         transaction = Transaction()
-        transaction.this_transaction("D",  self.identifier, environment.banks[0:1][0], value, self.parameters["rd"],  0, -1)
+        transaction.this_transaction("D",  self.identifier, environment.banks[0:1][0], value, environment.static_parameters["rd"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
@@ -253,7 +248,7 @@ class Household(BaseAgent):
         del transaction
 
         # manhours - labour to sell
-        value = 240.0
+        value = 250.0
         transaction = Transaction()
         transaction.this_transaction("H", self.identifier, self.identifier, value, 0,  0, -1)
         self.accounts.append(transaction)

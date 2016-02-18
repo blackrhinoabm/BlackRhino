@@ -41,8 +41,6 @@ class Bank(BaseAgent):
     state_variables = {}
     accounts = []  # all accounts of a bank
 
-    parameters["rd"] = 0.0  # interest rate on deposits
-    parameters["rl"] = 0.0  # interest rate on loans
     parameters["active"] = 0
 
 #
@@ -114,8 +112,6 @@ class Bank(BaseAgent):
     def __str__(self):
         text = "<bank identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <parameter name='rd' value='" + str(self.parameters["rd"]) + "'></parameter>\n"
-        text += "    <parameter name='rl' value='" + str(self.parameters["rl"]) + "'></parameter>\n"
         text += "    <transactions>\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
@@ -135,9 +131,6 @@ class Bank(BaseAgent):
             xmlText = open(bankFilename).read()
             element = ElementTree.XML(xmlText)
             self.identifier = element.attrib['identifier']
-
-            self.parameters["rd"] = environment.static_parameters["rd"]
-            self.parameters["rl"] = environment.static_parameters["rl"]
 
             # self.initialize_transactions(environment)
         except:
@@ -230,14 +223,12 @@ class Bank(BaseAgent):
         from src.transaction import Transaction
 
         self.identifier = "0"
-        self.parameters["rd"] = 0.01
-        self.parameters["rl"] = 0.05
 
         # deposits - we get the first household from the list of households
         # if there are no households it will be a blank which is fine for testing
         value = 250.0
         transaction = Transaction()
-        transaction.this_transaction("D",  environment.households[0:1][0],  self.identifier,  value,  self.parameters["rd"],  0, -1)
+        transaction.this_transaction("D",  environment.households[0:1][0],  self.identifier,  value,  environment.static_parameters["rd"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
@@ -252,7 +243,7 @@ class Bank(BaseAgent):
         # if there are no firms it will be a blank which is fine for testing
         value = 150.0
         transaction = Transaction()
-        transaction.this_transaction("L",  self.identifier, environment.firms[0:1][0],  value,  self.parameters["rl"],  0, -1)
+        transaction.this_transaction("L",  self.identifier, environment.firms[0:1][0],  value,  environment.static_parameters["rl"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 

@@ -50,6 +50,8 @@ class Environment(BaseConfig):
     static_parameters["numSweeps"] = 0
     static_parameters["numBanks"] = 0
     static_parameters["bankDirectory"] = ""
+    static_parameters["firmDirectory"] = ""
+    static_parameters["householdDirectory"] = ""
     # parameters for the networks
     static_parameters["graphType"] = ""
     static_parameters["graphParameter1"] = 0.0
@@ -64,7 +66,7 @@ class Environment(BaseConfig):
     # VARIABLES
     #
     # parameters determining the cash flow of banks
-    static_parameters["rb"] = 0.0  # interbank interest rate
+    static_parameters["rl"] = 0.0  # interest rate on loans
     static_parameters["rd"] = 0.0  # interest rate on deposits
     # parameters for the central bank
     static_parameters["collateralQuality"] = 0.0  # the fraction of a bank's portfolio that the central bank accepts as collateral
@@ -227,6 +229,8 @@ class Environment(BaseConfig):
         self.static_parameters["numSweeps"] = 0
         self.static_parameters["numBanks"] = 0
         self.static_parameters["bankDirectory"] = ""
+        self.static_parameters["firmDirectory"] = ""
+        self.static_parameters["householdDirectory"] = ""
         # parameters for the networks
         self.static_parameters["graphType"] = ""
         self.static_parameters["graphParameter1"] = 0.0
@@ -241,8 +245,8 @@ class Environment(BaseConfig):
         # VARIABLES
         #
         # parameters determining the cash flow of banks
-        self.static_parameters["rl"] = 0.0  # interbank interest rate
-        self.static_parameters["rd"] = 0.0  # interest rate on deposits
+        self.static_parameters["rl"] = 0.05  # interbank interest rate
+        self.static_parameters["rd"] = 0.01  # interest rate on deposits
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_environment_file(environment_filename)
@@ -293,6 +297,10 @@ class Environment(BaseConfig):
                 self.static_parameters["numBanks"] = int(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'bankDirectory'):
                 self.static_parameters["bankDirectory"] = str(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'firmDirectory'):
+                self.static_parameters["firmDirectory"] = str(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'householdDirectory'):
+                self.static_parameters["householdDirectory"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'graphType'):
                 self.static_parameters["graphType"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'rd'):
