@@ -147,33 +147,23 @@ class Bank(BaseAgent):
     # check_consistency
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        assets = 0.0
-        liabilities = 0.0
-
-        for transaction in self.accounts:
-            if (transaction.transactionType == "LOAN" or transaction.transactionType == "MONEY"):
-                assets = assets + transaction.transactionValue
-            if (transaction.transactionType == "DEPOSIT"):
-                liabilities = liabilities + transaction.transactionValue
-
-        if assets == liabilities:
-            return True
-        else:
-            return False
+        _assets = ["LOAN", "MONEY"]
+        _liabilities = ["DEPOSIT"]
+        return super(Bank.self).check_consistency(_assets, _liabilities)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account
     # -------------------------------------------------------------------------
     def get_account(self,  _type):
-        super(Bank, self).get_account(_type)
+        return super(Bank, self).get_account(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
     def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        super(Bank, self).get_account_num_transactions(_type)
+        return super(Bank, self).get_account_num_transactions(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

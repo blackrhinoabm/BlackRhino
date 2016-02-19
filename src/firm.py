@@ -168,14 +168,14 @@ class Firm(BaseAgent):
     # get_account
     # -------------------------------------------------------------------------
     def get_account(self,  _type):
-        super(Firm, self).get_account(_type)
+        return super(Firm, self).get_account(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
     def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        super(Firm, self).get_account_num_transactions(_type)
+        return super(Firm, self).get_account_num_transactions(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

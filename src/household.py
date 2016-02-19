@@ -172,14 +172,14 @@ class Household(BaseAgent):
     # get_account
     # -------------------------------------------------------------------------
     def get_account(self,  _type):
-        super(Household, self).get_account(_type)
+        return super(Household, self).get_account(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
     def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        super(Household, self).get_account_num_transactions(_type)
+        return super(Household, self).get_account_num_transactions(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
