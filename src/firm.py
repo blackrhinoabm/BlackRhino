@@ -224,28 +224,28 @@ class Firm(BaseAgent):
     def initialize_standard_firm(self, environment):
         from src.transaction import Transaction
 
-        self.identifier = "0"  # identifier
+        self.identifier = "standard_firm_id"  # identifier
         self.parameters["productivity"] = 1.20  # how much goods do we get from 1 unit of labour
 
         # loans - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
         value = 250.0
         transaction = Transaction()
-        transaction.this_transaction("L", environment.banks[0:1][0], self.identifier, value,  environment.static_parameters["rl"],  0, -1)
+        transaction.this_transaction("LOAN", environment.banks[0:1][0], self.identifier, value,  environment.static_parameters["interest_rate_loans"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
         value = 200.0
         transaction = Transaction()
-        transaction.this_transaction("M", self.identifier, self.identifier, value,  0,  0, -1)
+        transaction.this_transaction("MONEY", self.identifier, self.identifier, value,  0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 
         # goods - unique production
         value = 50.0
         transaction = Transaction()
-        transaction.this_transaction("G", self.identifier, self.identifier, value,  0,  0, -1)
+        transaction.this_transaction("GOODS", self.identifier, self.identifier, value,  0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 

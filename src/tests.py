@@ -578,7 +578,7 @@ class Tests(object):
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
         print("Adding additional deposits without adding appropriate cash/loans.")
-        bank.add_transaction("D",  environment.households[0:1][0],  bank.identifier,  150,  environment.static_parameters["rd"],  0, -1)
+        bank.add_transaction("DEPOSIT",  environment.households[0:1][0],  bank.identifier,  150,  environment.static_parameters["interest_rate_deposits"],  0, -1)
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
 
@@ -642,14 +642,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(bank)                                              # and checking how much is the total
         # volume of the account
-        for type in ["D",  "M",  "L"]:
-                        if type == "D":
+        for type in ["DEPOSIT",  "MONEY",  "LOAN"]:
+                        if type == "DEPOSIT":
                                 account += bank.get_account(type)
                                 print("D = " + str(account))
-                        if type == "M":
+                        if type == "MONEY":
                                 account += bank.get_account(type)
                                 print("D+M = " + str(account))
-                        if type == "L":
+                        if type == "LOAN":
                                 account += bank.get_account(type)
                                 print("D+M+L = " + str(account))
 
@@ -712,14 +712,14 @@ class Tests(object):
         print(bank)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["D",  "M",  "L"]:
-                        if type == "D":
+        for type in ["DEPOSIT",  "MONEY",  "LOAN"]:
+                        if type == "DEPOSIT":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
-                        if type == "M":
+                        if type == "MONEY":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
-                        if type == "L":
+                        if type == "LOAN":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D+M+L = " + str(num_transactions))
 
@@ -740,7 +740,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our bank. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "D",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
+        text += '  (type = "DEPOSIT",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -783,7 +783,7 @@ class Tests(object):
 
         print(bank)
         print("Adding new transaction: \n")
-        bank.add_transaction("D",  environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
+        bank.add_transaction("DEPOSIT",  environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
         print(bank)
 
     # -------------------------------------------------------------------------
@@ -851,7 +851,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("D", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("DEPOSIT", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -940,7 +940,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("D", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("DEPOSIT", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -1553,14 +1553,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(firm)                                             # and checking how much is the total
         # volume of the account
-        for type in ["L",  "M",  "G"]:
-                        if type == "L":
+        for type in ["LOAN",  "MONEY",  "GOODS"]:
+                        if type == "LOAN":
                                 account += firm.get_account(type)
                                 print("L = " + str(account))
-                        if type == "M":
+                        if type == "MONEY":
                                 account += firm.get_account(type)
                                 print("L+M = " + str(account))
-                        if type == "G":
+                        if type == "GOODS":
                                 account += firm.get_account(type)
                                 print("L+M+G = " + str(account))
 
@@ -1623,14 +1623,14 @@ class Tests(object):
         print(firm)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["L",  "M",  "G"]:
-                        if type == "L":
+        for type in ["LOAN",  "MONEY",  "GOODS"]:
+                        if type == "LOAN":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L = " + str(num_transactions))
-                        if type == "M":
+                        if type == "MONEY":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L+M = " + str(num_transactions))
-                        if type == "G":
+                        if type == "GOODS":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L+M+G = " + str(num_transactions))
 
@@ -1651,7 +1651,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our firm. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "D",  fromID = -1,  toID = firm.identifier,  value = 10,  \n'
+        text += '  (type = "DEPOSIT",  fromID = -1,  toID = firm.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -1694,7 +1694,7 @@ class Tests(object):
 
         print(firm)
         print("Adding new transaction: \n")
-        firm.add_transaction("D",  environment.households[0:1][0],  firm.identifier,  10,  0.09,  0, -1)
+        firm.add_transaction("DEPOSIT",  environment.households[0:1][0],  firm.identifier,  10,  0.09,  0, -1)
         print(firm)
 
     # -------------------------------------------------------------------------
@@ -1762,7 +1762,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        firm.add_transaction("D", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("DEPOSIT", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -1851,7 +1851,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        firm.add_transaction("D", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("DEPOSIT", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -2458,14 +2458,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(household)                                             # and checking how much is the total
         # volume of the account
-        for type in ["D",  "M",  "H"]:
-                        if type == "D":
+        for type in ["DEPOSIT",  "MONEY",  "MANHOURS"]:
+                        if type == "DEPOSIT":
                                 account += household.get_account(type)
                                 print("D = " + str(account))
-                        if type == "M":
+                        if type == "MONEY":
                                 account += household.get_account(type)
                                 print("D+M = " + str(account))
-                        if type == "H":
+                        if type == "MANHOURS":
                                 account += household.get_account(type)
                                 print("D+M+H = " + str(account))
 
@@ -2528,14 +2528,14 @@ class Tests(object):
         print(household)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["D",  "M",  "H"]:
-                        if type == "D":
+        for type in ["DEPOSIT",  "MONEY",  "MANHOURS"]:
+                        if type == "DEPOSIT":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
-                        if type == "M":
+                        if type == "MONEY":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
-                        if type == "H":
+                        if type == "MANHOURS":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D+M+H = " + str(num_transactions))
 
@@ -2556,7 +2556,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our household. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "D",  fromID = -1,  toID = household.identifier,  value = 10,  \n'
+        text += '  (type = "DEPOSIT",  fromID = -1,  toID = household.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -2599,7 +2599,7 @@ class Tests(object):
 
         print(household)
         print("Adding new transaction: \n")
-        household.add_transaction("D",  environment.banks[0:1][0],  household.identifier,  10,  0.09,  0, -1)
+        household.add_transaction("DEPOSIT",  environment.banks[0:1][0],  household.identifier,  10,  0.09,  0, -1)
         print(household)
 
     # -------------------------------------------------------------------------
@@ -2667,7 +2667,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        household.add_transaction("D", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("DEPOSIT", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
@@ -2756,7 +2756,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        household.add_transaction("D", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("DEPOSIT", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0

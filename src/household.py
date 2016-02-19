@@ -42,7 +42,7 @@ class Household(BaseAgent):
     accounts = []  # all accounts of a bank
 
     parameters["labour"] = 0.0  # labour to sell every step
-    parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
+    parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0
 
 #
@@ -115,7 +115,7 @@ class Household(BaseAgent):
         text = "<household identifier='" + self.identifier + "'>\n"
         text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
         text += "    <parameter name='labour' value='" + str(self.parameters["labour"]) + "'></parameter>\n"
-        text += "    <parameter name='ps' value='" + str(self.parameters["ps"]) + "'></parameter>\n"
+        text += "    <parameter name='propensity_to_save' value='" + str(self.parameters["propensity_to_save"]) + "'></parameter>\n"
         text += "    <transactions>\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
@@ -142,8 +142,8 @@ class Household(BaseAgent):
                 value = subelement.attrib['value']
                 if (name == 'labour'):
                     self.parameters["labour"] = float(value)
-                if (name == 'ps'):
-                    self.parameters["ps"] = float(value)
+                if (name == 'propensity_to_save'):
+                    self.parameters["propensity_to_save"] = float(value)
 
             # self.initialize_transactions(environment)
         except:
@@ -228,29 +228,29 @@ class Household(BaseAgent):
     def initialize_standard_household(self, environment):
         from src.transaction import Transaction
 
-        self.identifier = "0"  # identifier
+        self.identifier = "standard_household_id"  # identifier
         self.parameters["labour"] = 24.00  # labour to sell per step
-        self.parameters["ps"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
+        self.parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
 
         # deposits - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
         value = 200.0
         transaction = Transaction()
-        transaction.this_transaction("D",  self.identifier, environment.banks[0:1][0], value, environment.static_parameters["rd"],  0, -1)
+        transaction.this_transaction("DEPOSIT",  self.identifier, environment.banks[0:1][0], value, environment.static_parameters["interest_rate_deposits"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
         value = 50.0
         transaction = Transaction()
-        transaction.this_transaction("M", self.identifier, self.identifier, value, 0,  0, -1)
+        transaction.this_transaction("MONEY", self.identifier, self.identifier, value, 0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 
         # manhours - labour to sell
         value = 250.0
         transaction = Transaction()
-        transaction.this_transaction("H", self.identifier, self.identifier, value, 0,  0, -1)
+        transaction.this_transaction("MANHOURS", self.identifier, self.identifier, value, 0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 

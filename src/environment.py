@@ -66,8 +66,8 @@ class Environment(BaseConfig):
     # VARIABLES
     #
     # parameters determining the cash flow of banks
-    static_parameters["rl"] = 0.0  # interest rate on loans
-    static_parameters["rd"] = 0.0  # interest rate on deposits
+    static_parameters["interest_rate_loans"] = 0.0  # interest rate on loans
+    static_parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
     # parameters for the central bank
     static_parameters["collateralQuality"] = 0.0  # the fraction of a bank's portfolio that the central bank accepts as collateral
     # firm parameters
@@ -164,7 +164,7 @@ class Environment(BaseConfig):
         text = "<state>\n"
         text += "  <!-- parameters determining the payment flow of banks -->\n"
         text += "  <parameter type='changing' name='rb' value='" + str(self.static_parameters["rb"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='rd' value='" + str(self.static_parameters["rd"]) + "'></parameter>\n"
+        text += "  <parameter type='changing' name='rd' value='" + str(self.static_parameters["interest_rate_deposits"]) + "'></parameter>\n"
         text += "  <!-- parameters for the central bank -->\n"
         text += "  <parameter type='changing' name='collateralQuality' value='" + str(self.static_parameters["collateralQuality"]) + "'></parameter>\n"
         text += "  <!-- firm parameters-->\n"
@@ -245,8 +245,8 @@ class Environment(BaseConfig):
         # VARIABLES
         #
         # parameters determining the cash flow of banks
-        self.static_parameters["rl"] = 0.05  # interbank interest rate
-        self.static_parameters["rd"] = 0.01  # interest rate on deposits
+        self.static_parameters["interest_rate_loans"] = 0.05  # interbank interest rate
+        self.static_parameters["interest_rate_deposits"] = 0.01  # interest rate on deposits
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_environment_file(environment_filename)
@@ -304,9 +304,9 @@ class Environment(BaseConfig):
             if (subelement.attrib['type'] == 'graphType'):
                 self.static_parameters["graphType"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'rd'):
-                self.static_parameters["rd"] = float(subelement.attrib['value'])
+                self.static_parameters["interest_rate_deposits"] = float(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'rl'):
-                self.static_parameters["rl"] = float(subelement.attrib['value'])
+                self.static_parameters["interest_rate_loans"] = float(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'contractsNetworkFile'):
                 self.static_parameters["contractsNetworkFile"] = str(subelement.attrib['value'])
             # now also read in the parameters that can change during the simulation
@@ -374,7 +374,7 @@ class Environment(BaseConfig):
                 if parameter == 'rb':
                     self.static_parameters["rb"] = float(self.variable_parameters[parameter]['value'])
                 if parameter == 'rd':
-                    self.static_parameters["rd"] = float(self.variable_parameters[parameter]['value'])
+                    self.static_parameters["interest_rate_deposits"] = float(self.variable_parameters[parameter]['value'])
                 if parameter == 'r':
                     self.static_parameters["r"] = float(self.variable_parameters[parameter]['value'])
                 if parameter == 'collateralQuality':
@@ -459,7 +459,7 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
     def print_state(self):
         print "rb: " + str(self.static_parameters["rb"])
-        print "rd: " + str(self.static_parameters["rd"])
+        print "rd: " + str(self.static_parameters["interest_rate_deposits"])
         print "r: " + str(self.static_parameters["r"])
         print "sifiSurchargeFactor: " + str(self.static_parameters["sifiSurchargeFactor"])
         print "successProbabilityFirms: " + str(self.static_parameters["successProbabilityFirms"])

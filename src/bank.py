@@ -145,9 +145,9 @@ class Bank(BaseAgent):
         liabilities = 0.0
 
         for transaction in self.accounts:
-            if (transaction.transactionType == "L" or transaction.transactionType == "M"):
+            if (transaction.transactionType == "LOAN" or transaction.transactionType == "MONEY"):
                 assets = assets + transaction.transactionValue
-            if (transaction.transactionType == "D"):
+            if (transaction.transactionType == "DEPOSIT"):
                 liabilities = liabilities + transaction.transactionValue
 
         if assets == liabilities:
@@ -222,20 +222,20 @@ class Bank(BaseAgent):
     def initialize_standard_bank(self, environment):
         from src.transaction import Transaction
 
-        self.identifier = "0"
+        self.identifier = "standard_bank_id"
 
         # deposits - we get the first household from the list of households
         # if there are no households it will be a blank which is fine for testing
         value = 250.0
         transaction = Transaction()
-        transaction.this_transaction("D",  environment.households[0:1][0],  self.identifier,  value,  environment.static_parameters["rd"],  0, -1)
+        transaction.this_transaction("DEPOSIT",  environment.households[0:1][0],  self.identifier,  value,  environment.static_parameters["interest_rate_deposits"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
         value = 100.0
         transaction = Transaction()
-        transaction.this_transaction("M",  self.identifier, self.identifier,  value,  0,  0, -1)
+        transaction.this_transaction("MONEY",  self.identifier, self.identifier,  value,  0,  0, -1)
         self.accounts.append(transaction)
         del transaction
 
@@ -243,7 +243,7 @@ class Bank(BaseAgent):
         # if there are no firms it will be a blank which is fine for testing
         value = 150.0
         transaction = Transaction()
-        transaction.this_transaction("L",  self.identifier, environment.firms[0:1][0],  value,  environment.static_parameters["rl"],  0, -1)
+        transaction.this_transaction("LOAN",  self.identifier, environment.firms[0:1][0],  value,  environment.static_parameters["interest_rate_loans"],  0, -1)
         self.accounts.append(transaction)
         del transaction
 
