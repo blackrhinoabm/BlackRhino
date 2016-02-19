@@ -1491,6 +1491,8 @@ class Tests(object):
         text += "Identifier: "
         text += firm.identifier
         text += "\n"
+        text += "Productivity: "
+        text += str(firm.parameters["productivity"])
         self.print_info(text)
 
     # -------------------------------------------------------------------------
@@ -2396,6 +2398,11 @@ class Tests(object):
         text += "Identifier: "
         text += household.identifier
         text += "\n"
+        text += "Amount of labour: "
+        text += str(household.parameters["labour"])
+        text += "\n"
+        text += "Propensity to save: "
+        text += str(household.parameters["propensity_to_save"])
         self.print_info(text)
 
     # -------------------------------------------------------------------------

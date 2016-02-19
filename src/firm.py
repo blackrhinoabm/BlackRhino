@@ -133,23 +133,7 @@ class Firm(BaseAgent):
     # get_parameters_from_file
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  firmFilename, environment):
-        from xml.etree import ElementTree
-
-        try:
-            xmlText = open(firmFilename).read()
-            element = ElementTree.XML(xmlText)
-            self.identifier = element.attrib['identifier']
-
-            # loop over all entries in the xml file
-            for subelement in element:
-                name = subelement.attrib['name']
-                value = subelement.attrib['value']
-                if (name == 'productivity'):
-                    self.parameters["productivity"] = float(value)
-
-            # self.initialize_transactions(environment)
-        except:
-            logging.error("    ERROR: %s could not be parsed",  firmFilename)
+        super(Firm, self).get_parameters_from_file(firmFilename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -162,6 +146,13 @@ class Firm(BaseAgent):
         volume = uniform(low, high)
 
         return volume
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_consistency
+    # -------------------------------------------------------------------------
+    def check_consistency(self):
+        pass
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

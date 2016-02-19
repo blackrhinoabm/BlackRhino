@@ -131,16 +131,7 @@ class Bank(BaseAgent):
     # get_parameters_from_file
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  bankFilename, environment):
-        from xml.etree import ElementTree
-
-        try:
-            xmlText = open(bankFilename).read()
-            element = ElementTree.XML(xmlText)
-            self.identifier = element.attrib['identifier']
-
-            # self.initialize_transactions(environment)
-        except:
-            logging.error("    ERROR: %s could not be parsed",  bankFilename)
+        super(Bank, self).get_parameters_from_file(bankFilename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -149,7 +140,7 @@ class Bank(BaseAgent):
     def check_consistency(self):
         _assets = ["LOAN", "MONEY"]
         _liabilities = ["DEPOSIT"]
-        return super(Bank.self).check_consistency(_assets, _liabilities)
+        return super(Bank, self).check_consistency(_assets, _liabilities)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

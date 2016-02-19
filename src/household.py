@@ -135,25 +135,7 @@ class Household(BaseAgent):
     # get_parameters_from_file
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  householdFilename, environment):
-        from xml.etree import ElementTree
-
-        try:
-            xmlText = open(householdFilename).read()
-            element = ElementTree.XML(xmlText)
-            self.identifier = element.attrib['identifier']
-
-            # loop over all entries in the xml file
-            for subelement in element:
-                name = subelement.attrib['name']
-                value = subelement.attrib['value']
-                if (name == 'labour'):
-                    self.parameters["labour"] = float(value)
-                if (name == 'propensity_to_save'):
-                    self.parameters["propensity_to_save"] = float(value)
-
-            # self.initialize_transactions(environment)
-        except:
-            logging.error("    ERROR: %s could not be parsed",  householdFilename)
+        super(Household, self).get_parameters_from_file(householdFilename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -166,6 +148,13 @@ class Household(BaseAgent):
         volume = uniform(low, high)
 
         return volume
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_consistency
+    # -------------------------------------------------------------------------
+    def check_consistency(self):
+        pass
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
