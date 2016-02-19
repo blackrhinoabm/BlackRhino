@@ -80,6 +80,12 @@ class Firm(BaseAgent):
         """
         super(Firm, self).set_state_variables(_value)
 
+    def append_parameters(self, _value):
+        super(Firm, self).append_parameters(_value)
+
+    def append_state_variables(self, _value):
+        super(Firm, self).append_state_variables(_value)
+
     # -------------------------------------------------------------------------
     # functions needed to make Firm() hashable
     # -------------------------------------------------------------------------

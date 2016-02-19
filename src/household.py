@@ -81,6 +81,12 @@ class Household(BaseAgent):
         """
         super(Household, self).set_state_variables(_value)
 
+    def append_parameters(self, _value):
+        super(Household, self).append_parameters(_value)
+
+    def append_state_variables(self, _value):
+        super(Household, self).append_state_variables(_value)
+
     # -------------------------------------------------------------------------
     # functions needed to make Household() hashable
     # -------------------------------------------------------------------------
