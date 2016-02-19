@@ -171,27 +171,15 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     # get_account
     # -------------------------------------------------------------------------
-    def get_account(self,  type):
-        volume = 0.0
-
-        for transaction in self.accounts:
-            if (transaction.transactionType == type):
-                volume = volume + float(transaction.transactionValue)
-
-        return volume
+    def get_account(self,  _type):
+        super(Household, self).get_account(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  type):  # returns the number of transactions in a given account
-        num_transactions = 0.0
-
-        for transaction in self.accounts:
-            if (transaction.transactionType == type):
-                num_transactions += 1
-
-        return num_transactions
+    def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
+        super(Household, self).get_account_num_transactions(_type)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -209,20 +197,14 @@ class Household(BaseAgent):
     # clear_accounts
     # -------------------------------------------------------------------------
     def clear_accounts(self):
-        self.accounts = []
+        super(Household, self).clear_accounts()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # purge_accounts
     # -------------------------------------------------------------------------
     def purge_accounts(self):
-        new_accounts = []
-
-        for transaction in self.accounts:
-            if transaction.transactionValue > 0.0:
-                new_accounts.append(transaction)
-
-        self.accounts = new_accounts
+        super(Household, self).purge_accounts()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
