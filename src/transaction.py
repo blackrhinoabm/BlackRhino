@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from abm_template.src.basetransaction import BaseTransaction
+
 # -------------------------------------------------------------------------
 #
 # class Transaction
@@ -26,24 +28,26 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 # -------------------------------------------------------------------------
 
 
-class Transaction(object):
+class Transaction(BaseTransaction):
     #
     # VARIABLES
     #
-    transactionType = ""
-    # transactionAsset = None
-    transactionFrom = 0
-    transactionTo = 0
-    transactionValue = 0.0
-    transactionInterest = 0.0
-    transactionMaturity = 0
+
+    transaction_type = ""
+    transaction_asset = ""
+    transaction_from = 0
+    transaction_to = 0
+    transaction_value = 0.0
+    transaction_interest = 0.0
+    transaction_maturity = 0
     # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
     # if timeOfDefault == 0: loan defaults
-    transactionTimeOfDefault = -1
+    transaction_time_of_default = -1
 
     #
     # METHODS
     #
+
     # -------------------------------------------------------------------------
     # __init__
     # -------------------------------------------------------------------------
@@ -52,70 +56,81 @@ class Transaction(object):
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # this_transaction(transactionType,
-    #                  transactionFrom,
-    #                  transactionTo,
-    #                  transactionValue,
-    #                  transactionInterest,
-    #                  transactionMaturity,
-    #                  transactionTimeOfDefault)
+    # functions for setting/changing variables
     # -------------------------------------------------------------------------
-    def this_transaction(self,  transactionType,  transactionFrom,  transactionTo,  transactionValue,  transactionInterest,  transactionMaturity, transactionTimeOfDefault):
-        self.transactionType = transactionType
-        # if transactionType == "I":
-        #    self.transactionAsset = transactionAsset
-        # the convention used is that values are positive
-        if transactionValue >= 0:
-            self.transactionFrom = transactionFrom
-            self.transactionTo = transactionTo
-        else:  # negative values reverse direction and delete sign
-            self.transactionFrom = transactionTo
-            self.transactionTo = transactionFrom
-            transactionValue = abs(transactionValue)
-        self.transactionValue = transactionValue
-        self.transactionInterest = transactionInterest
-        self.transactionMaturity = transactionMaturity
-        self.transactionTimeOfDefault = transactionTimeOfDefault
+    def get_transaction_type(self):
+        return self.transaction_type
+
+    def set_transaction_type(self, type):
+        super(Transaction, self).set_transaction_type(type)
+
+    def get_transaction_asset(self):
+        return self.transaction_asset
+
+    def set_transaction_asset(self, asset):
+        super(Transaction, self).set_transaction_asset(asset)
+
+    def get_transaction_from(self):
+        return self.transaction_from
+
+    def set_transaction_from(self, from_):
+        super(Transaction, self).set_transaction_from(from_)
+
+    def get_transaction_to(self):
+        return self.transaction_to
+
+    def set_transaction_to(self, to):
+        super(Transaction, self).set_transaction_to(to)
+
+    def get_transaction_value(self):
+        return self.transaction_value
+
+    def set_transaction_value(self, value):
+        super(Transaction, self).set_transaction_value(value)
+
+    def get_transaction_interest(self):
+        return self.transaction_interest
+
+    def set_transaction_interest(self, interest):
+        super(Transaction, self).set_transaction_interest(interest)
+
+    def get_transaction_maturity(self):
+        return self.transaction_maturity
+
+    def set_transaction_maturity(self, maturity):
+        super(Transaction, self).set_transaction_maturity(maturity)
+
+    def get_transaction_time_of_default(self):
+        return self.transaction_time_of_default
+
+    def set_transaction_time_of_default(self, time_of_default):
+        super(Transaction, self).set_transaction_time_of_default(time_of_default)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # this_transaction(transaction_type,
+    #                  transaction_asset,
+    #                  transaction_from,
+    #                  transaction_to,
+    #                  transaction_value,
+    #                  transaction_interest,
+    #                  transaction_maturity,
+    #                  transaction_time_of_default)
+    # -------------------------------------------------------------------------
+    def this_transaction(self, transaction_type, transaction_asset, transaction_from, transaction_to, transaction_value,  transaction_interest,  transaction_maturity, transaction_time_of_default):
+        super(Transaction, self).this_transaction(transaction_type, transaction_asset, transaction_from, transaction_to, transaction_value,  transaction_interest,  transaction_maturity, transaction_time_of_default)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # print_transaction()
     # -------------------------------------------------------------------------
     def print_transaction(self):
-        print "        <transaction type='" + self.transactionType + "'>"
-        if hasattr(self.transactionFrom, "identifier"):
-            print "            <property type='from' value='" + str(self.transactionFrom.identifier) + "'></property>"
-        else:
-            print "            <property type='from' value='" + str(self.transactionFrom) + "'></property>"
-        if hasattr(self.transactionTo, "identifier"):
-            print "            <property type='to' value='" + str(self.transactionTo.identifier) + "'></property>"
-        else:
-            print "            <property type='to' value='" + str(self.transactionTo) + "'></property>"
-        print "            <property type='value' value='" + str(self.transactionValue) + "'></property>"
-        print "            <property type='interest' value='" + str(self.transactionInterest) + "'></property>"
-        print "            <property type='maturity' value='" + str(self.transactionMaturity) + "'></property>"
-        print "            <property type='timeOfDefault' value='" + str(self.transactionTimeOfDefault) + "'></property>"
-        print "        </transaction>"
+        super(Transaction, self).print_transaction()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # write_transaction()
     # -------------------------------------------------------------------------
     def write_transaction(self):
-        text = "        <transaction type='" + self.transactionType + "'>\n"
-        if hasattr(self.transactionFrom, "identifier"):
-            text += "            <property type='from' value='" + str(self.transactionFrom.identifier) + "'></property>\n"
-        else:
-            text += "            <property type='from' value='" + str(self.transactionFrom) + "'></property>\n"
-        if hasattr(self.transactionTo, "identifier"):
-            text += "            <property type='to' value='" + str(self.transactionTo.identifier) + "'></property>\n"
-        else:
-            text += "            <property type='to' value='" + str(self.transactionTo) + "'></property>\n"
-        text += "            <property type='value' value='" + str(self.transactionValue) + "'></property>\n"
-        text += "            <property type='interest' value='" + str(self.transactionInterest) + "'></property>\n"
-        text += "            <property type='maturity' value='" + str(self.transactionMaturity) + "'></property>\n"
-        text += "            <property type='timeOfDefault' value='" + str(self.transactionTimeOfDefault) + "'></property>\n"
-        text += "        </transaction>\n"
-
-        return text
+        return super(Transaction, self).write_transaction()
     # -------------------------------------------------------------------------

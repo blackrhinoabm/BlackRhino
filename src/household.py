@@ -45,47 +45,38 @@ class Household(BaseAgent):
     parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0
 
-#
-#
-# CODE
-#
-#
+    #
+    #
+    # CODE
+    #
+    #
 
+    # -------------------------------------------------------------------------
+    # functions for setting/changing id, parameters, and state variables
+    # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
 
-    def set_identifier(self, _value):
-        """
-        Class variables: identifier
-        Local variables: _identifier
-        """
-        super(Household, self).set_identifier(_value)
+    def set_identifier(self, value):
+        super(Household, self).set_identifier(value)
 
     def get_parameters(self):
         return self.parameters
 
-    def set_parameters(self, _value):
-        """
-        Class variables: parameters
-        Local variables: _params
-        """
-        super(Household, self).set_parameters(_value)
+    def set_parameters(self, value):
+        super(Household, self).set_parameters(value)
 
     def get_state_variables(self):
         return self.state_variables
 
-    def set_state_variables(self, _value):
-        """
-        Class variables: state_variables
-        Local variables: _variables
-        """
-        super(Household, self).set_state_variables(_value)
+    def set_state_variables(self, value):
+        super(Household, self).set_state_variables(value)
 
-    def append_parameters(self, _value):
-        super(Household, self).append_parameters(_value)
+    def append_parameters(self, value):
+        super(Household, self).append_parameters(value)
 
-    def append_state_variables(self, _value):
-        super(Household, self).append_state_variables(_value)
+    def append_state_variables(self, value):
+        super(Household, self).append_state_variables(value)
 
     # -------------------------------------------------------------------------
     # functions needed to make Household() hashable
@@ -118,36 +109,27 @@ class Household(BaseAgent):
     # __str__
     # -------------------------------------------------------------------------
     def __str__(self):
-        text = "<household identifier='" + self.identifier + "'>\n"
-        text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <parameter name='labour' value='" + str(self.parameters["labour"]) + "'></parameter>\n"
-        text += "    <parameter name='propensity_to_save' value='" + str(self.parameters["propensity_to_save"]) + "'></parameter>\n"
-        text += "    <transactions>\n"
+        household_string = super(Household, self).__str__()
+        household_string = household_string.replace("\n", "\n    <type value='household'>\n", 1)
+        text = "\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
-        text += "    </transactions>\n"
-        text += "</household>\n"
-
-        return text
+        text += "  </agent>"
+        return household_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
     # -------------------------------------------------------------------------
-    def get_parameters_from_file(self,  householdFilename, environment):
-        super(Household, self).get_parameters_from_file(householdFilename, environment)
+    def get_parameters_from_file(self,  household_filename, environment):
+        super(Household, self).get_parameters_from_file(household_filename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_new_savings
     # -------------------------------------------------------------------------
     def get_new_savings(self, low, high):
-        volume = 0.0
-
-        from random import uniform
-        volume = uniform(low, high)
-
-        return volume
+        pass
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -160,24 +142,24 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     # get_account
     # -------------------------------------------------------------------------
-    def get_account(self,  _type):
-        return super(Household, self).get_account(_type)
+    def get_account(self,  type_):
+        return super(Household, self).get_account(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        return super(Household, self).get_account_num_transactions(_type)
+    def get_account_num_transactions(self,  type_):  # returns the number of transactions in a given account
+        return super(Household, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_transaction
     # -------------------------------------------------------------------------
-    def add_transaction(self,  type,  fromID,  toID,  value,  interest,  maturity, timeOfDefault):
+    def add_transaction(self,  type_, asset, from_id,  to_id,  value,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type,  fromID,  toID,  value,  interest,  maturity,  timeOfDefault)
+        transaction.this_transaction(type_, asset, from_id, to_id, value, interest, maturity, time_of_default)
         self.accounts.append(transaction)
         del transaction
     # -------------------------------------------------------------------------
@@ -194,41 +176,4 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Household, self).purge_accounts()
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # initialize_standard_household
-    #
-    # this routine initializes a household with a standard balance sheet,
-    # which can be used to make the tests more handy
-    # -------------------------------------------------------------------------
-    def initialize_standard_household(self, environment):
-        from src.transaction import Transaction
-
-        self.identifier = "standard_household_id"  # identifier
-        self.parameters["labour"] = 24.00  # labour to sell per step
-        self.parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
-
-        # deposits - we get the first bank from the list of banks
-        # if there are no banks it will be a blank which is fine for testing
-        value = 200.0
-        transaction = Transaction()
-        transaction.this_transaction("DEPOSIT",  self.identifier, environment.banks[0:1][0], value, environment.static_parameters["interest_rate_deposits"],  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # money - cash and equivalents
-        value = 50.0
-        transaction = Transaction()
-        transaction.this_transaction("MONEY", self.identifier, self.identifier, value, 0,  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # manhours - labour to sell
-        value = 250.0
-        transaction = Transaction()
-        transaction.this_transaction("MANHOURS", self.identifier, self.identifier, value, 0,  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
     # -------------------------------------------------------------------------

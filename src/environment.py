@@ -46,12 +46,12 @@ class Environment(BaseConfig):
     # assets = []
 
     static_parameters = {}
-    static_parameters["numSimulations"] = 0
-    static_parameters["numSweeps"] = 0
-    static_parameters["numBanks"] = 0
-    static_parameters["bankDirectory"] = ""
-    static_parameters["firmDirectory"] = ""
-    static_parameters["householdDirectory"] = ""
+    static_parameters["num_simulations"] = 0
+    static_parameters["num_sweeps"] = 0
+    static_parameters["num_banks"] = 0
+    static_parameters["bank_directory"] = ""
+    static_parameters["firm_directory"] = ""
+    static_parameters["household_directory"] = ""
     # parameters for the networks
     static_parameters["graphType"] = ""
     static_parameters["graphParameter1"] = 0.0
@@ -225,12 +225,12 @@ class Environment(BaseConfig):
         self.identifier = identifier
 
         self.static_parameters = {}
-        self.static_parameters["numSimulations"] = 0
-        self.static_parameters["numSweeps"] = 0
-        self.static_parameters["numBanks"] = 0
-        self.static_parameters["bankDirectory"] = ""
-        self.static_parameters["firmDirectory"] = ""
-        self.static_parameters["householdDirectory"] = ""
+        self.static_parameters["num_simulations"] = 0
+        self.static_parameters["num_sweeps"] = 0
+        self.static_parameters["num_banks"] = 0
+        self.static_parameters["bank_directory"] = ""
+        self.static_parameters["firm_directory"] = ""
+        self.static_parameters["household_directory"] = ""
         # parameters for the networks
         self.static_parameters["graphType"] = ""
         self.static_parameters["graphParameter1"] = 0.0
@@ -289,18 +289,18 @@ class Environment(BaseConfig):
         # loop over all entries in the xml file
         for subelement in element:
             # the first set of parameters will be valid for the whole simulation
-            if (subelement.attrib['type'] == 'numSweeps'):
-                self.static_parameters["numSweeps"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'numSimulations'):
-                self.static_parameters["numSimulations"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'numBanks'):
-                self.static_parameters["numBanks"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'bankDirectory'):
-                self.static_parameters["bankDirectory"] = str(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'firmDirectory'):
-                self.static_parameters["firmDirectory"] = str(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'householdDirectory'):
-                self.static_parameters["householdDirectory"] = str(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'num_sweeps'):
+                self.static_parameters["num_sweeps"] = int(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'num_simulations'):
+                self.static_parameters["num_simulations"] = int(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'num_banks'):
+                self.static_parameters["num_banks"] = int(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'bank_directory'):
+                self.static_parameters["bank_directory"] = str(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'firm_directory'):
+                self.static_parameters["firm_directory"] = str(subelement.attrib['value'])
+            if (subelement.attrib['type'] == 'household_directory'):
+                self.static_parameters["household_directory"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'graphType'):
                 self.static_parameters["graphType"] = str(subelement.attrib['value'])
             if (subelement.attrib['type'] == 'rd'):

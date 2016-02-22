@@ -43,47 +43,39 @@ class Bank(BaseAgent):
 
     parameters["active"] = 0
 
-#
-#
-# CODE
-#
-#
+    #
+    #
+    # CODE
+    #
+    #
 
+    # -------------------------------------------------------------------------
+    # functions for setting/changing id, parameters, and state variables
+    # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
 
-    def set_identifier(self, _value):
-        """
-        Class variables: identifier
-        Local variables: _identifier
-        """
-        super(Bank, self).set_identifier(_value)
+    def set_identifier(self, value):
+        super(Bank, self).set_identifier(value)
 
     def get_parameters(self):
         return self.parameters
 
-    def set_parameters(self, _value):
-        """
-        Class variables: parameters
-        Local variables: _params
-        """
-        super(Bank, self).set_parameters(_value)
+    def set_parameters(self, value):
+        super(Bank, self).set_parameters(value)
 
     def get_state_variables(self):
         return self.state_variables
 
-    def set_state_variables(self, _value):
-        """
-        Class variables: state_variables
-        Local variables: _variables
-        """
-        super(Bank, self).set_state_variables(_value)
+    def set_state_variables(self, value):
+        super(Bank, self).set_state_variables(value)
 
-    def append_parameters(self, _value):
-        super(Bank, self).append_parameters(_value)
+    def append_parameters(self, value):
+        super(Bank, self).append_parameters(value)
 
-    def append_state_variables(self, _value):
-        super(Bank, self).append_state_variables(_value)
+    def append_state_variables(self, value):
+        super(Bank, self).append_state_variables(value)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # functions needed to make Bank() hashable
@@ -116,54 +108,52 @@ class Bank(BaseAgent):
     # __str__
     # -------------------------------------------------------------------------
     def __str__(self):
-        text = "<bank identifier='" + self.identifier + "'>\n"
-        text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <transactions>\n"
+        bank_string = super(Bank, self).__str__()
+        bank_string = bank_string.replace("\n", "\n    <type value='bank'>\n", 1)
+        text = "\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
-        text += "    </transactions>\n"
-        text += "</bank>\n"
-
-        return text
+        text += "  </agent>"
+        return bank_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
     # -------------------------------------------------------------------------
-    def get_parameters_from_file(self,  bankFilename, environment):
-        super(Bank, self).get_parameters_from_file(bankFilename, environment)
+    def get_parameters_from_file(self,  bank_filename, environment):
+        super(Bank, self).get_parameters_from_file(bank_filename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # check_consistency
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        _assets = ["LOAN", "MONEY"]
-        _liabilities = ["DEPOSIT"]
-        return super(Bank, self).check_consistency(_assets, _liabilities)
+        assets = ["loans", "cash"]
+        liabilities = ["deposits"]
+        return super(Bank, self).check_consistency(assets, liabilities)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account
     # -------------------------------------------------------------------------
-    def get_account(self,  _type):
-        return super(Bank, self).get_account(_type)
+    def get_account(self,  type_):
+        return super(Bank, self).get_account(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        return super(Bank, self).get_account_num_transactions(_type)
+    def get_account_num_transactions(self,  type_):  # returns the number of transactions in a given account
+        return super(Bank, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_transaction
     # -------------------------------------------------------------------------
-    def add_transaction(self,  type,  fromID,  toID,  value,  interest,  maturity, timeOfDefault):
+    def add_transaction(self, type_, asset,  from_id,  to_id,  value,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type,  fromID,  toID,  value,  interest,  maturity,  timeOfDefault)
+        transaction.this_transaction(type_, asset, from_id,  to_id,  value,  interest,  maturity,  time_of_default)
         self.accounts.append(transaction)
         del transaction
     # -------------------------------------------------------------------------
@@ -180,40 +170,4 @@ class Bank(BaseAgent):
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Bank, self).purge_accounts()
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # initialize_standard_bank
-    #
-    # this routine initializes a bank with a standard balance sheet,
-    # which can be used to make the tests more handy
-    # -------------------------------------------------------------------------
-    def initialize_standard_bank(self, environment):
-        from src.transaction import Transaction
-
-        self.identifier = "standard_bank_id"
-
-        # deposits - we get the first household from the list of households
-        # if there are no households it will be a blank which is fine for testing
-        value = 250.0
-        transaction = Transaction()
-        transaction.this_transaction("DEPOSIT",  environment.households[0:1][0],  self.identifier,  value,  environment.static_parameters["interest_rate_deposits"],  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # money - cash and equivalents
-        value = 100.0
-        transaction = Transaction()
-        transaction.this_transaction("MONEY",  self.identifier, self.identifier,  value,  0,  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # loans - we get the first firm from the list of firms
-        # if there are no firms it will be a blank which is fine for testing
-        value = 150.0
-        transaction = Transaction()
-        transaction.this_transaction("LOAN",  self.identifier, environment.firms[0:1][0],  value,  environment.static_parameters["interest_rate_loans"],  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
     # -------------------------------------------------------------------------

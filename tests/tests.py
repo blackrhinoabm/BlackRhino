@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import logging
+from src.helper import Helper
 
 # -------------------------------------------------------------------------
 #  class Tests
@@ -83,11 +84,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -101,7 +102,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -140,11 +142,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -158,7 +160,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -201,11 +204,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -219,8 +222,9 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        # bank.initialize_standard_bank(environment)
-        bank.get_parameters_from_file(bankFilename, environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+        bank.get_parameters_from_file(bank_filename, environment)
 
         #
         # TESTING
@@ -259,11 +263,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -277,7 +281,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -320,11 +325,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -338,7 +343,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -377,11 +383,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -395,7 +401,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -438,11 +445,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -456,7 +463,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -493,11 +501,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -509,7 +517,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.get_parameters_from_file(bankFilename, environment)
+        bank.get_parameters_from_file(bank_filename, environment)
 
         #
         # TESTING
@@ -551,11 +559,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -569,7 +577,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -578,7 +587,7 @@ class Tests(object):
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
         print("Adding additional deposits without adding appropriate cash/loans.")
-        bank.add_transaction("DEPOSIT",  environment.households[0:1][0],  bank.identifier,  150,  environment.static_parameters["interest_rate_deposits"],  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  150,  environment.static_parameters["interest_rate_deposits"],  0, -1)
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
 
@@ -615,11 +624,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -633,7 +642,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -642,14 +652,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(bank)                                              # and checking how much is the total
         # volume of the account
-        for type in ["DEPOSIT",  "MONEY",  "LOAN"]:
-                        if type == "DEPOSIT":
+        for type in ["deposits",  "cash",  "loans"]:
+                        if type == "deposits":
                                 account += bank.get_account(type)
                                 print("D = " + str(account))
-                        if type == "MONEY":
+                        if type == "cash":
                                 account += bank.get_account(type)
                                 print("D+M = " + str(account))
-                        if type == "LOAN":
+                        if type == "loans":
                                 account += bank.get_account(type)
                                 print("D+M+L = " + str(account))
 
@@ -684,11 +694,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -702,7 +712,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -712,14 +723,14 @@ class Tests(object):
         print(bank)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["DEPOSIT",  "MONEY",  "LOAN"]:
-                        if type == "DEPOSIT":
+        for type in ["deposits",  "cash",  "loans"]:
+                        if type == "deposits":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
-                        if type == "MONEY":
+                        if type == "cash":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
-                        if type == "LOAN":
+                        if type == "loans":
                                 num_transactions += bank.get_account_num_transactions(type)
                                 print("D+M+L = " + str(num_transactions))
 
@@ -740,7 +751,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our bank. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "DEPOSIT",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -757,11 +768,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -775,7 +786,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -783,7 +795,7 @@ class Tests(object):
 
         print(bank)
         print("Adding new transaction: \n")
-        bank.add_transaction("DEPOSIT",  environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
         print(bank)
 
     # -------------------------------------------------------------------------
@@ -817,11 +829,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -835,7 +847,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -845,19 +858,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        bank.add_transaction("DEPOSIT", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -869,7 +882,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -906,11 +919,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -924,7 +937,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -934,19 +948,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        bank.add_transaction("DEPOSIT", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -958,7 +972,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -993,11 +1007,11 @@ class Tests(object):
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the bankDirectory from the environment
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        # get the bank_directory from the environment
+        bank_directory = environment.static_parameters["bank_directory"]
         # and loop over all banks in the directory
-        listing = os.listdir(bankDirectory)
-        bankFilename = bankDirectory + listing[0]
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1011,7 +1025,8 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
-        bank.initialize_standard_bank(environment)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
 
         #
         # TESTING
@@ -1052,11 +1067,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1070,7 +1085,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1109,11 +1125,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1127,7 +1143,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1170,11 +1187,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1188,7 +1205,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1227,11 +1245,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1245,7 +1263,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1288,11 +1307,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1306,7 +1325,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1345,11 +1365,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1367,7 +1387,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         text = "Original state variables:"
         print(text)
@@ -1406,11 +1427,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1424,7 +1445,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1461,11 +1483,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1479,7 +1501,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        # firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
         firm.get_parameters_from_file(firmFilename, environment)
 
         #
@@ -1528,11 +1551,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1546,7 +1569,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1555,14 +1579,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(firm)                                             # and checking how much is the total
         # volume of the account
-        for type in ["LOAN",  "MONEY",  "GOODS"]:
-                        if type == "LOAN":
+        for type in ["loans",  "cash",  "goods"]:
+                        if type == "loans":
                                 account += firm.get_account(type)
                                 print("L = " + str(account))
-                        if type == "MONEY":
+                        if type == "cash":
                                 account += firm.get_account(type)
                                 print("L+M = " + str(account))
-                        if type == "GOODS":
+                        if type == "goods":
                                 account += firm.get_account(type)
                                 print("L+M+G = " + str(account))
 
@@ -1597,11 +1621,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1615,7 +1639,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1625,14 +1650,14 @@ class Tests(object):
         print(firm)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["LOAN",  "MONEY",  "GOODS"]:
-                        if type == "LOAN":
+        for type in ["loans",  "cash",  "goods"]:
+                        if type == "loans":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L = " + str(num_transactions))
-                        if type == "MONEY":
+                        if type == "cash":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L+M = " + str(num_transactions))
-                        if type == "GOODS":
+                        if type == "goods":
                                 num_transactions += firm.get_account_num_transactions(type)
                                 print("L+M+G = " + str(num_transactions))
 
@@ -1653,7 +1678,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our firm. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "DEPOSIT",  fromID = -1,  toID = firm.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = firm.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -1670,11 +1695,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1688,7 +1713,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1696,7 +1722,7 @@ class Tests(object):
 
         print(firm)
         print("Adding new transaction: \n")
-        firm.add_transaction("DEPOSIT",  environment.households[0:1][0],  firm.identifier,  10,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier,  10,  0.09,  0, -1)
         print(firm)
 
     # -------------------------------------------------------------------------
@@ -1730,11 +1756,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1748,7 +1774,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1758,19 +1785,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        firm.add_transaction("DEPOSIT", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -1782,7 +1809,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -1819,11 +1846,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1837,7 +1864,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1847,19 +1875,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        firm.add_transaction("DEPOSIT", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -1871,7 +1899,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -1906,11 +1934,11 @@ class Tests(object):
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        firmDirectory = environment.static_parameters["firmDirectory"]
+        # get the firm_directory from the environment
+        firm_directory = environment.static_parameters["firm_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(firmDirectory)
-        firmFilename = firmDirectory + listing[0]
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
 
         # generate a household
         household = Household()
@@ -1924,7 +1952,8 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
-        firm.initialize_standard_firm(environment)
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
 
         #
         # TESTING
@@ -1965,11 +1994,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -1983,7 +2012,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
         #
         # TESTING
         #
@@ -2021,11 +2051,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2039,7 +2069,9 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
+
         #
         # TESTING
         #
@@ -2081,11 +2113,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2099,7 +2131,9 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
+
         #
         # TESTING
         #
@@ -2137,11 +2171,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2155,7 +2189,9 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
+
         #
         # TESTING
         #
@@ -2197,11 +2233,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2215,7 +2251,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2254,11 +2291,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2272,7 +2309,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2314,11 +2352,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2332,7 +2370,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2369,11 +2408,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the household_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2438,11 +2477,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2456,7 +2495,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2465,14 +2505,14 @@ class Tests(object):
         account = 0.0                                           # counting all types in account together
         print(household)                                             # and checking how much is the total
         # volume of the account
-        for type in ["DEPOSIT",  "MONEY",  "MANHOURS"]:
-                        if type == "DEPOSIT":
+        for type in ["deposits",  "cash",  "manhours"]:
+                        if type == "deposits":
                                 account += household.get_account(type)
                                 print("D = " + str(account))
-                        if type == "MONEY":
+                        if type == "cash":
                                 account += household.get_account(type)
                                 print("D+M = " + str(account))
-                        if type == "MANHOURS":
+                        if type == "manhours":
                                 account += household.get_account(type)
                                 print("D+M+H = " + str(account))
 
@@ -2507,11 +2547,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2525,7 +2565,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2535,14 +2576,14 @@ class Tests(object):
         print(household)
         # and checking if the number of transaction
         # is increasing by one
-        for type in ["DEPOSIT",  "MONEY",  "MANHOURS"]:
-                        if type == "DEPOSIT":
+        for type in ["deposits",  "cash",  "manhours"]:
+                        if type == "deposits":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
-                        if type == "MONEY":
+                        if type == "cash":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
-                        if type == "MANHOURS":
+                        if type == "manhours":
                                 num_transactions += household.get_account_num_transactions(type)
                                 print("D+M+H = " + str(num_transactions))
 
@@ -2563,7 +2604,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our household. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "DEPOSIT",  fromID = -1,  toID = household.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = household.identifier,  value = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -2580,11 +2621,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2598,7 +2639,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2606,7 +2648,7 @@ class Tests(object):
 
         print(household)
         print("Adding new transaction: \n")
-        household.add_transaction("DEPOSIT",  environment.banks[0:1][0],  household.identifier,  10,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier,  10,  0.09,  0, -1)
         print(household)
 
     # -------------------------------------------------------------------------
@@ -2640,11 +2682,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2658,7 +2700,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2668,19 +2711,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        household.add_transaction("DEPOSIT", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -2692,7 +2735,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -2729,11 +2772,11 @@ class Tests(object):
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2747,7 +2790,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2757,19 +2801,19 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
         print(account)
 
-        household.add_transaction("DEPOSIT", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
 
         account = 0.0
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -2781,7 +2825,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transactionValue
+            account = account + transaction.transaction_value
             tranx = tranx + 1
 
         print(tranx)
@@ -2790,17 +2834,17 @@ class Tests(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # household__initialize_standard_firm
+    # household__initialize_standard_household
     # -------------------------------------------------------------------------
 
-    def household__initialize_standard_firm(self, args):
+    def household__initialize_standard_household(self, args):
         import os
         from src.bank import Bank
         from src.household import Household
         from src.firm import Firm
         from src.environment import Environment  # needed for the bankDirectory
 
-        text = "This test checks household.initialize_standard_firm \n"
+        text = "This test checks household.initialize_standard_household \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2811,16 +2855,16 @@ class Tests(object):
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__initialize_standard_bank in run: %s',  environment_directory + identifier + ".xml")
+        logging.info('START logging for test household__initialize_standard_household in run: %s',  environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
-        # get the firmDirectory from the environment
-        householdDirectory = environment.static_parameters["householdDirectory"]
+        # get the firm_directory from the environment
+        household_directory = environment.static_parameters["household_directory"]
         # and loop over all firms in the directory
-        listing = os.listdir(householdDirectory)
-        householdFilename = householdDirectory + listing[0]
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
 
         # generate a bank
         bank = Bank()
@@ -2834,7 +2878,8 @@ class Tests(object):
 
         # generate a household
         household = Household()
-        household.initialize_standard_household(environment)
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
 
         #
         # TESTING
@@ -2883,7 +2928,7 @@ class Tests(object):
         # TEST CODE
         #
         # environment.initialize(environment_directory,  identifier)
-        bankDirectory = environment.static_parameters["bankDirectory"]
+        bank_directory = environment.static_parameters["bank_directory"]
 
         bank = Bank()
         account = 0.0

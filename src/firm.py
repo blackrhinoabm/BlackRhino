@@ -44,47 +44,39 @@ class Firm(BaseAgent):
     parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
     parameters["active"] = 0
 
-#
-#
-# CODE
-#
-#
+    #
+    #
+    # CODE
+    #
+    #
 
+    # -------------------------------------------------------------------------
+    # functions for setting/changing id, parameters, and state variables
+    # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
 
-    def set_identifier(self, _value):
-        """
-        Class variables: identifier
-        Local variables: _identifier
-        """
-        super(Firm, self).set_identifier(_value)
+    def set_identifier(self, value):
+        super(Firm, self).set_identifier(value)
 
     def get_parameters(self):
         return self.parameters
 
-    def set_parameters(self, _value):
-        """
-        Class variables: parameters
-        Local variables: _params
-        """
-        super(Firm, self).set_parameters(_value)
+    def set_parameters(self, value):
+        super(Firm, self).set_parameters(value)
 
     def get_state_variables(self):
         return self.state_variables
 
-    def set_state_variables(self, _value):
-        """
-        Class variables: state_variables
-        Local variables: _variables
-        """
-        super(Firm, self).set_state_variables(_value)
+    def set_state_variables(self, value):
+        super(Firm, self).set_state_variables(value)
 
-    def append_parameters(self, _value):
-        super(Firm, self).append_parameters(_value)
+    def append_parameters(self, value):
+        super(Firm, self).append_parameters(value)
 
-    def append_state_variables(self, _value):
-        super(Firm, self).append_state_variables(_value)
+    def append_state_variables(self, value):
+        super(Firm, self).append_state_variables(value)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # functions needed to make Firm() hashable
@@ -117,35 +109,27 @@ class Firm(BaseAgent):
     # __str__
     # -------------------------------------------------------------------------
     def __str__(self):
-        text = "<firm identifier='" + self.identifier + "'>\n"
-        text += "    <value name='active' value='" + str(self.parameters["active"]) + "'></value>\n"
-        text += "    <parameter name='productivity' value='" + str(self.parameters["productivity"]) + "'></parameter>\n"
-        text += "    <transactions>\n"
+        firm_string = super(Firm, self).__str__()
+        firm_string = firm_string.replace("\n", "\n    <type value='firm''>\n", 1)
+        text = "\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
-        text += "    </transactions>\n"
-        text += "</firm>\n"
-
-        return text
+        text += "  </agent>"
+        return firm_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
     # -------------------------------------------------------------------------
-    def get_parameters_from_file(self,  firmFilename, environment):
-        super(Firm, self).get_parameters_from_file(firmFilename, environment)
+    def get_parameters_from_file(self,  firm_filename, environment):
+        super(Firm, self).get_parameters_from_file(firm_filename, environment)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_new_investments
     # -------------------------------------------------------------------------
     def get_new_investments(self, low, high):
-        volume = 0.0
-
-        from random import uniform
-        volume = uniform(low, high)
-
-        return volume
+        pass
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -158,24 +142,24 @@ class Firm(BaseAgent):
     # -------------------------------------------------------------------------
     # get_account
     # -------------------------------------------------------------------------
-    def get_account(self,  _type):
-        return super(Firm, self).get_account(_type)
+    def get_account(self,  type_):
+        return super(Firm, self).get_account(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  _type):  # returns the number of transactions in a given account
-        return super(Firm, self).get_account_num_transactions(_type)
+    def get_account_num_transactions(self,  type_):  # returns the number of transactions in a given account
+        return super(Firm, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_transaction
     # -------------------------------------------------------------------------
-    def add_transaction(self,  type,  fromID,  toID,  value,  interest,  maturity, timeOfDefault):
+    def add_transaction(self,  type_, asset, from_id,  to_id,  value,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type,  fromID,  toID,  value,  interest,  maturity,  timeOfDefault)
+        transaction.this_transaction(type_, asset, from_id,  to_id,  value,  interest,  maturity,  time_of_default)
         self.accounts.append(transaction)
         del transaction
     # -------------------------------------------------------------------------
@@ -192,40 +176,4 @@ class Firm(BaseAgent):
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Firm, self).purge_accounts()
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # initialize_standard_firm
-    #
-    # this routine initializes a firm with a standard balance sheet,
-    # which can be used to make the tests more handy
-    # -------------------------------------------------------------------------
-    def initialize_standard_firm(self, environment):
-        from src.transaction import Transaction
-
-        self.identifier = "standard_firm_id"  # identifier
-        self.parameters["productivity"] = 1.20  # how much goods do we get from 1 unit of labour
-
-        # loans - we get the first bank from the list of banks
-        # if there are no banks it will be a blank which is fine for testing
-        value = 250.0
-        transaction = Transaction()
-        transaction.this_transaction("LOAN", environment.banks[0:1][0], self.identifier, value,  environment.static_parameters["interest_rate_loans"],  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # money - cash and equivalents
-        value = 200.0
-        transaction = Transaction()
-        transaction.this_transaction("MONEY", self.identifier, self.identifier, value,  0,  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
-        # goods - unique production
-        value = 50.0
-        transaction = Transaction()
-        transaction.this_transaction("GOODS", self.identifier, self.identifier, value,  0,  0, -1)
-        self.accounts.append(transaction)
-        del transaction
-
     # -------------------------------------------------------------------------
