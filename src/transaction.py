@@ -33,16 +33,16 @@ class Transaction(BaseTransaction):
     # VARIABLES
     #
 
-    transaction_type = ""
-    transaction_asset = ""
-    transaction_from = 0
-    transaction_to = 0
-    transaction_value = 0.0
-    transaction_interest = 0.0
-    transaction_maturity = 0
+    type_ = ""
+    asset = ""
+    from_ = 0
+    to = 0
+    value = 0.0
+    interest = 0.0
+    maturity = 0
     # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
     # if timeOfDefault == 0: loan defaults
-    transaction_time_of_default = -1
+    time_of_default = -1
 
     #
     # METHODS
@@ -58,67 +58,67 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
     # functions for setting/changing variables
     # -------------------------------------------------------------------------
-    def get_transaction_type(self):
-        return self.transaction_type
+    def get_type_(self):
+        return self.type_
 
-    def set_transaction_type(self, type):
-        super(Transaction, self).set_transaction_type(type)
+    def set_type_(self, type_):
+        super(Transaction, self).set_type_(type_)
 
-    def get_transaction_asset(self):
-        return self.transaction_asset
+    def get_asset(self):
+        return self.asset
 
-    def set_transaction_asset(self, asset):
-        super(Transaction, self).set_transaction_asset(asset)
+    def set_asset(self, asset):
+        super(Transaction, self).set_asset(asset)
 
-    def get_transaction_from(self):
-        return self.transaction_from
+    def get_from_(self):
+        return self.from_
 
-    def set_transaction_from(self, from_):
-        super(Transaction, self).set_transaction_from(from_)
+    def set_from_(self, from_):
+        super(Transaction, self).set_from(from_)
 
-    def get_transaction_to(self):
-        return self.transaction_to
+    def get_to(self):
+        return self.to
 
-    def set_transaction_to(self, to):
-        super(Transaction, self).set_transaction_to(to)
+    def set_to(self, to):
+        super(Transaction, self).set_to(to)
 
-    def get_transaction_value(self):
-        return self.transaction_value
+    def get_value(self):
+        return self.value
 
-    def set_transaction_value(self, value):
-        super(Transaction, self).set_transaction_value(value)
+    def set_value(self, value):
+        super(Transaction, self).set_value(value)
 
-    def get_transaction_interest(self):
-        return self.transaction_interest
+    def get_interest(self):
+        return self.interest
 
-    def set_transaction_interest(self, interest):
-        super(Transaction, self).set_transaction_interest(interest)
+    def set_interest(self, interest):
+        super(Transaction, self).set_interest(interest)
 
-    def get_transaction_maturity(self):
-        return self.transaction_maturity
+    def get_maturity(self):
+        return self.maturity
 
-    def set_transaction_maturity(self, maturity):
-        super(Transaction, self).set_transaction_maturity(maturity)
+    def set_maturity(self, maturity):
+        super(Transaction, self).set_maturity(maturity)
 
-    def get_transaction_time_of_default(self):
-        return self.transaction_time_of_default
+    def get_time_of_default(self):
+        return self.time_of_default
 
-    def set_transaction_time_of_default(self, time_of_default):
-        super(Transaction, self).set_transaction_time_of_default(time_of_default)
+    def set_time_of_default(self, time_of_default):
+        super(Transaction, self).set_time_of_default(time_of_default)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # this_transaction(transaction_type,
-    #                  transaction_asset,
-    #                  transaction_from,
-    #                  transaction_to,
-    #                  transaction_value,
-    #                  transaction_interest,
-    #                  transaction_maturity,
-    #                  transaction_time_of_default)
+    # this_transaction(type_,
+    #                  asset,
+    #                  from_,
+    #                  to,
+    #                  value,
+    #                  interest,
+    #                  maturity,
+    #                  time_of_default)
     # -------------------------------------------------------------------------
-    def this_transaction(self, transaction_type, transaction_asset, transaction_from, transaction_to, transaction_value,  transaction_interest,  transaction_maturity, transaction_time_of_default):
-        super(Transaction, self).this_transaction(transaction_type, transaction_asset, transaction_from, transaction_to, transaction_value,  transaction_interest,  transaction_maturity, transaction_time_of_default)
+    def this_transaction(self, type_, asset, from_, to, value,  interest,  maturity, time_of_default):
+        super(Transaction, self).this_transaction(type_, asset, from_, to, value, interest, maturity, time_of_default)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

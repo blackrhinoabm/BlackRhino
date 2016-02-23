@@ -858,7 +858,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -870,7 +870,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -882,7 +882,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -948,7 +948,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -960,7 +960,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -972,7 +972,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1785,7 +1785,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1797,7 +1797,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1809,7 +1809,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1875,7 +1875,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1887,7 +1887,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -1899,7 +1899,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2711,7 +2711,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2723,7 +2723,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2735,7 +2735,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2801,7 +2801,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2813,7 +2813,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
@@ -2825,7 +2825,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.transaction_value
+            account = account + transaction.value
             tranx = tranx + 1
 
         print(tranx)
