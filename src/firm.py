@@ -36,13 +36,12 @@ class Firm(BaseAgent):
     # VARIABLES
     #
     #
-    identifier = ""
-    parameters = {}
-    state_variables = {}
-    accounts = []  # all accounts of a bank
-
+    identifier = ""  # identifier of the specific firm
+    parameters = {}  # parameters of the specific firm
+    state_variables = {}  # state variables of the specific firm
+    accounts = []  # all accounts of a firm (filled with transactions)
     parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
-    parameters["active"] = 0
+    parameters["active"] = 0  # this is a control parameter checking whether firm is active
 
     #
     #
@@ -52,6 +51,9 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # functions for setting/changing id, parameters, and state variables
+    # these either return or set specific value to the above variables
+    # with the exception of append (2 last ones) which append the dictionaries
+    # which contain parameters or state variables
     # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
@@ -107,6 +109,9 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # __str__
+    # returns a string describing the firm and its properties
+    # based on the implementation in the abstract class BaseAgent
+    # but adds the type of agent (firm) and lists all transactions
     # -------------------------------------------------------------------------
     def __str__(self):
         firm_string = super(Firm, self).__str__()
@@ -120,6 +125,12 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
+    # reads the specified config file given the environment
+    # and sets parameters to the ones found in the config file
+    # the config file should be an xml file that looks like the below:
+    # <firm identifier='string'>
+    #     <parameter name='string' value='string'></parameter>
+    # </firm>
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  firm_filename, environment):
         super(Firm, self).get_parameters_from_file(firm_filename, environment)
@@ -127,6 +138,7 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_new_investments
+    # placeholder for a function determining production size of a firm
     # -------------------------------------------------------------------------
     def get_new_investments(self, low, high):
         pass
@@ -134,13 +146,20 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # check_consistency
+    # checks whether the assets and liabilities have the same total value
+    # the types of transactions that make up assets and liabilities is
+    # controlled by the lists below
+    # NOT IMPLEMENTED FOR FIRM YET, NEED TO FILL assets & liabilities
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        pass
+        assets = []
+        liabilities = []
+        return super(Firm, self).check_consistency(assets, liabilities)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_account
+    # returns the value of all transactions of a given type
     # -------------------------------------------------------------------------
     def get_account(self,  type_):
         return super(Firm, self).get_account(type_)
@@ -148,13 +167,24 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
+    # returns the number of transactions of a given type
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  type_):  # returns the number of transactions in a given account
+    def get_account_num_transactions(self,  type_):
         return super(Firm, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_transaction
+    # adds a transaction to the accounts
+    # the transaction is endowed with the following information:
+    #   type_           - type of transactions, e.g. "deposit"
+    #   assets          - type of asset, used for investment types
+    #   from_id         - agent being the originator of the transaction
+    #   to_id           - agent being the recipient of the transaction
+    #   value           - value of the transaction
+    #   interest        - interest rate paid to the originator each time step
+    #   maturity        - time (in steps) to maturity
+    #   time_of_default - control variable checking for defaulted transactions
     # -------------------------------------------------------------------------
     def add_transaction(self,  type_, asset, from_id,  to_id,  value,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
@@ -166,6 +196,7 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # clear_accounts
+    # removes all transactions from firm's accounts
     # -------------------------------------------------------------------------
     def clear_accounts(self):
         super(Firm, self).clear_accounts()
@@ -173,6 +204,7 @@ class Firm(BaseAgent):
 
     # -------------------------------------------------------------------------
     # purge_accounts
+    # removes worthless transactions from firm's accounts
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Firm, self).purge_accounts()

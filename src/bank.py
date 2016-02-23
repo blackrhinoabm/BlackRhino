@@ -36,12 +36,11 @@ class Bank(BaseAgent):
     # VARIABLES
     #
     #
-    identifier = ""
-    parameters = {}
-    state_variables = {}
-    accounts = []  # all accounts of a bank
-
-    parameters["active"] = 0
+    identifier = ""  # identifier of the specific bank
+    parameters = {}  # parameters of the specific bank
+    state_variables = {}  # state variables of the specific bank
+    accounts = []  # all accounts of a bank (filled with transactions)
+    parameters["active"] = 0  # this is a control parameter checking whether bank is active
 
     #
     #
@@ -51,6 +50,9 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # functions for setting/changing id, parameters, and state variables
+    # these either return or set specific value to the above variables
+    # with the exception of append (2 last ones) which append the dictionaries
+    # which contain parameters or state variables
     # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
@@ -106,6 +108,9 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # __str__
+    # returns a string describing the bank and its properties
+    # based on the implementation in the abstract class BaseAgent
+    # but adds the type of agent (bank) and lists all transactions
     # -------------------------------------------------------------------------
     def __str__(self):
         bank_string = super(Bank, self).__str__()
@@ -119,6 +124,12 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
+    # reads the specified config file given the environment
+    # and sets parameters to the ones found in the config file
+    # the config file should be an xml file that looks like the below:
+    # <bank identifier='string'>
+    #     <parameter name='string' value='string'></parameter>
+    # </bank>
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  bank_filename, environment):
         super(Bank, self).get_parameters_from_file(bank_filename, environment)
@@ -126,6 +137,9 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # check_consistency
+    # checks whether the assets and liabilities have the same total value
+    # the types of transactions that make up assets and liabilities is
+    # controlled by the lists below
     # -------------------------------------------------------------------------
     def check_consistency(self):
         assets = ["loans", "cash"]
@@ -135,6 +149,7 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_account
+    # returns the value of all transactions of a given type
     # -------------------------------------------------------------------------
     def get_account(self,  type_):
         return super(Bank, self).get_account(type_)
@@ -142,13 +157,24 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_account_num_transactions
+    # returns the number of transactions of a given type
     # -------------------------------------------------------------------------
-    def get_account_num_transactions(self,  type_):  # returns the number of transactions in a given account
+    def get_account_num_transactions(self,  type_):
         return super(Bank, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_transaction
+    # adds a transaction to the accounts
+    # the transaction is endowed with the following information:
+    #   type_           - type of transactions, e.g. "deposit"
+    #   assets          - type of asset, used for investment types
+    #   from_id         - agent being the originator of the transaction
+    #   to_id           - agent being the recipient of the transaction
+    #   value           - value of the transaction
+    #   interest        - interest rate paid to the originator each time step
+    #   maturity        - time (in steps) to maturity
+    #   time_of_default - control variable checking for defaulted transactions
     # -------------------------------------------------------------------------
     def add_transaction(self, type_, asset,  from_id,  to_id,  value,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
@@ -160,6 +186,7 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # clear_accounts
+    # removes all transactions from bank's accounts
     # -------------------------------------------------------------------------
     def clear_accounts(self):
         super(Bank, self).clear_accounts()
@@ -167,6 +194,7 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # purge_accounts
+    # removes worthless transactions from bank's accounts
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Bank, self).purge_accounts()

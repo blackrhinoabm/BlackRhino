@@ -30,22 +30,26 @@ from abm_template.src.basetransaction import BaseTransaction
 
 class Transaction(BaseTransaction):
     #
+    #
     # VARIABLES
     #
+    #
 
-    type_ = ""
-    asset = ""
-    from_ = 0
-    to = 0
-    value = 0.0
-    interest = 0.0
-    maturity = 0
+    type_ = ""  # type of transactions, e.g. "deposit"
+    asset = ""  # type of asset, used for investment types
+    from_ = 0  # agent being the originator of the transaction
+    to = 0  # agent being the recipient of the transaction
+    value = 0.0  # value of the transaction
+    interest = 0.0  # interest rate paid to the originator each time step
+    maturity = 0  # time (in steps) to maturity
     # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
     # if timeOfDefault == 0: loan defaults
-    time_of_default = -1
+    time_of_default = -1  # control variable checking for defaulted transactions
 
     #
+    #
     # METHODS
+    #
     #
 
     # -------------------------------------------------------------------------
@@ -57,6 +61,7 @@ class Transaction(BaseTransaction):
 
     # -------------------------------------------------------------------------
     # functions for setting/changing variables
+    # these either return or set specific value to the above variables
     # -------------------------------------------------------------------------
     def get_type_(self):
         return self.type_
@@ -116,6 +121,7 @@ class Transaction(BaseTransaction):
     #                  interest,
     #                  maturity,
     #                  time_of_default)
+    # sets the variables of the transaction to the given values
     # -------------------------------------------------------------------------
     def this_transaction(self, type_, asset, from_, to, value,  interest,  maturity, time_of_default):
         super(Transaction, self).this_transaction(type_, asset, from_, to, value, interest, maturity, time_of_default)
@@ -123,6 +129,7 @@ class Transaction(BaseTransaction):
 
     # -------------------------------------------------------------------------
     # print_transaction()
+    # prints the transaction and its properties
     # -------------------------------------------------------------------------
     def print_transaction(self):
         super(Transaction, self).print_transaction()
@@ -130,6 +137,7 @@ class Transaction(BaseTransaction):
 
     # -------------------------------------------------------------------------
     # write_transaction()
+    # returns a string with the transaction and its properties
     # -------------------------------------------------------------------------
     def write_transaction(self):
         return super(Transaction, self).write_transaction()
