@@ -144,3 +144,39 @@ DESCRIPTION OF TESTS
     test.household__initialize_standard_firm([environment_directory, test_config_file, log_directory])
         Tests whether the helper function for initializing a standard household works
         and prints the standard household for visual confirmation
+
+    # Tests for Environment
+    test.environment__add_static_parameter(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether one can add a static parameter, should print the standard set of static
+        parameters and then the same set with a 'test' parameter added with value 0.66
+    test.environment__add_variable_parameter(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether one can add a variable parameter, should print the standard set of variable
+        parameters and then the same set with a 'test' parameter added with value range 0.66-0.77
+    test.environment__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__get_static_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__set_static_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__get_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__set_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__print_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__write_environment_file(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__initialize(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__initialize_banks_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__initialize_firms_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+        

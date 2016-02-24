@@ -39,7 +39,7 @@ class Transaction(BaseTransaction):
     asset = ""  # type of asset, used for investment types
     from_ = 0  # agent being the originator of the transaction
     to = 0  # agent being the recipient of the transaction
-    value = 0.0  # value of the transaction
+    amount = 0.0  # amount of the transaction
     interest = 0.0  # interest rate paid to the originator each time step
     maturity = 0  # time (in steps) to maturity
     # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
@@ -87,11 +87,11 @@ class Transaction(BaseTransaction):
     def set_to(self, to):
         super(Transaction, self).set_to(to)
 
-    def get_value(self):
-        return self.value
+    def get_amount(self):
+        return self.amount
 
-    def set_value(self, value):
-        super(Transaction, self).set_value(value)
+    def set_amount(self, amount):
+        super(Transaction, self).set_amount(amount)
 
     def get_interest(self):
         return self.interest
@@ -117,14 +117,14 @@ class Transaction(BaseTransaction):
     #                  asset,
     #                  from_,
     #                  to,
-    #                  value,
+    #                  amount,
     #                  interest,
     #                  maturity,
     #                  time_of_default)
-    # sets the variables of the transaction to the given values
+    # sets the variables of the transaction to the given amounts
     # -------------------------------------------------------------------------
-    def this_transaction(self, type_, asset, from_, to, value,  interest,  maturity, time_of_default):
-        super(Transaction, self).this_transaction(type_, asset, from_, to, value, interest, maturity, time_of_default)
+    def this_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
+        super(Transaction, self).this_transaction(type_, asset, from_, to, amount, interest, maturity, time_of_default)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

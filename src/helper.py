@@ -55,24 +55,24 @@ class Helper(object):
 
         # deposits - we get the first household from the list of households
         # if there are no households it will be a blank which is fine for testing
-        value = 250.0
+        amount = 250.0
         transaction = Transaction()
-        transaction.this_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  value,  environment.static_parameters["interest_rate_deposits"],  0, -1)
+        transaction.this_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  amount,  environment.static_parameters["interest_rate_deposits"],  0, -1)
         bank.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
-        value = 100.0
+        amount = 100.0
         transaction = Transaction()
-        transaction.this_transaction("cash", "", bank.identifier, bank.identifier,  value,  0,  0, -1)
+        transaction.this_transaction("cash", "", bank.identifier, bank.identifier,  amount,  0,  0, -1)
         bank.accounts.append(transaction)
         del transaction
 
         # loans - we get the first firm from the list of firms
         # if there are no firms it will be a blank which is fine for testing
-        value = 150.0
+        amount = 150.0
         transaction = Transaction()
-        transaction.this_transaction("loans", "", bank.identifier, environment.firms[0:1][0],  value,  environment.static_parameters["interest_rate_loans"],  0, -1)
+        transaction.this_transaction("loans", "", bank.identifier, environment.firms[0:1][0],  amount,  environment.static_parameters["interest_rate_loans"],  0, -1)
         bank.accounts.append(transaction)
         del transaction
 
@@ -92,23 +92,23 @@ class Helper(object):
 
         # loans - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
-        value = 250.0
+        amount = 250.0
         transaction = Transaction()
-        transaction.this_transaction("loans", "", environment.banks[0:1][0], firm.identifier, value,  environment.static_parameters["interest_rate_loans"],  0, -1)
+        transaction.this_transaction("loans", "", environment.banks[0:1][0], firm.identifier, amount,  environment.static_parameters["interest_rate_loans"],  0, -1)
         firm.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
-        value = 200.0
+        amount = 200.0
         transaction = Transaction()
-        transaction.this_transaction("cash", "", firm.identifier, firm.identifier, value,  0,  0, -1)
+        transaction.this_transaction("cash", "", firm.identifier, firm.identifier, amount,  0,  0, -1)
         firm.accounts.append(transaction)
         del transaction
 
         # goods - unique production
-        value = 50.0
+        amount = 50.0
         transaction = Transaction()
-        transaction.this_transaction("goods", "", firm.identifier, firm.identifier, value,  0,  0, -1)
+        transaction.this_transaction("goods", "", firm.identifier, firm.identifier, amount,  0,  0, -1)
         firm.accounts.append(transaction)
         del transaction
 
@@ -129,23 +129,23 @@ class Helper(object):
 
         # deposits - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
-        value = 200.0
+        amount = 200.0
         transaction = Transaction()
-        transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0:1][0], value, environment.static_parameters["interest_rate_deposits"],  0, -1)
+        transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0:1][0], amount, environment.static_parameters["interest_rate_deposits"],  0, -1)
         household.accounts.append(transaction)
         del transaction
 
         # money - cash and equivalents
-        value = 50.0
+        amount = 50.0
         transaction = Transaction()
-        transaction.this_transaction("cash", "", household.identifier, household.identifier, value, 0,  0, -1)
+        transaction.this_transaction("cash", "", household.identifier, household.identifier, amount, 0,  0, -1)
         household.accounts.append(transaction)
         del transaction
 
         # manhours - labour to sell
-        value = 250.0
+        amount = 250.0
         transaction = Transaction()
-        transaction.this_transaction("manhours", "", household.identifier, household.identifier, value, 0,  0, -1)
+        transaction.this_transaction("manhours", "", household.identifier, household.identifier, amount, 0,  0, -1)
         household.accounts.append(transaction)
         del transaction
 

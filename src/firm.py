@@ -181,15 +181,15 @@ class Firm(BaseAgent):
     #   assets          - type of asset, used for investment types
     #   from_id         - agent being the originator of the transaction
     #   to_id           - agent being the recipient of the transaction
-    #   value           - value of the transaction
+    #   amount          - amount of the transaction
     #   interest        - interest rate paid to the originator each time step
     #   maturity        - time (in steps) to maturity
     #   time_of_default - control variable checking for defaulted transactions
     # -------------------------------------------------------------------------
-    def add_transaction(self,  type_, asset, from_id,  to_id,  value,  interest,  maturity, time_of_default):
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  value,  interest,  maturity,  time_of_default)
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         self.accounts.append(transaction)
         del transaction
     # -------------------------------------------------------------------------

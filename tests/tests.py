@@ -751,7 +751,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our bank. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = bank.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = bank.identifier,  amount = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -858,7 +858,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -870,7 +870,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -882,7 +882,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -948,7 +948,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -960,7 +960,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -972,7 +972,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in bank.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1678,7 +1678,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our firm. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = firm.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = firm.identifier,  amount = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -1785,7 +1785,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1797,7 +1797,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1809,7 +1809,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1875,7 +1875,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1887,7 +1887,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -1899,7 +1899,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in firm.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2604,7 +2604,7 @@ class Tests(object):
         text += "  The most simple way to test this function is to assign an new    \n"
         text += "  transaction to our household. Therefore, lets just assign the following  \n"
         text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = household.identifier,  value = 10,  \n'
+        text += '  (type = "deposits",  fromID = -1,  toID = household.identifier,  amount = 10,  \n'
         text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
@@ -2711,7 +2711,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2723,7 +2723,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2735,7 +2735,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2801,7 +2801,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2813,7 +2813,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2825,7 +2825,7 @@ class Tests(object):
         tranx = 0
 
         for transaction in household.accounts:
-            account = account + transaction.value
+            account = account + transaction.amount
             tranx = tranx + 1
 
         print(tranx)
@@ -2889,11 +2889,455 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
-# BELOW IT'S THE OLD STUFF
-
 # -------------------------------------------------------------------------
 #  TESTS FOR ENVIRONMENT.PY
 # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__add_static_parameter
+    # -------------------------------------------------------------------------
+
+    def environment__add_static_parameter(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.add_static_parameter \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__add_static_parameter in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print(environment.static_parameters)
+        print("Adding 'test':0.66")
+        environment.add_static_parameter("test", 0.66)
+        print(environment.static_parameters)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__add_variable_parameter
+    # -------------------------------------------------------------------------
+
+    def environment__add_variable_parameter(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.add_static_parameter \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__add_variable_parameter in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print(environment.variable_parameters)
+        print("Adding 'test':0.66-0.77")
+        environment.add_variable_parameter("test", 0.66, 0.77)
+        print(environment.variable_parameters)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__get_identifier
+    # -------------------------------------------------------------------------
+
+    def environment__get_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        text = "Identifier: "
+        text += environment.identifier
+        print(text)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__set_identifier
+    # -------------------------------------------------------------------------
+
+    def environment__set_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.set_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        text = "Identifier: "
+        text += environment.identifier
+        print(text)
+        print("Changing identifier to XYZ")
+        environment.set_identifier("XYZ")
+        text = "Identifier: "
+        text += environment.identifier
+        print(text)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__get_static_parameters
+    # -------------------------------------------------------------------------
+
+    def environment__get_static_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_static_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_static_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print "Static parameters:"
+        print(environment.get_static_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__set_static_parameters
+    # -------------------------------------------------------------------------
+
+    def environment__set_static_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.set_static_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_static_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Static parameters:")
+        print(environment.get_static_parameters())
+        print("Changing static parameters to 'test':0.55")
+        environment.set_static_parameters({'test': 0.55})
+        print("Static parameters:")
+        print(environment.get_static_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__get_variable_parameters
+    # -------------------------------------------------------------------------
+
+    def environment__get_variable_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_variable_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_variable_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print "Variable parameters:"
+        print(environment.get_variable_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__set_variable_parameters
+    # -------------------------------------------------------------------------
+
+    def environment__set_variable_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.set_variable_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_variable_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Variable parameters:")
+        print(environment.get_variable_parameters())
+        print("Changing variable parameters to 'test': 0.55-0.66")
+        environment.set_variable_parameters({'test': [0.55, 0.66]})
+        print("Variable parameters:")
+        print(environment.get_variable_parameters())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__str
+    # -------------------------------------------------------------------------
+
+    def environment__str(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.__str__ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__str__ in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print(environment.__str__())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__print_parameters
+    # -------------------------------------------------------------------------
+
+    def environment__print_parameters(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.print_parameters \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__print_parameters in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Parameters of the environment: ")
+        environment.print_parameters()
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__write_environment_file
+    # -------------------------------------------------------------------------
+
+    def environment__write_environment_file(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.write_environment_file \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__write_environment_file in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Writing the environment file")
+        environment.write_environment_file(identifier)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__read_xml_config_file
+    # -------------------------------------------------------------------------
+
+    def environment__read_xml_config_file(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.read_xml_config_file \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_xml_config_file in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Read the environment config file")
+        print(environment.__str__())
+
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # environment__initialize
@@ -2902,162 +3346,161 @@ class Tests(object):
     def environment__initialize(self, args):
         import os
         from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment
 
         text = "This test checks environment.initialize \n"
-        text += "  It is successfull if a standart Bank with 2 asstets (I = 100),\n"
-        text += "  E = 90, D = 250  and pReal = 0,9 etc. has been created.\n"
-        text += "  See 'initialize_standard_bank' in bank.py for details.\n"
         self.print_info(text)
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
         logging.info('START logging for test environment__initialize in run: %s',  environment_directory + identifier + ".xml")
 
-        # Construct  environment
+        # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         #
-        # TEST CODE
+        # TESTING
         #
-        # environment.initialize(environment_directory,  identifier)
-        bank_directory = environment.static_parameters["bank_directory"]
-
-        bank = Bank()
-        account = 0.0
-
-        for type in ["I"]:
-                        if type == "I":
-                                account += bank.get_account(type)
-                                print("I = " + str(account))
+        print("Initialized the environment")
+        print(environment.__str__())
 
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # environment__read_environment_file
+    # environment__initialize_banks_from_files
     # -------------------------------------------------------------------------
 
-    def environment__read_environment_file(self, args):
-        text = "This test checks environment.read_environment_file \n"
-        text += "  This is a function from the standard Python library \n"
-        text += "  which does not really need to be tested therefore \n"
+    def environment__initialize_banks_from_files(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.initialize_banks_from_files \n"
         self.print_info(text)
-
-    # -------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------
-#  TESTS FOR NETWORK.PY
-# -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # network__do_interbank_trades
-    # -------------------------------------------------------------------------
-    def network__do_interbank_trades(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test network__do_interbank_trades in run: %s',  environment_directory + identifier + ".xml")
+        logging.info('START logging for test environment__initialize_banks_from_files in run: %s',  environment_directory + identifier + ".xml")
 
-        #
-        # TEST CODE
-        #
+        # Construct household filename
         environment = Environment(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        # print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
-        print environment.network
-        environment.banks[0].parameters["Lp"] = 2.0
-        environment.banks[1].parameters["Lp"] = -1.0
-        environment.banks[2].parameters["Lp"] = -1.0
-        environment.network.do_interbank_trades(environment.get_state(0))
-        print environment.network
-        environment.banks[0].parameters["Lp"] = 2.3
-        environment.banks[1].parameters["Lp"] = -1.1
-        environment.banks[2].parameters["Lp"] = -1.2
-        environment.network.do_interbank_trades(environment.get_state(0))
-        print environment.network
-
-        # print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
 
         #
-        # MEASUREMENT AND LOGGING
+        # TESTING
         #
-        logging.info('FINISHED logging for test updater__remove_inactive_bank in run: %s \n', environment_directory + identifier + ".xml")
+        print("Initialized the banks")
+        text = "num_banks parameter: "
+        text += str(environment.static_parameters["num_banks"])
+        print(text)
+        text = "Number of banks read: "
+        text += str(len(environment.banks))
+        print(text)
+        for i in range(0, int(environment.static_parameters["num_banks"])):
+            print(environment.banks[i].__str__())
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # network__remove_inactive_bank
+    # environment__initialize_firms_from_files
     # -------------------------------------------------------------------------
-    def network__remove_inactive_bank(self, args):
+
+    def environment__initialize_firms_from_files(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
         from src.environment import Environment
-        from src.updater import Updater
 
+        text = "This test checks environment.initialize_firms_from_files \n"
+        self.print_info(text)
         #
         # INITIALIZATION
         #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__remove_inactive_banks in run: %s',  environment_directory + identifier + ".xml")
+        logging.info('START logging for test environment__initialize_firms_from_files in run: %s',  environment_directory + identifier + ".xml")
 
-        #
-        # TEST CODE
-        #
+        # Construct household filename
         environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        # print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
-        environment.banks[0].parameters["Lp"] = 2.0
-        environment.banks[1].parameters["Lp"] = -1.0
-        environment.banks[2].parameters["Lp"] = -1.0
-        environment.network.do_interbank_trades(environment.get_state(0))
-        print environment.network
-
-        updater = Updater(environment)
 
         #
-        # execute the update code
+        # TESTING
         #
-        environment.banks[0].reduce_banking_capital(2.0)
-        environment.banks[0].check_solvency(environment, 'info', 0)
-        environment.network.remove_inactive_bank(environment.banks[0], 0)
+        print("Initialized the firms")
+        text = "num_firms parameter: "
+        text += str(environment.static_parameters["num_firms"])
+        print(text)
+        text = "Number of firms read: "
+        text += str(len(environment.firms))
+        print(text)
+        for i in range(0, int(environment.static_parameters["num_firms"])):
+            print(environment.firms[i].__str__())
 
-        # print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
-        print environment.network
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test updater__remove_inactive_bank in run: %s \n', environment_directory + identifier + ".xml")
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__initialize_households_from_files
+    # -------------------------------------------------------------------------
+
+    def environment__initialize_households_from_files(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.initialize_households_from_files \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize_households_from_files in run: %s',  environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Initialized the households")
+        text = "num_households parameter: "
+        text += str(environment.static_parameters["num_households"])
+        print(text)
+        text = "Number of households read: "
+        text += str(len(environment.households))
+        print(text)
+        for i in range(0, int(environment.static_parameters["num_households"])):
+            print(environment.households[i].__str__())
+
+    # -------------------------------------------------------------------------
+
+# BELOW IT'S THE OLD STUFF
 
 # -------------------------------------------------------------------------
 #  TESTS FOR UPDATER.PY
@@ -3146,181 +3589,4 @@ class Tests(object):
         # MEASUREMENT AND LOGGING
         #
         logging.info('FINISHED logging for test updater__updater1 in run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------
-#  UNKNOWN TESTS
-# -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # test_fire_sales
-    # -------------------------------------------------------------------------
-    def test_fire_sales(self, args):  # TODO not consistent with other test names
-        import logging
-        import networkx as nx
-
-        from src.environment import Environment
-        from src.runner import Runner
-        from src.measurement import Measurement
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-        measurement_directory = str(args[4])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for run: %s',  environment_directory + identifier + ".xml")
-
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        runner = Runner()
-        measurement = Measurement()
-
-        #
-        # UPDATE STEP
-        #
-        for i in range(environment.static_parameters["numSimulations"]):
-            environment.initialize(environment_directory,  identifier)
-            runner.initialize(environment)
-            measurement.initialize()  # clear the previous measurement
-
-            # do the run
-            runner.do_run(measurement, "info")
-
-            # do the histograms, i.e. add the current measurement to the histogram
-            measurement.do_histograms()
-            logging.info('')
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        measurement.write_histograms(measurement_directory,  environment)
-        logging.info('FINISHED logging for run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # test_state
-    # -------------------------------------------------------------------------
-    def test_state(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__remove_inactive_banks in run: %s',  environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        #
-        print environment.get_state(0)
-        environment.banks[0].reduce_banking_capital(10.0)
-        environment.banks[0].check_solvency(environment.get_state(0),  "info", 0)
-        print environment.get_state(1)
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test updater__remove_inactive_bank in run: %s \n', environment_directory + identifier + ".xml")
-    # ------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # liquidate_assets
-    # -------------------------------------------------------------------------
-    def updater__liquidate_assets(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__liquidate_assets in run: %s',  environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
-
-        updater = Updater(environment)
-        environment.banks[1].parameters["active"] = -1
-        environment.banks[2].parameters["active"] = -1
-        #
-        # execute the update code
-        #
-        updater.do_update_phase1(environment, 0, "debug")
-        updater.do_update_phase2(environment, 0, "info")
-
-        print environment.banks[0]
-        # print environment.banks[1]
-        # print environment.banks[2]
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test updater__liquidate_assets in run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # bank__test1
-    # -------------------------------------------------------------------------
-    def bank__test1(self, args):
-        from src.environment import Environment
-
-        text = "This test checks the environment.initializer \n"
-        text += "  It is successfull if a bank has been generate and \n"
-        text += "  if a network of 3 banks with 3 nodes and 6 edges \n"
-        text += "  has been established.\n"
-        self.print_info(text)
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__test1 in run: %s',  environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-
-        # for bank in environment.banks:
-        print environment.banks[2]
-        print environment.network
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test bank__test1 in run: %s \n', environment_directory + identifier + ".xml")
     # -------------------------------------------------------------------------

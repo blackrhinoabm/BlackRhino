@@ -1,12 +1,14 @@
-<environment title='tests_for_all_methods'>
+<environment identifier='tests_for_all_methods'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='100'></parameter>
-    <parameter type='num_simulations' value='1'></parameter>
-    <parameter type='num_banks' value='3'></parameter>
-    <parameter type='bank_directory' value='tests/agents/banks/'></parameter>
-    <parameter type='firm_directory' value='tests/agents/firms/'></parameter>
-    <parameter type='household_directory' value='tests/agents/households/'></parameter>
-    <!-- parameters determining the payment flow of banks -->
-    <parameter type='rl' value='0.06'></parameter>
-    <parameter type='rd' value='0.02'></parameter>
+    <parameter type='static' name='num_sweeps' value='100'></parameter>
+    <parameter type='static' name='num_simulations' value='1'></parameter>
+    <parameter type='static' name='num_banks' value='1'></parameter>
+    <parameter type='static' name='num_firms' value='1'></parameter>
+    <parameter type='static' name='num_households' value='1'></parameter>
+    <parameter type='static' name='bank_directory' value='tests/agents/banks/'></parameter>
+    <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
+    <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
+    <!-- parameters determining the dynamics -->
+    <parameter type='static' name='interest_rate_loans' value='0.06'></parameter>
+    <parameter type='static' name='interest_rate_deposits' value='0.02'></parameter>
 </environment>
