@@ -2905,6 +2905,7 @@ class Tests(object):
         from src.environment import Environment
 
         text = "This test checks environment.add_static_parameter \n"
+        text = "Should add 'test':0.66 to static parameters \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2942,7 +2943,8 @@ class Tests(object):
         from src.firm import Firm
         from src.environment import Environment
 
-        text = "This test checks environment.add_static_parameter \n"
+        text = "This test checks environment.add_variable_parameter \n"
+        text = "Should add 'test':0.66-0.77 to the parameters \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3018,6 +3020,7 @@ class Tests(object):
         from src.environment import Environment
 
         text = "This test checks environment.set_identifier \n"
+        text = "and sets the identifier to XYZ \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3096,6 +3099,7 @@ class Tests(object):
         from src.environment import Environment
 
         text = "This test checks environment.set_static_parameters \n"
+        text = "and sets them to 'test':0.55 \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3172,6 +3176,7 @@ class Tests(object):
         from src.environment import Environment
 
         text = "This test checks environment.set_variable_parameters \n"
+        text = "and sets them to 'test': 0.55-0.66 \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3281,6 +3286,8 @@ class Tests(object):
         from src.environment import Environment
 
         text = "This test checks environment.write_environment_file \n"
+        text = "and writes a mirror of the config file \n"
+        text = "in the directory from which it was called \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3411,6 +3418,7 @@ class Tests(object):
         text = "Number of banks read: "
         text += str(len(environment.banks))
         print(text)
+        print("The banks read: ")
         for i in range(0, int(environment.static_parameters["num_banks"])):
             print(environment.banks[i].__str__())
 
@@ -3453,6 +3461,7 @@ class Tests(object):
         text = "Number of firms read: "
         text += str(len(environment.firms))
         print(text)
+        print("The firms read: ")
         for i in range(0, int(environment.static_parameters["num_firms"])):
             print(environment.firms[i].__str__())
 
@@ -3495,6 +3504,7 @@ class Tests(object):
         text = "Number of households read: "
         text += str(len(environment.households))
         print(text)
+        print("The households read: ")
         for i in range(0, int(environment.static_parameters["num_households"])):
             print(environment.households[i].__str__())
 

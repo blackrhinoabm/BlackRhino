@@ -153,30 +153,44 @@ DESCRIPTION OF TESTS
         Tests whether one can add a variable parameter, should print the standard set of variable
         parameters and then the same set with a 'test' parameter added with value range 0.66-0.77
     test.environment__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get the identifier of the environment, and prints it out
+        should be the same as in the config file in tests/environments/
     test.environment__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can change the identifier of the environment, and prints the
+        original identifier, changes it to XYZ and prints the identifier again
     test.environment__get_static_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get static parameters from the environment, and prints
+        them out, they should be in line with the config file in tests/environments/
     test.environment__set_static_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can set static parameters in the environment, first prints
+        the original static parameters, changes them to {'test': 0.55}, and prints them again
     test.environment__get_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get variable parameters from the environment, and prints
+        them out, they should be in line with the config file in tests/environments/
     test.environment__set_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can set variable parameters in the environment, first prints
+        the original variable parameters, changes them to {'test': 0.55-0.66}, and prints them again
     test.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether __str__ function works properly, the printout can be checked against
+        the config file in tests/environments/
     test.environment__print_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can print the parameters correctly, this prints the parameters
+        read from the config file in tests/environments/
     test.environment__write_environment_file(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can write the environment config file, it is written to the folder
+        from which the function is originally called
     test.environment__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can read an xml config file (/tests/environments/), and prints out
+        the environment so it can be checked against the config file
     test.environment__initialize(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether the environment is properly initialized, and prints out the environment
+        so it can be checked against the config file in tests/environments/
     test.environment__initialize_banks_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether banks are properly initialized by the environment from config files saved in
+        tests/agents/banks/, prints the number of banks expected and read and then prints the banks
     test.environment__initialize_firms_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether firms are properly initialized by the environment from config files saved in
+        tests/agents/firms/, prints the number of firms expected and read and then prints the firms
     test.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
-        
+        Tests whether households are properly initialized by the environment from config files saved in
+        tests/agents/households/, prints the number of households expected and read and then prints the households
