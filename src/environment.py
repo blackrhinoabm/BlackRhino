@@ -4,7 +4,8 @@
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
-Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,24 +36,24 @@ class Environment(BaseConfig):
     # VARIABLES
     #
     #
-    identifier = ""
+    identifier = ""  # identifier of the specific bank
 
-    banks = []
-    households = []
-    firms = []
+    banks = []  # a list containing all banks (instances of class Bank)
+    households = []  # a list containing all households (instances of class Household)
+    firms = []  # a list containing all firms (instances of class Firm)
 
-    static_parameters = {}
-    variable_parameters = {}
+    static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
+    variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
 
-    static_parameters["num_simulations"] = 0
-    static_parameters["num_sweeps"] = 0
-    static_parameters["num_banks"] = 0
-    static_parameters["num_firms"] = 0
-    static_parameters["num_households"] = 0
+    static_parameters["num_simulations"] = 0  # number of simulations to be performed
+    static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
+    static_parameters["num_banks"] = 0  # number of banks in a simulation
+    static_parameters["num_firms"] = 0  # number of firms in a simulation
+    static_parameters["num_households"] = 0  # number of households in a simulation
 
-    static_parameters["bank_directory"] = ""
-    static_parameters["firm_directory"] = ""
-    static_parameters["household_directory"] = ""
+    static_parameters["bank_directory"] = ""  # directory containing bank config files
+    static_parameters["firm_directory"] = ""  # directory containing firm config files
+    static_parameters["household_directory"] = ""  # directory containing household config files
 
     static_parameters["interest_rate_loans"] = 0.0  # interest rate on loans
     static_parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
@@ -69,52 +70,89 @@ class Environment(BaseConfig):
     # with the exception of add (2 first ones) which append the dictionaries
     # which contain static parameters or variable parameters
     # -------------------------------------------------------------------------
-
     # -------------------------------------------------------------------------
     # add_static_parameter(self, type, value)
+    # add a given parameter to the stack of static parameters
     # -------------------------------------------------------------------------
     def add_static_parameter(self, name, value):
-        # add the parameter to the stack of static parameters
-        self.static_parameters[name] = value
+        super(Environment, self).add_static_parameter(name, value)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # add_variable_parameter(self, type, range_from, range_to)
+    # adds a given parameter to the stack of variable parameters
     # -------------------------------------------------------------------------
     def add_variable_parameter(self, name, range_from, range_to):
-        # add the parameter to the stack of variable parameters
-        self.variable_parameters[name] = [range_from, range_to]
+        super(Environment, self).add_variable_parameter(name, range_from, range_to)
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # __init__(self,  environment_directory,  identifier)
+    # initializes the bank given the directory containing the config
+    # files and the identifier (name of the config file)
+    # -------------------------------------------------------------------------
     def __init__(self,  environment_directory,  identifier):
         self.initialize(environment_directory,  identifier)
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # get_identifier(self)
+    # returns the identifier of the environment
+    # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
+    # -------------------------------------------------------------------------
 
-    def set_identifier(self, _value):
-        super(Environment, self).set_identifier(_value)
+    # -------------------------------------------------------------------------
+    # set_identifier(self, value)
+    # changes the environment to the supplied value
+    # -------------------------------------------------------------------------
+    def set_identifier(self, value):
+        super(Environment, self).set_identifier(value)
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # get_static_parameters(self)
+    # returns static parameters of the environment
+    # -------------------------------------------------------------------------
     def get_static_parameters(self):
         return self.static_parameters
+    # -------------------------------------------------------------------------
 
-    def set_static_parameters(self, _value):
-        super(Environment, self).set_static_parameters(_value)
+    # -------------------------------------------------------------------------
+    # set_static_parameters(self, value)
+    # changes static parameters to the supplied value
+    # -------------------------------------------------------------------------
+    def set_static_parameters(self, value):
+        super(Environment, self).set_static_parameters(value)
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # get_variable_parameters(self)
+    # returns variable parameters of the environment
+    # -------------------------------------------------------------------------
     def get_variable_parameters(self):
         return self.variable_parameters
+    # -------------------------------------------------------------------------
 
-    def set_variable_parameters(self, _value):
-        super(Environment, self).set_variable_parameters(_value)
+    # -------------------------------------------------------------------------
+    # set_variable_parameters(self, value):
+    # changes variable parameters to the supplied value
+    # -------------------------------------------------------------------------
+    def set_variable_parameters(self, value):
+        super(Environment, self).set_variable_parameters(value)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # Functions for printing and writing
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
     # __str__
+    # returns the environment as an xml like config file
     # -------------------------------------------------------------------------
     def __str__(self):
         environment_string = super(Environment, self).__str__()
+        # abstract class uses config, we use environment, so we amend the string
         environment_string = environment_string.replace("<config", "<environment", 1)
         environment_string = environment_string.replace("</config>", "</environment>", 1)
         return environment_string
@@ -122,36 +160,39 @@ class Environment(BaseConfig):
 
     # -------------------------------------------------------------------------
     # print_parameters(self)
+    # prints the parameters within the environment (static + variable)
     # -------------------------------------------------------------------------
     def print_parameters(self):
-        for key in self.static_parameters:
-            print str(key) + ": " + str(self.static_parameters[key])
-        for key in self.variable_parameters:
-            print str(key) + ":" + " range: " + str(self.variable_parameters[key][0]) + "-" + str(self.variable_parameters[key][1])
+        super(Environment, self).print_parameters()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # write_environment_file(file_name)
+    # writes the environment as an xml config file to an .xml file
+    # with the given file_name to the current directory
     # -------------------------------------------------------------------------
     def write_environment_file(self,  file_name):
-        out_file = open(file_name + "-check.xml",  'w')
-        text = self.__str__()
-        out_file.write(text)
-        out_file.close()
+        super(Environment, self).write_environment_file(file_name)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # Functions for reading config files and initializing
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
-    # read_xml_config_file
+    # read_xml_config_file(self, config_file_name)
+    # reads an xml file with config and sets identifier, static and variable
+    # parameters to whatever is in the config file
     # -------------------------------------------------------------------------
     def read_xml_config_file(self, config_file_name):
         super(Environment, self).read_xml_config_file(config_file_name)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize
+    # initialize(self,  environment_directory,  identifier)
+    # initializes the environment, initializing all the variables
+    # reading the config file from supplied environment_directory and
+    # identifier, and initializes all agents from the directories
+    # supplied in the main config file
     # -------------------------------------------------------------------------
     def initialize(self,  environment_directory,  identifier):
         self.identifier = identifier
@@ -201,9 +242,11 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize_banks_from_files
-    # banks have to be initialized for each simulation as a number of banks might become inactive
-    # in the previous simulation
+    # initialize_banks_from_files(self,  bank_directory)
+    # banks have to be initialized for each simulation as a number of
+    # banks might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes banks with the contents of these configs
     # -------------------------------------------------------------------------
     def initialize_banks_from_files(self,  bank_directory):
         from src.bank import Bank
@@ -219,17 +262,19 @@ class Environment(BaseConfig):
             bank = Bank()
             bank.get_parameters_from_file(bank_directory + infile,  self)
             self.banks.append(bank)
-            bank.__del__()  # TODO not sure if this is really safe, but it is better than doing nothing about all those created instances...
+            bank.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize_banks_from_files
-    # banks have to be initialized for each simulation as a number of banks might become inactive
-    # in the previous simulation
+    # initialize_firms_from_files
+    # banks have to be initialized for each simulation as a number of
+    # banks might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes firms with the contents of these configs
     # -------------------------------------------------------------------------
     def initialize_firms_from_files(self,  firm_directory):
         from src.firm import Firm
-        # this routine is called more than once, so we have to reset the list of banks each time
+        # this routine is called more than once, so we have to reset the list of firms each time
         self.firms = []
 
         listing = os.listdir(firm_directory)
@@ -240,17 +285,19 @@ class Environment(BaseConfig):
             firm = Firm()
             firm.get_parameters_from_file(firm_directory + infile,  self)
             self.firms.append(firm)
-            firm.__del__()  # TODO not sure if this is really safe, but it is better than doing nothing about all those created instances...
+            firm.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize_banks_from_files
-    # banks have to be initialized for each simulation as a number of banks might become inactive
-    # in the previous simulation
+    # initialize_households_from_files
+    # households have to be initialized for each simulation as a number of
+    # households might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes households with the contents of these configs
     # -------------------------------------------------------------------------
     def initialize_households_from_files(self,  household_directory):
         from src.household import Household
-        # this routine is called more than once, so we have to reset the list of banks each time
+        # this routine is called more than once, so we have to reset the list of households each time
         self.households = []
 
         listing = os.listdir(household_directory)
@@ -261,5 +308,5 @@ class Environment(BaseConfig):
             household = Household()
             household.get_parameters_from_file(household_directory + infile,  self)
             self.households.append(household)
-            household.__del__()  # TODO not sure if this is really safe, but it is better than doing nothing about all those created instances...
+            household.__del__()
     # -------------------------------------------------------------------------

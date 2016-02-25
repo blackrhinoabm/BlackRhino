@@ -4,7 +4,8 @@
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
-Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
