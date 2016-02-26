@@ -150,16 +150,20 @@ class Environment(BaseConfig):
     # which allows for directly fetching parameters from the Environment
     # i.e. environment.num_banks instead of a bit more bulky
     # environment.static_parameters["num_banks"]
-    # JUST FOR READING, DO NOT USE SHORTCUTS FOR WRITING
+    # makes sure we don't have it in both containers, which
+    # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        try:
-            return self.static_parameters[attr]
-        except:
+        if (attr in self.static_parameters) and (attr in self.variable_parameters):
+            raise AttributeError('The same name exists in both static and variable parameters.')
+        else:
             try:
-                return self.variable_parameters[attr]
+                return self.static_parameters[attr]
             except:
-                raise AttributeError('Environment has no attribute "%s".' % attr)
+                try:
+                    return self.variable_parameters[attr]
+                except:
+                    raise AttributeError('Environment has no attribute "%s".' % attr)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -281,6 +285,7 @@ class Environment(BaseConfig):
             bank = Bank()
             bank.get_parameters_from_file(bank_directory + infile,  self)
             self.banks.append(bank)
+            bank.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -303,6 +308,7 @@ class Environment(BaseConfig):
             firm = Firm()
             firm.get_parameters_from_file(firm_directory + infile,  self)
             self.firms.append(firm)
+            firm.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -325,4 +331,5 @@ class Environment(BaseConfig):
             household = Household()
             household.get_parameters_from_file(household_directory + infile,  self)
             self.households.append(household)
+            household.__del__()
     # -------------------------------------------------------------------------

@@ -207,14 +207,18 @@ class Bank(BaseAgent):
     # which allows for directly fetching parameters from the Bank
     # i.e. bank.active instead of a bit more bulky
     # bank.parameters["active"]
-    # JUST FOR READING, DO NOT USE SHORTCUTS FOR WRITING
+    # makes sure we don't have it in both containers, which
+    # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        try:
-            return self.parameters[attr]
-        except:
+        if (attr in self.parameters) and (attr in self.state_variables):
+            raise AttributeError('The same name exists in both parameters and state variables.')
+        else:
             try:
-                return self.state_variables[attr]
+                return self.parameters[attr]
             except:
-                raise AttributeError('Bank has no attribute "%s".' % attr)
+                try:
+                    return self.state_variables[attr]
+                except:
+                    raise AttributeError('Bank has no attribute "%s".' % attr)
     # -------------------------------------------------------------------------
