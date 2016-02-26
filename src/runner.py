@@ -32,62 +32,75 @@ from abm_template.src.baserunner import BaseRunner
 
 
 class Runner(BaseRunner):
-    # from environment import Environment
-
+    #
     #
     # VARIABLES
+    #
     #
 
     identifier = ""
     num_simulations = 0
 
     #
+    #
     # METHODS
     #
+    #
+
     # -------------------------------------------------------------------------
     # __init__
     # -------------------------------------------------------------------------
-    def __init__(self):
-        pass
+    def __init__(self, environment):
+        self.initialize(environment)
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # get_identifier
+    # -------------------------------------------------------------------------
     def get_identifier(self):
         return self.identifier
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # set_identifier
+    # -------------------------------------------------------------------------
     def set_identifier(self, _value):
         super(Runner, self).set_identifier(_value)
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # get_num_simulations
+    # -------------------------------------------------------------------------
     def get_num_simulations(self):
         return self.num_simulations
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # set_num_simulations
+    # -------------------------------------------------------------------------
     def set_num_simulations(self, _value):
         super(Runner, self).set_num_simulaitons(_value)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # initialize()
     # -------------------------------------------------------------------------
     def initialize(self,  environment):
         self.identifier = environment.identifier
-        self.num_simulations = environment.static_parameters["numSweeps"]
-        self.environment = environment
+        self.num_simulations = environment.num_simulations
         self.updater = Updater(self.environment)
-        self.shocker = Shock()
+        # self.shocker = Shock()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_run
     # -------------------------------------------------------------------------
-    def do_run(self, measurement,  debug):
+    def do_run(self, measurement, debug):
         # loop over all time steps and do the updating
         for i in range(self.num_simulations):
             # the update step
             self.updater.do_update(self.environment, i, debug)
 
-            # check if there is a shock at the current time step
-            if (int(self.environment.get_state(i).static_parameters["shockType"]) != 0):
-                self.shocker.do_shock(self.environment, int(i))
-                self.environment.get_state(i).static_parameters["shockType"] = 0
-
             # do the measurement
-            measurement.do_measurement(self.environment.banks)
+            # measurement.do_measurement(self.environment.banks)
     # ------------------------------------------------------------------------

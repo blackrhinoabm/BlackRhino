@@ -192,7 +192,7 @@ class Household(BaseAgent):
         transaction = Transaction()
         transaction.this_transaction(type_, asset, from_id, to_id, amount, interest, maturity, time_of_default)
         self.accounts.append(transaction)
-        del transaction
+        del transaction  # append() above does make a copy so we may delete for garbage collection
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -209,4 +209,23 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     def purge_accounts(self):
         super(Household, self).purge_accounts()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # __getattr__
+    # if the attribute isn't found by Python we tell Python
+    # to look for it first in parameters and then in state variables
+    # which allows for directly fetching parameters from the Household
+    # i.e. household.active instead of a bit more bulky
+    # household.parameters["active"]
+    # JUST FOR READING, DO NOT USE SHORTCUTS FOR WRITING
+    # -------------------------------------------------------------------------
+    def __getattr__(self, attr):
+        try:
+            return self.parameters[attr]
+        except:
+            try:
+                return self.state_variables[attr]
+            except:
+                raise AttributeError('Household has no attribute "%s".' % attr)
     # -------------------------------------------------------------------------
