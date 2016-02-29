@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
@@ -40,7 +40,12 @@ class Household(BaseAgent):
     parameters = {}  # parameters of the specific household
     state_variables = {}  # state variables of the specific household
     accounts = []  # all accounts of a household (filled with transactions)
-
+    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
     parameters["labour"] = 0.0  # labour to sell every step (labour endowment)
     parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0  # this is a control parameter checking whether bank is active

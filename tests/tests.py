@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
@@ -78,14 +78,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -136,14 +138,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -198,14 +202,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -257,14 +263,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__set_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -319,14 +327,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -377,14 +387,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__set_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__set_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -439,14 +451,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__str in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__str in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -495,14 +509,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_parameters_from_file in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_parameters_from_file in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -553,14 +569,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__check_consistency in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__check_consistency in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -587,7 +605,11 @@ class Tests(object):
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
         print("Adding additional deposits without adding appropriate cash/loans.")
-        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  150,  environment.static_parameters["interest_rate_deposits"],  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],
+                             bank.identifier, 150, bank.interest_rate_deposits, 0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
 
@@ -618,14 +640,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_account in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_account in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -688,14 +712,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__get_account_num_transactions in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_account_num_transactions in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -762,14 +788,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__add_transaction in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__add_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -795,7 +823,11 @@ class Tests(object):
 
         print(bank)
         print("Adding new transaction: \n")
-        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier,  10,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],
+                             bank.identifier,  10,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
         print(bank)
 
     # -------------------------------------------------------------------------
@@ -823,14 +855,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__clear_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__clear_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -864,7 +898,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],
+                             bank.identifier, 0.0,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -913,14 +951,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__purge_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__purge_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -954,7 +994,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("deposits", "", environment.households[0:1][0],  bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", environment.households[0:1][0],
+                             bank.identifier, 0.0,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -1001,14 +1045,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test bank__initialize_standard_bank in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__initialize_standard_bank in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct bank filename
         environment = Environment(environment_directory,  identifier)
 
         # get the bank_directory from the environment
-        bank_directory = environment.static_parameters["bank_directory"]
+        bank_directory = environment.bank_directory
         # and loop over all banks in the directory
         listing = os.listdir(bank_directory)
         bank_filename = bank_directory + listing[0]
@@ -1061,14 +1107,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1119,14 +1167,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1181,14 +1231,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1239,14 +1291,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__set_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__set_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1301,14 +1355,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1359,14 +1415,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__set_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__set_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1421,14 +1479,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__str in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__str in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1477,14 +1537,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_parameters_from_file in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_parameters_from_file in run: %s', 
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1545,14 +1607,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_account in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_account in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1615,14 +1679,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__get_account_num_transactions in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_account_num_transactions in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1689,14 +1755,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__add_transaction in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__add_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1722,7 +1790,11 @@ class Tests(object):
 
         print(firm)
         print("Adding new transaction: \n")
-        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier,  10,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],
+                             firm.identifier,  10,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
         print(firm)
 
     # -------------------------------------------------------------------------
@@ -1750,14 +1822,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__clear_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__clear_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1791,7 +1865,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],
+                             firm.identifier, 0.0,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -1840,14 +1918,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__purge_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__purge_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1881,7 +1961,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        firm.add_transaction("deposits", "", environment.households[0:1][0],  firm.identifier, 0.0,  0.09,  0, -1)
+        firm.add_transaction("deposits", "", environment.households[0:1][0],
+                             firm.identifier, 0.0,  0.09,  0, -1)
+        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first household in environment, but if there are no
+        # households (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -1928,14 +2012,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test firm__initialize_standard_bank in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__initialize_standard_bank in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct firm filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        firm_directory = environment.static_parameters["firm_directory"]
+        firm_directory = environment.firm_directory
         # and loop over all firms in the directory
         listing = os.listdir(firm_directory)
         firmFilename = firm_directory + listing[0]
@@ -1988,14 +2074,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2045,14 +2133,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2107,14 +2197,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2165,14 +2257,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__set_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__set_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2227,14 +2321,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2285,14 +2381,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__set_state_variables in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__set_state_variables in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2346,14 +2444,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__str in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__str in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2402,14 +2502,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_parameters_from_file in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_parameters_from_file in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the household_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2471,14 +2573,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_account in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_account in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2541,14 +2645,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__get_account_num_transactions in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_account_num_transactions in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2615,14 +2721,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__add_transaction in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__add_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2648,7 +2756,11 @@ class Tests(object):
 
         print(household)
         print("Adding new transaction: \n")
-        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier,  10,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],
+                                  household.identifier,  10,  0.09,  0, -1)
+        # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first bank in environment, but if there are no
+        # banks (which happens in testing) it doesn't break down
         print(household)
 
     # -------------------------------------------------------------------------
@@ -2676,14 +2788,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__clear_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__clear_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2717,7 +2831,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],
+                                  household.identifier, 0.0,  0.09,  0, -1)
+        # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first bank in environment, but if there are no
+        # banks (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -2766,14 +2884,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__purge_accounts in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__purge_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2807,7 +2927,11 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        household.add_transaction("deposits", "", environment.banks[0:1][0],  household.identifier, 0.0,  0.09,  0, -1)
+        household.add_transaction("deposits", "", environment.banks[0:1][0],
+                                  household.identifier, 0.0,  0.09,  0, -1)
+        # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # what it does is is takes the first bank in environment, but if there are no
+        # banks (which happens in testing) it doesn't break down
 
         account = 0.0
         tranx = 0
@@ -2854,14 +2978,16 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test household__initialize_standard_household in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__initialize_standard_household in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
 
         # get the firm_directory from the environment
-        household_directory = environment.static_parameters["household_directory"]
+        household_directory = environment.household_directory
         # and loop over all firms in the directory
         listing = os.listdir(household_directory)
         householdFilename = household_directory + listing[0]
@@ -2915,8 +3041,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__add_static_parameter in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__add_static_parameter in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -2954,8 +3082,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__add_variable_parameter in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__add_variable_parameter in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -2992,8 +3122,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__get_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3030,8 +3162,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__set_identifier in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3072,8 +3206,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__get_static_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_static_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3109,8 +3245,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__set_static_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_static_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3149,8 +3287,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__get_variable_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_variable_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3186,8 +3326,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__set_variable_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_variable_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3226,8 +3368,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__str__ in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__str__ in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3260,8 +3404,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__print_parameters in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__print_parameters in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3297,8 +3443,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__write_environment_file in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__write_environment_file in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3332,8 +3480,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__read_xml_config_file in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_xml_config_file in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3367,8 +3517,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__initialize in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3402,8 +3554,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__initialize_banks_from_files in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize_banks_from_files in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3413,13 +3567,13 @@ class Tests(object):
         #
         print("Initialized the banks")
         text = "num_banks parameter: "
-        text += str(environment.static_parameters["num_banks"])
+        text += str(environment.num_banks)
         print(text)
         text = "Number of banks read: "
         text += str(len(environment.banks))
         print(text)
         print("The banks read: ")
-        for i in range(0, int(environment.static_parameters["num_banks"])):
+        for i in range(0, int(environment.num_banks)):
             print(environment.banks[i].__str__())
 
     # -------------------------------------------------------------------------
@@ -3445,8 +3599,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__initialize_firms_from_files in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize_firms_from_files in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3456,13 +3612,13 @@ class Tests(object):
         #
         print("Initialized the firms")
         text = "num_firms parameter: "
-        text += str(environment.static_parameters["num_firms"])
+        text += str(environment.num_firms)
         print(text)
         text = "Number of firms read: "
         text += str(len(environment.firms))
         print(text)
         print("The firms read: ")
-        for i in range(0, int(environment.static_parameters["num_firms"])):
+        for i in range(0, int(environment.num_firms)):
             print(environment.firms[i].__str__())
 
     # -------------------------------------------------------------------------
@@ -3488,8 +3644,10 @@ class Tests(object):
         log_directory = str(args[2])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test environment__initialize_households_from_files in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize_households_from_files in run: %s',
+                     environment_directory + identifier + ".xml")
 
         # Construct household filename
         environment = Environment(environment_directory,  identifier)
@@ -3499,13 +3657,13 @@ class Tests(object):
         #
         print("Initialized the households")
         text = "num_households parameter: "
-        text += str(environment.static_parameters["num_households"])
+        text += str(environment.num_households)
         print(text)
         text = "Number of households read: "
         text += str(len(environment.households))
         print(text)
         print("The households read: ")
-        for i in range(0, int(environment.static_parameters["num_households"])):
+        for i in range(0, int(environment.num_households)):
             print(environment.households[i].__str__())
 
     # -------------------------------------------------------------------------
@@ -3531,8 +3689,10 @@ class Tests(object):
         log_directory = str(args[3])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__updater2 in run: %s',  environment_directory + identifier + ".xml")
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__updater2 in run: %s',
+                     environment_directory + identifier + ".xml")
 
         #
         # TEST CODE
@@ -3570,7 +3730,8 @@ class Tests(object):
         log_directory = str(args[3])
 
         # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
         logging.info('START logging for test updater__updater1 in run: %s',  environment_directory + identifier + ".xml")
 
         #

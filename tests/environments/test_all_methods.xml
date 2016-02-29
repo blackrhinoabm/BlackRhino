@@ -9,6 +9,4 @@
     <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
     <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
     <!-- parameters determining the dynamics -->
-    <parameter type='static' name='interest_rate_loans' value='0.06'></parameter>
-    <parameter type='static' name='interest_rate_deposits' value='0.02'></parameter>
 </environment>

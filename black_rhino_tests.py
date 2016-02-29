@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """

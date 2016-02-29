@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
@@ -44,7 +44,12 @@ class Environment(BaseConfig):
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
-
+    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
     static_parameters["num_simulations"] = 0  # number of simulations to be performed
     static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
     static_parameters["num_banks"] = 0  # number of banks in a simulation
@@ -54,9 +59,6 @@ class Environment(BaseConfig):
     static_parameters["bank_directory"] = ""  # directory containing bank config files
     static_parameters["firm_directory"] = ""  # directory containing firm config files
     static_parameters["household_directory"] = ""  # directory containing household config files
-
-    static_parameters["interest_rate_loans"] = 0.0  # interest rate on loans
-    static_parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
 
     #
     #
@@ -230,8 +232,6 @@ class Environment(BaseConfig):
         self.static_parameters["firm_directory"] = ""
         self.static_parameters["household_directory"] = ""
         self.variable_parameters = {}
-        self.static_parameters["interest_rate_loans"] = 0.05  # interbank interest rate
-        self.static_parameters["interest_rate_deposits"] = 0.01  # interest rate on deposits
 
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
@@ -250,7 +250,7 @@ class Environment(BaseConfig):
         if (self.static_parameters["firm_directory"] != ""):
             if (self.static_parameters["firm_directory"] != "none"):  # none is used for tests only
                 self.initialize_firms_from_files(self.static_parameters["firm_directory"])
-                logging.info("  banks read from directory: %s",  self.static_parameters["firm_directory"])
+                logging.info("  firms read from directory: %s",  self.static_parameters["firm_directory"])
         else:
             logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
@@ -258,7 +258,7 @@ class Environment(BaseConfig):
         if (self.static_parameters["household_directory"] != ""):
             if (self.static_parameters["household_directory"] != "none"):  # none is used for tests only
                 self.initialize_households_from_files(self.static_parameters["household_directory"])
-                logging.info("  banks read from directory: %s",  self.static_parameters["household_directory"])
+                logging.info("  households read from directory: %s",  self.static_parameters["household_directory"])
         else:
             logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
 
@@ -279,13 +279,13 @@ class Environment(BaseConfig):
         listing = os.listdir(bank_directory)
 
         if (len(listing) != self.static_parameters["num_banks"]):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",  bank_directory,  str(len(listing)), str(self.static_parameters["num_banks"]))
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
+                          bank_directory,  str(len(listing)), str(self.num_banks))
 
         for infile in listing:
             bank = Bank()
             bank.get_parameters_from_file(bank_directory + infile,  self)
             self.banks.append(bank)
-            bank.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -302,13 +302,13 @@ class Environment(BaseConfig):
 
         listing = os.listdir(firm_directory)
         if (len(listing) != self.static_parameters["num_firms"]):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_firms (=%s)",  firm_directory,  str(len(listing)), str(self.static_parameters["num_firms"]))
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_firms (=%s)",
+                          firm_directory,  str(len(listing)), str(self.num_firms))
 
         for infile in listing:
             firm = Firm()
             firm.get_parameters_from_file(firm_directory + infile,  self)
             self.firms.append(firm)
-            firm.__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -325,11 +325,11 @@ class Environment(BaseConfig):
 
         listing = os.listdir(household_directory)
         if (len(listing) != self.static_parameters["num_households"]):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",  household_directory,  str(len(listing)), str(self.static_parameters["num_households"]))
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
+                          household_directory,  str(len(listing)), str(self.num_households))
 
         for infile in listing:
             household = Household()
             household.get_parameters_from_file(household_directory + infile,  self)
             self.households.append(household)
-            household.__del__()
     # -------------------------------------------------------------------------

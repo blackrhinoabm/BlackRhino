@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
@@ -40,6 +40,14 @@ class Bank(BaseAgent):
     parameters = {}  # parameters of the specific bank
     state_variables = {}  # state variables of the specific bank
     accounts = []  # all accounts of a bank (filled with transactions)
+    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED 
+    parameters["interest_rate_loans"] = 0.0  # interest rate on loans
+    parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
     parameters["active"] = 0  # this is a control parameter checking whether bank is active
 
     #
