@@ -209,6 +209,13 @@ class Bank(BaseAgent):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # get_transactions_from_file
+    # reads transactions from the config file to the bank's accounts
+    # -------------------------------------------------------------------------
+    def get_transactions_from_file(self, filename, environment):
+        super(Bank, self).get_transactions_from_file(filename, environment)
+    # -------------------------------------------------------------------------
+
     # __getattr__
     # if the attribute isn't found by Python we tell Python
     # to look for it first in parameters and then in state variables

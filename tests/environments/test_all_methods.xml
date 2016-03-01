@@ -2,7 +2,7 @@
     <!-- simulation parameters -->
     <parameter type='static' name='num_sweeps' value='100'></parameter>
     <parameter type='static' name='num_simulations' value='1'></parameter>
-    <parameter type='static' name='num_banks' value='1'></parameter>
+    <parameter type='static' name='num_banks' value='2'></parameter>
     <parameter type='static' name='num_firms' value='1'></parameter>
     <parameter type='static' name='num_households' value='1'></parameter>
     <parameter type='static' name='bank_directory' value='tests/agents/banks/'></parameter>

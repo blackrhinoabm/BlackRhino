@@ -239,29 +239,33 @@ class Environment(BaseConfig):
         logging.info("  environment file read: %s",  environment_filename)
 
         # then read in all the banks
-        if (self.static_parameters["bank_directory"] != ""):
-            if (self.static_parameters["bank_directory"] != "none"):  # none is used for tests only
-                self.initialize_banks_from_files(self.static_parameters["bank_directory"])
-                logging.info("  banks read from directory: %s",  self.static_parameters["bank_directory"])
+        if (self.bank_directory != ""):
+            if (self.bank_directory != "none"):  # none is used for tests only
+                self.initialize_banks_from_files(self.bank_directory)
+                logging.info("  banks read from directory: %s",  self.bank_directory)
         else:
             logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
         # then read in all the firms
-        if (self.static_parameters["firm_directory"] != ""):
-            if (self.static_parameters["firm_directory"] != "none"):  # none is used for tests only
-                self.initialize_firms_from_files(self.static_parameters["firm_directory"])
-                logging.info("  firms read from directory: %s",  self.static_parameters["firm_directory"])
+        if (self.firm_directory != ""):
+            if (self.firm_directory != "none"):  # none is used for tests only
+                self.initialize_firms_from_files(self.firm_directory)
+                logging.info("  firms read from directory: %s",  self.firm_directory)
         else:
             logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
         # then read in all the households
-        if (self.static_parameters["household_directory"] != ""):
-            if (self.static_parameters["household_directory"] != "none"):  # none is used for tests only
-                self.initialize_households_from_files(self.static_parameters["household_directory"])
-                logging.info("  households read from directory: %s",  self.static_parameters["household_directory"])
+        if (self.household_directory != ""):
+            if (self.household_directory != "none"):  # none is used for tests only
+                self.initialize_households_from_files(self.household_directory)
+                logging.info("  households read from directory: %s",  self.household_directory)
         else:
             logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
 
+        # then, initialize transactions from the config files
+        self.read_transactions_for_banks(self.bank_directory)
+        self.read_transactions_for_firms(self.firm_directory)
+        self.read_transactions_for_households(self.household_directory)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -332,4 +336,82 @@ class Environment(BaseConfig):
             household = Household()
             household.get_parameters_from_file(household_directory + infile,  self)
             self.households.append(household)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_agent_by_id
+    # returns an agent based on the id
+    # -------------------------------------------------------------------------
+    def get_agent_by_id(self,  ident):
+        for bank in self.banks:
+            if bank.identifier == ident:
+                return bank
+        for firm in self.firms:
+            if firm.identifier == ident:
+                return firm
+        for household in self.households:
+            if household.identifier == ident:
+                return household
+
+    # -------------------------------------------------------------------------
+    # read_transactions_from_files(self,  bank_directory)
+    # reads transactions for banks from the config files
+    # -------------------------------------------------------------------------
+    def read_transactions_for_banks(self,  bank_directory):
+        from xml.etree import ElementTree
+
+        listing = os.listdir(bank_directory)
+
+        if (len(listing) != self.static_parameters["num_banks"]):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
+                          bank_directory,  str(len(listing)), str(self.num_banks))
+
+        for infile in listing:
+            xmlText = open(bank_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            bank = self.get_agent_by_id(identifier)
+            bank.get_transactions_from_file(bank_directory + infile, self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_transactions_for_firms
+    # reads transactions for firms from the config files
+    # -------------------------------------------------------------------------
+    def read_transactions_for_firms(self,  firm_directory):
+        from xml.etree import ElementTree
+
+        listing = os.listdir(firm_directory)
+
+        if (len(listing) != self.static_parameters["num_firms"]):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_firms (=%s)",
+                          firm_directory,  str(len(listing)), str(self.num_firms))
+
+        for infile in listing:
+            xmlText = open(firm_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            firm = self.get_agent_by_id(identifier)
+            firm.get_transactions_from_file(firm_directory + infile, self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_transactions_for_households
+    # reads transactions for households from the config files
+    # -------------------------------------------------------------------------
+    def read_transactions_for_households(self,  household_directory):
+        from xml.etree import ElementTree
+
+        listing = os.listdir(household_directory)
+
+        if (len(listing) != self.static_parameters["num_households"]):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
+                          household_directory,  str(len(listing)), str(self.num_households))
+
+        for infile in listing:
+            xmlText = open(household_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            household = self.get_agent_by_id(identifier)
+            household.get_transactions_from_file(household_directory + infile, self)
     # -------------------------------------------------------------------------
