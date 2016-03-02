@@ -20,8 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from src.updater import Updater
-from src.shock import Shock
+from src.updater_simple import Updater
 from abm_template.src.baserunner import BaseRunner
 
 # -------------------------------------------------------------------------
@@ -87,20 +86,18 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
     def initialize(self,  environment):
         self.identifier = environment.identifier
-        self.num_simulations = environment.num_simulations
-        self.updater = Updater(self.environment)
-        # self.shocker = Shock()
+        self.num_sweeps = int(environment.num_sweeps)
+        self.updater = Updater(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_run
     # -------------------------------------------------------------------------
-    def do_run(self, measurement, debug):
+    def do_run(self, environment):
         # loop over all time steps and do the updating
-        for i in range(self.num_simulations):
+        for i in range(self.num_sweeps):
             # the update step
-            self.updater.do_update(self.environment, i, debug)
-
-            # do the measurement
-            # measurement.do_measurement(self.environment.banks)
+            self.updater.do_update(environment, i)
+            print("Bank 1 deposit value on time %s equals " % i + str(environment.banks[0].accounts[0].amount))
+            print("Bank 2 deposit value on time %s equals " % i + str(environment.banks[1].accounts[0].amount))
     # ------------------------------------------------------------------------

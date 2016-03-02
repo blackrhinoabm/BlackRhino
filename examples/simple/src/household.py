@@ -25,29 +25,29 @@ from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
 #
-# class Bank
+# class Household
 #
 # ============================================================================
 
 
-class Bank(BaseAgent):
+class Household(BaseAgent):
     #
     #
     # VARIABLES
     #
     #
-    identifier = ""  # identifier of the specific bank
-    parameters = {}  # parameters of the specific bank
-    state_variables = {}  # state variables of the specific bank
-    accounts = []  # all accounts of a bank (filled with transactions)
+    identifier = ""  # identifier of the specific household
+    parameters = {}  # parameters of the specific household
+    state_variables = {}  # state variables of the specific household
+    accounts = []  # all accounts of a household (filled with transactions)
     # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
     # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
     # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
     # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
     # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
     # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
-    parameters["interest_rate_loans"] = 0.0  # interest rate on loans
-    parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
+    parameters["labour"] = 0.0  # labour to sell every step (labour endowment)
+    parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
     parameters["active"] = 0  # this is a control parameter checking whether bank is active
 
     #
@@ -66,29 +66,28 @@ class Bank(BaseAgent):
         return self.identifier
 
     def set_identifier(self, value):
-        super(Bank, self).set_identifier(value)
+        super(Household, self).set_identifier(value)
 
     def get_parameters(self):
         return self.parameters
 
     def set_parameters(self, value):
-        super(Bank, self).set_parameters(value)
+        super(Household, self).set_parameters(value)
 
     def get_state_variables(self):
         return self.state_variables
 
     def set_state_variables(self, value):
-        super(Bank, self).set_state_variables(value)
+        super(Household, self).set_state_variables(value)
 
     def append_parameters(self, value):
-        super(Bank, self).append_parameters(value)
+        super(Household, self).append_parameters(value)
 
     def append_state_variables(self, value):
-        super(Bank, self).append_state_variables(value)
-    # -------------------------------------------------------------------------
+        super(Household, self).append_state_variables(value)
 
     # -------------------------------------------------------------------------
-    # functions needed to make Bank() hashable
+    # functions needed to make Household() hashable
     # -------------------------------------------------------------------------
     def __key__(self):
         return self.identifier
@@ -104,7 +103,7 @@ class Bank(BaseAgent):
     # __init__
     # -------------------------------------------------------------------------
     def __init__(self):
-        self.accounts = []  # clear transactions when bank is initialized
+        self.accounts = []  # clear transactions when household is initialized
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -116,18 +115,18 @@ class Bank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # __str__
-    # returns a string describing the bank and its properties
+    # returns a string describing the household and its properties
     # based on the implementation in the abstract class BaseAgent
-    # but adds the type of agent (bank) and lists all transactions
+    # but adds the type of agent (household) and lists all transactions
     # -------------------------------------------------------------------------
     def __str__(self):
-        bank_string = super(Bank, self).__str__()
-        bank_string = bank_string.replace("\n", "\n    <type value='bank'>\n", 1)
+        household_string = super(Household, self).__str__()
+        household_string = household_string.replace("\n", "\n    <type value='household'>\n", 1)
         text = "\n"
         for transaction in self.accounts:
             text += transaction.write_transaction()
         text += "  </agent>"
-        return bank_string.replace("\n  </agent>", text, 1)
+        return household_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -135,24 +134,33 @@ class Bank(BaseAgent):
     # reads the specified config file given the environment
     # and sets parameters to the ones found in the config file
     # the config file should be an xml file that looks like the below:
-    # <bank identifier='string'>
+    # <household identifier='string'>
     #     <parameter name='string' value='string'></parameter>
-    # </bank>
+    # </household>
     # -------------------------------------------------------------------------
-    def get_parameters_from_file(self,  bank_filename, environment):
-        super(Bank, self).get_parameters_from_file(bank_filename, environment)
+    def get_parameters_from_file(self,  household_filename, environment):
+        super(Household, self).get_parameters_from_file(household_filename, environment)
     # ------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_new_savings
+    # placeholder for a function determining savings size of a household
+    # -------------------------------------------------------------------------
+    def get_new_savings(self, low, high):
+        pass
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # check_consistency
     # checks whether the assets and liabilities have the same total value
     # the types of transactions that make up assets and liabilities is
     # controlled by the lists below
+    # NOT IMPLEMENTED FOR HOUSEHOLD YET, NEED TO FILL assets & liabilities
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        assets = ["loans", "cash"]
-        liabilities = ["deposits"]
-        return super(Bank, self).check_consistency(assets, liabilities)
+        assets = []
+        liabilities = []
+        return super(Household, self).check_consistency(assets, liabilities)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -160,7 +168,7 @@ class Bank(BaseAgent):
     # returns the value of all transactions of a given type
     # -------------------------------------------------------------------------
     def get_account(self,  type_):
-        return super(Bank, self).get_account(type_)
+        return super(Household, self).get_account(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -168,7 +176,7 @@ class Bank(BaseAgent):
     # returns the number of transactions of a given type
     # -------------------------------------------------------------------------
     def get_account_num_transactions(self,  type_):
-        return super(Bank, self).get_account_num_transactions(type_)
+        return super(Household, self).get_account_num_transactions(type_)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -184,10 +192,10 @@ class Bank(BaseAgent):
     #   maturity        - time (in steps) to maturity
     #   time_of_default - control variable checking for defaulted transactions
     # -------------------------------------------------------------------------
-    def add_transaction(self, type_, asset,  from_id,  to_id,  amount,  interest,  maturity, time_of_default):
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.this_transaction(type_, asset, from_id, to_id, amount, interest, maturity, time_of_default)
         self.accounts.append(transaction)
         del transaction  # append() above does make a copy so we may delete for garbage collection
     # -------------------------------------------------------------------------
@@ -197,7 +205,7 @@ class Bank(BaseAgent):
     # removes all transactions from bank's accounts
     # -------------------------------------------------------------------------
     def clear_accounts(self):
-        super(Bank, self).clear_accounts()
+        super(Household, self).clear_accounts()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -205,23 +213,24 @@ class Bank(BaseAgent):
     # removes worthless transactions from bank's accounts
     # -------------------------------------------------------------------------
     def purge_accounts(self):
-        super(Bank, self).purge_accounts()
+        super(Household, self).purge_accounts()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # get_transactions_from_file
-    # reads transactions from the config file to the bank's accounts
+    # reads transactions from the config file to the household's accounts
     # -------------------------------------------------------------------------
     def get_transactions_from_file(self, filename, environment):
-        super(Bank, self).get_transactions_from_file(filename, environment)
+        super(Household, self).get_transactions_from_file(filename, environment)
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
     # __getattr__
     # if the attribute isn't found by Python we tell Python
     # to look for it first in parameters and then in state variables
-    # which allows for directly fetching parameters from the Bank
-    # i.e. bank.active instead of a bit more bulky
-    # bank.parameters["active"]
+    # which allows for directly fetching parameters from the Household
+    # i.e. household.active instead of a bit more bulky
+    # household.parameters["active"]
     # makes sure we don't have it in both containers, which
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
@@ -235,5 +244,5 @@ class Bank(BaseAgent):
                 try:
                     return self.state_variables[attr]
                 except:
-                    raise AttributeError('Bank has no attribute "%s".' % attr)
+                    raise AttributeError('Household has no attribute "%s".' % attr)
     # -------------------------------------------------------------------------

@@ -1,0 +1,5 @@
+<bank identifier='bank_test_config_id'>
+	<parameter type='static' name='interest_rate_loans' value='0.06'></parameter>
+    <parameter type='static' name='interest_rate_deposits' value='0.02'></parameter>
+    <transaction type='deposits' asset='' from='bank_test_config_id' to='household_test_config_id' amount='30' interest='0.02' maturity='0' time_of_default='-1'></transaction>
+</bank>

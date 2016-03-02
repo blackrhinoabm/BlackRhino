@@ -56,6 +56,8 @@ if __name__ == '__main__':
     test.bank__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.bank__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.bank__initialize_standard_bank(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.bank__get_transactions_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.bank__getattr(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Firm
     test.firm__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -72,6 +74,8 @@ if __name__ == '__main__':
     test.firm__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.firm__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.firm__initialize_standard_firm(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.firm__get_transactions_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.firm__getattr(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Household
     test.household__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -88,6 +92,8 @@ if __name__ == '__main__':
     test.household__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.household__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.household__initialize_standard_household(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.household__get_transactions_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.household__getattr(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Environment
     test.environment__add_static_parameter(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -106,3 +112,7 @@ if __name__ == '__main__':
     test.environment__initialize_banks_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
     test.environment__initialize_firms_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
     test.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.environment__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.environment__read_transactions_for_banks(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.environment__read_transactions_for_firms(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])

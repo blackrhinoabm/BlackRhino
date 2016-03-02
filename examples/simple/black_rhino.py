@@ -35,9 +35,9 @@ if __name__ == '__main__':
     import logging
 
     from src.environment import Environment
-    from src.runner_simple import Runner
+    from src.runner import Runner
 
-    args = ['./black_rhino.py',  "tests/environments/", "test_all_methods",  "tests/log/"]
+    args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
     # args = sys.argv
 
     if len(args) != 4:

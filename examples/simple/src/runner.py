@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from src.updater_simple import Updater
+from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
 
 # -------------------------------------------------------------------------
@@ -86,7 +86,7 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
     def initialize(self,  environment):
         self.identifier = environment.identifier
-        self.num_simulations = int(environment.num_simulations)
+        self.num_sweeps = int(environment.num_sweeps)
         self.updater = Updater(environment)
     # -------------------------------------------------------------------------
 
@@ -95,8 +95,17 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
     def do_run(self, environment):
         # loop over all time steps and do the updating
-        for i in range(self.num_simulations):
+        for i in range(self.num_sweeps):
             # the update step
             self.updater.do_update(environment, i)
-        print(environment.banks)
+            print("Sweep number %s" % str(i+1))
+            for bank in environment.banks:
+                print(banks)
+            print("Bank objects:")
+            print(environment.banks)
+            print("Firm objects:")
+            print(environment.firms)
+            print("Household objects:")
+            print(environment.households)
+
     # ------------------------------------------------------------------------

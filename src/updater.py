@@ -86,64 +86,69 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def __init__(self,  environment):
         self.environment = environment
-        self.model_parameters = environment.static_parameters
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_update
     # -------------------------------------------------------------------------
-    def do_update(self,  environment,  time,  debug):
-        network = environment.network
-        # state = environment.get_state(time)
-
-        active_banks = self.find_active_banks(environment,  network,  time)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # do_update_phase1
-    # -------------------------------------------------------------------------
-    def do_update_phase1(self,  environment,   active_banks,  time,  debug):
-        self.agents = environment.banks
-
-        #
-        # loop over all banks and do update step
-        #
-        for bank in active_banks:
-            # first, update all maturities
-            bank.update_maturity()
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # do_update_phase2
-    # -------------------------------------------------------------------------
-    def do_update_phase2(self,  environment,  active_banks,  time,  debug):
-        for bank in active_banks:
-            # next, determine new deposit level
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # do_update_phase3
-    # -------------------------------------------------------------------------
-    def do_update_phase3(self,  environment,  active_banks,  time,  debug):
-        current_assets = 0.0  # the volume of all assets in the market, required to determine the price-drop of assets in a fire sale
-        for bank in active_banks:  # find the current amount of assets in the market
-    # -------------------------------------------------------------------------
-
-#
-# HELPER ROUTINES
-#
-
-    # -------------------------------------------------------------------------
-    # find_active_banks()
-    # -------------------------------------------------------------------------
-    def find_active_banks(self,  environment,  network,  time):
-        active_banks = []
-
+    def do_update(self,  environment,  time):
+        # accruing interest on all deposits for banks
         for bank in environment.banks:
-            if bank.parameters["active"] > -1:
-                active_banks.append(bank)
-            else:
-                network.remove_inactive_bank(bank,  time)
+            for tranx in bank.accounts:
+                if tranx.type_ == "deposits":
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
 
-        return active_banks
+        # accruing interest on all deposits for firms
+        for firm in environment.firms:
+            for tranx in firm.accounts:
+                if tranx.type_ == "deposits":
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+
+        # accruing interest on all deposits for households
+        for household in environment.households:
+            for tranx in household.accounts:
+                if tranx.type_ == "deposits":
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # accrue_interests
+    # -------------------------------------------------------------------------
+    def accrue_interests(self,  environment):
+        pass
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # endow_labour
+    # -------------------------------------------------------------------------
+    def endow_labour(self,  environment):
+        pass
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # sell_labour
+    # -------------------------------------------------------------------------
+    def sell_labour(self,  environment):
+        pass
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # produce
+    # -------------------------------------------------------------------------
+    def produce(self,  environment):
+        pass
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # consume
+    # -------------------------------------------------------------------------
+    def consume(self,  environment):
+        pass
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # push_savings
+    # -------------------------------------------------------------------------
+    def push_savings(self,  environment):
+        pass
     # -------------------------------------------------------------------------

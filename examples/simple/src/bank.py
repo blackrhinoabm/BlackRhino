@@ -45,7 +45,7 @@ class Bank(BaseAgent):
     # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
     # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
     # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
-    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
+    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED 
     parameters["interest_rate_loans"] = 0.0  # interest rate on loans
     parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
     parameters["active"] = 0  # this is a control parameter checking whether bank is active

@@ -463,12 +463,3 @@ class Environment(BaseConfig):
             # then we read the transactions from the config to the appropriate firm
             household.get_transactions_from_file(household_directory + infile, self)
     # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # check_global_transaction_balance
-    # checks if transaction type (ie 'deposits') balances out globally
-    # -------------------------------------------------------------------------
-    def check_global_transaction_balance(self, transaction):
-        # make a list or dictionary with agents and sums of values
-        # with + when 'to' or - when 'from_' then check if all goes to 0
-        pass

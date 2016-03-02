@@ -92,16 +92,19 @@ class Updater(BaseModel):
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self,  environment,  time):
+        # accruing interest on all deposits for banks
         for bank in environment.banks:
             for tranx in bank.accounts:
                 if tranx.type_ == "deposits":
                     tranx.amount = tranx.amount + tranx.amount * tranx.interest
 
+        # accruing interest on all deposits for firms
         for firm in environment.firms:
             for tranx in firm.accounts:
                 if tranx.type_ == "deposits":
                     tranx.amount = tranx.amount + tranx.amount * tranx.interest
 
+        # accruing interest on all deposits for households
         for household in environment.households:
             for tranx in household.accounts:
                 if tranx.type_ == "deposits":

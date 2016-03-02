@@ -1082,6 +1082,128 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # bank__get_transactions_from_file
+    # -------------------------------------------------------------------------
+
+    def bank__get_transactions_from_file(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.get_transactions_from_file \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__get_transactions_from_file in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+
+        #
+        # TESTING
+        #
+
+        print("Printing bank: \n")
+        print(bank)
+        print("Reading transactions from the config file.\n")
+        print("Printing bank: \n")
+        bank.get_transactions_from_file(bank_directory + listing[0], environment)
+        print(bank)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # bank__getattr
+    # -------------------------------------------------------------------------
+
+    def bank__getattr(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks bank.getattr \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test bank__getattr in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        #
+        # TESTING
+        #
+
+        print('Accessing rates through bank.parameters["interest_rate_loans"] :')
+        print(bank.parameters["interest_rate_loans"])
+        print("Accessing rates through bank.interest_rate_loans:")
+        print(bank.interest_rate_loans)
+
+    # -------------------------------------------------------------------------
+
 # -------------------------------------------------------------------------
 #  TESTS FOR FIRM.PY
 # -------------------------------------------------------------------------
@@ -2046,6 +2168,128 @@ class Tests(object):
         #
 
         print(firm)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # firm__get_transactions_from_file
+    # -------------------------------------------------------------------------
+
+    def firm__get_transactions_from_file(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks firm.get_transactions_from_file \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__get_transactions_from_file in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct firm filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the firm_directory from the environment
+        firm_directory = environment.firm_directory
+        # and loop over all firms in the directory
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+
+        #
+        # TESTING
+        #
+
+        print("Printing firm:\n")
+        print(firm)
+        print("Reading transactions from the config file.\n")
+        print("Printing firm: \n")
+        firm.get_transactions_from_file(firm_directory + listing[0], environment)
+        print(firm)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # firm__getattr
+    # -------------------------------------------------------------------------
+
+    def firm__getattr(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks firm.getattr \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test firm__getattr in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct firm filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the firm_directory from the environment
+        firm_directory = environment.firm_directory
+        # and loop over all firms in the directory
+        listing = os.listdir(firm_directory)
+        firmFilename = firm_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        helper = Helper()
+        helper.initialize_standard_firm(firm, environment)
+
+        #
+        # TESTING
+        #
+
+        print('Accessing rates through bank.parameters["productivity"] :')
+        print(firm.parameters["productivity"])
+        print("Accessing rates through bank.productivity:")
+        print(firm.productivity)
 
     # -------------------------------------------------------------------------
 
@@ -3015,6 +3259,128 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # household__get_transactions_from_file
+    # -------------------------------------------------------------------------
+
+    def household__get_transactions_from_file(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks household.get_transactions_from_file \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__get_transactions_from_file in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the firm_directory from the environment
+        household_directory = environment.household_directory
+        # and loop over all firms in the directory
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+
+        #
+        # TESTING
+        #
+
+        print("Printing household:\n")
+        print(household)
+        print("Reading transactions from the config file.\n")
+        print("Printing household: \n")
+        household.get_transactions_from_file(household_directory + listing[0], environment)
+        print(household)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # household__getattr
+    # -------------------------------------------------------------------------
+
+    def household__getattr(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the bankDirectory
+
+        text = "This test checks household.getattr \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test household__getattr in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the firm_directory from the environment
+        household_directory = environment.household_directory
+        # and loop over all firms in the directory
+        listing = os.listdir(household_directory)
+        householdFilename = household_directory + listing[0]
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        helper = Helper()
+        helper.initialize_standard_household(household, environment)
+
+        #
+        # TESTING
+        #
+
+        print('Accessing rates through bank.parameters["propensity_to_save"] :')
+        print(household.parameters["propensity_to_save"])
+        print("Accessing rates through bank.propensity_to_save:")
+        print(household.propensity_to_save)
+
+    # -------------------------------------------------------------------------
+
 # -------------------------------------------------------------------------
 #  TESTS FOR ENVIRONMENT.PY
 # -------------------------------------------------------------------------
@@ -3665,6 +4031,169 @@ class Tests(object):
         print("The households read: ")
         for i in range(0, int(environment.num_households)):
             print(environment.households[i].__str__())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__get_agent_by_id
+    # -------------------------------------------------------------------------
+
+    def environment__get_agent_by_id(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_agent_by_id \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_agent_by_id in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Getting a bank with id: bank_test_config_id")
+        print(environment.get_agent_by_id("bank_test_config_id"))
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__read_transactions_for_banks
+    # -------------------------------------------------------------------------
+
+    def environment__read_transactions_for_banks(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.read_transactions_for_banks \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_transactions_for_banks in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Clearing accounts of the bank:")
+        environment.banks[0].clear_accounts()  # let's use the first bank
+        print(environment.banks[0])
+        print("Reading transactions: ")
+        environment.read_transactions_for_banks(environment.bank_directory)
+        print(environment.banks[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__read_transactions_for_firms
+    # -------------------------------------------------------------------------
+
+    def environment__read_transactions_for_firms(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.read_transactions_for_firms \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_transactions_for_firms in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Clearing accounts of the firm:")
+        environment.firms[0].clear_accounts()  # let's use the first bank
+        print(environment.firms[0])
+        print("Reading transactions: ")
+        environment.read_transactions_for_firms(environment.firm_directory)
+        print(environment.firms[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__read_transactions_for_households
+    # -------------------------------------------------------------------------
+
+    def environment__read_transactions_for_households(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.read_transactions_for_households \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_transactions_for_households in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Clearing accounts of the household:")
+        environment.households[0].clear_accounts()  # let's use the first bank
+        print(environment.households[0])
+        print("Reading transactions: ")
+        environment.read_transactions_for_households(environment.household_directory)
+        print(environment.households[0])
 
     # -------------------------------------------------------------------------
 
