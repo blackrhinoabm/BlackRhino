@@ -100,7 +100,7 @@ class Runner(BaseRunner):
             self.updater.do_update(environment, i)
             print("Sweep number %s" % str(i+1))
             for bank in environment.banks:
-                print(banks)
+                print(bank)
             print("Bank objects:")
             print(environment.banks)
             print("Firm objects:")
