@@ -467,8 +467,129 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
     # check_global_transaction_balance
     # checks if transaction type (ie 'deposits') balances out globally
+    # I suppose this should presumably be used in the Updater after every
+    # step to ensure consistency, along with appropriately using the
+    # check_consistency function, and appropriately synchronising the update
+    # itself
     # -------------------------------------------------------------------------
-    def check_global_transaction_balance(self, transaction):
-        # make a list or dictionary with agents and sums of values
-        # with + when 'to' or - when 'from_' then check if all goes to 0
-        pass
+    def check_global_transaction_balance(self, type_):
+        sum_lists = 0  # global sum, for checking the consistency numerically
+        # We check all the banks first
+        for bank in self.banks:
+            # Dictionaries to keep all the incoming and outgoing transactions of the bank
+            tranx_list_from = {}
+            tranx_list_to = {}
+            # We populate the above with the amounts
+            for tranx in bank.accounts:
+                if tranx.type_ == type_:
+                    if tranx.from_ == bank:
+                        if tranx.to in tranx_list_to:
+                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
+                        else:
+                            tranx_list_to[tranx.to] = tranx.amount
+                    else:
+                        if tranx.from_ in tranx_list_from:
+                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
+                        else:
+                            tranx_list_from[tranx.from_] = tranx.amount
+            # And we check if the added transactions exist in the counterparty's books
+            # If they do we subtract the amount from the dictionaries
+            # So that we can check if the dictionaries go to 0 globally
+            for key in tranx_list_from:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.from_ == key:
+                            if tranx.to == bank:
+                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
+            for key in tranx_list_to:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.to == key:
+                            if tranx.from_ == bank:
+                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
+            # Then we add the dictionary entries to the global check variable
+            for key in tranx_list_from:
+                sum_lists += abs(tranx_list_from[key])
+            for key in tranx_list_to:
+                sum_lists += abs(tranx_list_to[key])
+        # We check all the firms then
+        for firm in self.firms:
+            # Dictionaries to keep all the incoming and outgoing transactions of the bank
+            tranx_list_from = {}
+            tranx_list_to = {}
+            # We populate the above with the amounts
+            for tranx in firm.accounts:
+                if tranx.type_ == type_:
+                    if tranx.from_ == firm:
+                        if tranx.to in tranx_list_to:
+                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
+                        else:
+                            tranx_list_to[tranx.to] = tranx.amount
+                    else:
+                        if tranx.from_ in tranx_list_from:
+                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
+                        else:
+                            tranx_list_from[tranx.from_] = tranx.amount
+            # And we check if the added transactions exist in the counterparty's books
+            # If they do we subtract the amount from the dictionaries
+            # So that we can check if the dictionaries go to 0 globally
+            for key in tranx_list_from:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.from_ == key:
+                            if tranx.to == firm:
+                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
+            for key in tranx_list_to:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.to == key:
+                            if tranx.from_ == firm:
+                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
+            # Then we add the dictionary entries to the global check variable
+            for key in tranx_list_from:
+                sum_lists += abs(tranx_list_from[key])
+            for key in tranx_list_to:
+                sum_lists += abs(tranx_list_to[key])
+        # We check all the household finally
+        for household in self.households:
+            # Dictionaries to keep all the incoming and outgoing transactions of the bank
+            tranx_list_from = {}
+            tranx_list_to = {}
+            # We populate the above with the amounts
+            for tranx in household.accounts:
+                if tranx.type_ == type_:
+                    if tranx.from_ == household:
+                        if tranx.to in tranx_list_to:
+                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
+                        else:
+                            tranx_list_to[tranx.to] = tranx.amount
+                    else:
+                        if tranx.from_ in tranx_list_from:
+                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
+                        else:
+                            tranx_list_from[tranx.from_] = tranx.amount
+            # And we check if the added transactions exist in the counterparty's books
+            # If they do we subtract the amount from the dictionaries
+            # So that we can check if the dictionaries go to 0 globally
+            for key in tranx_list_from:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.from_ == key:
+                            if tranx.to == household:
+                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
+            for key in tranx_list_to:
+                for tranx in key.accounts:
+                    if tranx.type_ == type_:
+                        if tranx.to == key:
+                            if tranx.from_ == household:
+                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
+            # Then we add the dictionary entries to the global check variable
+            for key in tranx_list_from:
+                sum_lists += abs(tranx_list_from[key])
+            for key in tranx_list_to:
+                sum_lists += abs(tranx_list_to[key])
+        # We make the final check and return True if consistent, otherwise return False
+        if sum_lists == 0:
+            return True
+        else:
+            return False
