@@ -92,37 +92,54 @@ class Updater(BaseModel):
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self,  environment,  time):
-        # accruing interest on all deposits for banks
-        for bank in environment.banks:
-            for tranx in bank.accounts:
-                if tranx.type_ == "deposits":
-                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
-
-        # accruing interest on all deposits for firms
-        for firm in environment.firms:
-            for tranx in firm.accounts:
-                if tranx.type_ == "deposits":
-                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
-
-        # accruing interest on all deposits for households
-        for household in environment.households:
-            for tranx in household.accounts:
-                if tranx.type_ == "deposits":
-                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+        self.accrue_interests(environment)
+        self.endow_labour(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # accrue_interests
     # -------------------------------------------------------------------------
     def accrue_interests(self,  environment):
-        pass
+        # accruing interest on all transactions for banks
+        for bank in environment.banks:
+            for tranx in bank.accounts:
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+
+        # accruing interest on all transactions for firms
+        for firm in environment.firms:
+            for tranx in firm.accounts:
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+
+        # accruing interest on all transactions for households
+        for household in environment.households:
+            for tranx in household.accounts:
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # endow_labour
     # -------------------------------------------------------------------------
     def endow_labour(self,  environment):
-        pass
+        # we make sure household get their labour endowment per step
+        for household in environment.households:
+            # First, we set a control variable that makes sure we have exactly
+            # one transaction with "manhours"
+            check = 0
+            for tranx in household.accounts:
+                if tranx.type_ == "manhours":
+                    if check == 0:
+                        # If this is the first appropriate transaction found we fix the amount to the parameter
+                        tranx.amount == household.labour
+                        check += 1
+                    else:
+                        # If we have more than one "mahhours" transaction we raise an error
+                        raise LookupError("Too many labour transactions for a household.")
+            # If there are no "manhours" transactions then we create one and add it to the household's accounts
+            if check == 0:
+                amount = household.labour
+                transaction = Transaction()
+                transaction.this_transaction("manhours", "", household.identifier, household.identifier, amount, 0,  0, -1)
+                household.accounts.append(transaction)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -143,7 +160,36 @@ class Updater(BaseModel):
     # consume
     # -------------------------------------------------------------------------
     def consume(self,  environment):
-        pass
+        for household in environment.households:
+            wealth = 0.0  # total of deposits and cash available for the household
+            cash = 0.0  # total of cash available for the household
+            # We calculate the above
+            for tranx in household.accounts:
+                if tranx.type_ == "deposits" or tranx.type_ == "cash":
+                    wealth += tranx.amount
+                if tranx.type_ == "cash":
+                    cash += tranx.amount
+            # We consume the percentage of wealth of, cash first
+            to_consume = wealth * (1 - household.propensity_to_save)
+            # Consume here: firms sell goods,
+            # We randomise the order of firms
+            # TODO: randomise the households selling too above
+            itrange = list(range(0, environment.num_firms))
+            random.shuffle(itrange)
+            # For each firm in random order
+            for i in itrange:
+                for tranx in environment.firms[i].accounts:
+                    if tranx.type_ == "goods":
+                        for tranx_h in household.accounts:
+                            if tranx_h == "cash":
+                                amount_proxy = min(tranx.amount, to_consume)
+                                tranx_h.amount += amount_proxy
+                        to_consume -= amount_proxy
+                        tranx.amount -= amount_proxy
+        for household in environment.households:
+            household.purge_acconts()
+        for firm in environment.firms:
+            firm.purge_acconts()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

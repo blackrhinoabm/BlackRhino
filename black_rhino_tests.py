@@ -116,3 +116,4 @@ if __name__ == '__main__':
     test.environment__read_transactions_for_banks(["tests/environments/", "test_all_methods", "tests/log/"])
     test.environment__read_transactions_for_firms(["tests/environments/", "test_all_methods", "tests/log/"])
     test.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.environment__check_global_transaction_balance(["tests/environments/", "test_all_methods", "tests/log/"])
