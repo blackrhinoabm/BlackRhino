@@ -21,6 +21,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from abm_template.src.basemodel import BaseModel
+import random
+from src.transaction import Transaction
 
 # -------------------------------------------------------------------------
 #  class Updater
@@ -146,7 +148,8 @@ class Updater(BaseModel):
     # sell_labour
     # -------------------------------------------------------------------------
     def sell_labour(self,  environment):
-        pass
+        for firm in environment.firms:
+            pass
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -196,5 +199,25 @@ class Updater(BaseModel):
     # push_savings
     # -------------------------------------------------------------------------
     def push_savings(self,  environment):
-        pass
+        for household in environment.households:
+            cash = 0.0  # total of cash available for the household
+            control_deposits = 0  # checking if the household already has a deposit
+            # We calculate the available cash
+            for tranx in household.accounts:
+                if tranx.type_ == "cash":
+                    cash += tranx.amount
+                    tranx.amount = 0
+            # And move all available cash to deposits at the end of the step
+            for tranx in household.accounts:
+                # If we already have a deposit in one of the banks we add the cash there
+                if tranx.type_ == "deposits":
+                    tranx.amount += cash
+                    control_deposits += 1
+                # If there are no prior deposits we choose a random bank and make a deposit there
+                if control_deposits == 0:
+                    random_bank = random.choice(environment.banks)
+                    transaction = Transaction()
+                    transaction.this_transaction("deposits", "",  household.identifier, random_bank,
+                                     amount, random_bank.interest_rate_deposits,  0, -1)
+                    household.accounts.append(transaction)
     # -------------------------------------------------------------------------

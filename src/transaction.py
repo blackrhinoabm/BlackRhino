@@ -30,12 +30,13 @@ from abm_template.src.basetransaction import BaseTransaction
 
 
 class Transaction(BaseTransaction):
-    #
-    #
+    
+#    #
     # VARIABLES
     #
     #
 
+    identifier = None  # unique identifier of the transaction, may be useful for iterators
     type_ = ""  # type of transactions, e.g. "deposit"
     asset = ""  # type of asset, used for investment types
     from_ = 0  # agent being the originator of the transaction
@@ -55,10 +56,26 @@ class Transaction(BaseTransaction):
 
     # -------------------------------------------------------------------------
     # __init__
+    # Generate a unique identifier of the transaction
+    # This may be useful for looping over various agent's accounts
     # -------------------------------------------------------------------------
     def __init__(self):
-        pass
+        import uuid
+        self.identifier = uuid.uuid4()
     # ------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # __del__()
+    # removes the transaction from appropriate accounts and deletes the instance
+    # -------------------------------------------------------------------------
+    def __del__(self):
+        if self.from_ == self.to:
+            self.from_.accounts.remove(self)
+        else:
+            self.from_.accounts.remove(self)
+            self.to.accounts.remove(self)
+        del self
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # functions for setting/changing variables
@@ -129,6 +146,24 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # add_transaction
+    # adds the transaction to appropriate agents' accounts
+    # THIS NEEDS TO BE THOUGHT THROUGH PROPERLY
+    # in particular __del__ may be tricky and needs testing
+    # clear and purge accounts probably need to be redesigned to go to transaction
+    # changing should work perfectly well though
+    # BUT we need to make sure we don't do it twice when we iterate over
+    # transactions in the accounts of agents (this may be tricky)
+    # -------------------------------------------------------------------------
+    def add_transaction(self):
+        if self.from_ == self.to:
+            self.from_.accounts.append(self)
+        else:
+            self.from_.accounts.append(self)
+            self.to.accounts.append(self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # print_transaction()
     # prints the transaction and its properties
     # -------------------------------------------------------------------------
@@ -143,3 +178,56 @@ class Transaction(BaseTransaction):
     def write_transaction(self):
         return super(Transaction, self).write_transaction()
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # clear_accounts()
+    # deletes all transactions of a given agent
+    # this should be used very sparingly, as this does not account
+    # for the economics of the process
+    # TODO: maybe change to __del__() on all of them
+    # -------------------------------------------------------------------------
+    def clear_accounts(self, agent, environement):
+        list_of_deleted_transactions = []
+        for tranx in agent.accounts:
+            list_of_deleted_transactions.append(tranx.identifier)
+        agent.accounts = []
+        for bank in environement.banks:
+            for tranx in bank.accounts:
+                if tranx.identifier in list_of_deleted_transactions:
+                    tranx.__del__()
+        for firm in environement.firms:
+            for tranx in firm.accounts:
+                if tranx.identifier in list_of_deleted_transactions:
+                    tranx.__del__()
+        for household in environement.households:
+            for tranx in household.accounts:
+                if tranx.identifier in list_of_deleted_transactions:
+                    tranx.__del__()
+    # a standard function deleting all transactions of the agent
+
+    def purge_accounts(self, environement):
+        for bank in environement.banks:
+            new_accounts = []
+
+            for transaction in bank.accounts:
+                if transaction.amount > 0.0:
+                    new_accounts.append(transaction)
+
+            bank.accounts = new_accounts
+        for firm in environement.firms:
+            new_accounts = []
+
+            for transaction in firm.accounts:
+                if transaction.amount > 0.0:
+                    new_accounts.append(transaction)
+
+            firm.accounts = new_accounts
+        for household in environement.households:
+            new_accounts = []
+
+            for transaction in household.accounts:
+                if transaction.amount > 0.0:
+                    new_accounts.append(transaction)
+
+            household.accounts = new_accounts
+    # a standard function deleting all worthless transactions of the agents
