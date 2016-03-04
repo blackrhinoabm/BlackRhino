@@ -148,7 +148,12 @@ class Updater(BaseModel):
     # sell_labour
     # -------------------------------------------------------------------------
     def sell_labour(self,  environment):
-        for firm in environment.firms:
+        # find the cash available through loans in the system
+        for firm in environment.firms:  #TODO: make this iterate randomly
+            # find the available cash of the firm
+            # find the collateral value for loans
+            # go through households and buy all the labour firm can afford
+            # 
             pass
     # -------------------------------------------------------------------------
 
