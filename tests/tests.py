@@ -4245,6 +4245,907 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------
+#  TESTS FOR TRANSACTION.PY
+# -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__init
+    # -------------------------------------------------------------------------
+
+    def transaction__init(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.init \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__init in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction \n")
+        transaction = Transaction()
+        print("Transaction ID: ")
+        print(transaction.identifier)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__del
+    # -------------------------------------------------------------------------
+
+    def transaction__del(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.del \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__del in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        print("Transaction exists? ")
+        print("transaction" in locals())
+        print("Deleting the transaction")
+        del transaction
+        print("Transaction exists? ")
+        print("transaction" in locals())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_type_
+    # -------------------------------------------------------------------------
+
+    def transaction__get_type_(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_type_ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_type_ in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.type_ = "test_type"
+        print("Type: ")
+        print(transaction.get_type_())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_type_
+    # -------------------------------------------------------------------------
+
+    def transaction__set_type_(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_type_ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_type_ in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.type_ = "test_type"
+        print("Type: ")
+        print(transaction.get_type_())
+        print("Setting type")
+        transaction.set_type_("new_type")
+        print("Type: ")
+        print(transaction.get_type_())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_asset
+    # -------------------------------------------------------------------------
+
+    def transaction__get_asset(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_asset \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_asset in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.asset = "test_asset"
+        print("Asset: ")
+        print(transaction.get_asset())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_asset
+    # -------------------------------------------------------------------------
+
+    def transaction__set_asset(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_asset \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_asset in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.asset = "test_asset"
+        print("Asset: ")
+        print(transaction.get_asset())
+        print("Setting asset")
+        transaction.set_asset("new_asset")
+        print("Asset: ")
+        print(transaction.get_asset())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_from_
+    # -------------------------------------------------------------------------
+
+    def transaction__get_from_(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_from_ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_from_ in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.from_ = "test_from"
+        print("From: ")
+        print(transaction.get_from_())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_from_
+    # -------------------------------------------------------------------------
+
+    def transaction__set_from_(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_from_ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_from_ in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.from_ = "test_from"
+        print("From: ")
+        print(transaction.get_from_())
+        print("Setting from")
+        transaction.set_from_("new_from")
+        print("From: ")
+        print(transaction.get_from_())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_to
+    # -------------------------------------------------------------------------
+
+    def transaction__get_to(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_to \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_to in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.to = "test_to"
+        print("To: ")
+        print(transaction.get_to())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_to
+    # -------------------------------------------------------------------------
+
+    def transaction__set_to(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_to \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_to in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.to = "test_to"
+        print("To: ")
+        print(transaction.get_to())
+        print("Setting to")
+        transaction.set_to("new_to")
+        print("To: ")
+        print(transaction.get_to())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_amount
+    # -------------------------------------------------------------------------
+
+    def transaction__get_amount(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_amount \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_amount in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.amount = 15.0
+        print("Amount: ")
+        print(transaction.get_amount())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_amount
+    # -------------------------------------------------------------------------
+
+    def transaction__set_amount(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_amount \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_amount in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.amount = 15.0
+        print("Amount: ")
+        print(transaction.get_amount())
+        print("Setting amount")
+        transaction.set_amount(25.0)
+        print("Amount: ")
+        print(transaction.get_amount())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_interest
+    # -------------------------------------------------------------------------
+
+    def transaction__get_interest(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_interest \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_interest in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.interest = 0.01
+        print("Interest: ")
+        print(transaction.get_interest())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_amount
+    # -------------------------------------------------------------------------
+
+    def transaction__set_interest(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_interest \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_interest in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.interest = 0.01
+        print("Interest: ")
+        print(transaction.get_interest())
+        print("Setting interest")
+        transaction.set_interest(0.02)
+        print("Interest: ")
+        print(transaction.get_interest())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_maturity
+    # -------------------------------------------------------------------------
+
+    def transaction__get_maturity(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_maturity \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_maturity in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.maturity = 1
+        print("Maturity: ")
+        print(transaction.get_maturity())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_maturity
+    # -------------------------------------------------------------------------
+
+    def transaction__set_maturity(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_maturity \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_maturity in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.maturity = 1
+        print("Maturity: ")
+        print(transaction.get_maturity())
+        print("Setting maturity")
+        transaction.set_maturity(2)
+        print("Maturity: ")
+        print(transaction.get_maturity())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__get_time_of_default
+    # -------------------------------------------------------------------------
+
+    def transaction__get_time_of_default(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_time_of_default \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_time_of_default in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.time_of_default = 1
+        print("Time of default: ")
+        print(transaction.get_time_of_default())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_time_of_default
+    # -------------------------------------------------------------------------
+
+    def transaction__set_time_of_default(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_time_of_default \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_time_of_default in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.time_of_default = 1
+        print("Time of default: ")
+        print(transaction.get_time_of_default())
+        print("Setting time of default")
+        transaction.set_time_of_default(2)
+        print("Time of default: ")
+        print(transaction.get_time_of_default())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__this_transaction
+    # -------------------------------------------------------------------------
+
+    def transaction__this_transaction(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.this_transaction \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__this_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        print("Assigning values")
+        transaction.this_transaction("type", "asset", "from", "to", 1,  2,  3, 4)
+        print("The transaction:")
+        print(transaction)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__add_transaction
+    # -------------------------------------------------------------------------
+
+    def transaction__add_transaction(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.add_transaction \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__add_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        print("Assigning values")
+        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
+        print("Adding the transaction to the books")
+        transaction.add_transaction(environment)
+        print("The transaction:")
+        print(transaction)
+        print("The firm:")
+        print(environment.get_agent_by_id("test_firm"))
+        print("The household:")
+        print(environment.get_agent_by_id("test_household"))
+
+    # -------------------------------------------------------------------------
+
 # BELOW IT'S THE OLD STUFF
 
 # -------------------------------------------------------------------------
