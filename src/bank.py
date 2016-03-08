@@ -184,12 +184,11 @@ class Bank(BaseAgent):
     #   maturity        - time (in steps) to maturity
     #   time_of_default - control variable checking for defaulted transactions
     # -------------------------------------------------------------------------
-    def add_transaction(self, type_, asset,  from_id,  to_id,  amount,  interest,  maturity, time_of_default):
+    def add_transaction(self, type_, asset,  from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
         transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
-        self.accounts.append(transaction)
-        del transaction  # append() above does make a copy so we may delete for garbage collection
+        transaction.add_transaction(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

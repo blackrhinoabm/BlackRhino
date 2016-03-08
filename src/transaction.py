@@ -71,7 +71,7 @@ class Transaction(BaseTransaction):
     # if transaction hasn't been properly added there is no need to change accounts
     # -------------------------------------------------------------------------
     def __del__(self):
-        if hasattr(self.from_, "accounts"):
+        if hasattr(self.from_, "accounts"):  # and hasattr(self.to, "accounts"):
                 if self.from_ == self.to:
                     self.from_.accounts.remove(self)
                 else:
@@ -153,23 +153,11 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
     # add_transaction
     # adds the transaction to appropriate agents' accounts
-    # THIS NEEDS TO BE THOUGHT THROUGH PROPERLY
-    # in particular __del__ may be tricky and needs testing
-    # clear and purge accounts probably need to be redesigned to go to transaction
-    # changing should work perfectly well though
-    # BUT we need to make sure we don't do it twice when we iterate over
+    # TODO: we need to make sure we don't do it twice when we iterate over
     # transactions in the accounts of agents (this may be tricky)
     # -------------------------------------------------------------------------
     def add_transaction(self, environment):
-        if isinstance(self.from_, str):
-            self.from_ = environment.get_agent_by_id(self.from_)
-        if isinstance(self.to, str):
-            self.to = environment.get_agent_by_id(self.to)
-        if self.from_ == self.to:
-            self.from_.accounts.append(self)
-        else:
-            self.from_.accounts.append(self)
-            self.to.accounts.append(self)
+        super(Transaction, self).add_transaction(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -201,27 +189,16 @@ class Transaction(BaseTransaction):
     # deletes all transactions of a given agent
     # this should be used very sparingly, as this does not account
     # for the economics of the process
-    # TODO: maybe change to __del__() on all of them
     # -------------------------------------------------------------------------
-    def clear_accounts(self, agent, environment):
-        list_of_deleted_transactions = []
+    def clear_accounts(self, agent):
         for tranx in agent.accounts:
-            list_of_deleted_transactions.append(tranx.identifier)
-        agent.accounts = []
-        for bank in environment.banks:
-            for tranx in bank.accounts:
-                if tranx.identifier in list_of_deleted_transactions:
-                    del tranx
-        for firm in environment.firms:
-            for tranx in firm.accounts:
-                if tranx.identifier in list_of_deleted_transactions:
-                    del tranx
-        for household in environment.households:
-            for tranx in household.accounts:
-                if tranx.identifier in list_of_deleted_transactions:
-                    del tranx
-    # a standard function deleting all transactions of the agent
+            tranx.__del__()
+    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # purge_accounts()
+    # removes all transactions of all agents with amount of zero
+    # -------------------------------------------------------------------------
     def purge_accounts(self, environment):
         for bank in environment.banks:
             new_accounts = []
@@ -247,4 +224,17 @@ class Transaction(BaseTransaction):
                     new_accounts.append(transaction)
 
             household.accounts = new_accounts
-    # a standard function deleting all worthless transactions of the agents
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # purge_accounts()
+    # removes all transactions of a given agent with amount of zero
+    # -------------------------------------------------------------------------
+    def purge_accounts_agent(self, agent):
+        new_accounts = []
+        for transaction in agent.accounts:
+            if transaction.amount > 0.0:
+                new_accounts.append(transaction)
+
+        agent.accounts = new_accounts
+    # -------------------------------------------------------------------------

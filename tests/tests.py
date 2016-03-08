@@ -104,6 +104,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -164,6 +165,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -228,6 +230,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
         bank.get_parameters_from_file(bank_filename, environment)
@@ -289,6 +292,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -353,6 +357,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -413,6 +418,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -477,6 +483,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -533,6 +540,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         bank.get_parameters_from_file(bank_filename, environment)
 
         #
@@ -595,6 +603,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -605,8 +614,8 @@ class Tests(object):
         print("Checking consistency of the standard bank: ")
         print(bank.check_consistency())
         print("Adding additional deposits without adding appropriate cash/loans.")
-        bank.add_transaction("deposits", "", environment.households[0:1][0],
-                             bank.identifier, 150, bank.interest_rate_deposits, 0, -1)
+        bank.add_transaction("deposits", "", environment.get_agent_by_id("test_household"),
+                             bank, 150, bank.interest_rate_deposits, 0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -666,6 +675,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -738,6 +748,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -814,6 +825,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -823,8 +835,9 @@ class Tests(object):
 
         print(bank)
         print("Adding new transaction: \n")
-        bank.add_transaction("deposits", "", environment.households[0:1][0],
-                             bank.identifier,  10,  0.09,  0, -1)
+        print(environment.get_agent_by_id(bank.identifier))
+        bank.add_transaction("deposits", "", "test_household",
+                             bank.identifier,  10,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -881,6 +894,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -898,8 +912,8 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("deposits", "", environment.households[0:1][0],
-                             bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", "test_household",
+                             bank.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -914,6 +928,12 @@ class Tests(object):
         print(tranx)
         print(account)
 
+        for bank in environment.banks:
+            print(bank)
+        for firm in environment.firms:
+            print(firm)
+        for household in environment.households:
+            print(household)
         bank.clear_accounts()
 
         account = 0.0
@@ -977,6 +997,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -994,8 +1015,8 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("deposits", "", environment.households[0:1][0],
-                             bank.identifier, 0.0,  0.09,  0, -1)
+        bank.add_transaction("deposits", "", "test_household",
+                             bank.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -1071,6 +1092,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -1190,6 +1212,7 @@ class Tests(object):
 
         # generate the bank
         bank = Bank()
+        environment.banks.append(bank)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -1255,6 +1278,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1315,6 +1339,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1379,6 +1404,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1439,6 +1465,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1503,6 +1530,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1567,6 +1595,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1627,6 +1656,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1685,6 +1715,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
         firm.get_parameters_from_file(firmFilename, environment)
@@ -1755,6 +1786,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1827,6 +1859,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1903,6 +1936,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1913,7 +1947,7 @@ class Tests(object):
         print(firm)
         print("Adding new transaction: \n")
         firm.add_transaction("deposits", "", environment.households[0:1][0],
-                             firm.identifier,  10,  0.09,  0, -1)
+                             firm.identifier,  10,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -1970,6 +2004,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -1988,7 +2023,7 @@ class Tests(object):
         print(account)
 
         firm.add_transaction("deposits", "", environment.households[0:1][0],
-                             firm.identifier, 0.0,  0.09,  0, -1)
+                             firm.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -2066,6 +2101,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -2084,7 +2120,7 @@ class Tests(object):
         print(account)
 
         firm.add_transaction("deposits", "", environment.households[0:1][0],
-                             firm.identifier, 0.0,  0.09,  0, -1)
+                             firm.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
         # households (which happens in testing) it doesn't break down
@@ -2160,6 +2196,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -2218,6 +2255,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
 
         #
         # TESTING
@@ -2279,6 +2317,7 @@ class Tests(object):
 
         # generate a firm
         firm = Firm()
+        environment.firms.append(firm)
         helper = Helper()
         helper.initialize_standard_firm(firm, environment)
 
@@ -2344,6 +2383,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
         #
@@ -2403,6 +2443,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2467,6 +2508,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2527,6 +2569,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2591,6 +2634,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2651,6 +2695,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2714,6 +2759,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2772,6 +2818,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         household.get_parameters_from_file(householdFilename, environment)
 
         #
@@ -2843,6 +2890,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2915,6 +2963,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -2991,6 +3040,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -3001,7 +3051,7 @@ class Tests(object):
         print(household)
         print("Adding new transaction: \n")
         household.add_transaction("deposits", "", environment.banks[0:1][0],
-                                  household.identifier,  10,  0.09,  0, -1)
+                                  household.identifier,  10,  0.09,  0, -1, environment)
         # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first bank in environment, but if there are no
         # banks (which happens in testing) it doesn't break down
@@ -3058,6 +3108,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -3076,7 +3127,7 @@ class Tests(object):
         print(account)
 
         household.add_transaction("deposits", "", environment.banks[0:1][0],
-                                  household.identifier, 0.0,  0.09,  0, -1)
+                                  household.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first bank in environment, but if there are no
         # banks (which happens in testing) it doesn't break down
@@ -3154,6 +3205,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -3172,7 +3224,7 @@ class Tests(object):
         print(account)
 
         household.add_transaction("deposits", "", environment.banks[0:1][0],
-                                  household.identifier, 0.0,  0.09,  0, -1)
+                                  household.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first bank in environment, but if there are no
         # banks (which happens in testing) it doesn't break down
@@ -3248,6 +3300,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -3306,6 +3359,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
 
         #
         # TESTING
@@ -3367,6 +3421,7 @@ class Tests(object):
 
         # generate a household
         household = Household()
+        environment.households.append(household)
         helper = Helper()
         helper.initialize_standard_household(household, environment)
 
@@ -5145,6 +5200,71 @@ class Tests(object):
         print(environment.get_agent_by_id("test_household"))
 
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__clear_accounts
+    # -------------------------------------------------------------------------
+
+    def transaction__clear_accounts(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.clear_accounts \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__clear_accounts in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        # bank = Bank()
+        # bank.identifier = "test_bank"
+        # environment.banks.append(bank)
+
+        # generate a firm
+        # firm = Firm()
+        # firm.identifier = "test_firm"
+        # environment.firms.append(firm)
+
+        # generate a household
+        # household = Household()
+        # household.identifier = "test_household"
+        # environment.households.append(household)
+
+        #
+        # TESTING
+        #
+
+        print("Before clearing one bank's accounts")
+        for bank in environment.banks:
+            print(bank)
+        for household in environment.households:
+            print(household)
+        environment.get_agent_by_id("bank_test_config_id").clear_accounts()
+        print("After clearing one bank's accounts")
+        for bank in environment.banks:
+            print(bank)
+        for household in environment.households:
+            print(household)
+
+
+    # -------------------------------------------------------------------------
+
 
 # BELOW IT'S THE OLD STUFF
 
