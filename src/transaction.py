@@ -191,7 +191,7 @@ class Transaction(BaseTransaction):
     # removes all transactions of all agents with amount of zero
     # -------------------------------------------------------------------------
     def purge_accounts(self, environment):
-        super(Transaction, self).purge_accounts(environment, [banks, firms, households])
+        super(Transaction, self).purge_accounts(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

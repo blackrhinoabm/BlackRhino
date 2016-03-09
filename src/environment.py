@@ -41,6 +41,7 @@ class Environment(BaseConfig):
     banks = []  # a list containing all banks (instances of class Bank)
     households = []  # a list containing all households (instances of class Household)
     firms = []  # a list containing all firms (instances of class Firm)
+    agents = [banks, households, firms]
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
@@ -147,6 +148,14 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # agents_generator(self):
+    # generator yielding all agents
+    # -------------------------------------------------------------------------
+    def agents_generator(self):
+        super(Environment, self).agents_generator()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # __getattr__
     # if the attribute isn't found by Python we tell Python
     # to look for it first in static and then in variable parameters
@@ -157,16 +166,7 @@ class Environment(BaseConfig):
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        if (attr in self.static_parameters) and (attr in self.variable_parameters):
-            raise AttributeError('The same name exists in both static and variable parameters.')
-        else:
-            try:
-                return self.static_parameters[attr]
-            except:
-                try:
-                    return self.variable_parameters[attr]
-                except:
-                    raise AttributeError('Environment has no attribute "%s".' % attr)
+        super(Environment, self).__getattr__(attr)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -367,30 +367,9 @@ class Environment(BaseConfig):
     # get_agent_by_id
     # returns an agent based on the id
     # -------------------------------------------------------------------------
-    def get_agent_by_id(self,  ident):
-        to_return = None
-        for bank in self.banks:
-            if bank.identifier == ident:
-                if to_return is None:  # checks whether something has been found previously in the function
-                    to_return = bank
-                else:
-                    raise LookupError('At least two agents have the same ID.')
-                    # if we have found something before then IDs are not unique, so we raise an error
-        for firm in self.firms:
-            if firm.identifier == ident:
-                if to_return is None:  # checks whether something has been found previously in the function
-                    to_return = firm
-                else:
-                    raise LookupError('At least two agents have the same ID.')
-                    # if we have found something before then IDs are not unique, so we raise an error
-        for household in self.households:
-            if household.identifier == ident:
-                if to_return is None:  # checks whether something has been found previously in the function
-                    to_return = household
-                else:
-                    raise LookupError('At least two agents have the same ID.')
-                    # if we have found something before then IDs are not unique, so we raise an error
-        return to_return
+    def get_agent_by_id(self, ident):
+        super(Environment, self).get_agent_by_id(ident)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # read_transactions_from_files(self,  bank_directory)
@@ -473,123 +452,5 @@ class Environment(BaseConfig):
     # itself
     # -------------------------------------------------------------------------
     def check_global_transaction_balance(self, type_):
-        sum_lists = 0  # global sum, for checking the consistency numerically
-        # We check all the banks first
-        for bank in self.banks:
-            # Dictionaries to keep all the incoming and outgoing transactions of the bank
-            tranx_list_from = {}
-            tranx_list_to = {}
-            # We populate the above with the amounts
-            for tranx in bank.accounts:
-                if tranx.type_ == type_:
-                    if tranx.from_ == bank:
-                        if tranx.to in tranx_list_to:
-                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
-                        else:
-                            tranx_list_to[tranx.to] = tranx.amount
-                    else:
-                        if tranx.from_ in tranx_list_from:
-                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
-                        else:
-                            tranx_list_from[tranx.from_] = tranx.amount
-            # And we check if the added transactions exist in the counterparty's books
-            # If they do we subtract the amount from the dictionaries
-            # So that we can check if the dictionaries go to 0 globally
-            for key in tranx_list_from:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.from_ == key:
-                            if tranx.to == bank:
-                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
-            for key in tranx_list_to:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.to == key:
-                            if tranx.from_ == bank:
-                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
-            # Then we add the dictionary entries to the global check variable
-            for key in tranx_list_from:
-                sum_lists += abs(tranx_list_from[key])
-            for key in tranx_list_to:
-                sum_lists += abs(tranx_list_to[key])
-        # We check all the firms then
-        for firm in self.firms:
-            # Dictionaries to keep all the incoming and outgoing transactions of the bank
-            tranx_list_from = {}
-            tranx_list_to = {}
-            # We populate the above with the amounts
-            for tranx in firm.accounts:
-                if tranx.type_ == type_:
-                    if tranx.from_ == firm:
-                        if tranx.to in tranx_list_to:
-                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
-                        else:
-                            tranx_list_to[tranx.to] = tranx.amount
-                    else:
-                        if tranx.from_ in tranx_list_from:
-                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
-                        else:
-                            tranx_list_from[tranx.from_] = tranx.amount
-            # And we check if the added transactions exist in the counterparty's books
-            # If they do we subtract the amount from the dictionaries
-            # So that we can check if the dictionaries go to 0 globally
-            for key in tranx_list_from:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.from_ == key:
-                            if tranx.to == firm:
-                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
-            for key in tranx_list_to:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.to == key:
-                            if tranx.from_ == firm:
-                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
-            # Then we add the dictionary entries to the global check variable
-            for key in tranx_list_from:
-                sum_lists += abs(tranx_list_from[key])
-            for key in tranx_list_to:
-                sum_lists += abs(tranx_list_to[key])
-        # We check all the household finally
-        for household in self.households:
-            # Dictionaries to keep all the incoming and outgoing transactions of the bank
-            tranx_list_from = {}
-            tranx_list_to = {}
-            # We populate the above with the amounts
-            for tranx in household.accounts:
-                if tranx.type_ == type_:
-                    if tranx.from_ == household:
-                        if tranx.to in tranx_list_to:
-                            tranx_list_to[tranx.to] = tranx_list_to[tranx.to] + tranx.amount
-                        else:
-                            tranx_list_to[tranx.to] = tranx.amount
-                    else:
-                        if tranx.from_ in tranx_list_from:
-                            tranx_list_from[tranx.from_] = tranx_list_from[tranx.from_] + tranx.amount
-                        else:
-                            tranx_list_from[tranx.from_] = tranx.amount
-            # And we check if the added transactions exist in the counterparty's books
-            # If they do we subtract the amount from the dictionaries
-            # So that we can check if the dictionaries go to 0 globally
-            for key in tranx_list_from:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.from_ == key:
-                            if tranx.to == household:
-                                tranx_list_from[key] = tranx_list_from[key] - tranx.amount
-            for key in tranx_list_to:
-                for tranx in key.accounts:
-                    if tranx.type_ == type_:
-                        if tranx.to == key:
-                            if tranx.from_ == household:
-                                tranx_list_to[key] = tranx_list_to[key] - tranx.amount
-            # Then we add the dictionary entries to the global check variable
-            for key in tranx_list_from:
-                sum_lists += abs(tranx_list_from[key])
-            for key in tranx_list_to:
-                sum_lists += abs(tranx_list_to[key])
-        # We make the final check and return True if consistent, otherwise return False
-        if sum_lists == 0:
-            return True
-        else:
-            return False
+        super(Environment, self).check_global_transaction_balance(type_)
+    # -------------------------------------------------------------------------

@@ -4247,7 +4247,8 @@ class Tests(object):
         environment.households[0].clear_accounts()  # let's use the first bank
         print(environment.households[0])
         print("Reading transactions: ")
-        environment.read_transactions_for_households(environment.household_directory)
+        environment.read_transactions_for_banks(environment.bank_directory) # deposits are saved in bank config files only
+        # environment.read_transactions_for_households(environment.household_directory)
         print(environment.households[0])
 
     # -------------------------------------------------------------------------

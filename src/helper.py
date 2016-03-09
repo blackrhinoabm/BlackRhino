@@ -133,7 +133,7 @@ class Helper(object):
         transaction = Transaction()
         transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0].identifier,
                                      amount, environment.banks[0].interest_rate_deposits,  0, -1)
-        # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
+        # environment.banks[0] is only for testing purposes DO NOT USE IN PRODUCTION
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
