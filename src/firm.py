@@ -202,6 +202,7 @@ class Firm(BaseAgent):
     # -------------------------------------------------------------------------
     # clear_accounts
     # removes all transactions from firm's accounts
+    # only for testing, the one in transaction should be used in production
     # -------------------------------------------------------------------------
     def clear_accounts(self):
         super(Firm, self).clear_accounts()

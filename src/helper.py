@@ -59,9 +59,7 @@ class Helper(object):
         transaction = Transaction()
         transaction.this_transaction("deposits", "", environment.households[0].identifier, bank.identifier,
                                      amount,  bank.interest_rate_deposits,  0, -1)
-        # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
-        # what it does is is takes the first household in environment, but if there are no
-        # households (which happens in testing) it doesn't break down
+        # environment.households[0] is only for testing purposes DO NOT USE IN PRODUCTION
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
@@ -77,9 +75,7 @@ class Helper(object):
         transaction = Transaction()
         transaction.this_transaction("loans", "", bank.identifier, environment.firms[0].identifier,
                                      amount,  bank.interest_rate_loans,  0, -1)
-        # environment.firms[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
-        # what it does is is takes the first firm in environment, but if there are no
-        # firms (which happens in testing) it doesn't break down
+        # environment.firms[0] is only for testing purposes DO NOT USE IN PRODUCTION
         transaction.add_transaction(environment)
     # -------------------------------------------------------------------------
 
@@ -99,11 +95,9 @@ class Helper(object):
         # if there are no banks it will be a blank which is fine for testing
         amount = 250.0
         transaction = Transaction()
-        transaction.this_transaction("loans", "", environment.banks[0:1][0].identifier, firm.identifier,
-                                     amount,  environment.banks[0:1][0].interest_rate_loans,  0, -1)
-        # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
-        # what it does is is takes the first bank in environment, but if there are no
-        # banks (which happens in testing) it doesn't break down
+        transaction.this_transaction("loans", "", environment.banks[0].identifier, firm.identifier,
+                                     amount,  environment.banks[0].interest_rate_loans,  0, -1)
+        # environment.banks[0] is only for testing purposes DO NOT USE IN PRODUCTION
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
@@ -137,11 +131,9 @@ class Helper(object):
         # if there are no banks it will be a blank which is fine for testing
         amount = 200.0
         transaction = Transaction()
-        transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0:1][0].identifier,
-                                     amount, environment.banks[0:1][0].interest_rate_deposits,  0, -1)
+        transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0].identifier,
+                                     amount, environment.banks[0].interest_rate_deposits,  0, -1)
         # environment.banks[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
-        # what it does is is takes the first bank in environment, but if there are no
-        # banks (which happens in testing) it doesn't break down
         transaction.add_transaction(environment)
 
         # money - cash and equivalents

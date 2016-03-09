@@ -202,6 +202,7 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     # clear_accounts
     # removes all transactions from bank's accounts
+    # only for testing, the one in transaction should be used in production
     # -------------------------------------------------------------------------
     def clear_accounts(self):
         super(Household, self).clear_accounts()
