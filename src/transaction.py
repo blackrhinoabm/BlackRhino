@@ -61,8 +61,7 @@ class Transaction(BaseTransaction):
     # This may be useful for looping over various agent's accounts
     # -------------------------------------------------------------------------
     def __init__(self):
-        import uuid
-        self.identifier = uuid.uuid4()
+        super(Transaction, self).__init__()
     # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -71,15 +70,7 @@ class Transaction(BaseTransaction):
     # if transaction hasn't been properly added there is no need to change accounts
     # -------------------------------------------------------------------------
     def __del__(self):
-        if hasattr(self.from_, "accounts"):  # and hasattr(self.to, "accounts"):
-                if self.from_ == self.to:
-                    self.from_.accounts.remove(self)
-                else:
-                    self.from_.accounts.remove(self)
-                    self.to.accounts.remove(self)
-                del self
-        else:
-            del self
+        super(Transaction, self).__del__()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -200,30 +191,7 @@ class Transaction(BaseTransaction):
     # removes all transactions of all agents with amount of zero
     # -------------------------------------------------------------------------
     def purge_accounts(self, environment):
-        for bank in environment.banks:
-            new_accounts = []
-
-            for transaction in bank.accounts:
-                if transaction.amount > 0.0:
-                    new_accounts.append(transaction)
-
-            bank.accounts = new_accounts
-        for firm in environment.firms:
-            new_accounts = []
-
-            for transaction in firm.accounts:
-                if transaction.amount > 0.0:
-                    new_accounts.append(transaction)
-
-            firm.accounts = new_accounts
-        for household in environment.households:
-            new_accounts = []
-
-            for transaction in household.accounts:
-                if transaction.amount > 0.0:
-                    new_accounts.append(transaction)
-
-            household.accounts = new_accounts
+        super(Transaction, self).purge_accounts(environment, [banks, firms, households])
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -231,10 +199,5 @@ class Transaction(BaseTransaction):
     # removes all transactions of a given agent with amount of zero
     # -------------------------------------------------------------------------
     def purge_accounts_agent(self, agent):
-        new_accounts = []
-        for transaction in agent.accounts:
-            if transaction.amount > 0.0:
-                new_accounts.append(transaction)
-
-        agent.accounts = new_accounts
+        super(Transaction, self).purge_accounts_agent(agent)
     # -------------------------------------------------------------------------
