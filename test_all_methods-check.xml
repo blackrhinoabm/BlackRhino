@@ -1,0 +1,10 @@
+<environment identifier='tests_for_all_methods'>
+  <parameter type='static' name='num_simulations' value='1.0'></parameter>
+  <parameter type='static' name='num_firms' value='1.0'></parameter>
+  <parameter type='static' name='num_banks' value='2.0'></parameter>
+  <parameter type='static' name='bank_directory' value='tests/agents/banks/'></parameter>
+  <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
+  <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
+  <parameter type='static' name='num_sweeps' value='100.0'></parameter>
+  <parameter type='static' name='num_households' value='1.0'></parameter>
+</environment>

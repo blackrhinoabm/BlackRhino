@@ -212,8 +212,8 @@ class Firm(BaseAgent):
     # purge_accounts
     # removes worthless transactions from firm's accounts
     # -------------------------------------------------------------------------
-    def purge_accounts(self):
-        super(Firm, self).purge_accounts()
+    def purge_accounts(self, environment):
+        super(Firm, self).purge_accounts(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -235,5 +235,14 @@ class Firm(BaseAgent):
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        super(Firm, self).__getattr__(attr)
+        if (attr in self.parameters) and (attr in self.state_variables):
+            raise AttributeError('The same name exists in both parameters and state variables.')
+        else:
+            try:
+                return self.parameters[attr]
+            except:
+                try:
+                    return self.state_variables[attr]
+                except:
+                    raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
     # -------------------------------------------------------------------------

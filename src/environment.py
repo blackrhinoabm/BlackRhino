@@ -41,7 +41,7 @@ class Environment(BaseConfig):
     banks = []  # a list containing all banks (instances of class Bank)
     households = []  # a list containing all households (instances of class Household)
     firms = []  # a list containing all firms (instances of class Firm)
-    agents = [banks, households, firms]
+    agents = []
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
@@ -152,8 +152,14 @@ class Environment(BaseConfig):
     # generator yielding all agents
     # -------------------------------------------------------------------------
     def agents_generator(self):
-        super(Environment, self).agents_generator()
-    # -------------------------------------------------------------------------
+        self.agents = [self.banks, self.households, self.firms]
+        if self.agents is not None:
+            for agent_type in self.agents:
+                for agent in agent_type:
+                    yield agent
+        else:
+            raise LookupError('There are no agents to iterate over.')
+# -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # __getattr__
@@ -166,7 +172,16 @@ class Environment(BaseConfig):
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        super(Environment, self).__getattr__(attr)
+        if (attr in self.static_parameters) and (attr in self.variable_parameters):
+            raise AttributeError('The same name exists in both static and variable parameters.')
+        else:
+            try:
+                return self.static_parameters[attr]
+            except:
+                try:
+                    return self.variable_parameters[attr]
+                except:
+                    raise AttributeError('Environment has no attribute "%s".' % attr)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -368,7 +383,21 @@ class Environment(BaseConfig):
     # returns an agent based on the id
     # -------------------------------------------------------------------------
     def get_agent_by_id(self, ident):
-        super(Environment, self).get_agent_by_id(ident)
+        # self.agents = [self.banks, self.firms, self.households]
+        # super(Environment, self).get_agent_by_id(ident)
+        to_return = None
+        for agent in self.agents_generator():
+            if agent.identifier == ident:
+                if to_return is None:  # checks whether something has been found previously in the function
+                    to_return = agent
+                else:
+                    raise LookupError('At least two agents have the same ID.')
+                    # if we have found something before then IDs are not unique, so we raise an error
+        if to_return is None:
+            raise LookupError('No agents have the provided ID.')
+            # if we don't find any agent with that ID we raise an error
+        else:
+            return to_return
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -383,7 +412,7 @@ class Environment(BaseConfig):
         if (len(listing) != self.num_banks):
             logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
                           bank_directory,  str(len(listing)), str(self.num_banks))
-        # we read the files sequentially
+        # we read the files sequentially)
         for infile in listing:
             # we open the file and find the identifier of the config
             xmlText = open(bank_directory + infile).read()

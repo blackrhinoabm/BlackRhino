@@ -1031,7 +1031,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        bank.purge_accounts()
+        bank.accounts[0].purge_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -2135,7 +2135,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        firm.purge_accounts()
+        firm.accounts[0].purge_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -3239,7 +3239,7 @@ class Tests(object):
         print(tranx)
         print(account)
 
-        household.purge_accounts()
+        household.accounts[0].purge_accounts(environment)
 
         account = 0.0
         tranx = 0

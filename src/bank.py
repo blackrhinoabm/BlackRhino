@@ -204,8 +204,8 @@ class Bank(BaseAgent):
     # purge_accounts
     # removes worthless transactions from bank's accounts
     # -------------------------------------------------------------------------
-    def purge_accounts(self):
-        super(Bank, self).purge_accounts()
+    def purge_accounts(self, environment):
+        super(Bank, self).purge_accounts(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -226,5 +226,14 @@ class Bank(BaseAgent):
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        super(Bank, self).__getattr__(attr)
+        if (attr in self.parameters) and (attr in self.state_variables):
+            raise AttributeError('The same name exists in both parameters and state variables.')
+        else:
+            try:
+                return self.parameters[attr]
+            except:
+                try:
+                    return self.state_variables[attr]
+                except:
+                    raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
     # -------------------------------------------------------------------------
