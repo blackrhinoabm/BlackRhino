@@ -5203,6 +5203,139 @@ class Tests(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # transaction__remove_transaction
+    # -------------------------------------------------------------------------
+
+    def transaction__remove_transaction(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.remove_transaction \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__remove_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        print("Assigning values")
+        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
+        print("Adding the transaction to the books")
+        transaction.add_transaction(environment)
+        print("The transaction:")
+        print(transaction)
+        print("The firm:")
+        print(environment.get_agent_by_id("test_firm"))
+        print("The household:")
+        print(environment.get_agent_by_id("test_household"))
+        print("Removing the transaction")
+        transaction.remove_transaction()
+        print("The transaction:")
+        print(transaction)
+        print("The firm:")
+        print(environment.get_agent_by_id("test_firm"))
+        print("The household:")
+        print(environment.get_agent_by_id("test_household"))
+        print("Removing the transaction")
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__print_transaction
+    # -------------------------------------------------------------------------
+
+    def transaction__print_transaction(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.print_transaction \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__print_transaction in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        print("Assigning values")
+        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
+        print("Adding the transaction to the books")
+        transaction.add_transaction(environment)
+        print("Printing transaction:")
+        transaction.print_transaction()
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # transaction__clear_accounts
     # -------------------------------------------------------------------------
 
@@ -5262,7 +5395,6 @@ class Tests(object):
             print(bank)
         for household in environment.households:
             print(household)
-
 
     # -------------------------------------------------------------------------
 

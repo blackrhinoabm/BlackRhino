@@ -152,6 +152,7 @@ class Environment(BaseConfig):
     # generator yielding all agents
     # -------------------------------------------------------------------------
     def agents_generator(self):
+        # self.agents = [self.banks, self.firms, self.households]
         return super(Environment, self).agents_generator()
     # -------------------------------------------------------------------------
 
@@ -310,7 +311,8 @@ class Environment(BaseConfig):
     def initialize_banks_from_files(self,  bank_directory):
         from src.bank import Bank
         # this routine is called more than once, so we have to reset the list of banks each time
-        self.banks = []
+        while len(self.banks) > 0:
+            self.banks.pop()
         # we list all the files in the specified directory
         listing = os.listdir(bank_directory)
         # and check if the number of files is in line with the parameters
@@ -335,7 +337,8 @@ class Environment(BaseConfig):
     def initialize_firms_from_files(self,  firm_directory):
         from src.firm import Firm
         # this routine is called more than once, so we have to reset the list of firms each time
-        self.firms = []
+        while len(self.firms) > 0:
+            self.firms.pop()
         # we list all the files in the specified directory
         listing = os.listdir(firm_directory)
         # and check if the number of files is in line with the parameters
@@ -360,7 +363,8 @@ class Environment(BaseConfig):
     def initialize_households_from_files(self,  household_directory):
         from src.household import Household
         # this routine is called more than once, so we have to reset the list of households each time
-        self.households = []
+        while len(self.households) > 0:
+            self.households.pop()
         # we list all the files in the specified directory
         listing = os.listdir(household_directory)
         # and check if the number of files is in line with the parameters
