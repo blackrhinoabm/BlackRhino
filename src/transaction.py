@@ -182,8 +182,7 @@ class Transaction(BaseTransaction):
     # for the economics of the process
     # -------------------------------------------------------------------------
     def clear_accounts(self, agent):
-        for tranx in agent.accounts:
-            tranx.__del__()
+        super(Transaction, self).clear_accounts(agent)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
