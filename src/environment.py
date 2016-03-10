@@ -152,14 +152,17 @@ class Environment(BaseConfig):
     # generator yielding all agents
     # -------------------------------------------------------------------------
     def agents_generator(self):
-        self.agents = [self.banks, self.households, self.firms]
-        if self.agents is not None:
-            for agent_type in self.agents:
-                for agent in agent_type:
-                    yield agent
-        else:
-            raise LookupError('There are no agents to iterate over.')
-# -------------------------------------------------------------------------
+        return super(Environment, self).agents_generator()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_agent_by_id
+    # returns an agent based on the id
+    # -------------------------------------------------------------------------
+    def get_agent_by_id(self, ident):
+        # self.agents = [self.banks, self.firms, self.households]
+        return super(Environment, self).get_agent_by_id(ident)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # __getattr__
@@ -172,16 +175,7 @@ class Environment(BaseConfig):
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
     def __getattr__(self, attr):
-        if (attr in self.static_parameters) and (attr in self.variable_parameters):
-            raise AttributeError('The same name exists in both static and variable parameters.')
-        else:
-            try:
-                return self.static_parameters[attr]
-            except:
-                try:
-                    return self.variable_parameters[attr]
-                except:
-                    raise AttributeError('Environment has no attribute "%s".' % attr)
+        return super(Environment, self).__getattr__(attr)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -277,6 +271,9 @@ class Environment(BaseConfig):
                 logging.info("  households read from directory: %s",  self.household_directory)
         else:
             logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
+
+        # add agents to the list of all agents
+        self.agents = [self.banks, self.firms, self.households]
 
         # then, initialize transactions from the config files for banks
         if (self.bank_directory != ""):
@@ -376,28 +373,6 @@ class Environment(BaseConfig):
             household.get_parameters_from_file(household_directory + infile,  self)
             # and read parameters to the firms, only to add them to the environment
             self.households.append(household)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # get_agent_by_id
-    # returns an agent based on the id
-    # -------------------------------------------------------------------------
-    def get_agent_by_id(self, ident):
-        # self.agents = [self.banks, self.firms, self.households]
-        # super(Environment, self).get_agent_by_id(ident)
-        to_return = None
-        for agent in self.agents_generator():
-            if agent.identifier == ident:
-                if to_return is None:  # checks whether something has been found previously in the function
-                    to_return = agent
-                else:
-                    raise LookupError('At least two agents have the same ID.')
-                    # if we have found something before then IDs are not unique, so we raise an error
-        if to_return is None:
-            raise LookupError('No agents have the provided ID.')
-            # if we don't find any agent with that ID we raise an error
-        else:
-            return to_return
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
