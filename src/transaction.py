@@ -68,6 +68,8 @@ class Transaction(BaseTransaction):
     # __del__()
     # removes the transaction from appropriate accounts and deletes the instance
     # if transaction hasn't been properly added there is no need to change accounts
+    # DO NOT USE IN PRODUCTION, this is a failsafe
+    # use remove_transaction() to take transaction off the books
     # -------------------------------------------------------------------------
     def __del__(self):
         super(Transaction, self).__del__()
@@ -152,6 +154,14 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # remove_transaction
+    # removes the transaction from appropriate agents' accounts
+    # -------------------------------------------------------------------------
+    def remove_transaction(self):
+        super(Transaction, self).remove_transaction()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # print_transaction()
     # prints the transaction and its properties
     # -------------------------------------------------------------------------
@@ -191,12 +201,4 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
     def purge_accounts(self, environment):
         super(Transaction, self).purge_accounts(environment)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # purge_accounts()
-    # removes all transactions of a given agent with amount of zero
-    # -------------------------------------------------------------------------
-    def purge_accounts_agent(self, agent):
-        super(Transaction, self).purge_accounts_agent(agent)
     # -------------------------------------------------------------------------
