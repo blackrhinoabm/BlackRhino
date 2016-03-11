@@ -118,7 +118,7 @@ if __name__ == '__main__':
     test.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
     test.environment__check_global_transaction_balance(["tests/environments/", "test_all_methods", "tests/log/"])
 
-    # Tests for Environment
+    # Tests for Transaction
     test.transaction__init(["tests/environments/", "test_all_methods", "tests/log/"])
     test.transaction__del(["tests/environments/", "test_all_methods", "tests/log/"])
     test.transaction__get_type_(["tests/environments/", "test_all_methods", "tests/log/"])

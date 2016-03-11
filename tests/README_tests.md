@@ -194,3 +194,100 @@ DESCRIPTION OF TESTS
     test.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether households are properly initialized by the environment from config files saved in
         tests/agents/households/, prints the number of households expected and read and then prints the households
+    test.environment__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the function fetches the agent by an ID (string). If it works correctly, it
+        should print an agent with "bank_test_config_id" identifier. This depends on the agent of this
+        identifier being in the /agents/ directory, from which the agents are initialized.
+    test.environment__read_transactions_for_banks(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests wehther the transactions in the bank files are read correctly. It first clears all the
+        accounts and prints empty books, and then reads the accounts and should print the banks with
+        the transactions as specified in the config files within /agents/banks/.
+    test.environment__read_transactions_for_firms(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests wehther the transactions in the firm files are read correctly. It first clears all the
+        accounts and prints empty books, and then reads the accounts and should print the firms with
+        the transactions as specified in the config files within /agents/firms/.
+    test.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests wehther the transactions in the household files are read correctly. It first clears all the
+        accounts and prints empty books, and then reads the accounts and should print the households with
+        the transactions as specified in the config files within /agents/banks/.
+    test.environment__check_global_transaction_balance(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the check for global balance for a transaction type
+
+    # Tests for Transaction
+    test.transaction__init(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the initialization of a transaction works, and prints the ID of the
+        initialized transaction, the assignment of which is all initialize does on Transaction.
+    test.transaction__del(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can delete the transaction, prints whether it exists, deletes it, and
+        then prints whether it exists again.
+    test.transaction__get_type_(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the type of the transaction and prints it (test_type).
+    test.transaction__set_type_(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the type of the transaction and prints it (test_type),
+        then changes it (new_type) and prints it again.
+    test.transaction__get_asset(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the asset of the transaction and prints it (test_asset).
+    test.transaction__set_asset(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the asset of the transaction and prints it (test_asset),
+        then changes it (new_asset) and prints it again.
+    test.transaction__get_from_(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the from of the transaction and prints it (test_from).
+    test.transaction__set_from_(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the from of the transaction and prints it (test_from),
+        then changes it (new_from) and prints it again.
+    test.transaction__get_to(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the to of the transaction and prints it (test_to).
+    test.transaction__set_to(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the to of the transaction and prints it (test_to),
+        then changes it (new_to) and prints it again.
+    test.transaction__get_amount(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the amount of the transaction and prints it (15).
+    test.transaction__set_amount(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the amount of the transaction and prints it (15),
+        then changes it (25) and prints it again.
+    test.transaction__get_interest(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the interest of the transaction and prints it (0.01).
+    test.transaction__set_interest(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the interest of the transaction and prints it (0.01),
+        then changes it (0.02) and prints it again.
+    test.transaction__get_maturity(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the maturity of the transaction and prints it (1).
+    test.transaction__set_maturity(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the maturity of the transaction and prints it (1),
+        then changes it (2) and prints it again.
+    test.transaction__get_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the time_of_default of the transaction and prints it (1).
+    test.transaction__set_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the time_of_default of the transaction and prints it (1),
+        then changes it (2) and prints it again.
+    test.transaction__this_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can add values to the transaction all at once, and then prints the
+        transaction, the attributes should be (type, asset, from, to, 1, 2, 3, 4) respectively.
+    test.transaction__add_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can add a transaction to the books of agents automatically. Creates a
+        transaction with attributes (type, asset, test_household, test_firm, 1, 2, 3, 4) and adds
+        it to the books of the two agents automatically, after which it prints the books of these
+        two agents.
+    test.transaction__remove_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can remove a transaction from the books of agents automatically. At first
+        it does the same as transaction__add_transaction but then it removes the transaction from
+        the books of the two agents and prints these agents again.
+    test.transaction__print_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can print the transaction properly. Prints the transaction from
+        transaction__add_transaction in a nice xml format.
+    test.transaction__str(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can print the transaction properly. Prints the transaction from
+        transaction__add_transaction in a nice xml format.
+    test.transaction__write_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can print the transaction properly. Prints the transaction from
+        transaction__add_transaction in a nice xml format.
+    test.transaction__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can clear accounts of a bank properly, so it reflects the removal on the
+        other party involved in the transaction as well. The test prints the accounts of banks
+        and households, then clears the accounts of bank_test_config_id bank, printing the
+        accounts of the aforementioned again, showing the appropriate transactions gone.
+    test.transaction__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether purging accounts works properly. Prints the books of test_household and
+        test_firm which have a transaction with amount = 0. Then the accounts globally are purged
+        and the two abovementioned agents are printed again, correctly not showing the transaction
+        with amount = 0.
