@@ -41,7 +41,7 @@ DESCRIPTION OF TESTS
         before and after adding the transaction, allowing for the comparison
     test.bank__clear_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are cleared after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of items and their value in the balance sheet at the beginning, after 
         adding a worthless item and finally after calling the function
     test.bank__purge_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are purged after using the appropriate function, and prints
