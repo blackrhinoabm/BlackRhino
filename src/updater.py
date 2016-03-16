@@ -94,38 +94,53 @@ class Updater(BaseModel):
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self,  environment,  time):
-        self.accrue_interests(environment)
-        self.endow_labour(environment)
+        # As a first step, we accrue all interest over the transactions
+        # Thus, important to notice to keep 0 as interest by default
+        # Unless transaction should carry interest
+        self.accrue_interests(environment, time)
+        # Then agents get their labour endowment for the step (work hours to spend)
+        self.endow_labour(environment, time)
+        # Households sell labour
+        # Firms produce
+        # Households buy goods
+        # Households make deposits
+        self.remove_labour(environment, time)
+        # //Need to work loans to the above, presumably around selling labour
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # accrue_interests
+    # accrue_interests(environment, time)
+    # This method accrues interest on all transaction
+    # making sure we don't double count the transactions that are
+    # on the books of multiple agents, interest is specified within the
+    # transaction itself
     # -------------------------------------------------------------------------
-    def accrue_interests(self,  environment):
-        # accruing interest on all transactions for banks
-        for bank in environment.banks:
-            for tranx in bank.accounts:
+    def accrue_interests(self,  environment, time):
+        done_list = []  # This keeps the IDs of updated transactions
+        # The above is important as the same transactions may be on the books
+        # of different agents, we don't want to double count the interest
+        for agent in environment.agents_generator():  # Iterate over all agents
+            for tranx in agent.accounts:  # Iterate over all transactions
+                if tranx.identifier not in done_list:  # If not amended previously
+                    # The below adds the interest on the principal amount
                     tranx.amount = tranx.amount + tranx.amount * tranx.interest
-
-        # accruing interest on all transactions for firms
-        for firm in environment.firms:
-            for tranx in firm.accounts:
-                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
-
-        # accruing interest on all transactions for households
-        for household in environment.households:
-            for tranx in household.accounts:
-                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+                    # The below makes sure that we don't double count
+                    done_list.append(tranx.identifier)
+        logging.info("  interest accrued on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # endow_labour
+    # This function makes sure that all households have the appropriate
+    # labour endowment for every step
     # -------------------------------------------------------------------------
-    def endow_labour(self,  environment):
-        # we make sure household get their labour endowment per step
+    def endow_labour(self,  environment, time):
+        # We make sure household get their labour endowment per step
         for household in environment.households:
             # First, we set a control variable that makes sure we have exactly
-            # one transaction with "manhours"
+            # one transaction with "manhours", though this should in general
+            # be the case
             check = 0
             for tranx in household.accounts:
                 if tranx.type_ == "manhours":
@@ -141,7 +156,11 @@ class Updater(BaseModel):
                 amount = household.labour
                 transaction = Transaction()
                 transaction.this_transaction("manhours", "", household.identifier, household.identifier, amount, 0,  0, -1)
-                household.accounts.append(transaction)
+                # It's important to add the transaction using the method
+                # from Transaction class and not manually
+                transaction.add_transaction()
+        logging.info("  labour endowed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -225,4 +244,27 @@ class Updater(BaseModel):
                     transaction.this_transaction("deposits", "",  household.identifier, random_bank,
                                      amount, random_bank.interest_rate_deposits,  0, -1)
                     household.accounts.append(transaction)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # remove_labour(environment, time)
+    # This function removes all the labour that hasn't been sold within
+    # sell_labour, in economic terms this means that labour doesn't carry
+    # over to the next step, just like in the real economy
+    # -------------------------------------------------------------------------
+    def remove_labour(self,  environment, time):
+        # We go through all households
+        for household in environment.households:
+                # We find the transactions that should be deleted from household's books
+                # We don't iterate over the accounts directly since we want to delete
+                # them and this could cause the loop to jump around
+                to_delete = []
+                to_delete[:] = [x for x in household.accounts if x.type_ == "manhours"]
+                # Once we have the transactions to find in a separate list
+                # We remove them from the appropriate books using the
+                # method from the Transaction class
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+        logging.info("  labour removed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
