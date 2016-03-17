@@ -125,8 +125,8 @@ class Bank(BaseAgent):
         bank_string = bank_string.replace("\n", "\n    <type value='bank'>\n", 1)
         text = "\n"
         for transaction in self.accounts:
-            text += transaction.write_transaction()
-        text += "  </agent>"
+            text = text + transaction.write_transaction()
+        text = text + "  </agent>"
         return bank_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
 

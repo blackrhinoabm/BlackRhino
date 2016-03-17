@@ -113,7 +113,7 @@ class Tests(object):
         #
 
         text = "Identifier: "
-        text += bank.get_identifier()
+        text = text + bank.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -174,11 +174,11 @@ class Tests(object):
         #
 
         text = "Original identifier: "
-        text += bank.get_identifier()
+        text = text + bank.get_identifier()
         print(text)
         bank.set_identifier("new_ident")
         text = "New identifier: "
-        text += bank.get_identifier()
+        text = text + bank.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -549,9 +549,9 @@ class Tests(object):
 
         # test whether the parameters are read properly
         text = "Identifier has been read as follows: \n"
-        text += "Identifier: "
-        text += bank.identifier
-        text += "\n"
+        text = text + "Identifier: "
+        text = text + bank.identifier
+        text = text + "\n"
         self.print_info(text)
 
     # -------------------------------------------------------------------------
@@ -636,10 +636,10 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account \n"
-        text += "  The purpose of this method is to establish an account for our bank which contains  \n"
-        text += "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
-        text += "  and stores them in one volume. As our Banks holds 250.0 assets \n"
-        text += "  and 250 liabilites the total volume of our account should be 500.0 \n"
+        text = text + "  The purpose of this method is to establish an account for our bank which contains  \n"
+        text = text + "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
+        text = text + "  and stores them in one volume. As our Banks holds 250.0 assets \n"
+        text = text + "  and 250 liabilites the total volume of our account should be 500.0 \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -688,13 +688,13 @@ class Tests(object):
         # volume of the account
         for type in ["deposits",  "cash",  "loans"]:
                         if type == "deposits":
-                                account += bank.get_account(type)
+                                account = account + bank.get_account(type)
                                 print("D = " + str(account))
                         if type == "cash":
-                                account += bank.get_account(type)
+                                account = account + bank.get_account(type)
                                 print("D+M = " + str(account))
                         if type == "loans":
-                                account += bank.get_account(type)
+                                account = account + bank.get_account(type)
                                 print("D+M+L = " + str(account))
 
     # -------------------------------------------------------------------------
@@ -711,8 +711,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.get_account_num_transactions \n"
-        text += "  The purpose of this method is to count the numbers of transaction for   \n"
-        text += "  accounts banks hold. Our standard bank has 3 transactions by default. \n"
+        text = text + "  The purpose of this method is to count the numbers of transaction for   \n"
+        text = text + "  accounts banks hold. Our standard bank has 3 transactions by default. \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -762,13 +762,13 @@ class Tests(object):
         # is increasing by one
         for type in ["deposits",  "cash",  "loans"]:
                         if type == "deposits":
-                                num_transactions += bank.get_account_num_transactions(type)
+                                num_transactions = num_transactions + bank.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
                         if type == "cash":
-                                num_transactions += bank.get_account_num_transactions(type)
+                                num_transactions = num_transactions + bank.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
                         if type == "loans":
-                                num_transactions += bank.get_account_num_transactions(type)
+                                num_transactions = num_transactions + bank.get_account_num_transactions(type)
                                 print("D+M+L = " + str(num_transactions))
 
     # -------------------------------------------------------------------------
@@ -785,11 +785,11 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.add_transaction \n"
-        text += "  The most simple way to test this function is to assign an new    \n"
-        text += "  transaction to our bank. Therefore, lets just assign the following  \n"
-        text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = bank.identifier,  amount = 10,  \n'
-        text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
+        text = text + "  The most simple way to test this function is to assign an new    \n"
+        text = text + "  transaction to our bank. Therefore, lets just assign the following  \n"
+        text = text + "  transaction and check whether it has been added: \n"
+        text = text + '  (type = "deposits",  fromID = -1,  toID = bank.identifier,  amount = 10,  \n'
+        text = text + "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -857,8 +857,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.clear_accounts \n"
-        text += "  Checking if after the clear_accounts the total amount    \n"
-        text += "  of transactions in zero.  \n"
+        text = text + "  Checking if after the clear_accounts the total amount    \n"
+        text = text + "  of transactions in zero.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -957,8 +957,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks bank.purge_accounts \n"
-        text += "  Checking if after the purge_accounts the total amount    \n"
-        text += "  of transactions in the bank stays the same.  \n"
+        text = text + "  Checking if after the purge_accounts the total amount    \n"
+        text = text + "  of transactions in the bank stays the same.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -1285,7 +1285,7 @@ class Tests(object):
         #
 
         text = "Identifier: "
-        text += firm.get_identifier()
+        text = text + firm.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -1346,11 +1346,11 @@ class Tests(object):
         #
 
         text = "Original identifier: "
-        text += firm.get_identifier()
+        text = text + firm.get_identifier()
         print(text)
         firm.set_identifier("new_ident")
         text = "New identifier: "
-        text += firm.get_identifier()
+        text = text + firm.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -1724,11 +1724,11 @@ class Tests(object):
 
         # test whether the parameters are read properly
         text = "Identifier has been read as follows: \n"
-        text += "Identifier: "
-        text += firm.identifier
-        text += "\n"
-        text += "Productivity: "
-        text += str(firm.parameters["productivity"])
+        text = text + "Identifier: "
+        text = text + firm.identifier
+        text = text + "\n"
+        text = text + "Productivity: "
+        text = text + str(firm.parameters["productivity"])
         self.print_info(text)
 
     # -------------------------------------------------------------------------
@@ -1745,10 +1745,10 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks firm.get_account \n"
-        text += "  The purpose of this method is to establish an account for our firm which contains  \n"
-        text += "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
-        text += "  and stores them in one volume. As our firms holds 250.0 assets \n"
-        text += "  and 250 liabilites the total volume of our account should be 500.0 \n"
+        text = text + "  The purpose of this method is to establish an account for our firm which contains  \n"
+        text = text + "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
+        text = text + "  and stores them in one volume. As our firms holds 250.0 assets \n"
+        text = text + "  and 250 liabilites the total volume of our account should be 500.0 \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -1797,13 +1797,13 @@ class Tests(object):
         # volume of the account
         for type in ["loans",  "cash",  "goods"]:
                         if type == "loans":
-                                account += firm.get_account(type)
+                                account = account + firm.get_account(type)
                                 print("L = " + str(account))
                         if type == "cash":
-                                account += firm.get_account(type)
+                                account = account + firm.get_account(type)
                                 print("L+M = " + str(account))
                         if type == "goods":
-                                account += firm.get_account(type)
+                                account = account + firm.get_account(type)
                                 print("L+M+G = " + str(account))
 
     # -------------------------------------------------------------------------
@@ -1820,8 +1820,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks firm.get_account_num_transactions \n"
-        text += "  The purpose of this method is to count the numbers of transaction for   \n"
-        text += "  accounts firms hold. Our standard frm has 3 transactions by default. \n"
+        text = text + "  The purpose of this method is to count the numbers of transaction for   \n"
+        text = text + "  accounts firms hold. Our standard frm has 3 transactions by default. \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -1871,13 +1871,13 @@ class Tests(object):
         # is increasing by one
         for type in ["loans",  "cash",  "goods"]:
                         if type == "loans":
-                                num_transactions += firm.get_account_num_transactions(type)
+                                num_transactions = num_transactions + firm.get_account_num_transactions(type)
                                 print("L = " + str(num_transactions))
                         if type == "cash":
-                                num_transactions += firm.get_account_num_transactions(type)
+                                num_transactions = num_transactions + firm.get_account_num_transactions(type)
                                 print("L+M = " + str(num_transactions))
                         if type == "goods":
-                                num_transactions += firm.get_account_num_transactions(type)
+                                num_transactions = num_transactions + firm.get_account_num_transactions(type)
                                 print("L+M+G = " + str(num_transactions))
 
     # -------------------------------------------------------------------------
@@ -1894,11 +1894,11 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks firm.add_transaction \n"
-        text += "  The most simple way to test this function is to assign an new    \n"
-        text += "  transaction to our firm. Therefore, lets just assign the following  \n"
-        text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = firm.identifier,  amount = 10,  \n'
-        text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
+        text = text + "  The most simple way to test this function is to assign an new    \n"
+        text = text + "  transaction to our firm. Therefore, lets just assign the following  \n"
+        text = text + "  transaction and check whether it has been added: \n"
+        text = text + '  (type = "deposits",  fromID = -1,  toID = firm.identifier,  amount = 10,  \n'
+        text = text + "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -1965,8 +1965,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks firm.clear_accounts \n"
-        text += "  Checking if after the clear_accounts the total amount    \n"
-        text += "  of transactions in zero.  \n"
+        text = text + "  Checking if after the clear_accounts the total amount    \n"
+        text = text + "  of transactions in zero.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2062,8 +2062,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks firm.purge_accounts \n"
-        text += "  Checking if after the purge_accounts the total amount    \n"
-        text += "  of transactions in the firm stays the same.  \n"
+        text = text + "  Checking if after the purge_accounts the total amount    \n"
+        text = text + "  of transactions in the firm stays the same.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2390,7 +2390,7 @@ class Tests(object):
         #
 
         text = "Identifier: "
-        text += household.get_identifier()
+        text = text + household.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -2451,11 +2451,11 @@ class Tests(object):
         #
 
         text = "Original identifier: "
-        text += household.get_identifier()
+        text = text + household.get_identifier()
         print(text)
         household.set_identifier("new_ident")
         text = "New identifier: "
-        text += household.get_identifier()
+        text = text + household.get_identifier()
         print(text)
 
     # -------------------------------------------------------------------------
@@ -2826,14 +2826,14 @@ class Tests(object):
 
         # test whether the parameters are read properly
         text = "Identifier has been read as follows: \n"
-        text += "Identifier: "
-        text += household.identifier
-        text += "\n"
-        text += "Amount of labour: "
-        text += str(household.parameters["labour"])
-        text += "\n"
-        text += "Propensity to save: "
-        text += str(household.parameters["propensity_to_save"])
+        text = text + "Identifier: "
+        text = text + household.identifier
+        text = text + "\n"
+        text = text + "Amount of labour: "
+        text = text + str(household.parameters["labour"])
+        text = text + "\n"
+        text = text + "Propensity to save: "
+        text = text + str(household.parameters["propensity_to_save"])
         self.print_info(text)
 
     # -------------------------------------------------------------------------
@@ -2850,10 +2850,10 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks household.get_account \n"
-        text += "  The purpose of this method is to establish an account for our household which contains  \n"
-        text += "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
-        text += "  and stores them in one volume. As our household holds 250.0 assets \n"
-        text += "  and 250 liabilites the total volume of our account should be 500.0 \n"
+        text = text + "  The purpose of this method is to establish an account for our household which contains  \n"
+        text = text + "  all kinds of assets and liabilities. The method simply adds all kinds of assets  \n"
+        text = text + "  and stores them in one volume. As our household holds 250.0 assets \n"
+        text = text + "  and 250 liabilites the total volume of our account should be 500.0 \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2902,13 +2902,13 @@ class Tests(object):
         # volume of the account
         for type in ["deposits",  "cash",  "manhours"]:
                         if type == "deposits":
-                                account += household.get_account(type)
+                                account = account + household.get_account(type)
                                 print("D = " + str(account))
                         if type == "cash":
-                                account += household.get_account(type)
+                                account = account + household.get_account(type)
                                 print("D+M = " + str(account))
                         if type == "manhours":
-                                account += household.get_account(type)
+                                account = account + household.get_account(type)
                                 print("D+M+H = " + str(account))
 
     # -------------------------------------------------------------------------
@@ -2925,8 +2925,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks household.get_account_num_transactions \n"
-        text += "  The purpose of this method is to count the numbers of transaction for   \n"
-        text += "  accounts households hold. Our standard frm has 3 transactions by default. \n"
+        text = text + "  The purpose of this method is to count the numbers of transaction for   \n"
+        text = text + "  accounts households hold. Our standard frm has 3 transactions by default. \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -2976,13 +2976,13 @@ class Tests(object):
         # is increasing by one
         for type in ["deposits",  "cash",  "manhours"]:
                         if type == "deposits":
-                                num_transactions += household.get_account_num_transactions(type)
+                                num_transactions = num_transactions + household.get_account_num_transactions(type)
                                 print("D = " + str(num_transactions))
                         if type == "cash":
-                                num_transactions += household.get_account_num_transactions(type)
+                                num_transactions = num_transactions + household.get_account_num_transactions(type)
                                 print("D+M = " + str(num_transactions))
                         if type == "manhours":
-                                num_transactions += household.get_account_num_transactions(type)
+                                num_transactions = num_transactions + household.get_account_num_transactions(type)
                                 print("D+M+H = " + str(num_transactions))
 
     # -------------------------------------------------------------------------
@@ -2999,11 +2999,11 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks household.add_transaction \n"
-        text += "  The most simple way to test this function is to assign an new    \n"
-        text += "  transaction to our household. Therefore, lets just assign the following  \n"
-        text += "  transaction and check whether it has been added: \n"
-        text += '  (type = "deposits",  fromID = -1,  toID = household.identifier,  amount = 10,  \n'
-        text += "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
+        text = text + "  The most simple way to test this function is to assign an new    \n"
+        text = text + "  transaction to our household. Therefore, lets just assign the following  \n"
+        text = text + "  transaction and check whether it has been added: \n"
+        text = text + '  (type = "deposits",  fromID = -1,  toID = household.identifier,  amount = 10,  \n'
+        text = text + "   interest = 0.09, maturity = 0, timeOfDefault = -1) \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3070,8 +3070,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks household.clear_accounts \n"
-        text += "  Checking if after the clear_accounts the total amount    \n"
-        text += "  of transactions in zero.  \n"
+        text = text + "  Checking if after the clear_accounts the total amount    \n"
+        text = text + "  of transactions in zero.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3167,8 +3167,8 @@ class Tests(object):
         from src.environment import Environment  # needed for the bankDirectory
 
         text = "This test checks household.purge_accounts \n"
-        text += "  Checking if after the purge_accounts the total amount    \n"
-        text += "  of transactions in the household stays the same.  \n"
+        text = text + "  Checking if after the purge_accounts the total amount    \n"
+        text = text + "  of transactions in the household stays the same.  \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -3556,7 +3556,7 @@ class Tests(object):
         #
 
         text = "Identifier: "
-        text += environment.identifier
+        text = text + environment.identifier
         print(text)
 
     # -------------------------------------------------------------------------
@@ -3596,12 +3596,12 @@ class Tests(object):
         #
 
         text = "Identifier: "
-        text += environment.identifier
+        text = text + environment.identifier
         print(text)
         print("Changing identifier to XYZ")
         environment.set_identifier("XYZ")
         text = "Identifier: "
-        text += environment.identifier
+        text = text + environment.identifier
         print(text)
 
     # -------------------------------------------------------------------------
@@ -3988,10 +3988,10 @@ class Tests(object):
         #
         print("Initialized the banks")
         text = "num_banks parameter: "
-        text += str(environment.num_banks)
+        text = text + str(environment.num_banks)
         print(text)
         text = "Number of banks read: "
-        text += str(len(environment.banks))
+        text = text + str(len(environment.banks))
         print(text)
         print("The banks read: ")
         for i in range(0, int(environment.num_banks)):
@@ -4033,10 +4033,10 @@ class Tests(object):
         #
         print("Initialized the firms")
         text = "num_firms parameter: "
-        text += str(environment.num_firms)
+        text = text + str(environment.num_firms)
         print(text)
         text = "Number of firms read: "
-        text += str(len(environment.firms))
+        text = text + str(len(environment.firms))
         print(text)
         print("The firms read: ")
         for i in range(0, int(environment.num_firms)):
@@ -4078,10 +4078,10 @@ class Tests(object):
         #
         print("Initialized the households")
         text = "num_households parameter: "
-        text += str(environment.num_households)
+        text = text + str(environment.num_households)
         print(text)
         text = "Number of households read: "
-        text += str(len(environment.households))
+        text = text + str(len(environment.households))
         print(text)
         print("The households read: ")
         for i in range(0, int(environment.num_households)):
