@@ -101,11 +101,11 @@ class Updater(BaseModel):
         # Then agents get their labour endowment for the step (work hours to spend)
         self.endow_labour(environment, time)
         # Households sell labour
-        self.sell_labour(environment, time)  # TODO
+        self.sell_labour(environment, time)  # CHECK CAREFULLY
         # Firms produce
-        self.produce(environment, time)  # TODO
+        self.produce(environment, time)
         # Households buy goods
-        self.consume(environment, time)  # TODO
+        self.consume(environment, time)  # CHECK CAREFULLY
         # Households make deposits
         self.make_deposits(environment, time)
         # Labour and goods are perishable, so must be removed before next step
@@ -171,61 +171,244 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # sell_labour
+    # sell_labour(environment, time)
+    # This function allows the households to sell their labour to firms
+    # For now we assume that firms want to buy all the labour they can get
+    # And that they need to use cash for this purpose, they can't take loans
+    # And firms keep cash, they do not keep deposits, these will be updated
+    # in later time
     # -------------------------------------------------------------------------
-    def sell_labour(self,  environment):
-        # find the cash available through loans in the system
-        for firm in environment.firms:  # TODO: make this iterate randomly
-            # find the available cash of the firm
-            # find the collateral value for loans LETS LEAVE LOANS FOR NOW
-            # AND ADD LOANS LATER, AS THIS MAY BE LESS OBVIOUS TO PARAMETRISE
-            # go through households and buy all the labour firm can afford
-            #
-            pass
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # produce
-    # -------------------------------------------------------------------------
-    def produce(self,  environment):
-        # We take all the labour and turn it into goods
-        pass
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # consume
-    # -------------------------------------------------------------------------
-    def consume(self,  environment):
+    def sell_labour(self,  environment, time):
+        # We want the sell to be done in random pairs
+        # So we need to randomise the households and the firms
+        # We start with the firms and create a list of order integers
+        # the size of the number of firms
+        itrange = list(range(0, environment.num_firms))
+        # Then we shuffle the list
+        random.shuffle(itrange)
+        # And use it to loop over the firms randomly
+        for i in itrange:
+            # Since we don't loop directly over firms
+            # We assign the correct firm in this run over the loop
+            firm = environment.firms[i]
+            # We calculate the amount of cash firm has to buy labour
+            to_buy = 0.0
+            # We go through the firm's transactions
+            for tranx in firm.accounts:
+                # If we find cash transaction
+                if tranx.type_ == "cash":
+                    # We add the cash to the amount of labour the firm
+                    # wants to buy, we assume 1 unit of labour costs 1 unit of cash
+                    to_buy = to_buy + tranx.amount
+            # Now we randomise households and create a list of order integers
+            # the size of the number of households
+            itrange_hh = list(range(0, environment.num_households))
+            # Then we shuffle the list
+            random.shuffle(itrange_hh)
+            # For each household in random order
+            for h in itrange_hh:
+                # Since we don't loop directly over households
+                # We assign the correct household in this run over the loop
+                household = environment.households[h]
+                household_cash = 0.0
+                # We go through household's accounts
+                for tranx in household.accounts:
+                    # And find transactions with labour
+                    if tranx.type_ == "manhours":
+                        # We will sell them for cash
+                        # So we look through firm's accounts
+                        for tranx_f in firm.accounts:
+                            # And find cash transactions
+                            if tranx_f.type_ == "cash":
+                                # We can only buy the lowest amount from the cash the firm
+                                # has, the labour the household has, and however many units
+                                # they want to buy
+                                amount_proxy = min(tranx.amount, tranx_f.amount, to_buy)
+                                # Then we remove the appropriate amount of cash from the firm
+                                tranx_f.amount = tranx_f.amount - amount_proxy
+                                # Lower the amount firm wants to buy
+                                to_buy = to_buy - amount_proxy
+                                # And remove the goods from household's account
+                                tranx.amount = tranx.amount - amount_proxy
+                                # And we note the cash to be added to the household
+                                household_cash = household_cash + amount_proxy
+                # Add cash for sold items to the household
+                cash_number = 0
+                # We calculate how many cash account the household has
+                for tranx in household.accounts:
+                    if tranx.type_ == "cash":
+                        cash_number = cash_number + 1
+                # If there are no cash transactions on the household's books
+                # We create a new one and put the proceeds there
+                if cash_number == 0:
+                    # Create a transaction
+                    transaction = Transaction()
+                    # Add the appropriate values to the transaction
+                    transaction.this_transaction("cash", "",  household.identifier, household.identifier,
+                                                 household_cash, 0,  0, -1)
+                    # And add the transaction to the books (do it through function/not manually)
+                    transaction.add_transaction(environment)
+                # If the household has previous cash transactions we add the cash from sales proportionately
+                else:
+                    # We find all cash transactions
+                    for tranx in household.accounts:
+                        if tranx.type_ == "cash":
+                            # And add the sales proceeds proportionately
+                            tranx.amount = tranx.amount + (household_cash / cash_number)
+        # The sales above may have rendered some transactions worthless
+        # So we need to purge all accounts to make sure everything is in order
         for household in environment.households:
+            household.purge_acconts()
+        # We do the same for households and firms
+        for firm in environment.firms:
+            firm.purge_acconts()
+        logging.info("  labour sold to firms on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # produce(environment, time)
+    # This function lets firms to turn their production factors (labour)
+    # into goods, using their know-how (productivity parameter)
+    # Thus in principle firms may differ in their production function and their
+    # outputs from the same amount of labour may be different
+    # -------------------------------------------------------------------------
+    def produce(self,  environment, time):
+        # We take all the labour and turn it into goods
+        for firm in environment.firms:  # We do it for every firm
+            production_factors = 0  # Here, we count how much labour the firm has
+            for tranx in firm.accounts:
+                if tranx.type_ == "manhours":
+                    # We move the labour to production as a production factor
+                    # First, we move it to production factors used below
+                    # Then we will remove it from the books
+                    production_factors = production_factors + tranx.amount
+            # Amount produced is labour * productivity in this simple model
+            amount = production_factors * firm.productivity
+            # Create a transaction
+            transaction = Transaction()
+            # Add the appropriate values to the transaction
+            transaction.this_transaction("goods", "",  firm.identifier, firm.identifier,
+                                         amount, 0,  0, -1)
+            # And add the transaction to the books (do it through function/not manually)
+            transaction.add_transaction(environment)
+        # Finally, we remove all the labour that was used in production
+        # from the books of the firms
+        self.remove_labour_firms(environment, time)
+        logging.info("  goods produced on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # consume(environment, time)
+    # This function lets households buy the goods the firms have produced
+    # so they can satisfy their needs through consumption
+    # This consumption depends on the propensity to save of the households
+    # The matching of buyers and sellers on the market is random
+    # -------------------------------------------------------------------------
+    def consume(self,  environment, time):
+        # We want the consumption to be done in random pairs
+        # So we need to randomise the households and the firms
+        # We start with the households and create a list of order integers
+        # the size of the number of households
+        itrange_hh = list(range(0, environment.num_households))
+        # Then we shuffle the list
+        random.shuffle(itrange_hh)
+        # And use it to loop over the households randomly
+        for h in itrange_hh:
+            # Since we don't loop directly over households
+            # We assign the correct household in this run over the loop
+            household = environment.households[h]
             wealth = 0.0  # total of deposits and cash available for the household
             cash = 0.0  # total of cash available for the household
-            # We calculate the above
+            # We calculate the above two values
             for tranx in household.accounts:
+                # We add all deposits and all cash to the wealth
                 if tranx.type_ == "deposits" or tranx.type_ == "cash":
                     wealth = wealth + tranx.amount
+                # But only cash to the available cash
                 if tranx.type_ == "cash":
                     cash = cash + tranx.amount
-            # We consume the percentage of wealth of, cash first
+            # We consume the percentage of wealth determined by
+            # the propensity to save, cash first
             to_consume = wealth * (1 - household.propensity_to_save)
-            # Consume here: firms sell goods,
-            # We randomise the order of firms
-            # TODO: randomise the households selling too above
+            # Now we randomise firms and create a list of order integers
+            # the size of the number of households
             itrange = list(range(0, environment.num_firms))
+            # Then we shuffle the list
             random.shuffle(itrange)
             # For each firm in random order
             for i in itrange:
+                # For every transaction on that firm's books
+                # We make a proxy for the cash that firm should obtain
+                # for whatever good they've sold to the household
+                firm_cash = 0.0
                 for tranx in environment.firms[i].accounts:
+                    # If the transaction contains goods
                     if tranx.type_ == "goods":
+                        # We go through the household's accounts
                         for tranx_h in household.accounts:
+                            # And look for cash
                             if tranx_h == "cash":
-                                amount_proxy = min(tranx.amount, to_consume)
-                                tranx_h.amount = tranx_h.amount + amount_proxy
-                        to_consume = to_consume - amount_proxy
-                        tranx.amount = tranx.amount - amount_proxy
+                                # We can buy for minimum of the cash and goods
+                                # in question
+                                amount_proxy = min(tranx.amount, tranx_h.amount, to_consume)
+                                # And remove the appropriate amount of cash
+                                tranx_h.amount = tranx_h.amount - amount_proxy
+                                # Lower the amount household wants to consume
+                                to_consume = to_consume - amount_proxy
+                                # And remove the goods from firm's account
+                                tranx.amount = tranx.amount - amount_proxy
+                                # And we note the cash to be added to the firm
+                                firm_cash = firm_cash + amount_proxy
+                        for tranx_h in household.accounts:
+                            # And look for deposits
+                            if tranx_h == "deposits":
+                                # We can buy for minimum of the deposits and goods
+                                # in question
+                                amount_proxy = min(tranx.amount, tranx_h.amount, to_consume)
+                                # And remove the appropriate amount of deposits
+                                tranx_h.amount = tranx_h.amount - amount_proxy
+                                # Lower the amount household wants to consume
+                                to_consume = to_consume - amount_proxy
+                                # And remove the goods from firm's account
+                                tranx.amount = tranx.amount - amount_proxy
+                                # And we note the cash to be added to the firm
+                                firm_cash = firm_cash + amount_proxy
+                # Add cash for sold items to the firm
+                cash_number = 0
+                # We calculate how many cash account the firm has
+                for tranx in environment.firms[i].accounts:
+                    if tranx.type_ == "cash":
+                        cash_number = cash_number + 1
+                # If the firm doesn't have any cash accounts we create a new one
+                if cash_number == 0:
+                    # Create a transaction
+                    transaction = Transaction()
+                    # Add the appropriate values to the transaction
+                    transaction.this_transaction("cash", "",  environment.firms[i].identifier, environment.firms[i].identifier,
+                                                 firm_cash, 0,  0, -1)
+                    # And add the transaction to the books (do it through function/not manually)
+                    transaction.add_transaction(environment)
+                # If the firm has previous cash transactions we add the cash from sales proportionately
+                else:
+                    # We find all cash transactions
+                    for tranx in environment.firms[i].accounts:
+                        if tranx.type_ == "cash":
+                            # And add the sales proceeds proportionately
+                            tranx.amount = tranx.amount + (firm_cash / cash_number)
+        # The sales above may have rendered some transactions worthless
+        # So we need to purge all accounts to make sure everything is in order
         for household in environment.households:
             household.purge_acconts()
+        # We do the same for households and firms
         for firm in environment.firms:
             firm.purge_acconts()
+        # Finally, we remove the goods which weren't sold from firms' accounts
+        # As they are perishable
+        self.remove_goods_firms(environment, time)
+        logging.info("  goods consumed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -251,7 +434,7 @@ class Updater(BaseModel):
             # And move all available cash to deposits at the end of the step
             # If there are no deposits we create one in a bank
             # The bank is chosen randomly
-            if control_deposits = 0:
+            if control_deposits == 0:
                 # We choose a bank randomly
                 random_bank = random.choice(environment.banks)
                 # Create a transaction
@@ -264,7 +447,7 @@ class Updater(BaseModel):
             # If there are previous deposits we expand them linearly
             else:
                 for tranx in household.accounts:
-                    if tranx.type_ = "deposits":
+                    if tranx.type_ == "deposits":
                         # We add the remaining cash to the existing deposits
                         # in equal proportions
                         # Perhaps this can be done proportionate with regards
@@ -300,7 +483,30 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # remove_labour(environment, time)
+    # remove_labour_firms(environment, time)
+    # This function removes all the labour that hasn't been sold within
+    # sell_labour, in economic terms this means that labour doesn't carry
+    # over to the next step, just like in the real economy
+    # -------------------------------------------------------------------------
+    def remove_labour_firms(self,  environment, time):
+        # We go through all households
+        for firm in environment.firms:
+                # We find the transactions that should be deleted from firm's books
+                # We don't iterate over the accounts directly since we want to delete
+                # them and this could cause the loop to jump around
+                to_delete = []  # An empty list to be used to keep the transactions to delete
+                # The below creates a SOFT COPY of the transactions that contain labour
+                to_delete[:] = [x for x in firm.accounts if x.type_ == "manhours"]
+                # Once we have the transactions to find in a separate list
+                # We remove them from the appropriate books using the
+                # method from the Transaction class
+                for tranx in to_delete:
+                    # This is important, we shouldn't do it manually though del/remove
+                    tranx.remove_transaction()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # remove_goods(environment, time)
     # This function removes all the goods that hasn't been sold within
     # the step, in economic terms this means that goods doesn't carry
     # over to the next step, i.e. goods are perishable
@@ -321,5 +527,30 @@ class Updater(BaseModel):
                     # This is important, we shouldn't do it manually though del/remove
                     tranx.remove_transaction()
         logging.info("  goods removed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # remove_goods_firms(environment, time)
+    # This function removes all the goods that hasn't been sold within
+    # the step, in economic terms this means that goods doesn't carry
+    # over to the next step, i.e. goods are perishable
+    # -------------------------------------------------------------------------
+    def remove_goods_firms(self,  environment, time):
+        # We go through all firms
+        for firm in environment.firms:
+                # We find the transactions that should be deleted from firm's books
+                # We don't iterate over the accounts directly since we want to delete
+                # them and this could cause the loop to jump around
+                to_delete = []  # An empty list to be used to keep the transactions to delete
+                # The below creates a SOFT COPY of the transactions that contain goods
+                to_delete[:] = [x for x in firm.accounts if x.type_ == "goods"]
+                # Once we have the transactions to find in a separate list
+                # We remove them from the appropriate books using the
+                # method from the Transaction class
+                for tranx in to_delete:
+                    # This is important, we shouldn't do it manually though del/remove
+                    tranx.remove_transaction()
+        # logging.info("  goods removed from firms on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
