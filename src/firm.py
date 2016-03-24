@@ -237,3 +237,12 @@ class Firm(BaseAgent):
     def __getattr__(self, attr):
         return super(Firm, self).__getattr__(attr)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # demand_for_labour(price)
+    # this is for testing for now, makes the demand labour to be
+    # a linear function of price
+    # -------------------------------------------------------------------------
+    def demand_for_labour(self, price):
+        return max(0.0, 100.0 - price * 1.5)
+    # -------------------------------------------------------------------------

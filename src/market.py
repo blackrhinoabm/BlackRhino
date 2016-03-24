@@ -21,7 +21,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from abm_template.src.basemarket import BaseMarket
-import random
 
 # -------------------------------------------------------------------------
 #  class Updater
@@ -73,7 +72,7 @@ class Market(BaseMarket):
     # -------------------------------------------------------------------------
     # __init__(environment)
     # -------------------------------------------------------------------------
-    def __init__(self, identifier, tolerance, resolution):
+    def __init__(self, identifier, tolerance, resolution, amplification):
         self.identifier = identifier
         self.tolerance = tolerance
         self.resolution = resolution
@@ -91,135 +90,19 @@ class Market(BaseMarket):
     # [buyers] = [[agent_1, demand_function_1],[agent_2, demand_function_2],...]
     # -------------------------------------------------------------------------
     def tatonnement(self, suppliers, buyers, starting_price):
-        # Initialise a variable which looks for the equilibrium price
-        price_dummy = 0.0
-        # Set price dummy to the starting value
-        # TODO: rethink this, maybe if it's run multiple times start with
-        #       previous equilibrium price, the below is tentative
-        if starting_price == 0.0:
-            price_dummy = random.randrange(0, 10, 0.1)
-        else:
-            price_dummy = starting_price
-        # Initialise dummy variables for exponential search
-        # First counts how many times we've moved in the same direction
-        same_direction_in_a_row = 0
-        # The second stores the last know direction:
-        #  1 = price moved upwards
-        # -1 = prive moved downwards
-        directon = 0
-        # The factor by which we change the price
-        # It's based on the resolution parameter but is adjusted
-        # in the course of exponential search
-        delta = self.resolution
-        # The search runs until we return the equilibrium price
-        # This is potentially dangerous, but if it doesn't work
-        # the whole model will not work, so this can be checked
-        # on runtime, if suspicious make a counter and error on
-        # given number of loops
-        while True:
-            # On every run we compare tentative demand and supply
-            # given the price we try out, so we initialise the
-            # dummy demand and supply variables
-            demand = 0.0
-            supply = 0.0
-            # Then we calculate supply and demand for a given price
-            # by calculating supply and demand of all respective
-            # agents through their supply demand functions ran
-            # with the dummy price, and these are summed to
-            # total supply and total demand at the tried price
-            # First, supply:
-            for supplier in suppliers:
-                supply = supply + supplier[0].supplier[1](price_dummy)
-            # Then, demand:
-            for buyer in buyers:
-                demand = demand + buyer[0].buyer[1](price_dummy)
-            # We check the exit condition, that is the convergence of
-            # supply and demand +/- set tolerance
-            if abs(demand - supply) / (demand + supply) <= self.tolerance:
-                # If we found equilibrium price we return it to the caller
-                return price_dummy
-            # If we haven't found the equilibrium price we start the
-            # exponential search
-            # Alt implementation in Java:
-            # https://github.com/kronrod/agentecon/blob/ComputationalEconomicsPaper/src/com/agentecon/price/ExpSearchPrice.java
-            else:
-                # We have two cases, either we need to increase or decrease
-                # the price dummy, we start with excess demand
-                if (demand - supply) > 0:
-                    # Now, we have three cases:
-                    # 1. It's the first run, and we haven't had any adjustments
-                    # In this case we just adjust the price dummy by the
-                    # standard delta gotten from the parameters
-                    if directon == 0:
-                        # We change the direction to upwards
-                        directon = 1
-                        # And adjust the price dummy by starting delta
-                        price_dummy = price_dummy * (1 + delta)
-                    # 2. We have the change in the same direction as previously
-                    # Then we need to adjust delta accordingly and only then
-                    # adjust the dummy price for further runs
-                    elif directon == 1:
-                        # The direction is already correct, so we
-                        # only adjust the number of times we've enountered
-                        # the same direction in a row by 1
-                        same_direction_in_a_row = same_direction_in_a_row + 1
-                        # If if was 2 or multiple of 2 times then we widen the
-                        # gap by which we adjust the dummy price by amplification factor
-                        if (same_direction_in_a_row > 0 and same_direction_in_a_row % 2 == 0):
-                            delta = delta * self.amplification
-                        # And adjust the price dummy accordingly
-                        price_dummy = price_dummy * (1 + delta)
-                    # 3. We have the change in opposite direction from previous one
-                    # Then we need to adjust delta accordingly and only then
-                    # adjust the dummy price for further runs
-                    else:
-                        # We reset the number of changes in the same direction
-                        # since we change direction with this adjustment
-                        same_direction_in_a_row = 0
-                        # And set direction upwards
-                        directon = 1
-                        # On changing direction we shorten the gap by which
-                        # we adjust the dummy price by amplification factor
-                        delta = delta / self.amplification
-                        # And adjust the price dummy accordingly
-                        price_dummy = price_dummy * (1 + delta)
-                # Now we move to the case with excess supply at last checked price
-                else:
-                    # Now, we have three cases:
-                    # 1. It's the first run, and we haven't had any adjustments
-                    # In this case we just adjust the price dummy by the
-                    # standard delta gotten from the parameters
-                    if directon == 0:
-                        # We change the direction to downwards
-                        directon = -1
-                        # And adjust the price dummy by starting delta
-                        price_dummy = price_dummy * (1 - delta)
-                    # 2. We have the change in the same direction as previously
-                    # Then we need to adjust delta accordingly and only then
-                    # adjust the dummy price for further runs
-                    elif directon == -1:
-                        # The direction is already correct, so we
-                        # only adjust the number of times we've enountered
-                        # the same direction in a row by 1
-                        same_direction_in_a_row = same_direction_in_a_row + 1
-                        # If if was 2 or multiple of 2 times then we widen the
-                        # gap by which we adjust the dummy price by amplification factor
-                        if (same_direction_in_a_row > 0 and same_direction_in_a_row % 2 == 0):
-                            delta = delta * self.amplification
-                        # And adjust the price dummy accordingly
-                        price_dummy = price_dummy * (1 - delta)
-                    # 3. We have the change in opposite direction from previous one
-                    # Then we need to adjust delta accordingly and only then
-                    # adjust the dummy price for further runs
-                    else:
-                        # We reset the number of changes in the same direction
-                        # since we change direction with this adjustment
-                        same_direction_in_a_row = 0
-                        # And set direction downwards
-                        directon = -1
-                        # On changing direction we shorten the gap by which
-                        # we adjust the dummy price by amplification factor
-                        delta = delta / self.amplification
-                        # And adjust the price dummy accordingly
-                        price_dummy = price_dummy * (1 - delta)
+        return super(Market, self).tatonnement(suppliers, buyers, starting_price)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # rationing(agents)
+    # This function performs a rationing mechanism to clear the market.
+    # Note that the input to this method is a lists containing pairs
+    # of agents and their supply or demand (supply + demand -)
+    # [agents] = [[agent_1, supply_1],[agent_2, supply_2],...]
+    # and returns a list of pairs and their exchange amounts
+    # [to_return] = [[agent_selling_1, agent_buying_1, amount_sold_1],
+    #                [agent_selling_2, agent_buying_2, amount_sold_2]]
+    # -------------------------------------------------------------------------
+    def rationing(self, agents):
+        return super(Market, self).rationing(agents)
     # -------------------------------------------------------------------------

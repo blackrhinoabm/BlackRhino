@@ -102,7 +102,8 @@ class Updater(BaseModel):
         # Then agents get their labour endowment for the step (work hours to spend)
         self.endow_labour(environment, time)
         # Households sell labour
-        self.sell_labour(environment, time)  # CHECK CAREFULLY
+        #self.sell_labour(environment, time)  # CHECK CAREFULLY
+        self.sell_labour_priced(environment, time)  # CHECK CAREFULLY
         # Firms produce
         self.produce(environment, time)
         # Households buy goods
@@ -231,6 +232,115 @@ class Updater(BaseModel):
                                 to_buy = to_buy - amount_proxy
                                 # And remove the goods from household's account
                                 tranx.amount = tranx.amount - amount_proxy
+                                # And we note the cash to be added to the household
+                                household_cash = household_cash + amount_proxy
+                                # Create a transaction
+                                transaction = Transaction()
+                                # Add the appropriate values to the transaction
+                                transaction.this_transaction("manhours", "",  firm.identifier, firm.identifier,
+                                                             amount_proxy, 0,  0, -1)
+                                # And add the transaction to the books (do it through function/not manually)
+                                transaction.add_transaction(environment)
+                # Add cash for sold items to the household
+                cash_number = 0
+                # We calculate how many cash account the household has
+                for tranx in household.accounts:
+                    if tranx.type_ == "cash":
+                        cash_number = cash_number + 1
+                # If there are no cash transactions on the household's books
+                # We create a new one and put the proceeds there
+                if cash_number == 0:
+                    # Create a transaction
+                    transaction = Transaction()
+                    # Add the appropriate values to the transaction
+                    transaction.this_transaction("cash", "",  household.identifier, household.identifier,
+                                                 household_cash, 0,  0, -1)
+                    # And add the transaction to the books (do it through function/not manually)
+                    transaction.add_transaction(environment)
+                # If the household has previous cash transactions we add the cash from sales proportionately
+                else:
+                    # We find all cash transactions
+                    for tranx in household.accounts:
+                        if tranx.type_ == "cash":
+                            # And add the sales proceeds proportionately
+                            tranx.amount = tranx.amount + (household_cash / cash_number)
+        # The sales above may have rendered some transactions worthless
+        # So we need to purge all accounts to make sure everything is in order
+        transaction = Transaction()
+        transaction.purge_accounts(environment)
+        logging.info("  labour sold to firms on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # sell_labour_priced(environment, time)
+    # This function allows the households to sell their labour to firms
+    # For now we assume that firms want to buy all the labour they can get
+    # And that they need to use cash for this purpose, they can't take loans
+    # And firms keep cash, they do not keep deposits, these will be updated
+    # in later time
+    # -------------------------------------------------------------------------
+    def sell_labour_priced(self,  environment, time):
+        suppliers = []
+        for agent in environment.households:
+            suppliers.append([agent, agent.supply_of_labour])
+        buyers = []
+        for agent in environment.firms:
+            buyers.append([agent, agent.demand_for_labour])
+        starting_price = 0.0
+        price = 0.0
+        from market import Market
+        market = Market("market", 0.01, 0.01, 1.1)
+        price = market.tatonnement(suppliers, buyers, starting_price)
+        # We want the sell to be done in random pairs
+        # So we need to randomise the households and the firms
+        # We start with the firms and create a list of order integers
+        # the size of the number of firms
+        itrange = list(range(0, int(environment.num_firms)))
+        # Then we shuffle the list
+        random.shuffle(itrange)
+        # And use it to loop over the firms randomly
+        for i in itrange:
+            # Since we don't loop directly over firms
+            # We assign the correct firm in this run over the loop
+            firm = environment.firms[i]
+            # We calculate the amount of cash firm has to buy labour
+            to_buy = firm.demand_for_labour(price)
+            to_sell = list(range(0, int(environment.num_households)))
+            # Now we randomise households and create a list of order integers
+            # the size of the number of households
+            itrange_hh = list(range(0, int(environment.num_households)))
+            # Then we shuffle the list
+            random.shuffle(itrange_hh)
+            for h in itrange_hh:
+                to_sell[h] = environment.households[h].supply_of_labour(price)
+            # For each household in random order
+            for h in itrange_hh:
+                # Since we don't loop directly over households
+                # We assign the correct household in this run over the loop
+                household = environment.households[h]
+                household_cash = 0.0
+                # We go through household's accounts
+                for tranx in household.accounts:
+                    # And find transactions with labour
+                    if tranx.type_ == "manhours":
+                        # We will sell them for cash
+                        # So we look through firm's accounts
+                        for tranx_f in firm.accounts:
+                            # And find cash transactions
+                            if tranx_f.type_ == "cash":
+                                # We can only buy the lowest amount from the cash the firm
+                                # has, the labour the household has, and however many units
+                                # they want to buy
+                                amount_proxy = min(tranx.amount*price, tranx_f.amount, to_buy*price, to_sell[h]*price)
+                                amount_proxy = amount_proxy / price
+                                # Then we remove the appropriate amount of cash from the firm
+                                tranx_f.amount = tranx_f.amount - amount_proxy * price
+                                # Lower the amount firm wants to buy
+                                to_buy = to_buy - amount_proxy
+                                # And remove the goods from household's account
+                                tranx.amount = tranx.amount - amount_proxy
+                                to_sell[h] = to_sell[h] - amount_proxy
                                 # And we note the cash to be added to the household
                                 household_cash = household_cash + amount_proxy
                                 # Create a transaction

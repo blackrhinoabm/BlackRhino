@@ -237,3 +237,12 @@ class Household(BaseAgent):
     def __getattr__(self, attr):
         return super(Household, self).__getattr__(attr)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # supply_of_labour(price)
+    # this is for testing for now, makes the supply of labour inelastic
+    # households want to sell all labour
+    # -------------------------------------------------------------------------
+    def supply_of_labour(self, price):
+        return self.get_account("manhours")
+    # -------------------------------------------------------------------------
