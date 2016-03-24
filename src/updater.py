@@ -342,7 +342,7 @@ class Updater(BaseModel):
                                 tranx.amount = tranx.amount - amount_proxy
                                 to_sell[h] = to_sell[h] - amount_proxy
                                 # And we note the cash to be added to the household
-                                household_cash = household_cash + amount_proxy
+                                household_cash = household_cash + amount_proxy * price
                                 # Create a transaction
                                 transaction = Transaction()
                                 # Add the appropriate values to the transaction
