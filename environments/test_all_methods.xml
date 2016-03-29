@@ -1,6 +1,6 @@
 <environment title='tests_for_all_methods'>
     <!-- simulation parameters -->
-    <parameter type='numSweeps' value='100'></parameter>
+    <parameter type='numSweeps' value='1'></parameter>
     <parameter type='numSimulations' value='1'></parameter>
     <parameter type='numBanks' value='3'></parameter>
     <parameter type='bankDirectory' value='agents/banks/'></parameter>

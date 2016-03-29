@@ -1,6 +1,6 @@
 <environment identifier='tests_for_all_methods'>
     <!-- simulation parameters -->
-    <parameter type='static' name='num_sweeps' value='100'></parameter>
+    <parameter type='static' name='num_sweeps' value='10'></parameter>
     <parameter type='static' name='num_simulations' value='1'></parameter>
     <parameter type='static' name='num_banks' value='2'></parameter>
     <parameter type='static' name='num_firms' value='1'></parameter>
