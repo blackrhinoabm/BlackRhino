@@ -292,10 +292,10 @@ class Updater(BaseModel):
         # That is their demand may be higher than
         # what they can actually buy, which may be ok
         # We set the values necessary for tatonnement
-        # The list of sellers and their supply functions
-        sellers = []
+        # The list of suppliers and their supply functions
+        suppliers = []
         for agent in environment.households:
-            sellers.append([agent, agent.supply_of_labour])
+            suppliers.append([agent, agent.supply_of_labour])
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
@@ -314,7 +314,7 @@ class Updater(BaseModel):
         market = Market("market", 0.01, 0.01, 1.1)
         # And we find the market price of labour
         # given supply and demand of the agents
-        price = market.tatonnement(sellers, buyers, starting_price)
+        price = market.tatonnement(suppliers, buyers, starting_price)
         ## print(price) # This is for testing, should be commented out
         # We find the amount of supply the households have
         # at market price
