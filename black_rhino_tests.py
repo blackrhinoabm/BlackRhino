@@ -145,3 +145,12 @@ if __name__ == '__main__':
     test.transaction__write_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
     test.transaction__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
     test.transaction__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for Helper
+    test.helper__initialize_standard_bank(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__initialize_standard_firm(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__initialize_standard_household(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__cobb_douglas(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__leontief(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__ces(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.helper__translog(["tests/environments/", "test_all_methods", "tests/log/"])

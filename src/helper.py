@@ -169,7 +169,7 @@ class Helper(object):
     # Leontief production function
     # https://en.wikipedia.org/wiki/Leontief_production_function
     # -------------------------------------------------------------------------
-    def cobb_douglas(self, input_, constants):
+    def leontief(self, input_, constants):
         dummy = []
         for i in range(0, len(input_)):
             dummy.append(input_[i]/constants[i])
@@ -199,12 +199,12 @@ class Helper(object):
     # translog production function
     # https://en.wikipedia.org/wiki/Cobb%E2%80%93Douglas_production_function
     # -------------------------------------------------------------------------
-    def tanslog(self, labour, capital, a_0, a_l, a_c, a_ll, a_cc, a_lc):
+    def translog(self, labour, capital, a_0, a_l, a_c, a_ll, a_cc, a_lc):
         import math
         production = 0.0
         production = a_0 +\
                      a_l * math.log(labour) + \
-                     a_c * math.log(capital) \
+                     a_c * math.log(capital) + \
                      a_ll * (math.log(labour)) ** 2 + \
                      a_cc * (math.log(capital)) ** 2 + \
                      a_lc * math.log(labour) * math.log(capital)

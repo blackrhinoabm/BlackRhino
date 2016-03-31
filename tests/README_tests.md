@@ -41,11 +41,11 @@ DESCRIPTION OF TESTS
         before and after adding the transaction, allowing for the comparison
     test.bank__clear_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are cleared after using the appropriate function, and prints
-        the number of items and their value in the balance sheet at the beginning, after 
+        the number of items and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.bank__purge_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are purged after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of itams and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.bank__initialize_standard_bank([environment_directory, test_config_file, log_directory])
         Tests whether the helper function for initializing a standard bank works
@@ -88,11 +88,11 @@ DESCRIPTION OF TESTS
         before and after adding the transaction, allowing for the comparison
     test.firm__clear_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are cleared after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of itams and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.firm__purge_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are purged after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of itams and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.firm__initialize_standard_firm([environment_directory, test_config_file, log_directory])
         Tests whether the helper function for initializing a standard firm works
@@ -135,11 +135,11 @@ DESCRIPTION OF TESTS
         before and after adding the transaction, allowing for the comparison
     test.household__clear_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are cleared after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of itams and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.household__purge_accounts([environment_directory, test_config_file, log_directory])
         Tests whether accounts are purged after using the appropriate function, and prints
-        the number of itams and their value in the balance sheet at the beginning, after 
+        the number of itams and their value in the balance sheet at the beginning, after
         adding a worthless item and finally after calling the function
     test.household__initialize_standard_firm([environment_directory, test_config_file, log_directory])
         Tests whether the helper function for initializing a standard household works
@@ -291,3 +291,27 @@ DESCRIPTION OF TESTS
         test_firm which have a transaction with amount = 0. Then the accounts globally are purged
         and the two abovementioned agents are printed again, correctly not showing the transaction
         with amount = 0.
+
+
+    # Tests for Helper
+    test.helper__initialize_standard_bank(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether initializing standard bank works properly. Initializes standard bank and then
+        prints it to the screen. The standard bank should have three transactions on the books.
+    test.helper__initialize_standard_firm(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether initializing standard firm works properly. Initializes standard firm and then
+        prints it to the screen. The standard firm should have three transactions on the books.
+    test.helper__initialize_standard_household(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether initializing standard household works properly. Initializes standard household and then
+        prints it to the screen. The standard household should have three transactions on the books.
+    test.helper__cobb_douglas(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether C-D production function works. Calculates production for given
+        parameters, should calculate production to be 2.93
+    test.helper__leontief(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether Leontief production function works. Calculates production for given
+        parameters, should calculate production to be 2.5
+    test.helper__ces(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether CES production function works. Calculates production for given
+        parameters, should calculate production to be 2.43
+    test.helper__translog(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether translog production function works. Calculates production for given
+        parameters, should calculate production to be 13.74
