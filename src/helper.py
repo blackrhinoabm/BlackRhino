@@ -148,3 +148,66 @@ class Helper(object):
         transaction.this_transaction("manhours", "", household.identifier, household.identifier, amount, 0,  0, -1)
         transaction.add_transaction(environment)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # cobb_douglas
+    #
+    # this routine calculates production according to
+    # Cobb-Douglas production function
+    # https://en.wikipedia.org/wiki/Cobb%E2%80%93Douglas_production_function
+    # -------------------------------------------------------------------------
+    def cobb_douglas(self, labour, capital, total_factor_productivity, labour_elasticity, capital_elasticity):
+        production = 0.0
+        production = total_factor_productivity * labour ** labour_elasticity * capital ** capital_elasticity
+        return production
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # leontief
+    #
+    # this routine calculates production according to
+    # Leontief production function
+    # https://en.wikipedia.org/wiki/Leontief_production_function
+    # -------------------------------------------------------------------------
+    def cobb_douglas(self, input_, constants):
+        dummy = []
+        for i in range(0, len(input_)):
+            dummy.append(input_[i]/constants[i])
+        production = 0.0
+        production = min(dummy)
+        return production
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # ces
+    #
+    # this routine calculates production according to
+    # Constant elasticity of substitution production function
+    # https://en.wikipedia.org/wiki/Constant_elasticity_of_substitution
+    # -------------------------------------------------------------------------
+    def ces(self, labour, capital, capital_share, elasticity_of_substitution):
+        r = (elasticity_of_substitution - 1) / elasticity_of_substitution
+        production = 0.0
+        production = (capital_share * capital ** r + (1 - capital_share) * labour ** r) ** (1 / r)
+        return production
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # translog
+    #
+    # this routine calculates production according to
+    # translog production function
+    # https://en.wikipedia.org/wiki/Cobb%E2%80%93Douglas_production_function
+    # -------------------------------------------------------------------------
+    def tanslog(self, labour, capital, a_0, a_l, a_c, a_ll, a_cc, a_lc):
+        import math
+        production = 0.0
+        production = a_0 +\
+                     a_l * math.log(labour) + \
+                     a_c * math.log(capital) \
+                     a_ll * (math.log(labour)) ** 2 + \
+                     a_cc * (math.log(capital)) ** 2 + \
+                     a_lc * math.log(labour) * math.log(capital)
+        production = math.exp(production)
+        return production
+    # -------------------------------------------------------------------------

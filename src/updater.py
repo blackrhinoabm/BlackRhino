@@ -102,7 +102,7 @@ class Updater(BaseModel):
         # Then agents get their labour endowment for the step (work hours to spend)
         self.endow_labour(environment, time)
         # Households sell labour
-        #self.sell_labour(environment, time)
+        # self.sell_labour(environment, time)
         self.sell_labour_priced(environment, time)
         # Firms produce
         self.produce(environment, time)
@@ -315,7 +315,7 @@ class Updater(BaseModel):
         # And we find the market price of labour
         # given supply and demand of the agents
         price = market.tatonnement(sellers, buyers, starting_price)
-        ## print(price) # This is for testing, should be commented out
+        # print(price) # This is for testing, should be commented out
         # We find the amount of supply the households have
         # at market price
         to_sell = list(range(0, int(environment.num_households)))
@@ -360,7 +360,8 @@ class Updater(BaseModel):
                                 # they want to buy
                                 amount_proxy = min(tranx.amount, tranx_f.amount/price, to_buy, to_sell[h])
                                 # MOVE TO LOGGING FOR PRODUCTION
-                                print("%s sold %d units of labour at a price %f to %s at time %d.") % (household.identifier, amount_proxy, price, firm.identifier, time)
+                                print("%s sold %d units of labour at a price %f to %s at time %d.") % (household.identifier,
+                                                                                                       amount_proxy, price, firm.identifier, time)
                                 # We only sell labour in full amounts
                                 # Can think about it as full hours
                                 amount_proxy = round(amount_proxy, 0)
@@ -503,7 +504,8 @@ class Updater(BaseModel):
                                 # in question
                                 amount_proxy = min(tranx.amount, tranx_h.amount/price, to_consume)
                                 amount_proxy = round(amount_proxy, 0)
-                                print("%s sold %d units of goods at a price %f to %s at time %d.") % (firm.identifier, amount_proxy, price, household.identifier, time)
+                                print("%s sold %d units of goods at a price %f to %s at time %d.") % (firm.identifier,
+                                                                                                      amount_proxy, price, household.identifier, time)
                                 # And remove the appropriate amount of cash
                                 tranx_h.amount = tranx_h.amount - amount_proxy * price
                                 # Lower the amount household wants to consume
@@ -559,7 +561,6 @@ class Updater(BaseModel):
         logging.info("  goods consumed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
-
 
     # -------------------------------------------------------------------------
     # consume_rationed(environment, time)
@@ -618,7 +619,8 @@ class Updater(BaseModel):
             # And a copy for the amount of cash as well
             ration_cash = ration_amount * price
             # We print the action of selling to the screen
-            print("%s sold %d units of goods at a price %f to %s at time %d.") % (agent_from.identifier, ration_goods, price, agent_to.identifier, time)
+            print("%s sold %d units of goods at a price %f to %s at time %d.") % (agent_from.identifier,
+                                                                                  ration_goods, price, agent_to.identifier, time)
             # AGENT_TO GOODS +
             # Add goods for sold items to the agent
             goods_number = 0
@@ -888,7 +890,6 @@ class Updater(BaseModel):
                 # And add the transaction to the books (do it through function/not manually)
                 transaction.add_transaction(environment)
     # -------------------------------------------------------------------------
-
 
     # -------------------------------------------------------------------------
     # transfer_cash(agent_from, agent_two, amount)
