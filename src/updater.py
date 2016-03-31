@@ -311,10 +311,10 @@ class Updater(BaseModel):
         # Put the appropriate settings, i.e.
         # tolerance of error, resolution of search
         # and amplification for exponential search
-        market = Market("market", 0.01, 0.01, 1.1)
+        market = Market("market")
         # And we find the market price of labour
         # given supply and demand of the agents
-        price = market.tatonnement(sellers, buyers, starting_price)
+        price = market.tatonnement(sellers, buyers, starting_price, 0.01, 0.01, 1.1)
         # print(price) # This is for testing, should be commented out
         # We find the amount of supply the households have
         # at market price

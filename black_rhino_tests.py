@@ -154,3 +154,12 @@ if __name__ == '__main__':
     test.helper__leontief(["tests/environments/", "test_all_methods", "tests/log/"])
     test.helper__ces(["tests/environments/", "test_all_methods", "tests/log/"])
     test.helper__translog(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for Market
+    test.market__tatonnement(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__rationing(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__rationing_proportional(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for Runner
+
+    # Tests for Updater

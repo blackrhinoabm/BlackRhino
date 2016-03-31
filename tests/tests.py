@@ -5580,107 +5580,192 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
-# BELOW IT'S THE OLD STUFF
-
 # -------------------------------------------------------------------------
-#  TESTS FOR UPDATER.PY
+#  TESTS FOR UPDATER.PY >> PAWEL TO DO <<
 # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # test_updater
-    # -------------------------------------------------------------------------
-    def updater__updater(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                            filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__updater2 in run: %s',
-                     environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # create a test environment with standardised banks
-        environment.banks[0].change_deposits(1.0)
-        environment.banks[1].change_deposits(-1.0)
-
-        updater = Updater(environment)
-
-        #
-        # execute the update code
-        #
-        updater.do_update(environment, 0, "info")
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test updater__updater2 in run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # test_updater1
-    # -------------------------------------------------------------------------
-    def updater__updater1(self, args):
-        from src.environment import Environment
-        from src.updater import Updater
-
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[1])
-        identifier = str(args[2])
-        log_directory = str(args[3])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                            filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__updater1 in run: %s',  environment_directory + identifier + ".xml")
-
-        #
-        # TEST CODE
-        #
-        environment = Environment(environment_directory,  identifier)
-        # environment.initialize(environment_directory,  identifier)
-        # create a test environment with standardised banks
-
-        print environment.banks[0]
-        print environment.banks[1]
-        print environment.banks[2]
-
-        updater = Updater(environment)
-
-        #
-        # execute the update code
-        #
-        updater.do_update_phase1(environment,  environment.network.contracts.nodes(), 0, "info")
-
-        print environment.banks[0]
-        print environment.banks[1]
-        print environment.banks[2]
-
-        #
-        # MEASUREMENT AND LOGGING
-        #
-        logging.info('FINISHED logging for test updater__updater1 in run: %s \n', environment_directory + identifier + ".xml")
-    # -------------------------------------------------------------------------
-
 
 # -------------------------------------------------------------------------
 #  TESTS FOR MARKET.PY
 # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # market__tatonnement
+    # -------------------------------------------------------------------------
+
+    def market__tatonnement(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.tatonnement \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__tatonnement in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        sellers = []
+        for agent in environment.households:
+            sellers.append([agent, agent.supply_of_labour])
+        buyers = []
+        for agent in environment.firms:
+            buyers.append([agent, agent.demand_for_labour])
+        starting_price = 0.0
+        price = 0.0
+        market = Market("market")
+        price = market.tatonnement(sellers, buyers, starting_price, 0.00000001, 0.01, 1.1)
+        print("Price found through tatonnement:")
+        print(price)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__rationing
+    # -------------------------------------------------------------------------
+
+    def market__rationing(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.rationing \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__rationing in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market")
+        rationed = market.rationing([["agent1", 5], ["agent2", 7], ["agent3", -3], ["agent4", -4]])
+        print("Pairs found through rationing:")
+        print(rationed)
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__rationing_proportional
+    # -------------------------------------------------------------------------
+
+    def market__rationing_proportional(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.rationing_proportional \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__rationing_proportional in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market")
+        rationed = market.rationing_proportional([["agent1", 5], ["agent2", 7], ["agent3", -3], ["agent4", -4]])
+        print("Pairs found through proportional rationing:")
+        print(rationed)
+
+    # -------------------------------------------------------------------------
+
 # -------------------------------------------------------------------------
-#  TESTS FOR RUNNER.PY
+#  TESTS FOR RUNNER.PY >> TINA TO DO <<
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------

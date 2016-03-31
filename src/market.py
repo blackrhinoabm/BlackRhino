@@ -72,10 +72,10 @@ class Market(BaseMarket):
     # -------------------------------------------------------------------------
     # __init__(environment)
     # -------------------------------------------------------------------------
-    def __init__(self, identifier, tolerance, resolution, amplification):
+    def __init__(self, identifier):
         self.identifier = identifier
-        self.tolerance = tolerance
-        self.resolution = resolution
+        self.tolerance = 0.01
+        self.resolution = 0.01
         self.amplification = 1.1
     # -------------------------------------------------------------------------
 
@@ -89,7 +89,10 @@ class Market(BaseMarket):
     # [sellers] = [[agent_1, supply_function_1],[agent_2, supply_function_2],...]
     # [buyers] = [[agent_1, demand_function_1],[agent_2, demand_function_2],...]
     # -------------------------------------------------------------------------
-    def tatonnement(self, sellers, buyers, starting_price):
+    def tatonnement(self, sellers, buyers, starting_price, tolerance, resolution, amplification):
+        self.tolerance = tolerance
+        self.resolution = resolution
+        self.amplification = amplification
         return super(Market, self).tatonnement(sellers, buyers, starting_price)
     # -------------------------------------------------------------------------
 

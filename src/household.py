@@ -244,5 +244,5 @@ class Household(BaseAgent):
     # households want to sell all labour
     # -------------------------------------------------------------------------
     def supply_of_labour(self, price):
-        return self.get_account("manhours")
+        return self.labour
     # -------------------------------------------------------------------------

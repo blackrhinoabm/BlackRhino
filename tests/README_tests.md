@@ -292,7 +292,6 @@ DESCRIPTION OF TESTS
         and the two abovementioned agents are printed again, correctly not showing the transaction
         with amount = 0.
 
-
     # Tests for Helper
     test.helper__initialize_standard_bank(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether initializing standard bank works properly. Initializes standard bank and then
@@ -315,3 +314,20 @@ DESCRIPTION OF TESTS
     test.helper__translog(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether translog production function works. Calculates production for given
         parameters, should calculate production to be 13.74
+
+    # Tests for Market
+    test.market__tatonnement(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether tatonnement finds appropriate price or labour. Should give roughly 50.666
+    test.market__rationing(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether rationing finds appropriate pairs and transactions. Should return
+        transactions amounting to 7, from agents 1 and 2 to agents 3 and 4. The final pairs
+        may be different each run but the above conditions should be met.
+    test.market__rationing_proportional(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether proportional rationing finds appropriate pairs and transactions. Should return
+        transactions amounting to 7, from agents 1 and 2 to agents 3 and 4. Agent 1 should be selling
+        2.91 while Agent 2 should be selling 4.08. The final pairs may be different each run
+        but the above conditions should be met.
+
+    # Tests for Runner
+
+    # Tests for Updater
