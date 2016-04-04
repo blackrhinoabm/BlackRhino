@@ -101,26 +101,17 @@ class Updater(BaseModel):
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (e.g. work hours to spend)
         self.endow_labour(environment, time)
-        # Households sell labour
+        # The households sell labour to firms
         self.sell_labour(environment, time)
-        # Firms produce
-        # self.produce(environment, time)
-        # Households buy goods
+        # The firms sell goods to households
         self.consume_rationed(environment, time)
+        # We net deposits and loans
         self.net_loans_deposits(environment, time)
+        # We remove goods and labour (perishable) and are left with capital differences
         self.net_labour_goods(environment, time)
-        # Households make deposits
-        # self.make_deposits(environment, time)
-        # Labour and goods are perishable, so must be removed before next step
-        # self.remove_labour(environment, time)
-        # Labour and goods are perishable, so must be removed before next step
-        # self.remove_goods(environment, time)
-        # Collapse cash transactions, just in case
-        # self.collapse_one_sided(environment, time, "cash")
-        # Purge accounts at the end of the routine
+        # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
-        # //Need to work loans to the above, presumably around selling labour
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -208,29 +199,17 @@ class Updater(BaseModel):
         for ration in rationed:
             # The labour is an asset (production factor) for the firm
             # and a liability (promise to work) for the household
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("labour", "",  ration[1].identifier, ration[0].identifier,
-                                         ration[2], 0,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
+            environment.new_transaction("labour", "",  ration[1].identifier, ration[0].identifier,
+                                        ration[2], 0,  0, -1)
             random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                         ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
+            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
+                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
             # Loan is an asset of the bank
             # and a liability of the firm
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-                                         ration[2]*price, random_bank.interest_rate_loans,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
+            environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
+                                        ration[2]*price, random_bank.interest_rate_loans,  0, -1)
             # We print the action of selling to the screen
             print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                    ration[2], price, ration[1].identifier, time)
@@ -287,36 +266,18 @@ class Updater(BaseModel):
         # and move the goods and cash appropriately
         for ration in rationed:
             #
-            #
             #             A (from)    L (to)
             # bank        loan        deposit
             # household   goods       loan
             # firm        deposit     goods
             #
-            #
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
-                                         ration[2], 0,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
+            environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
+                                        ration[2], 0,  0, -1)
             random_bank = random.choice(environment.banks)
-            # Deposit is a liability of the bank
-            # and an asset of the household
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                         ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
-            # Loan is an asset of the bank
-            # and a liability of the firm
-            transaction = Transaction()
-            # Add the appropriate values to the transaction
-            transaction.this_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-                                         ration[2]*price, random_bank.interest_rate_loans,  0, -1)
-            # And add the transaction to the books (do it through function/not manually)
-            transaction.add_transaction(environment)
+            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
+                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
+            environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
+                                        ration[2]*price, random_bank.interest_rate_loans,  0, -1)
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                   ration[2], price, ration[1].identifier, time)
@@ -347,21 +308,13 @@ class Updater(BaseModel):
                             balance = balance - tranx.amount
                             to_delete.append(tranx)
                 for tranx in to_delete:
-                    tranx.remove_transaction()  # DOES THIS WORK???)
+                    tranx.remove_transaction()
                 if balance > 0.0:
-                    transaction = Transaction()
-                    # Add the appropriate values to the transaction
-                    transaction.this_transaction("deposits", "",  firm.identifier, bank.identifier,
-                                                 balance, bank.interest_rate_deposits,  0, -1)
-                    # And add the transaction to the books (do it through function/not manually)
-                    transaction.add_transaction(environment)
+                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
+                                                balance, bank.interest_rate_deposits,  0, -1)
                 elif balance < 0.0:
-                    transaction = Transaction()
-                    # Add the appropriate values to the transaction
-                    transaction.this_transaction("loans", "",  bank.identifier, firm.identifier,
-                                                 abs(balance), bank.interest_rate_loans,  0, -1)
-                    # And add the transaction to the books (do it through function/not manually)
-                    transaction.add_transaction(environment)
+                    environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
+                                                abs(balance), bank.interest_rate_loans,  0, -1)
         for bank in environment.banks:
             for household in environment.households:
                 balance = 0.0
@@ -378,19 +331,11 @@ class Updater(BaseModel):
                 for tranx in to_delete:
                     tranx.remove_transaction()
                 if balance > 0.0:
-                    transaction = Transaction()
-                    # Add the appropriate values to the transaction
-                    transaction.this_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                 balance, bank.interest_rate_deposits,  0, -1)
-                    # And add the transaction to the books (do it through function/not manually)
-                    transaction.add_transaction(environment)
+                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
+                                                balance, bank.interest_rate_deposits,  0, -1)
                 elif balance < 0.0:
-                    transaction = Transaction()
-                    # Add the appropriate values to the transaction
-                    transaction.this_transaction("loans", "",  bank.identifier, household.identifier,
-                                                 abs(balance), bank.interest_rate_loans,  0, -1)
-                    # And add the transaction to the books (do it through function/not manually)
-                    transaction.add_transaction(environment)
+                    environment.new_transaction("loans", "",  bank.identifier, household.identifier,
+                                                abs(balance), bank.interest_rate_loans,  0, -1)
         logging.info("  deposits and loans netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -428,12 +373,8 @@ class Updater(BaseModel):
                 for tranx in to_delete:
                     tranx.remove_transaction()
                 if balance != 0.0:
-                    transaction = Transaction()
-                    # Add the appropriate values to the transaction
-                    transaction.this_transaction("capital", "",  household.identifier, firm.identifier,
-                                                 balance, 0,  0, -1)
-                    # And add the transaction to the books (do it through function/not manually)
-                    transaction.add_transaction(environment)
+                    environment.new_transaction("capital", "",  household.identifier, firm.identifier,
+                                                balance, 0,  0, -1)
         logging.info("  labour and goods netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -451,13 +392,5 @@ class Updater(BaseModel):
     # removes an amount of given type from a given agent from its books
     # -------------------------------------------------------------------------
     def remove_amount(self,  agent, type, amount):
-        pass
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # add_transaction(all_transaction_stuff)
-    # add transaction in one line in the above
-    # -------------------------------------------------------------------------
-    def add_transaction(self,  all_transaction_stuff):
         pass
     # -------------------------------------------------------------------------

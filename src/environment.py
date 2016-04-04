@@ -473,3 +473,13 @@ class Environment(BaseConfig):
     def accrue_interests(self):
         super(Environment, self).accrue_interests()
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # new_transaction()
+    # -------------------------------------------------------------------------
+    def new_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default)
+        transaction.add_transaction(self)
+    # -------------------------------------------------------------------------

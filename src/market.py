@@ -129,3 +129,127 @@ class Market(BaseMarket):
     def rationing_proportional(self, agents):
         return super(Market, self).rationing_proportional(agents)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # rationing_abstract(agents)
+    # This function performs a rationing mechanism to clear the market.
+    # Note that the input to this method is a lists containing pairs
+    # of agents and their supply or demand (supply + demand -)
+    # [agents] = [[agent_1, supply_1],[agent_2, supply_2],...]
+    # and returns a list of pairs and their exchange amounts
+    # [to_return] = [[agent_selling_1, agent_buying_1, amount_sold_1],
+    #                [agent_selling_2, agent_buying_2, amount_sold_2]]
+    # This version makes sure the agents get to sell or buy amounts
+    # proportionately to their original supply or demand, the pairings are
+    # still random however
+    # -------------------------------------------------------------------------
+    def rationing_abstract(self, agents, matching_function):
+        #
+        to_return = []
+
+        def get_key(item):
+            return item[2]
+        #
+        pairs = []
+        #
+        for agent_one in agents:
+            for agent_two in agents:
+                if agent_one[0] != agent_two[0]:
+                    pairs.append([agent_one, agent_two, matching_function(agent_one[0], agent_two[0])])
+        pairs = sorted(pairs, key=get_key)
+        for pair in pairs:
+            if pairs[0][1] * pairs[1][1] < 0:
+                # If the agent i is the one with excess demand
+                if pairs[0][1] < 0:
+                    # We find the value that will be traded as the minimum
+                    # between the agents' respective excess supply and demand
+                    value = min(abs(pairs[0][1]), abs(pairs[1][1]))
+                    # And append the resulting transaction to the list we
+                    # will return later with a list of three items:
+                    # [the_seller, the_buyer, amount_sold]
+                    to_return.append([pairs[1][0], pairs[0][0], value])
+                    # Finally, we need to amend the values of excess
+                    # supply and excess demand for the purpose of further
+                    # trades within the loops
+                    pairs[0][1] = pairs[0][1] + value
+                    pairs[1][1] = pairs[1][1] - value
+                # If the agent j is the one with excess demand
+                elif pairs[0][1] > 0:
+                    # We find the value that will be traded as the minimum
+                    # between the agents' respective excess supply and demand
+                    value = min(abs(pairs[0][1]), abs(pairs[1][1]))
+                    # And append the resulting transaction to the list we
+                    # will return later with a list of three items:
+                    # [the_seller, the_buyer, amount_sold]
+                    to_return.append([pairs[0][0], pairs[1][0], value])
+                    # Finally, we need to amend the values of excess
+                    # supply and excess demand for the purpose of further
+                    # trades within the loops
+                    pairs[0][1] = pairs[0][1] - value
+                    pairs[1][1] = pairs[1][1] + value
+        # And return the list to the caller
+        return to_return
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # rationing_abstract_two(agents)
+    # This function performs a rationing mechanism to clear the market.
+    # Note that the input to this method is a lists containing pairs
+    # of agents and their supply or demand (supply + demand -)
+    # [agents] = [[agent_1, supply_1],[agent_2, supply_2],...]
+    # and returns a list of pairs and their exchange amounts
+    # [to_return] = [[agent_selling_1, agent_buying_1, amount_sold_1],
+    #                [agent_selling_2, agent_buying_2, amount_sold_2]]
+    # This version makes sure the agents get to sell or buy amounts
+    # proportionately to their original supply or demand, the pairings are
+    # still random however
+    # -------------------------------------------------------------------------
+    def rationing_abstract_two(self, agents, matching_function, allow_match):
+        #
+        to_return = []
+
+        def get_key(item):
+            return item[2]
+        #
+        pairs = []
+        #
+        for agent_one in agents:
+            for agent_two in agents:
+                if agent_one[0] != agent_two[0]:
+                    pairs.append([agent_one, agent_two, matching_function(agent_one[0], agent_two[0]), allow_match(agent_one[0], agent_two[0])])
+        pairs = sorted(pairs, key=get_key)
+        # REMOVE NON MATCHING
+        pairs = [x for x in pairs if x[3] == 1]
+        for pair in pairs:
+            if pairs[0][1] * pairs[1][1] < 0:
+                # If the agent i is the one with excess demand
+                if pairs[0][1] < 0:
+                    # We find the value that will be traded as the minimum
+                    # between the agents' respective excess supply and demand
+                    value = min(abs(pairs[0][1]), abs(pairs[1][1]))
+                    # And append the resulting transaction to the list we
+                    # will return later with a list of three items:
+                    # [the_seller, the_buyer, amount_sold]
+                    to_return.append([pairs[1][0], pairs[0][0], value])
+                    # Finally, we need to amend the values of excess
+                    # supply and excess demand for the purpose of further
+                    # trades within the loops
+                    pairs[0][1] = pairs[0][1] + value
+                    pairs[1][1] = pairs[1][1] - value
+                # If the agent j is the one with excess demand
+                elif pairs[0][1] > 0:
+                    # We find the value that will be traded as the minimum
+                    # between the agents' respective excess supply and demand
+                    value = min(abs(pairs[0][1]), abs(pairs[1][1]))
+                    # And append the resulting transaction to the list we
+                    # will return later with a list of three items:
+                    # [the_seller, the_buyer, amount_sold]
+                    to_return.append([pairs[0][0], pairs[1][0], value])
+                    # Finally, we need to amend the values of excess
+                    # supply and excess demand for the purpose of further
+                    # trades within the loops
+                    pairs[0][1] = pairs[0][1] - value
+                    pairs[1][1] = pairs[1][1] + value
+        # And return the list to the caller
+        return to_return
+    # -------------------------------------------------------------------------
