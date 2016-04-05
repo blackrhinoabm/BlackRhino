@@ -98,6 +98,7 @@ class Updater(BaseModel):
         # As a first step, we accrue all interest over the transactions
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
+        # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (e.g. work hours to spend)
         self.endow_labour(environment, time)
@@ -261,7 +262,15 @@ class Updater(BaseModel):
         market = Market("market")
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
-        rationed = market.rationing(for_rationing)
+        # TESTING THE ABSTRACT RATIONING
+
+        def matching_agents_basic(agent_one, agent_two):
+            return 1.0
+
+        def allow_match_basic(agent_one, agent_two):
+            return True
+        #
+        rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
         # Then we go through the rationing
         # and move the goods and cash appropriately
         for ration in rationed:

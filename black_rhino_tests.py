@@ -156,9 +156,18 @@ if __name__ == '__main__':
     test.helper__translog(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Market
+    test.market__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__get_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__set_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__get_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__set_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__get_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__set_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
     test.market__tatonnement(["tests/environments/", "test_all_methods", "tests/log/"])
     test.market__rationing(["tests/environments/", "test_all_methods", "tests/log/"])
     test.market__rationing_proportional(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.market__rationing_abstract(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Runner
 

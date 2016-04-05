@@ -5764,6 +5764,88 @@ class Tests(object):
 
     # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
+    # market__rationing_abstract
+    # -------------------------------------------------------------------------
+
+    def market__rationing_abstract(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.rationing_abstract \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__rationing_abstract in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+
+        def matching_agents_basic(agent_one, agent_two):
+            import difflib
+            seq = difflib.SequenceMatcher(a=agent_one.lower(), b=agent_two.lower())
+            return seq.ratio()
+
+        def matching_agents_basic_inv(agent_one, agent_two):
+            import difflib
+            seq = difflib.SequenceMatcher(a=agent_one.lower(), b=agent_two.lower())
+            return 1-seq.quick_ratio()
+
+        def allow_match_basic(agent_one, agent_two):
+            return True
+
+            def allow_match_basic(agent_one, agent_two):
+                if ((agent_one == 'aaaaaa' and agent_two == 'aaaabb') or (agent_one == 'aaaabb' and agent_two == 'aaaaaa')):
+                    return False
+                else:
+                    return True
+
+        market = Market("market")
+        rationed = market.rationing_abstract([["aaaaaa", 5], ["bbbbbb", 7], ["aaaabb", -3], ["aabbbb", -4]], matching_agents_basic, allow_match_basic)
+        print("Pairs found through abstract rationing prioritising similar names:")
+        print(rationed)
+        rationed = market.rationing_abstract([["aaaaaa", 5], ["bbbbbb", 7], ["aaaabb", -3], ["aabbbb", -4]], matching_agents_basic_inv, allow_match_basic)
+        print("Pairs found through abstract rationing prioritising dissimilar names:")
+        print(rationed)
+        rationed = market.rationing_abstract([["aaaaaa", 5], ["bbbbbb", 7], ["aaaabb", -3], ["aabbbb", -4]], matching_agents_basic_inv, allow_match_basic)
+        print("Pairs found through abstract rationing prioritising similar names with 'aaaaaa'>'aaaabb' not allowed:")
+        print(rationed)
+
+    # -------------------------------------------------------------------------
+
 # -------------------------------------------------------------------------
 #  TESTS FOR RUNNER.PY >> TINA TO DO <<
 # -------------------------------------------------------------------------

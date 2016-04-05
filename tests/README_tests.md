@@ -316,6 +316,22 @@ DESCRIPTION OF TESTS
         parameters, should calculate production to be 13.74
 
     # Tests for Market
+    test.market__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__get_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__set_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__get_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__set_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__get_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    test.market__set_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
+
     test.market__tatonnement(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether tatonnement finds appropriate price or labour. Should give roughly 50.666
     test.market__rationing(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -327,7 +343,14 @@ DESCRIPTION OF TESTS
         transactions amounting to 7, from agents 1 and 2 to agents 3 and 4. Agent 1 should be selling
         2.91 while Agent 2 should be selling 4.08. The final pairs may be different each run
         but the above conditions should be met.
+    test.market__rationing_proportional(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether abstract rationing finds appropriate pairs and transactions. First it looks
+        at prioritising pairs with similar names. There it should return 'aaaaaa' > 'aaaabb' = 3
+        'bbbbbb' > 'aabbbb' = 4, then it looks at prioritising pairs with dissimilar names and should
+        return 'aaaaaa' > 'aabbbb' = 4 & 'bbbbbb' > 'aaaabb' = 3, finally again at the first version
+        but not allowing 'aaaaaa' to trade with 'aaaabb', and should return 'aaaaaa' > 'aabbbb' = 4
+        'bbbbbb' > 'aaaabb' = 3.
 
-    # Tests for Runner
+    # Tests for Runner # TODO: Tina
 
-    # Tests for Updater
+    # Tests for Updater # TODO: Pawel once updater is in order
