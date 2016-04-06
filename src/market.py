@@ -41,6 +41,28 @@ class Market(BaseMarket):
 
     #
     #
+    # TENTATIVE FOR LIMIT ORDER BOOKS SO I DON'T FORGET
+    #
+    #
+    # NOTES:
+    # - price-time matching
+    # - pro rata matching
+    # - price-size matching
+    #
+    # - block list??? may be tricky
+    # - clear at the end of the day (step)?
+    # - how to cancel orders ???
+
+    lob_lot = 1  # multiplier for orders, order
+    lob_resolution = 0.00001
+    lob_buy_book = []
+    lob_sell_book = []
+
+    def send_order(agent, price, volume, time):
+        pass
+
+    #
+    #
     # METHODS
     #
     #

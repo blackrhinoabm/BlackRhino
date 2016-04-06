@@ -161,11 +161,11 @@ class Updater(BaseModel):
         # The list of sellers and their supply functions
         sellers = []
         for agent in environment.households:
-            sellers.append([agent, agent.supply_of_labour])
+            sellers.append([agent, agent.supply_of_labour_new])
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
-            buyers.append([agent, agent.demand_for_labour])
+            buyers.append([agent, agent.demand_for_labour_new])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
@@ -230,7 +230,7 @@ class Updater(BaseModel):
         # We use rationing from market clearing class to do that
         # Price is static for this example, otherwise we can't use rationing
         # and need some other market clearing
-        price = 50.0
+        price = 5.0
         environment.variable_parameters["price_of_goods"] = price
         # We need a list of agents and their demand or supply
         # Supply is denoted with positive float, demand with negative float
@@ -240,7 +240,8 @@ class Updater(BaseModel):
         from src.helper import Helper
         helper = Helper()
         for firm in environment.firms:
-            amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
+            # amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
+            amount = round(helper.cobb_douglas(firm.get_account("labour"), 1, 15, 0.5, 0)*price, 0)
             for_rationing.append([firm, amount])
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they

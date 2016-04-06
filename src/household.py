@@ -213,7 +213,7 @@ class Household(BaseAgent):
     # purge_accounts
     # removes worthless transactions from bank's accounts
     # -------------------------------------------------------------------------
-    def purge_accounts(self):
+    def purge_accounts(self, environment):
         super(Household, self).purge_accounts(environment)
     # -------------------------------------------------------------------------
 
@@ -246,4 +246,14 @@ class Household(BaseAgent):
     # -------------------------------------------------------------------------
     def supply_of_labour(self, price):
         return self.labour
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # supply_of_labour_new(price)
+    # this is for testing for now, makes the supply of labour inelastic
+    # households want to sell all labour
+    # -------------------------------------------------------------------------
+    def supply_of_labour_new(self, price):
+        #return min(self.labour, max(0, ((self.labour + 1 - (1 - self.propensity_to_save) * self.get_account("deposits")) / ((1 - self.propensity_to_save) * price + 1))))
+        return min(self.labour, max(0, ((self.labour + 1) + 1/5 * self.get_account("deposits")) / ((1-self.propensity_to_save) * 1/5 * price + 1)))
     # -------------------------------------------------------------------------
