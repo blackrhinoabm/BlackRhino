@@ -317,21 +317,29 @@ DESCRIPTION OF TESTS
 
     # Tests for Market
     test.market__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get the identifier of the market, and prints it out
+        should be printing "market_id"
     test.market__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether the identifier as mentioned above can be changed
+        and prints the original ("market_id") and changed ("new_market_id") identifiers
     test.market__get_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get the tolerance of the market, and prints it out
+        should be printing 0.01
     test.market__set_tolerance(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether the tolerance as mentioned above can be changed
+        and prints the original (0.01) and changed (0.55) tolerances
     test.market__get_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get the resolution of the market, and prints it out
+        should be printing 0.01
     test.market__set_resolution(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether the resolution as mentioned above can be changed
+        and prints the original (0.01) and changed (0.55) resolutions
     test.market__get_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether we can get the amplification of the market, and prints it out
+        should be printing 1.1
     test.market__set_amplification(["tests/environments/", "test_all_methods", "tests/log/"])
-
+        Tests whether the amplification as mentioned above can be changed
+        and prints the original (1.1) and changed (0.55) amplifications
     test.market__tatonnement(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether tatonnement finds appropriate price or labour. Should give roughly 50.666
     test.market__rationing(["tests/environments/", "test_all_methods", "tests/log/"])

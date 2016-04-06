@@ -5589,6 +5589,462 @@ class Tests(object):
 # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # market__get_identifier
+    # -------------------------------------------------------------------------
+
+    def market__get_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.get_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's ID:")
+        print(market.get_identifier())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__set_identifier
+    # -------------------------------------------------------------------------
+
+    def market__set_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.set_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's ID:")
+        print(market.get_identifier())
+        print("Changing ID")
+        market.set_identifier("new_market_id")
+        print("Market's ID:")
+        print(market.get_identifier())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__get_tolerance
+    # -------------------------------------------------------------------------
+
+    def market__get_tolerance(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.get_tolerance \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__get_tolerance in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's tolerance:")
+        print(market.get_tolerance())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__set_tolerance
+    # -------------------------------------------------------------------------
+
+    def market__set_tolerance(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.set_tolerance \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__set_tolerance in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's tolerance:")
+        print(market.get_tolerance())
+        print("Changing tolerance")
+        market.set_tolerance(0.55)
+        print("Market's tolerance:")
+        print(market.get_tolerance())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__get_resolution
+    # -------------------------------------------------------------------------
+
+    def market__get_resolution(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.get_resolution \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__get_resolution in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's resolution:")
+        print(market.get_resolution())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__set_resolution
+    # -------------------------------------------------------------------------
+
+    def market__set_resolution(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.set_resolution \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__set_resolution in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's resolution:")
+        print(market.get_resolution())
+        print("Changing resolution")
+        market.set_resolution(0.55)
+        print("Market's resolution:")
+        print(market.get_resolution())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__get_amplification
+    # -------------------------------------------------------------------------
+
+    def market__get_amplification(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.get_amplification \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__get_amplification in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's amplification:")
+        print(market.get_amplification())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # market__set_amplification
+    # -------------------------------------------------------------------------
+
+    def market__set_amplification(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+
+        text = "This test checks market.set_amplification \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test market__set_amplification in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        market = Market("market_id")
+        print("Market's amplification:")
+        print(market.get_amplification())
+        print("Changing amplification")
+        market.set_amplification(0.55)
+        print("Market's amplification:")
+        print(market.get_amplification())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # market__tatonnement
     # -------------------------------------------------------------------------
 
