@@ -253,7 +253,8 @@ class Firm(BaseAgent):
     # Cobb-Douglas with no capital Y = a * l^b * 1 (for capital)
     # -------------------------------------------------------------------------
     def demand_for_labour_new(self, price):
-        a = 40
+        a = 5
         b = 0.5
-        return max(0, (price / (a * b)) ** (1 / (b-1)))
+        goods_price = 10.0
+        return max(0, (price / (a * b * goods_price)) ** (1 / (b-1)))
     # -------------------------------------------------------------------------

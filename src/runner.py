@@ -101,6 +101,6 @@ class Runner(BaseRunner):
             # TESTING IN SIMPLE EXAMPLES
             # REMOVE FOR PRODUCTION
             # OR MOVE TO LOGGING
-            print(environment.firms[0])
-            print(environment.households[0])
+            # print(environment.firms[0])
+            print(environment.households[0].get_account("deposits"))
     # ------------------------------------------------------------------------

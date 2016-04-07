@@ -185,9 +185,9 @@ class Updater(BaseModel):
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
         for household in environment.households:
-            for_rationing.append([household, household.supply_of_labour(price)])
+            for_rationing.append([household, household.supply_of_labour_new(price)])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.demand_for_labour(price)])
+            for_rationing.append([firm, -firm.demand_for_labour_new(price)])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing(for_rationing)
@@ -230,7 +230,7 @@ class Updater(BaseModel):
         # We use rationing from market clearing class to do that
         # Price is static for this example, otherwise we can't use rationing
         # and need some other market clearing
-        price = 5.0
+        price = 10.0
         environment.variable_parameters["price_of_goods"] = price
         # We need a list of agents and their demand or supply
         # Supply is denoted with positive float, demand with negative float
