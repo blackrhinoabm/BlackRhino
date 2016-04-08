@@ -254,5 +254,6 @@ class Household(BaseAgent):
     # households want to sell all labour
     # -------------------------------------------------------------------------
     def supply_of_labour_new(self, price):
-        return min(self.labour, max(0, ((self.labour + 1)*price - self.get_account("deposits"))/(2*price)))
+        #return min(self.labour, max(0, ((self.labour + 1)*price - self.get_account("deposits"))/(2*price)))
+        return (self.labour+1)/2
     # -------------------------------------------------------------------------

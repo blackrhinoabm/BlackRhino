@@ -241,7 +241,8 @@ class Updater(BaseModel):
         helper = Helper()
         for firm in environment.firms:
             # amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
-            amount = round(helper.cobb_douglas(firm.get_account("labour"), 1, 15, 0.5, 0)*price, 0)
+            #amount = round(helper.cobb_douglas(firm.get_account("labour"), 1, 5, 0.5, 0)*price, 0)
+            amount = helper.cobb_douglas(firm.get_account("labour"), 1, 5, 0.5, 0)*price
             for_rationing.append([firm, amount])
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they
@@ -250,7 +251,8 @@ class Updater(BaseModel):
         # households want to spend by price to get the demand
         for household in environment.households:
             demand = 0.0
-            demand = -round(((household.get_account("deposits") * (1 - household.propensity_to_save)) / price), 0)
+            #demand = -round(((household.get_account("deposits") * (1 - household.propensity_to_save)) / price), 0)
+            demand = -household.get_account("deposits")/price
             for_rationing.append([household, demand])
         # We import the market clearing class
         from market import Market

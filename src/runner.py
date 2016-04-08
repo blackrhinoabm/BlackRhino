@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
+from src.measurement import Measurement
 
 # -------------------------------------------------------------------------
 #
@@ -39,6 +40,7 @@ class Runner(BaseRunner):
 
     identifier = ""
     num_simulations = 0
+    current_step = 0
 
     #
     #
@@ -95,12 +97,24 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
     def do_run(self, environment):
         # loop over all time steps and do the updating
+        # We initialise the measurement class for writing outputs to csv
+        #measurement = Measurement("Measurement", environment, self, {1: ["Step", "static", "self.runner.current_step"], 2: ["Deposits", "dynamic", "self.environment.households[0].get_account", ["deposits"]]}, "TestMeasurement.csv")
+        measurement = Measurement(environment, self)
+        # And open the output file
+        measurement.open_file()
+        # For each update step
         for i in range(self.num_sweeps):
+            print(environment.measurement_config)
             # the update step
+            # append current step, this is mostly for measurements
+            self.current_step = i
+            # do the actual update
             self.updater.do_update(environment, i)
-            # TESTING IN SIMPLE EXAMPLES
-            # REMOVE FOR PRODUCTION
-            # OR MOVE TO LOGGING
-            # print(environment.firms[0])
-            print(environment.households[0].get_account("deposits"))
+            # write the state of the system
+            measurement.write_to_file()
+            # HELPER, to be removed in production
+            print(environment.households[0])
+            print(environment.firms[0])
+        # Close the output file at the end of the simulation
+        measurement.close_file()
     # ------------------------------------------------------------------------
