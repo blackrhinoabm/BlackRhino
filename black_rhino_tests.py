@@ -169,6 +169,27 @@ if __name__ == '__main__':
     test.market__rationing_proportional(["tests/environments/", "test_all_methods", "tests/log/"])
     test.market__rationing_abstract(["tests/environments/", "test_all_methods", "tests/log/"])
 
+    # Tests for Measurement
+    test.measurement__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_config(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_config(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_environment(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_environment(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_runner(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_runner(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_filename(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_filename(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__get_csv_writer(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__set_csv_writer(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__init(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__open_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__write_to_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__close_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
+
     # Tests for Runner
 
     # Tests for Updater

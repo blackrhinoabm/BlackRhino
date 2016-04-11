@@ -36,7 +36,7 @@ class Environment(BaseConfig):
     # VARIABLES
     #
     #
-    identifier = ""  # identifier of the specific bank
+    identifier = ""  # identifier of the environment
 
     banks = []  # a list containing all banks (instances of class Bank)
     households = []  # a list containing all households (instances of class Household)
