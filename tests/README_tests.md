@@ -359,6 +359,65 @@ DESCRIPTION OF TESTS
         but not allowing 'aaaaaa' to trade with 'aaaabb', and should return 'aaaaaa' > 'aabbbb' = 4
         'bbbbbb' > 'aaaabb' = 3.
 
+    # Tests for Measurement
+    test.measurement__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the identifier of the measurement, and prints it out
+        should be printing whatever is in the config file in /tests/ ("test_output")
+    test.measurement__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the identifier as mentioned above can be changed
+        and prints the original ("test_output") and changed ("new_measurement_id") identifiers
+    test.measurement__get_config(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the config of the measurement, and prints it out
+        should be printing whatever is in the xml config file in /tests/
+    test.measurement__set_config(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the config as mentioned above can be changed
+        and prints the original (as above) and changed ({'test': ['config']}) configs
+    test.measurement__get_environment(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the environment of the measurement, and prints it out
+        should be printing whatever is environment config specified
+    test.measurement__set_environment(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the environment as mentioned above can be changed
+        and prints the original (as above) and changed (we change it to Runner object) configs
+    test.measurement__get_runner(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the runner of the measurement, and prints it out
+        should be printing a src.runner.Runner object
+    test.measurement__set_runner(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the runner as mentioned above can be changed
+        and prints the original (as above) and changed (we change it to Environment object) configs
+    test.measurement__get_filename(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the filename of the measurement, and prints it out
+        should be printing whatever is in the measurement config in /tests/
+    test.measurement__set_filename(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the filename as mentioned above can be changed
+        and prints the original (as above) and changed (TestFilename.csv) filenames
+    test.measurement__get_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the file of the measurement, and prints it out
+        should be printing None in this instance, see the test below also
+    test.measurement__set_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the file as mentioned above can be changed
+        and prints the original (as above) and changed (open file object) filenames
+    test.measurement__get_csv_writer(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the csv_writer of the measurement, and prints it out
+        should be printing None in this instance, see the test below also
+    test.measurement__set_csv_writer(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the csv_writer as mentioned above can be changed
+        and prints the original (as above) and changed (_csv.writer object) filenames
+    test.measurement__init(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can initialise the Measurement class instance properly
+        and prints so initialised instance to the screen
+    test.measurement__open_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can open a file in the measurement class and prints out
+        the open file object
+    test.measurement__write_to_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can write to the file opened above and it prints out the objects
+        and their size before and after writing to the file
+    test.measurement__close_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can close the file which we've been opening and writing to
+        and prints whether the file is closed before and after closing it (should be False > True)
+    test.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can read the xml config file for the measurement saved in /tests/
+        and writes the identifier, so it can be checked against the id in the config file
+
     # Tests for Runner # TODO: Tina
 
     # Tests for Updater # TODO: Pawel once updater is in order
