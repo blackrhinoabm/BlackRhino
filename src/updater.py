@@ -161,11 +161,11 @@ class Updater(BaseModel):
         # The list of sellers and their supply functions
         sellers = []
         for agent in environment.households:
-            sellers.append([agent, agent.supply_of_labour_new])
+            sellers.append([agent, agent.supply_of_labour_solow])
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
-            buyers.append([agent, agent.demand_for_labour_new])
+            buyers.append([agent, agent.demand_for_labour_solow])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
@@ -185,9 +185,9 @@ class Updater(BaseModel):
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
         for household in environment.households:
-            for_rationing.append([household, household.supply_of_labour_new(price)])
+            for_rationing.append([household, household.supply_of_labour_solow(price)])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.demand_for_labour_new(price)])
+            for_rationing.append([firm, -firm.demand_for_labour_solow(price)])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing(for_rationing)
@@ -241,8 +241,8 @@ class Updater(BaseModel):
         helper = Helper()
         for firm in environment.firms:
             # amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
-            #amount = round(helper.cobb_douglas(firm.get_account("labour"), 1, 5, 0.5, 0)*price, 0)
-            amount = helper.cobb_douglas(firm.get_account("labour"), 1, 5, 0.5, 0)*price
+            amount = helper.cobb_douglas(firm.get_account("labour"), firm.get_account("capital"),
+                                         firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             for_rationing.append([firm, amount])
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they
@@ -251,8 +251,9 @@ class Updater(BaseModel):
         # households want to spend by price to get the demand
         for household in environment.households:
             demand = 0.0
-            #demand = -round(((household.get_account("deposits") * (1 - household.propensity_to_save)) / price), 0)
-            demand = -household.get_account("deposits")/price
+            # demand = -round(((household.get_account("deposits") * (1 - household.propensity_to_save)) / price), 0)
+            demand = -((household.get_account("deposits") * (1 - household.propensity_to_save)) / price)
+            # demand = -household.get_account("deposits")/price
             for_rationing.append([household, demand])
         # We import the market clearing class
         from market import Market

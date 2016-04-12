@@ -242,6 +242,7 @@ class Firm(BaseAgent):
     # demand_for_labour(price)
     # this is for testing for now, makes the demand labour to be
     # a linear function of price
+    # TEST ONLY, REMOVE LATER IF NOT NECESSARY
     # -------------------------------------------------------------------------
     def demand_for_labour(self, price):
         return max(0.0, 100.0 - price * 1.5)
@@ -251,10 +252,30 @@ class Firm(BaseAgent):
     # demand_for_labour_new(price)
     # this is for testing for now, makes the demand labour to be
     # Cobb-Douglas with no capital Y = a * l^b * 1 (for capital)
+    # TEST ONLY, REMOVE LATER IF NOT NECESSARY
     # -------------------------------------------------------------------------
     def demand_for_labour_new(self, price):
         a = 5
         b = 0.5
         goods_price = 10.0
         return max(0, (price / (a * b * goods_price)) ** (1 / (b-1)))
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # demand_for_labour_solow(price)
+    # Demand for labour stemming from the Solow model with C-D function
+    # Derived as maximum utility (profit: production*price - wage*labour)
+    # given C-D production function Y=a*L^b*C^c
+    # -------------------------------------------------------------------------
+    def demand_for_labour_solow(self, price_of_labour):
+        # The parameters of the production function are read from the config
+        # And reassigned here for easier formula below
+        a = self.total_factor_productivity
+        b = self.labour_elasticity
+        c = self.capital_elasticity
+        # This is the one price set up, we only consider relative prices in the model
+        # as consistent with DSGE models and the rest of macroeconomics
+        goods_price = 10.0
+        # Finally max(U) given particular wage
+        return max(0, (price_of_labour / (a * b * goods_price * self.get_account("capital") ** c)) ** (1 / (b-1)))
     # -------------------------------------------------------------------------
