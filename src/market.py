@@ -119,6 +119,23 @@ class Market(BaseMarket):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # tatonnement([sellers], [buyers], starting_price)
+    # This function performs a Walrasian auction to determine the
+    # price at equilibrium (market clearing).
+    # Note that the input to this method are two lists, first contains pairs
+    # of agents and their supply functions (methods), and seconds contains pairs
+    # of agents and their demand functions (methods), so that:
+    # [sellers] = [[agent_1, supply_function_1],[agent_2, supply_function_2],...]
+    # [buyers] = [[agent_1, demand_function_1],[agent_2, demand_function_2],...]
+    # -------------------------------------------------------------------------
+    def tatonnement_parallel(self, sellers, buyers, starting_price, tolerance, resolution, amplification):
+        self.tolerance = tolerance
+        self.resolution = resolution
+        self.amplification = amplification
+        return super(Market, self).tatonnement_parallel(sellers, buyers, starting_price)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # rationing(agents)
     # This function performs a rationing mechanism to clear the market.
     # Note that the input to this method is a lists containing pairs

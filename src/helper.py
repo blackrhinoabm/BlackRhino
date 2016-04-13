@@ -203,11 +203,11 @@ class Helper(object):
         import math
         production = 0.0
         production = a_0 +\
-                     a_l * math.log(labour) + \
-                     a_c * math.log(capital) + \
-                     a_ll * (math.log(labour)) ** 2 + \
-                     a_cc * (math.log(capital)) ** 2 + \
-                     a_lc * math.log(labour) * math.log(capital)
+            a_l * math.log(labour) + \
+            a_c * math.log(capital) + \
+            a_ll * (math.log(labour)) ** 2 + \
+            a_cc * (math.log(capital)) ** 2 + \
+            a_lc * math.log(labour) * math.log(capital)
         production = math.exp(production)
         return production
     # -------------------------------------------------------------------------

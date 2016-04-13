@@ -420,4 +420,44 @@ DESCRIPTION OF TESTS
 
     # Tests for Runner # TODO: Tina
 
-    # Tests for Updater # TODO: Pawel once updater is in order
+    # Tests for Updater
+    test.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__get_model_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__set_model_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__get_agents(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__set_agents(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__get_interactions(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__set_interactions(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__check_agent_homogeneity(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__initialize_agents(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__str(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__init(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__do_update(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__accrue_interests(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__endow_labour(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__sell_labour(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__consume_rationed(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__net_loans_deposits(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
+    test.updater__net_labour_goods(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether
