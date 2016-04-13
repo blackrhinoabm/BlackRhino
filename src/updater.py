@@ -101,14 +101,15 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (e.g. work hours to spend)
-        self.endow_labour(environment, time)
+        # For now we don't need to keep track of labour left as there is no queue
+        # self.endow_labour(environment, time)
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
         self.consume_rationed(environment, time)
         # We net deposits and loans
         self.net_loans_deposits(environment, time)
-        # We remove goods and labour (perishable) and are left with capital differences
+        # We remove goods and labour (perishable) and are left with capital
         self.net_labour_goods(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
@@ -267,13 +268,16 @@ class Updater(BaseModel):
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         # TESTING THE ABSTRACT RATIONING
+        # The matching function means that all pairs will have the same priority
 
         def matching_agents_basic(agent_one, agent_two):
             return 1.0
 
+        # The below function means that all pairs are allowed
+
         def allow_match_basic(agent_one, agent_two):
             return True
-        #
+        # We find the actual trades
         rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
         # Then we go through the rationing
         # and move the goods and cash appropriately
@@ -307,46 +311,76 @@ class Updater(BaseModel):
     # to be easier and move all cash to deposits in the banks
     # -------------------------------------------------------------------------
     def net_loans_deposits(self,  environment, time):
+        # We do it from the bank's perspective
         for bank in environment.banks:
+            # And first go through the firms
             for firm in environment.firms:
+                # Finding what their balance of deposits (+) and loans (-) is
                 balance = 0.0
+                # And mark all the loan and deposits we account for to be deleted
                 to_delete = []
+                # We go through the firm's accounts
                 for tranx in firm.accounts:
+                    # And find deposits from the firm to the bank
                     if tranx.type_ == "deposits":
                         if tranx.to == bank:
+                            # If we find one we append the balance
                             balance = balance + tranx.amount
+                            # And mark the transaction for deletion
                             to_delete.append(tranx)
+                    # And find loans from the bank to the firm
                     if tranx.type_ == "loans":
                         if tranx.from_ == bank:
+                            # If we find one we append the balance
                             balance = balance - tranx.amount
+                            # And mark the transaction for deletio
                             to_delete.append(tranx)
+                # Then we delete all market transactions
                 for tranx in to_delete:
                     tranx.remove_transaction()
+                # And add the netted transaction to the firm's and bank's books
                 if balance > 0.0:
+                    # If the balance is positive it's a deposit
                     environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
                                                 balance, bank.interest_rate_deposits,  0, -1)
                 elif balance < 0.0:
+                    # If the balance is negative it's a loan
                     environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
                                                 abs(balance), bank.interest_rate_loans,  0, -1)
+        # We do it from the bank's perspective
         for bank in environment.banks:
+            # And first go through the households
             for household in environment.households:
+                # Finding what their balance of deposits (+) and loans (-) is
                 balance = 0.0
+                # And mark all the loan and deposits we account for to be deleted
                 to_delete = []
+                # We go through the household's accounts
                 for tranx in household.accounts:
+                    # And find deposits from the household to the bank
                     if tranx.type_ == "deposits":
                         if tranx.to == bank:
+                            # If we find one we append the balance
                             balance = balance + tranx.amount
+                            # And mark the transaction for deletion
                             to_delete.append(tranx)
+                    # And find loans from the bank to the household
                     if tranx.type_ == "loans":
                         if tranx.from_ == bank:
+                            # If we find one we append the balance
                             balance = balance - tranx.amount
+                            # And mark the transaction for deletion
                             to_delete.append(tranx)
+                # Then we delete all market transactions
                 for tranx in to_delete:
                     tranx.remove_transaction()
+                # And add the netted transaction to the household's and bank's books
                 if balance > 0.0:
+                    # If the balance is positive it's a deposit
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                                                 balance, bank.interest_rate_deposits,  0, -1)
                 elif balance < 0.0:
+                    # If the balance is negative it's a loan
                     environment.new_transaction("loans", "",  bank.identifier, household.identifier,
                                                 abs(balance), bank.interest_rate_loans,  0, -1)
         logging.info("  deposits and loans netted on step: %s",  time)
@@ -362,48 +396,57 @@ class Updater(BaseModel):
     # to be easier and move all cash to deposits in the banks
     # -------------------------------------------------------------------------
     def net_labour_goods(self,  environment, time):
+        # We do it from firm's perspective
         for firm in environment.firms:
+            # And go through households
             for household in environment.households:
+                # We find a balance of labour and goods sold between firm and household
+                # This is the saved part of the household's income, which
+                # is equivalent to capital accumulated in Solow's model
                 balance = 0.0
+                # And we mark all the transactions for deletion once they're added
+                # to the above balance
                 to_delete = []
+                # We go through the household's transactions
                 for tranx in household.accounts:
+                    # And find labour sold from the household to the firm
                     if tranx.type_ == "labour":
                         if tranx.from_ == firm:
+                            # and subtract it to the balance
                             balance = balance - tranx.amount * environment.price_of_labour
+                            # and mark for deletion
                             to_delete.append(tranx)
+                    # We also find goods sold from the firm to the household
                     if tranx.type_ == "goods":
                         if tranx.to == firm:
+                            # and add it to the balance
                             balance = balance + tranx.amount * environment.price_of_goods
+                            # and mark for deletion
                             to_delete.append(tranx)
+                    # We also net previous capital
+                    # This is so we have only one capital transaction per firm or household
                     if tranx.type_ == "capital":
                         if tranx.to == firm:
+                            # we add this to the balance if it's from the household to the firm
                             balance = balance + tranx.amount
+                            # and mark for deletion
                             to_delete.append(tranx)
                     if tranx.type_ == "capital":
                         if tranx.from_ == firm:
+                            # we subtract it from the balance if it's from the firm to the household
                             balance = balance - tranx.amount
+                            # and mark for deletion
                             to_delete.append(tranx)
+                # We delete all the marked transactions
                 for tranx in to_delete:
                     tranx.remove_transaction()
-                if balance != 0.0:
+                # And if the balance isn't 0, we add the capital to the books
+                if balance < 0.0:
                     environment.new_transaction("capital", "",  household.identifier, firm.identifier,
+                                                balance, 0,  0, -1)
+                elif balance > 0.0:
+                    environment.new_transaction("capital", "",  firm.identifier, household.identifier,
                                                 balance, 0,  0, -1)
         logging.info("  labour and goods netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # random_agents(agent_set)
-    # returns a generator randomly going through the specified set of agents
-    # -------------------------------------------------------------------------
-    def random_agents(self,  agent_set):
-        pass
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # remove_amount(agent, type, amount)
-    # removes an amount of given type from a given agent from its books
-    # -------------------------------------------------------------------------
-    def remove_amount(self,  agent, type, amount):
-        pass
     # -------------------------------------------------------------------------

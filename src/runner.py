@@ -98,7 +98,8 @@ class Runner(BaseRunner):
     def do_run(self, environment):
         # loop over all time steps and do the updating
         # We initialise the measurement class for writing outputs to csv
-        #measurement = Measurement("Measurement", environment, self, {1: ["Step", "static", "self.runner.current_step"], 2: ["Deposits", "dynamic", "self.environment.households[0].get_account", ["deposits"]]}, "TestMeasurement.csv")
+        # measurement = Measurement("Measurement", environment, self, {1: ["Step", "static", "self.runner.current_step"],
+        # 2: ["Deposits", "dynamic", "self.environment.households[0].get_account", ["deposits"]]}, "TestMeasurement.csv")
         measurement = Measurement(environment, self)
         # And open the output file
         measurement.open_file()
