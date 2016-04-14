@@ -483,3 +483,19 @@ class Environment(BaseConfig):
         transaction.this_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default)
         transaction.add_transaction(self)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_agent_homogeneity(type_)
+    # -------------------------------------------------------------------------
+    def check_agent_homogeneity(self, type_):
+        for agent_one in eval("self."+str(type_)):
+            for agent_two in eval("self."+str(type_)):
+                if agent_one != agent_two:
+                    for key in agent_one.parameters:
+                        if agent_one.parameters[key] != agent_two.parameters[key]:
+                            return False
+                    for key in agent_one.state_variables:
+                        if agent_one.state_variables[key] != agent_two.state_variables[key]:
+                            return False
+        return True
+    # -------------------------------------------------------------------------

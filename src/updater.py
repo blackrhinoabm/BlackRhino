@@ -165,7 +165,7 @@ class Updater(BaseModel):
         # given supply and demand of the agents
         # and tolerance of error, resolution of search
         # and amplification factor for exponential search
-        price = market.tatonnement(sellers, buyers, starting_price, 0.001, 0.01, 1.1)
+        price = market.tatonnement(sellers, buyers, starting_price, 0.00000000001, 0.01, 1.1)
         environment.variable_parameters["price_of_labour"] = price
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
