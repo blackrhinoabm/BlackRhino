@@ -422,42 +422,59 @@ DESCRIPTION OF TESTS
 
     # Tests for Updater
     test.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can get the identifier of the updater, and prints the current
+        identifier, that is "test_model_id"
     test.updater__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can change the previously set identifier and prints the previous
+        identifier as above and a new identifier after the change ("new_model_id")
     test.updater__get_model_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can get the model parameters of the updater, and prints the current
+        model parameters, that is {"test": "model parameters"}
     test.updater__set_model_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__get_agents(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__set_agents(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can change the previously set model_parameters and prints the previous
+        model_parameters as above and a new model_parameters after the change
+        i.e. {"new": "model parameters"}
     test.updater__get_interactions(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can get the interactions of the updater, and prints the current
+        interactions, that is None
     test.updater__set_interactions(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__check_agent_homogeneity(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__initialize_agents(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can change the previously set interactions and prints the previous
+        interactions as above and a new interactions after the change
+        ["new", "interactions"]
     test.updater__str(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can print the Updater, and prints an xml style string with
+        the config of updater, in this case should only have identifier = "testing str"
     test.updater__init(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
-    test.updater__do_update(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can initialise the updater properly. As initialising the updater
+        sets the appropriate environment this should print the environment
     test.updater__accrue_interests(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can accrue interests. Should print a deposits transaction of the
+        test household with value 10.0 and interest rate of 5%, accrue the interest, and
+        then pprint the test household with deposits now at 10.5
     test.updater__endow_labour(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can endow labour to the sweep_labour parameter, and prints the
+        sweep_labour before endowment (0) and after endowment (see config file)
     test.updater__sell_labour(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether selling endowed labour works well, prints the household with its
+        accounts, then sells labour and prints it again. You should notice new labour and
+        deposits transactions corresponding to the sell message above it.
     test.updater__consume_rationed(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether consuming the produced goods works. Prints the household which is
+        the same as at the end of the above test, then performs the consumptions, you should
+        see the message, and then the printout of the household again, wich should have additional
+        goods and loans transactions corresponding to the message
     test.updater__net_loans_deposits(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can net loans and deposits. This should print out the household
+        as it is at the end of the above test, performs netting the loans and deposits, and
+        prints the household again. All the loans and deposits should now be in one transaction
+        with value corresponding to sum of the previous loans and deposits.
     test.updater__net_labour_goods(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether
+        Tests whether we can net labour and goods. This should print out the household
+        as it is at the end of the above test, performs netting the labour and deposits, and
+        prints the household again. All the labour and goods should now be in one transaction
+        with value corresponding to sum of the previous labour and goods. Notice that goods and
+        deposits have different prices (see messages in the tests above), and this is used
+        in the netting.
+    test.updater__do_update(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether the do_update loop works. Prints the household at the start of the
+        update and then at the end. This should be equivalent to the 4 tests above.

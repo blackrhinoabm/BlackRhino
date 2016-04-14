@@ -39,7 +39,6 @@ class Updater(BaseModel):
 
     identifier = ""
     model_parameters = {}
-    agents = []
     interactions = None
 
     #
@@ -60,26 +59,11 @@ class Updater(BaseModel):
     def set_model_parameters(self, _value):
         super(Updater, self).set_model_parameters(_value)
 
-    def get_agents(self):
-        return self.agents
-
-    def set_agents(self, _value):
-        super(Updater, self).set_agents(_value)
-
     def get_interactions(self):
         return self.interactions
 
     def set_interactions(self, _value):
         super(Updater, self).set_interactions(_value)
-
-    def get_agent_by_id(self, _id):
-        super(Updater, self).get_agent_by_id(_id)
-
-    def check_agent_homogeneity(self):
-        super(Updater, self).check_agent_homogeneity()
-
-    def initialize_agents(self):
-        super(Updater, self).initialize_agents()
 
     def __str__(self):
         return super(Updater, self).__str__()
