@@ -134,33 +134,39 @@ class Measurement(BaseMeasurement):
     # read_xml_config_file(self, config_file_name)
     # Read the xml config file specifying the config file
     # which is a list of lists
-    # For static input, that is a variable gotten from somewhere we need
-    # -The number of the output column
-    # -Header used for this column
-    # -Designation that it is static, i.e. a string "static"
-    # -The full variable name as string, e.g. "self.environment.household[0].identifier"
-    # For dynamic input, that is a variable gotten from a method we need
-    # -The number of the output column
-    # -Header used for this column
-    # -Designation that it is dynamic, i.e. a string "dynamic"
-    # -The full method name as string, e.g. "self.environment.household[0].identifier"
-    # NOTE: Both variable and method string above must be reachable from Measurement class
-    # NOTE: That is why we have access to environment and runner (mostly for updater and step)
-    # -A list of arguments for the above method
+    # We need to specify the filename
+    # We also need to specify each output:
+    # - type: 'output'
+    # - column: integer specifying which column will be used for this
+    # - header: string written as header in the csv file in the column
+    # - value: string or number, identifier for the wrapper function
+    # specifying what the wrapper function returns
     # Thus:
-    # {column_number: [header,static/dynamic, variable / method, list_of_arguments],...:[...]]
-    # [int: [string, string, string / method, list],...:[...]]
+    # {column_number: [header, output, wrapper_id],...:[...]]
+    # [int: [string, string, string],...:[...]]
     #
     # Now we pass this on to the Measurement class through an xml file
     # which should look like this
     #
     # <measurement identifier='test_output'>
     #     <parameter type='filename' value='TestMeasurement.csv'></parameter>
-    #     <parameter type='static' column='1' header='Step' value='self.runner.current_step'></parameter>
-    #     <parameter type='dynamic' column='2' header='Deposits' method='self.environment.households[0].get_account' arguments='["deposits"]'></parameter>
+    #     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    #     <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
     # </measurement>
     #
     # -------------------------------------------------------------------------
     def read_xml_config_file(self, config_file_name):
         super(Measurement, self).read_xml_config_file(config_file_name)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # wrapper(self, id)
+    # Wrapper for functions returning the desired values to be written
+    # -------------------------------------------------------------------------
+    def wrapper(self, ident):
+        if ident == "current_step":
+            return self.runner.current_step+1
+
+        if ident == "household_deposits":
+            return self.environment.households[0].get_account("deposits")
     # -------------------------------------------------------------------------

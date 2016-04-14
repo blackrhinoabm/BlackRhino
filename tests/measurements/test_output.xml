@@ -1,5 +1,5 @@
 <measurement identifier='test_output'>
     <parameter type='filename' value='TestMeasurement.csv'></parameter>
-    <parameter type='static' column='1' header='Step' value='self.runner.current_step'></parameter>
-    <parameter type='dynamic' column='2' header='Deposits' method='self.environment.households[0].get_account' arguments='["deposits"]'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
 </measurement>
