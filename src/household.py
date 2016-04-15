@@ -36,21 +36,11 @@ class Household(BaseAgent):
     # VARIABLES
     #
     #
+
     identifier = ""  # identifier of the specific household
     parameters = {}  # parameters of the specific household
     state_variables = {}  # state variables of the specific household
     accounts = []  # all accounts of a household (filled with transactions)
-    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
-    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
-    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
-    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
-    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
-    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
-    parameters["labour"] = 0.0  # labour to sell every step (labour endowment)
-    parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
-    parameters["active"] = 0  # this is a control parameter checking whether bank is active
-    # The below is not needed, but kept just in case it will become needed
-    # state_variables["sweep_labour"] = 0.0  # labour left in the simulation step
 
     #
     #
@@ -105,7 +95,21 @@ class Household(BaseAgent):
     # __init__
     # -------------------------------------------------------------------------
     def __init__(self):
-        self.accounts = []  # clear transactions when household is initialized
+        self.identifier = ""  # identifier of the specific household
+        self.parameters = {}  # parameters of the specific household
+        self.state_variables = {}  # state variables of the specific household
+        self.accounts = []  # all accounts of a household (filled with transactions)
+        # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+        # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+        # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+        # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+        # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+        # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
+        self.parameters["labour"] = 0.0  # labour to sell every step (labour endowment)
+        self.parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
+        self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
+        # The below is not needed, but kept just in case it will become needed
+        # state_variables["sweep_labour"] = 0.0  # labour left in the simulation step
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

@@ -36,18 +36,11 @@ class Firm(BaseAgent):
     # VARIABLES
     #
     #
+
     identifier = ""  # identifier of the specific firm
     parameters = {}  # parameters of the specific firm
     state_variables = {}  # state variables of the specific firm
     accounts = []  # all accounts of a firm (filled with transactions)
-    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
-    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
-    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
-    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
-    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
-    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
-    parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
-    parameters["active"] = 0  # this is a control parameter checking whether firm is active
 
     #
     #
@@ -103,7 +96,18 @@ class Firm(BaseAgent):
     # __init__
     # -------------------------------------------------------------------------
     def __init__(self):
-        self.accounts = []  # clear transactions when firm is initialized
+        self.identifier = ""  # identifier of the specific firm
+        self.parameters = {}  # parameters of the specific firm
+        self.state_variables = {}  # state variables of the specific firm
+        self.accounts = []  # all accounts of a firm (filled with transactions)
+        # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+        # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+        # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+        # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+        # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+        # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
+        self.parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
+        self.parameters["active"] = 0  # this is a control parameter checking whether firm is active
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

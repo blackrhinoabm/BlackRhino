@@ -36,19 +36,11 @@ class Bank(BaseAgent):
     # VARIABLES
     #
     #
+
     identifier = ""  # identifier of the specific bank
     parameters = {}  # parameters of the specific bank
     state_variables = {}  # state variables of the specific bank
     accounts = []  # all accounts of a bank (filled with transactions)
-    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
-    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
-    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
-    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
-    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
-    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
-    parameters["interest_rate_loans"] = 0.0  # interest rate on loans
-    parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
-    parameters["active"] = 0  # this is a control parameter checking whether bank is active
 
     #
     #
@@ -104,7 +96,19 @@ class Bank(BaseAgent):
     # __init__
     # -------------------------------------------------------------------------
     def __init__(self):
-        self.accounts = []  # clear transactions when bank is initialized
+        self.identifier = ""  # identifier of the specific bank
+        self.parameters = {}  # parameters of the specific bank
+        self.state_variables = {}  # state variables of the specific bank
+        self.accounts = []  # all accounts of a bank (filled with transactions)
+        # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+        # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+        # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+        # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+        # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+        # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
+        self.parameters["interest_rate_loans"] = 0.0  # interest rate on loans
+        self.parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
+        self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
