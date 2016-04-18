@@ -56,3 +56,80 @@ class TestsRunner(object):
 # -------------------------------------------------------------------------
 #  TESTS FOR RUNNER.PY >> TINA TO DO <<
 # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # runner__get_identifier
+    # -------------------------------------------------------------------------
+
+    def runner__get_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner 
+
+        text = "This test checks runner.get_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        environment.banks.append(bank)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        # making an instance of the Runner class
+        runner=Runner(environment)
+        #
+        # TESTING
+        #
+
+        text = "Identifier: "
+        text = text + runner.get_identifier()
+        print(text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

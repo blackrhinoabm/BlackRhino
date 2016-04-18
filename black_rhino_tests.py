@@ -209,7 +209,9 @@ if __name__ == '__main__':
     test_measurement.measurement__close_file(["tests/environments/", "test_all_methods", "tests/log/"])
     test_measurement.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
 
-    # Tests for Runner << TINA TO WRITE
+    Tests for Runner << TINA TO WRITE
+    test_runner.runner__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    
 
     # Tests for Updater
     test_updater.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
