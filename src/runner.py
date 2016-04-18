@@ -39,7 +39,7 @@ class Runner(BaseRunner):
     #
 
     identifier = ""
-    num_simulations = 0
+    num_sweeps = 0
     current_step = 0
 
     #
@@ -70,17 +70,17 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # get_num_simulations
+    # get_num_sweeps
     # -------------------------------------------------------------------------
-    def get_num_simulations(self):
-        return self.num_simulations
+    def get_num_sweeps(self):
+        return self.num_sweeps
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # set_num_simulations
+    # set_num_sweeps
     # -------------------------------------------------------------------------
-    def set_num_simulations(self, _value):
-        super(Runner, self).set_num_simulaitons(_value)
+    def set_num_sweeps(self, _value):
+        super(Runner, self).set_num_sweeps(_value)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

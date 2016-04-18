@@ -58,7 +58,7 @@ if __name__ == '__main__':
     test_transaction = TestsTransaction()
     test_updater = TestsUpdater()
 
-    # Tests for Bank
+    # # Tests for Bank
     test_bank.bank__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__get_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -209,9 +209,13 @@ if __name__ == '__main__':
     test_measurement.measurement__close_file(["tests/environments/", "test_all_methods", "tests/log/"])
     test_measurement.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
 
-    Tests for Runner << TINA TO WRITE
+    # Tests for Runner << TINA TO WRITE
+    test_runner.runner__init__(["tests/environments/", "test_all_methods", "tests/log/"])
     test_runner.runner__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
-    
+    test_runner.runner__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_runner.runner__get_num_sweeps(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_runner.runner__set_num_sweeps(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_runner.runner__do_run(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Updater
     test_updater.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])

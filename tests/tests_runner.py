@@ -58,6 +58,76 @@ class TestsRunner(object):
 # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # runner__init
+    # -------------------------------------------------------------------------
+    def runner__init__(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner
+
+        text = "This test checks runner.__init__ \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner__init__ in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        environment.banks.append(bank)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        # making an instance of the Runner class
+        runner = Runner(environment)
+        #
+        # TESTING
+        #
+
+        text = "Identifier: "
+        text = text + runner.get_identifier()
+        print(text)
+
+        text = "Number of sweeps:"
+        text = text + str(runner.num_sweeps)
+        print(text)
+
+        text = "Updater"
+        text = text + str(runner.updater)
+        print(text)
+
+
+    # -------------------------------------------------------------------------
     # runner__get_identifier
     # -------------------------------------------------------------------------
 
@@ -67,7 +137,7 @@ class TestsRunner(object):
         from src.household import Household
         from src.firm import Firm
         from src.environment import Environment  # needed for the Directory
-        from src.runner import Runner 
+        from src.runner import Runner
 
         text = "This test checks runner.get_identifier \n"
         self.print_info(text)
@@ -110,7 +180,8 @@ class TestsRunner(object):
         helper.initialize_standard_bank(bank, environment)
 
         # making an instance of the Runner class
-        runner=Runner(environment)
+        runner = Runner(environment)
+
         #
         # TESTING
         #
@@ -119,12 +190,244 @@ class TestsRunner(object):
         text = text + runner.get_identifier()
         print(text)
 
+    # -------------------------------------------------------------------------
+    # runner__set_identifier
+    # -------------------------------------------------------------------------
+    def runner__set_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner
+
+        text = "This test checks runner.set_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        environment.banks.append(bank)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        # making an instance of the Runner class
+        runner = Runner(environment)
+        #
+        # TESTING
+        #
+
+        text = "Identifier: "
+        text = text + runner.get_identifier()
+        print(text)
+
+        runner.set_identifier("new_identifier")
+
+        text = "Print new Identifier:"
+        text = text + runner.get_identifier()
+        print(text)
+
+    # -------------------------------------------------------------------------
+    # runner__get_num_sweeps
+    # -------------------------------------------------------------------------
+    def runner__get_num_sweeps(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner
+
+        text = "This test checks runner.get_num_sweeps \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner_get_num_sweeps in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        environment.banks.append(bank)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        # making an instance of the Runner class
+        runner = Runner(environment)
+        #
+        # TESTING
+        #
+        text = "Number of sweeps: "
+        text = text + str(runner.get_num_sweeps())
+        print(text)
+    # -------------------------------------------------------------------------
+    # testing set_num_sweeps
+    # -------------------------------------------------------------------------
+
+    def runner__set_num_sweeps(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner
+
+        text = "This test checks runner.set_num_sweeps \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner_set_num_sweeps in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate the bank
+        bank = Bank()
+        environment.banks.append(bank)
+        helper = Helper()
+        helper.initialize_standard_bank(bank, environment)
+
+        # making an instance of the Runner class
+        runner = Runner(environment)
+        #
+        # TESTING
+        #
+        text = "Number of sweeps: "
+        text = text + str(runner.get_num_sweeps())
+        print(text)
+
+        runner.set_num_sweeps(666)
+
+        text = "New number of sweeps: "
+        text = text + str(runner.get_num_sweeps())
+        print(text)
+
+    # -------------------------------------------------------------------------
+    # do_run
+    # -------------------------------------------------------------------------
+
+    def runner__do_run(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment  # needed for the Directory
+        from src.runner import Runner
+        from src.measurement import Measurement
+
+        text = "This test checks runner.do_run \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test runner_do_run in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct bank filename
+        environment = Environment(environment_directory,  identifier)
+
+        # get the bank_directory from the environment
+        bank_directory = environment.bank_directory
+        # and loop over all banks in the directory for testing purpose (just one bank)
+        listing = os.listdir(bank_directory)
+        bank_filename = bank_directory + listing[0]
 
 
+        # making an instance of the Runner class
+        runner = Runner(environment)
 
-
-
-
+        #
+        # TESTING
+        #
+        runner.do_run(environment)
 
 
 
