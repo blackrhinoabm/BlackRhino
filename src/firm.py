@@ -127,8 +127,6 @@ class Firm(BaseAgent):
         firm_string = super(Firm, self).__str__()
         firm_string = firm_string.replace("\n", "\n    <type value='firm''>\n", 1)
         text = "\n"
-        for transaction in self.accounts:
-            text = text + transaction.write_transaction()
         text = text + "  </agent>"
         return firm_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------

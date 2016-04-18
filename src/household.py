@@ -129,8 +129,6 @@ class Household(BaseAgent):
         household_string = super(Household, self).__str__()
         household_string = household_string.replace("\n", "\n    <type value='household'>\n", 1)
         text = "\n"
-        for transaction in self.accounts:
-            text = text + transaction.write_transaction()
         text = text + "  </agent>"
         return household_string.replace("\n  </agent>", text, 1)
     # ------------------------------------------------------------------------
