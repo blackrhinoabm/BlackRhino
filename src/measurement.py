@@ -168,5 +168,13 @@ class Measurement(BaseMeasurement):
             return self.runner.current_step+1
 
         if ident == "household_deposits":
-            return self.environment.households[0].get_account("deposits")
+            #return self.environment.households[0].get_account("deposits")
+            wealth = 0.0
+            for household in self.environment.households:
+                for tranx in household.accounts:
+                    if tranx.type_ == "deposits" and tranx.from_ == household:
+                        wealth = wealth + tranx.amount
+                    if tranx.type_ == "loans" and tranx.to == household:
+                        wealth = wealth - tranx.amount
+            return wealth
     # -------------------------------------------------------------------------

@@ -154,7 +154,7 @@ class Updater(BaseModel):
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
-        starting_price = 0.0
+        starting_price = 10.0
         # We initialize the price
         price = 0.0
         # Import market clearing class
@@ -165,7 +165,7 @@ class Updater(BaseModel):
         # given supply and demand of the agents
         # and tolerance of error, resolution of search
         # and amplification factor for exponential search
-        price = market.tatonnement(sellers, buyers, starting_price, 0.00000000001, 0.01, 1.1)
+        price = market.tatonnement(sellers, buyers, starting_price, 0.001, 0.01, 1.1)
         environment.variable_parameters["price_of_labour"] = price
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
@@ -226,7 +226,11 @@ class Updater(BaseModel):
         helper = Helper()
         for firm in environment.firms:
             # amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
-            amount = helper.cobb_douglas(firm.get_account("labour"), firm.get_account("capital"),
+            capital = 0.0
+            for tranx in firm.accounts:
+                if tranx.type_ == "capital" and tranx.from_ == firm:
+                    capital = capital + tranx.amount
+            amount = helper.cobb_douglas(firm.get_account("labour"), capital,  # firm.get_account("capital"),
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             for_rationing.append([firm, amount])
         # Households give use their demand, we assume that they want to
@@ -236,9 +240,13 @@ class Updater(BaseModel):
         # households want to spend by price to get the demand
         for household in environment.households:
             demand = 0.0
-            # demand = -round(((household.get_account("deposits") * (1 - household.propensity_to_save)) / price), 0)
-            demand = -((household.get_account("deposits") * (1 - household.propensity_to_save)) / price)
-            # demand = -household.get_account("deposits")/price
+            wealth = 0.0
+            for tranx in household.accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == household:
+                    wealth = wealth + tranx.amount
+                if tranx.type_ == "loans" and tranx.to == household:
+                    wealth = wealth - tranx.amount
+            demand = -((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
         from market import Market
@@ -262,7 +270,8 @@ class Updater(BaseModel):
         def allow_match_basic(agent_one, agent_two):
             return True
         # We find the actual trades
-        rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
+        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
+        rationed = market.rationing_proportional(for_rationing)
         # Then we go through the rationing
         # and move the goods and cash appropriately
         for ration in rationed:
@@ -425,12 +434,12 @@ class Updater(BaseModel):
                 for tranx in to_delete:
                     tranx.remove_transaction()
                 # And if the balance isn't 0, we add the capital to the books
-                if balance < 0.0:
+                if balance > 0.0:
                     environment.new_transaction("capital", "",  household.identifier, firm.identifier,
                                                 balance, 0,  0, -1)
-                elif balance > 0.0:
+                elif balance < 0.0:
                     environment.new_transaction("capital", "",  firm.identifier, household.identifier,
-                                                balance, 0,  0, -1)
+                                                abs(balance), 0,  0, -1)
         logging.info("  labour and goods netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
