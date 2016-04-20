@@ -271,5 +271,24 @@ class Household(BaseAgent):
     # We assume that households consume a fraction of their income
     # -------------------------------------------------------------------------
     def supply_of_labour_solow(self, price):
-        return min(self.labour, max(0, ((self.labour + 1) * price - self.get_account("deposits"))/(2*price)))
+        # The supply of labour depends on the savings of the household
+        # as they can spend their savings instead of working if they
+        # have saving in excess
+        # Thus we calculate their accumulated wealth here
+        wealth = 0.0
+        # By looking through the household's accounts
+        for tranx in self.accounts:
+            # Adding deposits the household has in the banks
+            if tranx.type_ == "deposits" and tranx.from_ == self:
+                wealth = wealth + tranx.amount
+            # And subtracting the loans household has in the banks
+            if tranx.type_ == "loans" and tranx.to == self:
+                wealth = wealth - tranx.amount
+        # Armed with the savings of the household, and its labour endowment
+        # We find its supply of labour at a given price (wage)
+        # We have to remember that the supply of labour has to be bounded
+        # by 0 at the min (can't work negative hours)
+        # and their endowment at the max (working hours from one day cannot be saved to the next)
+        # Thus (see docs for the economics):
+        return min(self.labour, max(0, ((self.labour + 1) * price - wealth)/(2*price)))
     # -------------------------------------------------------------------------

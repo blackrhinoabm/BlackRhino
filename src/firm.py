@@ -278,6 +278,13 @@ class Firm(BaseAgent):
         # This is the one price set up, we only consider relative prices in the model
         # as consistent with DSGE models and the rest of macroeconomics
         goods_price = 10.0
+        #
+        capital = 0.0
+        for tranx in self.accounts:
+            if tranx.type_ == "capital" and tranx.from_ == self:
+                capital = capital + tranx.amount
+            if tranx.type_ == "capital" and tranx.to == self:
+                capital = capital - tranx.amount
         # Finally max(U) given particular wage
-        return max(0, (price_of_labour / (a * b * goods_price * self.get_account("capital") ** c)) ** (1 / (b-1)))
+        return max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1)))
     # -------------------------------------------------------------------------

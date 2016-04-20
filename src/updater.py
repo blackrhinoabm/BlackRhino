@@ -175,7 +175,7 @@ class Updater(BaseModel):
             for_rationing.append([firm, -firm.demand_for_labour_solow(price)])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
-        rationed = market.rationing(for_rationing)
+        rationed = market.rationing_proportional(for_rationing)
         #
         #             A (from)    L (to)
         # bank        loan        deposit
@@ -230,6 +230,8 @@ class Updater(BaseModel):
             for tranx in firm.accounts:
                 if tranx.type_ == "capital" and tranx.from_ == firm:
                     capital = capital + tranx.amount
+                if tranx.type_ == "capital" and tranx.to == firm:
+                    capital = capital - tranx.amount
             amount = helper.cobb_douglas(firm.get_account("labour"), capital,  # firm.get_account("capital"),
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             for_rationing.append([firm, amount])
