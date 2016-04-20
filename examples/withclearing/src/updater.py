@@ -560,7 +560,6 @@ class Updater(BaseModel):
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
-
     # -------------------------------------------------------------------------
     # consume_rationed(environment, time)
     # This function lets households buy the goods the firms have produced
