@@ -278,11 +278,14 @@ class Firm(BaseAgent):
         # This is the one price set up, we only consider relative prices in the model
         # as consistent with DSGE models and the rest of macroeconomics
         goods_price = 10.0
-        #
+        # We calculate the net capital, that is the difference between
+        # own capital stock, and owned capital of other agents
         capital = 0.0
         for tranx in self.accounts:
+            # Own capital stock is added here
             if tranx.type_ == "capital" and tranx.from_ == self:
                 capital = capital + tranx.amount
+            # Owned capital of other agents is subtracted here
             if tranx.type_ == "capital" and tranx.to == self:
                 capital = capital - tranx.amount
         # Finally max(U) given particular wage

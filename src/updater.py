@@ -94,7 +94,8 @@ class Updater(BaseModel):
         # We net deposits and loans
         self.net_loans_deposits(environment, time)
         # We remove goods and labour (perishable) and are left with capital
-        self.net_labour_goods(environment, time)
+        #self.net_labour_goods(environment, time)
+        self.capitalise(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
@@ -225,15 +226,21 @@ class Updater(BaseModel):
         from src.helper import Helper
         helper = Helper()
         for firm in environment.firms:
-            # amount = round(helper.leontief([firm.get_account("labour")], [1/firm.productivity]), 0)
+            # Firms produce based on their capital, for generality
+            # we use their net capital, as in their capital stock
+            # minus the capital owned of other agents
             capital = 0.0
             for tranx in firm.accounts:
+                # This is own capital stock
                 if tranx.type_ == "capital" and tranx.from_ == firm:
                     capital = capital + tranx.amount
+                # And here is the ownership of other agents' stock
                 if tranx.type_ == "capital" and tranx.to == firm:
                     capital = capital - tranx.amount
-            amount = helper.cobb_douglas(firm.get_account("labour"), capital,  # firm.get_account("capital"),
+            # We find the amount produced through the Cobb-Douglas function
+            amount = helper.cobb_douglas(firm.get_account("labour"), capital,
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
+            # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they
@@ -243,11 +250,15 @@ class Updater(BaseModel):
         for household in environment.households:
             demand = 0.0
             wealth = 0.0
+            # For generality we calculate net wealth for this, that is the
+            # amount of deposits they carry minus the amount of loans
             for tranx in household.accounts:
                 if tranx.type_ == "deposits" and tranx.from_ == household:
                     wealth = wealth + tranx.amount
                 if tranx.type_ == "loans" and tranx.to == household:
                     wealth = wealth - tranx.amount
+            # Then the demand is determined by the agent's propensity to save
+            # and the wealth calculated above
             demand = -((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
@@ -283,13 +294,41 @@ class Updater(BaseModel):
             # household   goods       loan
             # firm        deposit     goods
             #
+            # TODO: in the new version this may be irrelevant
             environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
                                         ration[2], 0,  0, -1)
+            # The below makes sure the allocations of loans are correct
+            # That is the banks don't allow overdraft for buying
+            # consumption goods by the households
+            to_finance = ration[2]*price
+            itrange = list(range(0, len(environment.banks)))
+            # And randomise this list for the purposes of iterating randomly
+            random.shuffle(itrange)
+            # And we iterate over the agents randomly by proxy of iterating
+            # through their places on the list [agents]
+            for i in itrange:
+                current_bank = self.environment.banks[i]
+                deposits_available = 0.0
+                for tranx in ration[1].accounts:
+                    if tranx.type_ == "deposits" and tranx.to == current_bank:
+                        deposits_available = deposits_available + tranx.amount
+                    # This should be irrelevant, but for completeness:
+                    if tranx.type_ == "loans" and tranx.from_ == current_bank:
+                        deposits_available = deposits_available - tranx.amount
+                current_amount = min(to_finance, deposits_available)
+                environment.new_transaction("deposits", "",  ration[0].identifier, current_bank.identifier,
+                                            current_amount, current_bank.interest_rate_deposits,  0, -1)
+                environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
+                                            current_amount, current_bank.interest_rate_loans,  0, -1)
+                to_finance = to_finance - current_amount
+            # Below is the old code for legacy comparison, to be deleted later
+            '''
             random_bank = random.choice(environment.banks)
             environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
                                         ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
             environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
                                         ration[2]*price, random_bank.interest_rate_loans,  0, -1)
+            '''
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                   ration[2], price, ration[1].identifier, time)
@@ -443,5 +482,103 @@ class Updater(BaseModel):
                     environment.new_transaction("capital", "",  firm.identifier, household.identifier,
                                                 abs(balance), 0,  0, -1)
         logging.info("  labour and goods netted on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # capitalise(environment, time)
+    # This function makes deposits of all the remaining cash of the households
+    # It is important to notice that this ultimately depends on the propensity
+    # to save parameter, but indirectly, since it influences how much in goods
+    # the agents buy from firms prior to this step, thus allowing this step
+    # to be easier and move all cash to deposits in the banks
+    # -------------------------------------------------------------------------
+    def capitalise(self,  environment, time):
+        # First, remove labour, goods //and capital
+        for firm in environment.firms:
+            to_delete = []
+            for tranx in firm.accounts:
+                if tranx.type_ == "labour":
+                    to_delete.append(tranx)
+                if tranx.type_ == "goods":
+                    to_delete.append(tranx)
+                # if tranx.type_ == "capital":
+                #    to_delete.append(tranx)
+            for tranx in to_delete:
+                tranx.remove_transaction()
+
+        # First, remove labour, goods //and capital
+        for household in environment.households:
+            to_delete = []
+            for tranx in firm.accounts:
+                if tranx.type_ == "labour":
+                    to_delete.append(tranx)
+                if tranx.type_ == "goods":
+                    to_delete.append(tranx)
+                # if tranx.type_ == "capital":
+                #    to_delete.append(tranx)
+            for tranx in to_delete:
+                tranx.remove_transaction()
+
+        # We will ration the remaining excess deposits
+        # and loan as capital ownership transfers
+        # to balance books, if books don't need to be
+        # balanced the same would work strictly on deposits
+        # and loans with no capital explicitly
+        for_rationing = []
+
+        for household in environment.households:
+            demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
+            for_rationing.append([household, -demand])
+
+        for firm in environment.firms:
+            supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
+            for_rationing.append([firm, supply])
+
+        from market import Market
+        market = Market("market")
+
+        def matching_agents_basic(agent_one, agent_two):
+            return 1.0
+
+        # The below function means that all pairs are allowed
+
+        def allow_match_basic(agent_one, agent_two):
+            return True
+
+        # We find the pairs of capital ownership transfers
+        rationed = market.rationing_proportional(for_rationing)
+
+        # We add these to the books
+        for ration in rationed:
+            environment.new_transaction("capital", "",  ration[0].identifier, ration[1].identifier,
+                                        ration[2], 0,  0, -1)
+            print("%s sold %d worth of capital to %s at time %d.") % (ration[0].identifier,
+                                                                      ration[2], ration[1].identifier, time)
+
+        # And net the capital transactions
+        to_delete = []
+
+        for firm in environment.firms:
+            for household in environment.households:
+                balance = 0.0
+                for tranx in household.accounts:
+                    if tranx.type_ == "capital":
+                        if tranx.from_ == firm:
+                            balance = balance + tranx.amount
+                            to_delete.append(tranx)
+                        elif tranx.to == firm:
+                            balance = balance - tranx.amount
+                            to_delete.append(tranx)
+                if balance > 0.0:
+                    environment.new_transaction("capital", "",  firm.identifier, household.identifier,
+                                                balance, 0,  0, -1)
+                elif balance < 0.0:
+                    environment.new_transaction("capital", "",  household.identifier, firm.identifier,
+                                                balance, 0,  0, -1)
+        for tranx in to_delete:
+            tranx.remove_transaction()
+
+        logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
