@@ -93,8 +93,9 @@ class Updater(BaseModel):
         self.consume_rationed(environment, time)
         # We net deposits and loans
         self.net_loans_deposits(environment, time)
-        # We remove goods and labour (perishable) and are left with capital
-        #self.net_labour_goods(environment, time)
+        # We remove the perishable transactions
+        self.remove_perishable(environment, time)
+        # And add capital to balance the books
         self.capitalise(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
@@ -276,7 +277,8 @@ class Updater(BaseModel):
         # The matching function means that all pairs will have the same priority
 
         def matching_agents_basic(agent_one, agent_two):
-            return 1.0
+            # return 1.0
+            return random.random()
 
         # The below function means that all pairs are allowed
 
@@ -422,124 +424,103 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # net_labour_goods(environment, time)
-    # This function makes deposits of all the remaining cash of the households
-    # It is important to notice that this ultimately depends on the propensity
-    # to save parameter, but indirectly, since it influences how much in goods
-    # the agents buy from firms prior to this step, thus allowing this step
-    # to be easier and move all cash to deposits in the banks
+    # remove_perishable(environment, time)
+    # This function removes the perishable transactions in the system
+    # which need to be removed from the books before the end of the step
+    # all methods that use these temporary transactions need to be invoked
+    # before this method, currently it removes labour and goods
     # -------------------------------------------------------------------------
-    def net_labour_goods(self,  environment, time):
-        # We do it from firm's perspective
+    def remove_perishable(self,  environment, time):
+        # First, remove labour, goods from firms
         for firm in environment.firms:
-            # And go through households
-            for household in environment.households:
-                # We find a balance of labour and goods sold between firm and household
-                # This is the saved part of the household's income, which
-                # is equivalent to capital accumulated in Solow's model
-                balance = 0.0
-                # And we mark all the transactions for deletion once they're added
-                # to the above balance
-                to_delete = []
-                # We go through the household's transactions
-                for tranx in household.accounts:
-                    # And find labour sold from the household to the firm
-                    if tranx.type_ == "labour":
-                        if tranx.from_ == firm:
-                            # and subtract it to the balance
-                            balance = balance - tranx.amount * environment.price_of_labour
-                            # and mark for deletion
-                            to_delete.append(tranx)
-                    # We also find goods sold from the firm to the household
-                    if tranx.type_ == "goods":
-                        if tranx.to == firm:
-                            # and add it to the balance
-                            balance = balance + tranx.amount * environment.price_of_goods
-                            # and mark for deletion
-                            to_delete.append(tranx)
-                    # We also net previous capital
-                    # This is so we have only one capital transaction per firm or household
-                    if tranx.type_ == "capital":
-                        if tranx.to == firm:
-                            # we add this to the balance if it's from the household to the firm
-                            balance = balance + tranx.amount
-                            # and mark for deletion
-                            to_delete.append(tranx)
-                    if tranx.type_ == "capital":
-                        if tranx.from_ == firm:
-                            # we subtract it from the balance if it's from the firm to the household
-                            balance = balance - tranx.amount
-                            # and mark for deletion
-                            to_delete.append(tranx)
-                # We delete all the marked transactions
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                # And if the balance isn't 0, we add the capital to the books
-                if balance > 0.0:
-                    environment.new_transaction("capital", "",  household.identifier, firm.identifier,
-                                                balance, 0,  0, -1)
-                elif balance < 0.0:
-                    environment.new_transaction("capital", "",  firm.identifier, household.identifier,
-                                                abs(balance), 0,  0, -1)
-        logging.info("  labour and goods netted on step: %s",  time)
+            # We create a list of things to be removed
+            # since removing things from a list
+            # in a loop over this list is not a good idea
+            to_delete = []
+            # Then go through transactions
+            for tranx in firm.accounts:
+                # Append the things to delete
+                # if it's a labour
+                if tranx.type_ == "labour":
+                    to_delete.append(tranx)
+                # or goods transaction
+                if tranx.type_ == "goods":
+                    to_delete.append(tranx)
+            # And once we have them all we
+            # go through the things to delete
+            # and remove them from the books of agents
+            for tranx in to_delete:
+                tranx.remove_transaction()
+
+        # Then, remove labour, goods from households
+        for household in environment.households:
+            # We create a list of things to be removed
+            # since removing things from a list
+            # in a loop over this list is not a good idea
+            to_delete = []
+            # Then go through transactions
+            for tranx in firm.accounts:
+                # Append the things to delete
+                # if it's a labour
+                if tranx.type_ == "labour":
+                    to_delete.append(tranx)
+                # or goods transaction
+                if tranx.type_ == "goods":
+                    to_delete.append(tranx)
+            # And once we have them all we
+            # go through the things to delete
+            # and remove them from the books of agents
+            for tranx in to_delete:
+                tranx.remove_transaction()
+
+        # If necessary, another line for banks will be added here
+
+        logging.info("  deposits and loans netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # capitalise(environment, time)
-    # This function makes deposits of all the remaining cash of the households
-    # It is important to notice that this ultimately depends on the propensity
-    # to save parameter, but indirectly, since it influences how much in goods
-    # the agents buy from firms prior to this step, thus allowing this step
-    # to be easier and move all cash to deposits in the banks
+    # This function makes capital transactions which represent final
+    # ownership of firms by the household which is done through the bank
+    # deposits and bank loans, these are in principle not necessary for the
+    # model to work, as we can assume the loans are the capital, and produce off
+    # that assumption, but this ensures the books are balanced for all agents
     # -------------------------------------------------------------------------
     def capitalise(self,  environment, time):
-        # First, remove labour, goods //and capital
-        for firm in environment.firms:
-            to_delete = []
-            for tranx in firm.accounts:
-                if tranx.type_ == "labour":
-                    to_delete.append(tranx)
-                if tranx.type_ == "goods":
-                    to_delete.append(tranx)
-                # if tranx.type_ == "capital":
-                #    to_delete.append(tranx)
-            for tranx in to_delete:
-                tranx.remove_transaction()
-
-        # First, remove labour, goods //and capital
-        for household in environment.households:
-            to_delete = []
-            for tranx in firm.accounts:
-                if tranx.type_ == "labour":
-                    to_delete.append(tranx)
-                if tranx.type_ == "goods":
-                    to_delete.append(tranx)
-                # if tranx.type_ == "capital":
-                #    to_delete.append(tranx)
-            for tranx in to_delete:
-                tranx.remove_transaction()
-
         # We will ration the remaining excess deposits
         # and loan as capital ownership transfers
         # to balance books, if books don't need to be
         # balanced the same would work strictly on deposits
         # and loans with no capital explicitly
+
+        # First, we create the list that will be used for rationing
+        # method from Market class, containing agents and their
+        # excess supply or demand
         for_rationing = []
 
+        # First we find household's demand for buying capital of the firms
         for household in environment.households:
+            # We calculate the demand as the amount of wealth (deposits-loans) minus previously owned capital
             demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
+            # And we add the household together with its demand to the list
             for_rationing.append([household, -demand])
 
         for firm in environment.firms:
+            # Supply of the firms is the opposite of the demand of the household
+            # that is the loans minus issued capital claims minus deposits
             supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
+            # And we add the firm together with its supply to the list
             for_rationing.append([firm, supply])
 
+        # We initialise the market clearing class
         from market import Market
         market = Market("market")
 
+        # The below functions means that the pairing will be linear
+
         def matching_agents_basic(agent_one, agent_two):
-            return 1.0
+            return random.random()
 
         # The below function means that all pairs are allowed
 
@@ -547,35 +528,53 @@ class Updater(BaseModel):
             return True
 
         # We find the pairs of capital ownership transfers
+        # We move the capital proportionately with respect to demand
         rationed = market.rationing_proportional(for_rationing)
 
         # We add these to the books
         for ration in rationed:
             environment.new_transaction("capital", "",  ration[0].identifier, ration[1].identifier,
                                         ration[2], 0,  0, -1)
+            # And print it to the screen for easy greping
             print("%s sold %d worth of capital to %s at time %d.") % (ration[0].identifier,
                                                                       ration[2], ration[1].identifier, time)
 
-        # And net the capital transactions
+        # And net the capital transactions, so we don't accumulate
+        # them over the course of the transaction
+        # Again, we create a proxy list for deleting transactions
+        # as deleting them from a list upon which we are looping is bad
         to_delete = []
 
+        # We go through the firms
         for firm in environment.firms:
+            # And then pair them with households
             for household in environment.households:
+                # We will look for the capital balance of the pair
                 balance = 0.0
+                # So we need to look through all their books
                 for tranx in household.accounts:
+                    # Find the capital transactions
                     if tranx.type_ == "capital":
+                        # And if they are ownership of the firm's equity
+                        # We add them to the balance
+                        # And mark for deletion
                         if tranx.from_ == firm:
                             balance = balance + tranx.amount
                             to_delete.append(tranx)
+                        # If they are the other way around for some reason
+                        # we would subtract them and mark for deletion
                         elif tranx.to == firm:
                             balance = balance - tranx.amount
                             to_delete.append(tranx)
+                # We create a new transactions from the balance
+                # depending on what the value of the balance is
                 if balance > 0.0:
                     environment.new_transaction("capital", "",  firm.identifier, household.identifier,
                                                 balance, 0,  0, -1)
                 elif balance < 0.0:
                     environment.new_transaction("capital", "",  household.identifier, firm.identifier,
                                                 balance, 0,  0, -1)
+        # And at the end, we remove all the transactions that we marked before
         for tranx in to_delete:
             tranx.remove_transaction()
 
