@@ -470,13 +470,15 @@ DESCRIPTION OF TESTS
         as it is at the end of the above test, performs netting the loans and deposits, and
         prints the household again. All the loans and deposits should now be in one transaction
         with value corresponding to sum of the previous loans and deposits.
-    test_updater.updater__net_labour_goods(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether we can net labour and goods. This should print out the household
-        as it is at the end of the above test, performs netting the labour and deposits, and
-        prints the household again. All the labour and goods should now be in one transaction
-        with value corresponding to sum of the previous labour and goods. Notice that goods and
-        deposits have different prices (see messages in the tests above), and this is used
-        in the netting.
+    test_updater.updater__remove_perishable(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can remove the perishable transacitons. This should print out the household
+        as it is at the end of the above test, performs removing the labour and goods, and
+        prints the household again. All the labour and goods should now be in gone.
+    test_updater.capitalise(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can capitalise. This should print out the household
+        as it is at the end of the above test, performs the capitlising, and
+        prints the household again. There should be capital transaction
+        with value corresponding to the deposits of the household.
     test_updater.updater__do_update(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether the do_update loop works. Prints the household at the start of the
         update and then at the end. This should be equivalent to the 4 tests above.

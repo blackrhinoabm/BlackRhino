@@ -231,5 +231,6 @@ if __name__ == '__main__':
     test_updater.updater__sell_labour(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__consume_rationed(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__net_loans_deposits(["tests/environments/", "test_all_methods", "tests/log/"])
-    test_updater.updater__net_labour_goods(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_updater.updater__remove_perishable(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_updater.updater__capitalise(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__do_update(["tests/environments/", "test_all_methods", "tests/log/"])

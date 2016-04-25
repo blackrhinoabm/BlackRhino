@@ -775,10 +775,10 @@ class TestsUpdater(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # updater__net_labour_goods
+    # updater__remove_perishable
     # -------------------------------------------------------------------------
 
-    def updater__net_labour_goods(self, args):
+    def updater__remove_perishable(self, args):
         import os
         from src.bank import Bank
         from src.household import Household
@@ -788,7 +788,7 @@ class TestsUpdater(object):
         from src.market import Market
         from src.updater import Updater
 
-        text = "This test checks updater.net_labour_goods \n"
+        text = "This test checks updater.remove_perishable \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -800,7 +800,7 @@ class TestsUpdater(object):
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                             filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__net_labour_goods in run: %s',
+        logging.info('START logging for test updater__remove_perishable in run: %s',
                      environment_directory + identifier + ".xml")
 
         # Construct household filename
@@ -814,8 +814,55 @@ class TestsUpdater(object):
         model.consume_rationed(environment, 0)
         model.net_loans_deposits(environment, 0)
         print(environment.households[0])
-        print("Netting labour and goods")
-        model.net_labour_goods(environment, 0)
+        print("Removing perishable")
+        model.remove_perishable(environment, 0)
+        print(environment.households[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # updater__capitalise
+    # -------------------------------------------------------------------------
+
+    def updater__capitalise(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+        from src.updater import Updater
+
+        text = "This test checks updater.capitalise \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__capitalise in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        model = Updater(environment)
+        model.sell_labour(environment, 0)
+        model.consume_rationed(environment, 0)
+        model.net_loans_deposits(environment, 0)
+        print(environment.households[0])
+        model.remove_perishable(environment, 0)
+        print("Capitalising")
+        model.capitalise(environment, 0)
         print(environment.households[0])
 
     # -------------------------------------------------------------------------
