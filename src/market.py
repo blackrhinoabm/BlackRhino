@@ -58,8 +58,138 @@ class Market(BaseMarket):
     lob_buy_book = []
     lob_sell_book = []
 
-    def send_order(agent, price, volume, time):
+    def add_order(self, agent, price, volume, time, ident, type_):
+        # We import operator to be able to quickly sort the books
+        from operator import itemgetter
+        # Note that trades are executed at the price of the active order!!!
+        # The topology of an order for simplicity:
+        # order[0] = agent
+        # order[1] = price
+        # order[2] = volume
+        # order[3] = time
+        # order[4] = ident
+        # order[5] = type_
+        # In the LOB functions we'll return list of trades
+        # These trades will be then used by the models as they see fit
+        # We need selling agent, buying agent, quantity and price
+        # If we need markets for every single security then add init (TODO)
+        # return [seller, buyer, quantity, price]
+        # We initialise the container for returning executed trades
+        to_return = []
+        # We check whether we add a sell or buy order
+        # If it is a sell order:
+        if type_ == "sell":
+            # We check how much buy volume do we have above or on the price of the incoming sell
+            volume_above_price = 0.0
+            # So we go through the buy book
+            for order in self.lob_buy_book:
+                # And find orders the price of which is above the incoming sell price
+                if order[1] >= price:
+                    # We add those to the volume we're looking for
+                    volume_above_price = volume_above_price + order[2]
+            # If that volume is bigger than the volume of the incoming sell
+            # Then all of the incoming sell will be executed
+            if volume_above_price >= volume:
+                # We need order in the way we execute the trades
+                # So we reorder by price and time (price priority first, then time priority)
+                self.lob_buy_book = sorted(self.lob_buy_book, key=itemgetter(1, 3))
+                # We initialise a helper variable showing volume left to settle
+                volume_to_settle = volume
+                # We go through the ordered buy book
+                for order in self.lob_buy_book:
+                    # And if we still have some volume to settle
+                    if volume_to_settle >= order[2]:
+                        # We execute this bit of the trade
+                        # That is add it to the list of trades we'll return
+                        to_return.append(agent, order[0], order[2], order[1])
+                        # And amend the volume to settle by the current settlement
+                        volume_to_settle = volume_to_settle - order[2]
+            # If not all of the incoming sell can be executed right away
+            else:
+                # We execute just parts of the trade and add active trade to the books
+                # We need order in the way we execute the trades
+                # So we reorder by price and time (price priority first, then time priority)
+                self.lob_buy_book = sorted(self.lob_buy_book, key=itemgetter(1, 3))
+                # We initialise a helper variable showing volume left to settle
+                volume_to_settle = volume
+                # We go through the ordered buy book
+                for order in self.lob_buy_book:
+                    # If the price of the buy trade is still at least the price of the incoming sell
+                    if order[1] >= price:
+                        # And if we still have some volume to settle
+                        if volume_to_settle >= order[2]:
+                            # We execute this bit of the trade
+                            # That is add it to the list of trades we'll return
+                            to_return.append(agent, order[0], order[2], order[1])
+                            # And amend the volume to settle by the current settlement
+                            volume_to_settle = volume_to_settle - order[2]
+                # And we add the unsettled part of the order as an active order to the sell book
+                self.lob_sell_book.append([agent, price, volume_to_settle, time, ident, type_])
+        # If it is a buy order:
+        elif type_ == "buy":
+            # We check how much buy volume do we have below or on the price of the incoming buy
+            volume_below_price = 0.0
+            # So we go through the sell book
+            for order in self.lob_sell_book:
+                # And find orders the price of which is below the incoming buy price
+                if order[1] <= price:
+                    # We add those to the volume we're looking for
+                    volume_below_price = volume_below_price + order[2]
+            # If that volume is bigger than the volume of the incoming sell
+            # Then all of the incoming sell will be executed
+            if volume_below_price >= volume:
+                # We need order in the way we execute the trades
+                # So we reorder by price and time (price priority first, then time priority)
+                self.lob_sell_book = sorted(self.lob_sell_book, key=itemgetter(1, 3))
+                # We initialise a helper variable showing volume left to settle
+                volume_to_settle = volume
+                # We go through the ordered buy book
+                for order in self.lob_sell_book:
+                    # And if we still have some volume to settle
+                    if volume_to_settle >= order[2]:
+                        # We execute this bit of the trade
+                        # That is add it to the list of trades we'll return
+                        to_return.append(agent, order[0], order[2], order[1])
+                        # And amend the volume to settle by the current settlement
+                        volume_to_settle = volume_to_settle - order[2]
+            # If not all of the incoming sell can be executed right away
+            else:
+                # We execute just parts of the trade and add active trade to the books
+                # We need order in the way we execute the trades
+                # So we reorder by price and time (price priority first, then time priority)
+                self.lob_sell_book = sorted(self.lob_sell_book, key=itemgetter(1, 3))
+                # We initialise a helper variable showing volume left to settle
+                volume_to_settle = volume
+                # We go through the ordered buy book
+                for order in self.lob_buy_book:
+                    # If the price of the buy trade is still at least the price of the incoming sell
+                    if order[1] <= price:
+                        # And if we still have some volume to settle
+                        if volume_to_settle >= order[2]:
+                            # We execute this bit of the trade
+                            # That is add it to the list of trades we'll return
+                            to_return.append(agent, order[0], order[2], order[1])
+                            # And amend the volume to settle by the current settlement
+                            volume_to_settle = volume_to_settle - order[2]
+                # And we add the unsettled part of the order as an active order to the sell book
+                self.lob_buy_book.append([agent, price, volume_to_settle, time, ident, type_])
+        # and finally we return the executed trades
+        return to_return
+
+    def cancel_order(self, agent, price, volume, time, ident, type_):
         pass
+        # just cancel based on ident
+
+    def replace_order(self, agent, price, volume, time, ident, type_):
+        pass
+        # change the volume to smaller (do not time)
+
+    def market_order(self, agent, price, volume, time, ident, type_):
+        if type_ == "sell":
+            volume_above_price = 0.0
+        elif type_ == "buy":
+            pass
+        # buyorsell immediately at the best available price
 
     #
     #
