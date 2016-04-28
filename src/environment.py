@@ -43,6 +43,8 @@ class Environment(BaseConfig):
     firms = []  # a list containing all firms (instances of class Firm)
     agents = []
 
+    assets = {}  # list of assets: ["name", "expected return", "return volatility", "current returns"]
+
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
     # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
@@ -498,4 +500,14 @@ class Environment(BaseConfig):
                         if agent_one.state_variables[key] != agent_two.state_variables[key]:
                             return False
         return True
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # update_asset_returns()
+    # -------------------------------------------------------------------------
+    def update_asset_returns(self):
+        from random import gauss
+        from math import sqrt
+        for key in self.assets:
+            assets[key][2] = gauss(assets[key][0], sqrt(assets[key][1]))
     # -------------------------------------------------------------------------
