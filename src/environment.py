@@ -150,6 +150,22 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # get_assets(self)
+    # returns assets of the environment
+    # -------------------------------------------------------------------------
+    def get_assets(self):
+        return self.assets
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_assets(self, value):
+    # changes assets to the supplied value
+    # -------------------------------------------------------------------------
+    def set_assets(self, value):
+        super(Environment, self).set_assets(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # agents_generator(self):
     # generator yielding all agents
     # -------------------------------------------------------------------------
@@ -506,8 +522,5 @@ class Environment(BaseConfig):
     # update_asset_returns()
     # -------------------------------------------------------------------------
     def update_asset_returns(self):
-        from random import gauss
-        from math import sqrt
-        for key in self.assets:
-            assets[key][2] = gauss(assets[key][0], sqrt(assets[key][1]))
+        super(Environment, self).update_asset_returns()
     # -------------------------------------------------------------------------

@@ -44,6 +44,7 @@ if __name__ == '__main__':
     from tests.tests_market import TestsMarket
     from tests.tests_measurement import TestsMeasurement
     from tests.tests_runner import TestsRunner
+    from tests.tests_shock import TestsShock
     from tests.tests_transaction import TestsTransaction
     from tests.tests_updater import TestsUpdater
 
@@ -55,10 +56,11 @@ if __name__ == '__main__':
     test_market = TestsMarket()
     test_measurement = TestsMeasurement()
     test_runner = TestsRunner()
+    test_shock = TestsShock()
     test_transaction = TestsTransaction()
     test_updater = TestsUpdater()
 
-    # # Tests for Bank
+    # Tests for Bank
     test_bank.bank__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__get_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -122,6 +124,8 @@ if __name__ == '__main__':
     test_environment.environment__set_static_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__get_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__set_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__get_assets(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__set_assets(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__print_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__write_environment_file(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -136,6 +140,7 @@ if __name__ == '__main__':
     test_environment.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__check_global_transaction_balance(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__check_agent_homogeneity(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__update_asset_returns(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Transaction
     test_transaction.transaction__init(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -216,6 +221,9 @@ if __name__ == '__main__':
     test_runner.runner__get_num_sweeps(["tests/environments/", "test_all_methods", "tests/log/"])
     test_runner.runner__set_num_sweeps(["tests/environments/", "test_all_methods", "tests/log/"])
     test_runner.runner__do_run(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for Shock
+    test_shock.shock__do_shock(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Updater
     test_updater.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])

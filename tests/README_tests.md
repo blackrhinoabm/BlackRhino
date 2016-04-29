@@ -170,6 +170,12 @@ DESCRIPTION OF TESTS
     test_environment.environment__set_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can set variable parameters in the environment, first prints
         the original variable parameters, changes them to {'test': 0.55-0.66}, and prints them again
+    test_environment.environment__get_assets(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get assets from the environment, and prints them out.
+        Should print whatever is in the config file in /tests/environments/ as assets.
+    test_environment.environment__set_assets(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can set assets in the environment, and prints the original assets as above,
+        and then prints the one after change, i.e. {'test': [0.05, 0.04, 0.03]}.
     test_environment.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether __str__ function works properly, the printout can be checked against
         the config file in tests/environments/
@@ -214,6 +220,11 @@ DESCRIPTION OF TESTS
         Tests whether the check for agent homogeneity works for banks (parameter "banks"), first
         we create two standard banks and check if they are homogeneous (should return True), then
         change some parameter and check again (should return False)
+    test_environment.environment__update_asset_returns(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can obtain current returns on assets from Gaussian distribution, prints out
+        the assets, with 0.0 current returns (last position in the list), then updates the returns
+        and prints them again, should be drawn randomly from an appropriate Gaussian distribution
+        as specified in the config file in /environments/tests/ with mean and variance.
 
     # Tests for Transaction
     test_transaction.transaction__init(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -421,6 +432,13 @@ DESCRIPTION OF TESTS
         and writes the identifier, so it can be checked against the id in the config file
 
     # Tests for Runner # TODO: Tina
+
+    # Tests for Shock
+    test_shock.shock__do_shock(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether do_shock works, it prints the starting labour endowment of the household, which
+        is 0.0 since we haven't initialised anything, then runs the do_shock with start parameter which
+        should change the labour endowment to 12 and runs do_shock with end parameter which should
+        change the labour endowment to 24.
 
     # Tests for Updater
     test_updater.updater__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])

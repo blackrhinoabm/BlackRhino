@@ -386,6 +386,87 @@ class TestsEnvironment(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # environment__get_assets
+    # -------------------------------------------------------------------------
+
+    def environment__get_assets(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_assets \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_assets in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print "Assets:"
+        print(environment.get_assets())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__set_assets
+    # -------------------------------------------------------------------------
+
+    def environment__set_assets(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.set_assets \n"
+        text = "and sets them to 'test': [0.05, 0.04, 0.03]\n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_assets in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Assets:")
+        print(environment.get_assets())
+        print("Changing variable parameters to 'test': [0.05, 0.04, 0.03]")
+        environment.set_assets({'test': [0.05, 0.04, 0.03]})
+        print("Assets:")
+        print(environment.get_assets())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # environment__str
     # -------------------------------------------------------------------------
 
@@ -961,5 +1042,47 @@ class TestsEnvironment(object):
         environment.get_agent_by_id("new bank").parameters["active"] = 4
         print("Are banks homogeneous?")
         print(environment.check_agent_homogeneity("banks"))
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__update_asset_returns
+    # -------------------------------------------------------------------------
+
+    def environment__update_asset_returns(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.update_asset_returns \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__update_asset_returns in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Assets:")
+        print(environment.get_assets())
+        print("Updating asset returns")
+        environment.update_asset_returns()
+        print("Assets:")
+        print(environment.get_assets())
 
     # -------------------------------------------------------------------------

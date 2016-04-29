@@ -23,6 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
 from src.measurement import Measurement
+from src.shock import Shock
 
 # -------------------------------------------------------------------------
 #
@@ -103,9 +104,13 @@ class Runner(BaseRunner):
         measurement = Measurement(environment, self)
         # And open the output file
         measurement.open_file()
+        # We start the shock class as well
+        shock = Shock()
         # For each update step
         for i in range(self.num_sweeps):
-            print(environment.measurement_config)
+            # do the shock
+            if int(environment.shock[0]) <= i+1 and int(environment.shock[1]) >= i+1:
+                shock.do_shock(environment, i, "start")
             # the update step
             # append current step, this is mostly for measurements
             self.current_step = i
@@ -113,6 +118,9 @@ class Runner(BaseRunner):
             self.updater.do_update(environment, i)
             # write the state of the system
             measurement.write_to_file()
+            # revert the shock if necessary
+            if int(environment.shock[0]) <= i+1 and int(environment.shock[1]) >= i+1:
+                shock.do_shock(environment, i, "end")
             # HELPER, to be removed in production
             for firm in environment.households:
                 print(firm)
