@@ -43,7 +43,8 @@ class Environment(BaseConfig):
     firms = []  # a list containing all firms (instances of class Firm)
     agents = []
 
-    assets = {}  # list of assets: ["name", "expected return", "return volatility", "current returns"]
+    assets = {}  # dictionary of assets: "name": ["expected return", "return volatility", "current returns"]
+    shocks = []  # list of shocks: [sweep_from, sweep_to, kind_of_shock]
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
@@ -163,6 +164,30 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
     def set_assets(self, value):
         super(Environment, self).set_assets(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_shocks(self)
+    # returns shocks of the environment
+    # -------------------------------------------------------------------------
+    def get_shocks(self):
+        return self.shocks
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_shocks(self, value):
+    # changes shocks to the supplied value
+    # -------------------------------------------------------------------------
+    def set_shocks(self, value):
+        super(Environment, self).set_shocks(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # add_shock(self, shock):
+    # adds shock to the list of shocks
+    # -------------------------------------------------------------------------
+    def add_shock(self, shock):
+        super(Environment, self).add_shock(shock)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

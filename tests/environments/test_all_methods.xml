@@ -9,7 +9,9 @@
     <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
     <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
     <parameter type='static' name='measurement_config' value='tests/measurements/test_output.xml'></parameter>
-    <parameter type='variable' name='shock' range='40-45' value='labour'></parameter>
+    <parameter type='static' name='max_leverage_ratio' value='3.0'></parameter>
+    <parameter type='shock' name='productivity' range='10-20'></parameter>
+    <parameter type='shock' name='labour' range='40-50'></parameter>
     <parameter type='asset' name='MBS' mean='0.05' variance='0.001'></parameter>
     <parameter type='asset' name='ABS' mean='0.07' variance='0.002'></parameter>
     <!-- parameters determining the dynamics -->
