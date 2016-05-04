@@ -37,6 +37,7 @@ if __name__ == '__main__':
     import logging
 
     from tests.tests_bank import TestsBank
+    from tests.tests_central_bank import TestsCentralBank
     from tests.tests_environment import TestsEnvironment
     from tests.tests_firm import TestsFirm
     from tests.tests_helper import TestsHelper
@@ -49,6 +50,7 @@ if __name__ == '__main__':
     from tests.tests_updater import TestsUpdater
 
     test_bank = TestsBank()
+    test_central_bank = TestsCentralBank()
     test_environment = TestsEnvironment()
     test_firm = TestsFirm()
     test_helper = TestsHelper()
@@ -78,6 +80,24 @@ if __name__ == '__main__':
     test_bank.bank__initialize_standard_bank(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__get_transactions_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
     test_bank.bank__getattr(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for CentralBank
+    test_central_bank.central_bank__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__set_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_state_variables(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__set_state_variables(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__str(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_parameters_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__check_consistency(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_account(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_account_num_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__add_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__clear_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__purge_accounts(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__get_transactions_from_file(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_central_bank.central_bank__getattr(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Firm
     test_firm.firm__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -126,6 +146,9 @@ if __name__ == '__main__':
     test_environment.environment__set_variable_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__get_assets(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__set_assets(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__get_shocks(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__set_shocks(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__add_shock(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__print_parameters(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__write_environment_file(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -134,10 +157,12 @@ if __name__ == '__main__':
     test_environment.environment__initialize_banks_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__initialize_firms_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__initialize_central_bank_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__read_transactions_for_banks(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__read_transactions_for_firms(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_environment.environment__read_transactions_for_central_bank(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__check_global_transaction_balance(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__check_agent_homogeneity(["tests/environments/", "test_all_methods", "tests/log/"])
     test_environment.environment__update_asset_returns(["tests/environments/", "test_all_methods", "tests/log/"])

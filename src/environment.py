@@ -41,6 +41,7 @@ class Environment(BaseConfig):
     banks = []  # a list containing all banks (instances of class Bank)
     households = []  # a list containing all households (instances of class Household)
     firms = []  # a list containing all firms (instances of class Firm)
+    central_bank = []  # to be consistent there's a list of central banks, but will consist of just one instance of class CentralBank
     agents = []
 
     assets = {}  # dictionary of assets: "name": ["expected return", "return volatility", "current returns"]
@@ -64,6 +65,9 @@ class Environment(BaseConfig):
     static_parameters["bank_directory"] = ""  # directory containing bank config files
     static_parameters["firm_directory"] = ""  # directory containing firm config files
     static_parameters["household_directory"] = ""  # directory containing household config files
+    static_parameters["central_bank_directory"] = ""  # directory containing central bank config file
+
+    static_parameters["max_leverage_ratio"] = ""  # max allowed leverage ratio of the banks (policy bound)
 
     #
     #
@@ -285,6 +289,8 @@ class Environment(BaseConfig):
         self.static_parameters["bank_directory"] = ""
         self.static_parameters["firm_directory"] = ""
         self.static_parameters["household_directory"] = ""
+        self.static_parameters["central_bank_directory"] = ""
+        self.static_parameters["max_leverage_ratio"] = ""
         self.variable_parameters = {}
 
         # first, read in the environment file
@@ -316,8 +322,16 @@ class Environment(BaseConfig):
         else:
             logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
 
+        # then read in the central bank
+        if (self.central_bank_directory != ""):
+            if (self.bank_directory != "none"):  # none is used for tests only
+                self.initialize_central_bank_from_files(self.central_bank_directory)
+                logging.info("  central bank read from directory: %s",  self.central_bank_directory)
+        else:
+            logging.error("ERROR: no central_bank_directory given in %s\n",  environment_filename)
+
         # add agents to the list of all agents
-        self.agents = [self.banks, self.firms, self.households]
+        self.agents = [self.banks, self.firms, self.households, self.central_bank]
 
         # then, initialize transactions from the config files for banks
         if (self.bank_directory != ""):
@@ -342,6 +356,15 @@ class Environment(BaseConfig):
                 logging.info("  households read from directory: %s",  self.household_directory)
         else:
             logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
+
+        # then, initialize transactions from the config files for central bank
+        if (self.central_bank_directory != ""):
+            if (self.central_bank_directory != "none"):  # none is used for tests only
+                self.read_transactions_for_central_bank(self.central_bank_directory)
+                logging.info("  central bank's transactions read from directory: %s",  self.central_bank_directory)
+        else:
+            logging.error("ERROR: no central_bank_directory given in %s\n",  environment_filename)
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -423,6 +446,31 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # initialize_central_bank_from_files
+    # central bank has to be initialized for each simulation
+    # this reads all config files in the provided directory and
+    # initializes central bank with the contents of the config
+    # -------------------------------------------------------------------------
+    def initialize_central_bank_from_files(self,  central_bank_directory):
+        from src.central_bank import CentralBank
+        # this routine is called more than once, so we have to reset the list of households each time
+        while len(self.central_bank) > 0:
+            self.central_bank.pop()
+        # we list all the files in the specified directory
+        listing = os.listdir(central_bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != 1):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match one central bank",
+                          central_bank_directory,  str(len(listing)))
+        # we read the files sequentially
+        for infile in listing:
+            cb = CentralBank()
+            cb.get_parameters_from_file(central_bank_directory + infile,  self)
+            # and read parameters to the firms, only to add them to the environment
+            self.central_bank.append(cb)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # read_transactions_from_files(self,  bank_directory)
     # reads transactions for banks from the config files
     # -------------------------------------------------------------------------
@@ -492,6 +540,30 @@ class Environment(BaseConfig):
             household = self.get_agent_by_id(identifier)
             # then we read the transactions from the config to the appropriate firm
             household.get_transactions_from_file(household_directory + infile, self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_transactions_for_central_bank(self,  central_bank_directory)
+    # reads transactions for central bank from the config file
+    # -------------------------------------------------------------------------
+    def read_transactions_for_central_bank(self,  central_bank_directory):
+        from xml.etree import ElementTree
+        # we list all the files in the specified directory
+        listing = os.listdir(central_bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != 1):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match one central bank",
+                          central_bank_directory,  str(len(listing)))
+        # we read the files sequentially
+        for infile in listing:
+            # we open the file and find the identifier of the config
+            xmlText = open(central_bank_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            # and we find the bank with this identifier
+            cb = self.get_agent_by_id(identifier)
+            # then we read the transactions from the config to the appropriate bank
+            cb.get_transactions_from_file(central_bank_directory + infile, self)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

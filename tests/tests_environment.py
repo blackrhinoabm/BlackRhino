@@ -459,10 +459,134 @@ class TestsEnvironment(object):
 
         print("Assets:")
         print(environment.get_assets())
-        print("Changing variable parameters to 'test': [0.05, 0.04, 0.03]")
+        print("Changing assets to 'test': [0.05, 0.04, 0.03]")
         environment.set_assets({'test': [0.05, 0.04, 0.03]})
         print("Assets:")
         print(environment.get_assets())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__get_shocks
+    # -------------------------------------------------------------------------
+
+    def environment__get_shocks(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.get_shocks \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__get_shocks in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print "Shocks:"
+        print(environment.get_shocks())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__set_shocks
+    # -------------------------------------------------------------------------
+
+    def environment__set_shocks(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.set_shocks \n"
+        text = text + "and sets them to [1, 2, 'test']\n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__set_shocks in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Shocks:")
+        print(environment.get_shocks())
+        print("Changing shocks to [1, 2, 'test']")
+        environment.set_shocks([1, 2, "test"])
+        print("Assets:")
+        print(environment.get_shocks())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__add_shock
+    # -------------------------------------------------------------------------
+
+    def environment__add_shock(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.add_shock \n"
+        text = text + "and adds to them [3, 4, 'test']\n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__add_shock in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Shocks:")
+        print(environment.get_shocks())
+        print("Adding shock [3, 4, 'test']")
+        environment.add_shock([3, 4, "test"])
+        print("Shocks:")
+        print(environment.get_shocks())
 
     # -------------------------------------------------------------------------
 
@@ -788,6 +912,48 @@ class TestsEnvironment(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # environment__initialize_central_bank_from_files
+    # -------------------------------------------------------------------------
+
+    def environment__initialize_central_bank_from_files(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.initialize_central_bank_from_files \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__initialize_central_bank_from_files in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        print("Initialized the central bank")
+        text = "Number of central banks read: "
+        text = text + str(len(environment.central_bank))
+        print(text)
+        print("The central bank read: ")
+        for i in range(0, int(len(environment.central_bank))):
+            print(environment.central_bank[i].__str__())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # environment__get_agent_by_id
     # -------------------------------------------------------------------------
 
@@ -948,6 +1114,49 @@ class TestsEnvironment(object):
         environment.read_transactions_for_banks(environment.bank_directory)  # deposits are saved in bank config files only
         # environment.read_transactions_for_households(environment.household_directory)
         print(environment.households[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # environment__read_transactions_for_central_bank
+    # -------------------------------------------------------------------------
+
+    def environment__read_transactions_for_central_bank(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+
+        text = "This test checks environment.read_transactions_for_central_bank \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test environment__read_transactions_for_central_bank in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Clearing accounts of the central_bank:")
+        environment.central_bank[0].clear_accounts()  # let's use the first bank
+        print(environment.central_bank[0])
+        print("Reading transactions: ")
+        environment.read_transactions_for_central_bank(environment.central_bank_directory)  # deposits are saved in bank config files only
+        # environment.read_transactions_for_households(environment.household_directory)
+        print(environment.central_bank[0])
 
     # -------------------------------------------------------------------------
 

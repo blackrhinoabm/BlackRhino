@@ -99,7 +99,7 @@ class CentralBank(BaseAgent):
         self.identifier = ""  # identifier of the central bank
         self.parameters = {}  # parameters of the central bank
         self.state_variables = {}  # state variables of the central bank
-        self.accounts = []  # all accounts of a bank (filled with transactions)
+        self.accounts = []  # all accounts of the bank (filled with transactions)
         # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
         # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
         # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
@@ -107,7 +107,6 @@ class CentralBank(BaseAgent):
         # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
         # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
         self.parameters["interest_rate_cb_loans"] = 0.0  # interest rate on loans
-        self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -119,13 +118,13 @@ class CentralBank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # __str__
-    # returns a string describing the bank and its properties
+    # returns a string describing the central bank and its properties
     # based on the implementation in the abstract class BaseAgent
     # but adds the type of agent (bank) and lists all transactions
     # -------------------------------------------------------------------------
     def __str__(self):
         bank_string = super(CentralBank, self).__str__()
-        bank_string = bank_string.replace("\n", "\n    <type value='bank'>\n", 1)
+        bank_string = bank_string.replace("\n", "\n    <type value='central_bank'>\n", 1)
         text = "\n"
         text = text + "  </agent>"
         return bank_string.replace("\n  </agent>", text, 1)
@@ -136,9 +135,9 @@ class CentralBank(BaseAgent):
     # reads the specified config file given the environment
     # and sets parameters to the ones found in the config file
     # the config file should be an xml file that looks like the below:
-    # <bank identifier='string'>
+    # <central_bank identifier='string'>
     #     <parameter name='string' value='string'></parameter>
-    # </bank>
+    # </central_bank>
     # -------------------------------------------------------------------------
     def get_parameters_from_file(self,  bank_filename, environment):
         super(CentralBank, self).get_parameters_from_file(bank_filename, environment)
@@ -190,7 +189,7 @@ class CentralBank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # clear_accounts
-    # removes all transactions from bank's accounts
+    # removes all transactions from central bank's accounts
     # only for testing, the one in transaction should be used in production
     # -------------------------------------------------------------------------
     def clear_accounts(self):
@@ -199,7 +198,7 @@ class CentralBank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # purge_accounts
-    # removes worthless transactions from bank's accounts
+    # removes worthless transactions from central bank's accounts
     # -------------------------------------------------------------------------
     def purge_accounts(self, environment):
         super(CentralBank, self).purge_accounts(environment)
@@ -207,7 +206,7 @@ class CentralBank(BaseAgent):
 
     # -------------------------------------------------------------------------
     # get_transactions_from_file
-    # reads transactions from the config file to the bank's accounts
+    # reads transactions from the config file to the central bank's accounts
     # -------------------------------------------------------------------------
     def get_transactions_from_file(self, filename, environment):
         super(CentralBank, self).get_transactions_from_file(filename, environment)

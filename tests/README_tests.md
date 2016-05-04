@@ -51,6 +51,55 @@ DESCRIPTION OF TESTS
         Tests whether the helper function for initializing a standard bank works
         and prints the standard bank for visual confirmation
 
+    # Tests for CentralBank
+    test_central_bank.central_bank__get_identifier([environment_directory, test_config_file, log_directory])
+        Tests whether the correct identifier has been read from the config file in tests/agents/central_bank
+        the identifier is printed and can be checked against the file
+    test_central_bank.central_bank__set_identifier([environment_directory, test_config_file, log_directory])
+        Tests whether the identifier read from the config file in tests/agents/central_bank can be changed
+        and prints the original and changed ("new_ident") identifiers
+    test_central_bank.central_bank__get_parameters([environment_directory, test_config_file, log_directory])
+        Tests whether parameters have been read from the file in tests/agents/central_bank
+        and prints them out, these can be checked against the file
+    test_central_bank.central_bank__set_parameters([environment_directory, test_config_file, log_directory])
+        Tests whether parameters have read from config can be overridden
+        and prints the new values {'rd': 0.44, 'rl': 0.55, 'active': 1}
+    test_central_bank.central_bank__get_state_variables([environment_directory, test_config_file, log_directory])
+        Tests whether state variables have been read from the file in tests/agents/central_bank
+        and prints them out, these can be checked against the file
+    test_central_bank.central_bank__set_state_variables([environment_directory, test_config_file, log_directory])
+        Tests whether state variables have read from config can be overridden
+        and prints the new values {'test': 0.66}
+    test_central_bank.central_bank__str([environment_directory, test_config_file, log_directory])
+        Tests whether __str__ function works properly, the printout can be checked against
+        the config in tests/agents/central_bank
+    test_central_bank.central_bank__get_parameters_from_file([environment_directory, test_config_file, log_directory])
+        Tests whether the config file is read correctly, prints the identifier from
+        the config file, which can be checked against the file in tests/agents/central_bank
+    test_central_bank.central_bank__check_consistency([environment_directory, test_config_file, log_directory])
+        Tests whether the function for checking whether assets are equal to liabilities
+        performs correctly, it should give True for central bank always, as central banks don't need to be consistent on the books
+    test_central_bank.central_bank__get_account([environment_directory, test_config_file, log_directory])
+        Tests whether get_account works properly, printing the values of various
+        balance sheet items, should give 100, 300, and 600
+    test_central_bank.central_bank__get_account_num_transactions([environment_directory, test_config_file, log_directory])
+        Tests whether get_account_num_transactions works, printing how many transactions
+        of different types are in the balance sheet, should give 1, 2, and 3
+    test_central_bank.central_bank__add_transaction([environment_directory, test_config_file, log_directory])
+        Tests whether a transaction can be added, and prints the balance sheet
+        before and after adding the transaction, allowing for the comparison
+    test_central_bank.central_bank__clear_accounts([environment_directory, test_config_file, log_directory])
+        Tests whether accounts are cleared after using the appropriate function, and prints
+        the number of items and their value in the balance sheet at the beginning, after
+        adding a worthless item and finally after calling the function
+    test_central_bank.central_bank__purge_accounts([environment_directory, test_config_file, log_directory])
+        Tests whether accounts are purged after using the appropriate function, and prints
+        the number of itams and their value in the balance sheet at the beginning, after
+        adding a worthless item and finally after calling the function
+    test_central_bank.central_bank__getattr([environment_directory, test_config_file, log_directory])
+        Tests whether the parameters can be called using their name instead of going into
+        the container, and prints the value of the parameter using both methods for comparison
+
     # Tests for Firm
     test_firm.firm__get_identifier([environment_directory, test_config_file, log_directory])
         Tests whether the correct identifier has been read from the config file in tests/agents/firms
@@ -176,6 +225,17 @@ DESCRIPTION OF TESTS
     test_environment.environment__set_assets(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can set assets in the environment, and prints the original assets as above,
         and then prints the one after change, i.e. {'test': [0.05, 0.04, 0.03]}.
+    test_environment.environment__get_shocks(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get shocks of the system stored in the environment and prints
+        the shocks as outlined in the config file in /tests/environment.
+    test_environment.environment__set_shocks(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can set shocks of the system stored in the environment and prints
+        the shocks as outlined in the config file in /tests/environment, then changes them to
+        [1, 2, 'test'] and prints them again.
+    test_environment.environment__add_shock(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can append shocks of the system stored in the environment and prints
+        the shocks as outlined in the config file in /tests/environment, then adds to them
+        [3, 4, 'test'] and prints them again.
     test_environment.environment__str(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether __str__ function works properly, the printout can be checked against
         the config file in tests/environments/
@@ -200,6 +260,9 @@ DESCRIPTION OF TESTS
     test_environment.environment__initialize_households_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether households are properly initialized by the environment from config files saved in
         tests/agents/households/, prints the number of households expected and read and then prints the households
+    test_environment.environment__initialize_central_bank_from_files(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether central bank is properly initialized by the environment from config file saved in
+        tests/agents/central_bank/, prints the number of central banks expected and read and then prints the central banks
     test_environment.environment__get_agent_by_id(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether the function fetches the agent by an ID (string). If it works correctly, it
         should print an agent with "bank_test_config_id" identifier. This depends on the agent of this
@@ -215,7 +278,11 @@ DESCRIPTION OF TESTS
     test_environment.environment__read_transactions_for_households(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests wehther the transactions in the household files are read correctly. It first clears all the
         accounts and prints empty books, and then reads the accounts and should print the households with
-        the transactions as specified in the config files within /agents/banks/.
+        the transactions as specified in the config files within /agents/households/.
+    test_environment.environment__read_transactions_for_central_bank(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests wehther the transactions in the central bank files are read correctly. It first clears all the
+        accounts and prints empty books, and then reads the accounts and should print the central bank with
+        the transactions as specified in the config files within /agents/central_bank/.
     test_environment.environment__check_agent_homogeneity(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether the check for agent homogeneity works for banks (parameter "banks"), first
         we create two standard banks and check if they are homogeneous (should return True), then
