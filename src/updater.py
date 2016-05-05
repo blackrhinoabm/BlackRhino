@@ -110,7 +110,26 @@ class Updater(BaseModel):
     # transaction itself
     # -------------------------------------------------------------------------
     def accrue_interests(self,  environment, time):
+        # First, add interests to all the transactions
         environment.accrue_interests()
+        # Then, banks give their revenue as dividends to households
+        # which own the banks in the model
+        # for now we have them given out proportionately
+        for bank in environment.banks:
+            excess = 0.0
+            for tranx in bank.accounts:
+                if tranx.type_ == "loans" and tranx.from_ == bank:
+                    excess = excess + tranx.amount
+                if tranx.type_ == "deposits" and tranx.to == bank:
+                    excess = excess - tranx.amount
+            if round(excess, 2) < 0.0:
+                raise LookupError("Bank lost money on interests.")
+            if round(excess, 2) > 0.0:
+                amount = excess / environment.num_households
+                # Deposit these to households
+                for household in environment.households:
+                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
+                                                amount, bank.interest_rate_deposits,  0, -1)
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -502,14 +521,38 @@ class Updater(BaseModel):
         # First we find household's demand for buying capital of the firms
         for household in environment.households:
             # We calculate the demand as the amount of wealth (deposits-loans) minus previously owned capital
+            deposits = 0.0
+            loans = 0.0
+            capital = 0.0
+            for tranx in household.accounts:
+                if tranx.type_ == "deposits":
+                    if tranx.from_ == household:
+                        deposits = deposits + tranx.amount
+                if tranx.type_ == "loans":
+                    if tranx.to == household:
+                        loans = loans + tranx.amount
+                if tranx.type_ == "capital":
+                    if tranx.to == household:
+                        capital = capital + tranx.amount
+                    if tranx.from_ == household:
+                        capital = capital - tranx.amount
             demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
+            # demand = deposits - loans - capital
             # And we add the household together with its demand to the list
             for_rationing.append([household, -demand])
 
         for firm in environment.firms:
             # Supply of the firms is the opposite of the demand of the household
             # that is the loans minus issued capital claims minus deposits
-            supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
+            capital = 0.0
+            for tranx in firm.accounts:
+                if tranx.type_ == "capital":
+                    if tranx.from_ == firm:
+                        capital = capital + tranx.amount
+                    if tranx.to == firm:
+                        capital = capital - tranx.amount
+            supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
+            # supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
             # And we add the firm together with its supply to the list
             for_rationing.append([firm, supply])
 

@@ -128,8 +128,13 @@ class Runner(BaseRunner):
                 if int(shock[0]) <= i+1 and int(shock[1]) >= i+1:
                     shock_class.do_shock(environment, i, shock[2], "end")
             # HELPER, to be removed in production
-            for firm in environment.households:
-                print(firm)
+            # for firm in environment.households:
+            #    print(firm)
+            # print(environment.households[0])
+            # print(environment.firms[0])
+            print(environment.firms[0].get_account("deposits")+environment.firms[0].get_account("capital")-environment.firms[0].get_account("loans"))
+            print(environment.firms[1].get_account("deposits")+environment.firms[1].get_account("capital")-environment.firms[1].get_account("loans"))
+            print(environment.firms[2].get_account("deposits")+environment.firms[2].get_account("capital")-environment.firms[2].get_account("loans"))
             # print(environment.firms[0])
         # Close the output file at the end of the simulation
         measurement.close_file()
