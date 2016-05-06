@@ -111,23 +111,42 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def accrue_interests(self,  environment, time):
         # First, add interests to all the transactions
+        # The function in environment makes sure we don't double count interests
         environment.accrue_interests()
         # Then, banks give their revenue as dividends to households
         # which own the banks in the model
-        # for now we have them given out proportionately
+        # for now we have them given out through ownership weights
+        total_ownership = 0.0
+        for household in environment.households:
+            total_ownership = total_ownership + household.ownership_of_banks
+        # We calculate dividends for every bank
         for bank in environment.banks:
+            # Find the excess of assets over liabilities
             excess = 0.0
+            # To do that we go through all transactions
+            # and add or subtract them appropriately
             for tranx in bank.accounts:
                 if tranx.type_ == "loans" and tranx.from_ == bank:
                     excess = excess + tranx.amount
                 if tranx.type_ == "deposits" and tranx.to == bank:
                     excess = excess - tranx.amount
+            # If there is shortfall we throw an error for now
+            # since it is assumed that in the moden banks should have balanced
+            # books and interests on assets are higher, but in principle
+            # we may add some other behaviour here if necessary
+            # IMPLEMENTATION NOTE: while we want full accuracy in the model for
+            # now, the floating error around 0 means we need to round before checking
             if round(excess, 2) < 0.0:
                 raise LookupError("Bank lost money on interests.")
+            # If there is excess of loans over deposits
+            # We distribute the excess as
+            # IMPLEMENTATION NOTE: same as above
             if round(excess, 2) > 0.0:
-                amount = excess / environment.num_households
-                # Deposit these to households
+                # TODO: bank_ownership parameter for households to weigh this
+                # For now, we add these proportionately to the households
+                # Deposit these to households appropriately
                 for household in environment.households:
+                    amount = excess * (household.ownership_of_banks / total_ownership)
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                                                 amount, bank.interest_rate_deposits,  0, -1)
         logging.info("  interest accrued on step: %s",  time)
@@ -303,6 +322,7 @@ class Updater(BaseModel):
 
         def allow_match_basic(agent_one, agent_two):
             return True
+
         # We find the actual trades
         # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
         rationed = market.rationing_proportional(for_rationing)
@@ -329,6 +349,7 @@ class Updater(BaseModel):
             # through their places on the list [agents]
             for i in itrange:
                 current_bank = self.environment.banks[i]
+                # We find how much in deposits the household has
                 deposits_available = 0.0
                 for tranx in ration[1].accounts:
                     if tranx.type_ == "deposits" and tranx.to == current_bank:
@@ -336,7 +357,9 @@ class Updater(BaseModel):
                     # This should be irrelevant, but for completeness:
                     if tranx.type_ == "loans" and tranx.from_ == current_bank:
                         deposits_available = deposits_available - tranx.amount
+                # We find the amount of deposits the household can spend for this particular bank
                 current_amount = min(to_finance, deposits_available)
+                # And add the appropriate transactions
                 environment.new_transaction("deposits", "",  ration[0].identifier, current_bank.identifier,
                                             current_amount, current_bank.interest_rate_deposits,  0, -1)
                 environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
@@ -513,6 +536,32 @@ class Updater(BaseModel):
         # balanced the same would work strictly on deposits
         # and loans with no capital explicitly
 
+        # First resolve capital shortfall for firms
+        # ie when firm needs to sell existing  capital instead of getting new owners
+        for firm in environment.firms:
+            # We calculate how much capital the firm has
+            capital = 0.0
+            for tranx in firm.accounts:
+                if tranx.type_ == "capital":
+                    if tranx.from_ == firm:
+                        capital = capital + tranx.amount
+                    if tranx.to == firm:
+                        capital = capital - tranx.amount
+            # Then find the firm's supply of capital given current books
+            supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
+            # If there is a shortfall of capital supply
+            if supply < 0.0:
+                # We go through the books
+                for tranx in firm.accounts:
+                    # And find capital transactions
+                    if tranx.type_ == "capital" and tranx.from_ == firm:
+                        # Then we sell the appropriate amount to cover the shortfall
+                        # TODO: we may want the sellout to be proportional or at least
+                        # going through books at random, though in the current model it shouldn't matter
+                        to_remove = min(-supply, tranx.amount)
+                        tranx.amount = tranx.amount - to_remove
+                        supply = supply + to_remove
+
         # First, we create the list that will be used for rationing
         # method from Market class, containing agents and their
         # excess supply or demand
@@ -521,6 +570,7 @@ class Updater(BaseModel):
         # First we find household's demand for buying capital of the firms
         for household in environment.households:
             # We calculate the demand as the amount of wealth (deposits-loans) minus previously owned capital
+            # We calculate capital by hand in case there is some reverse ownership
             deposits = 0.0
             loans = 0.0
             capital = 0.0
@@ -536,14 +586,15 @@ class Updater(BaseModel):
                         capital = capital + tranx.amount
                     if tranx.from_ == household:
                         capital = capital - tranx.amount
-            demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
-            # demand = deposits - loans - capital
+            # demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
+            demand = deposits - loans - capital
             # And we add the household together with its demand to the list
             for_rationing.append([household, -demand])
 
         for firm in environment.firms:
             # Supply of the firms is the opposite of the demand of the household
             # that is the loans minus issued capital claims minus deposits
+            # We calculate capital by hand in case there is some reverse ownership
             capital = 0.0
             for tranx in firm.accounts:
                 if tranx.type_ == "capital":
@@ -568,18 +619,22 @@ class Updater(BaseModel):
         # The below function means that all pairs are allowed
 
         def allow_match_basic(agent_one, agent_two):
-            return True
+            if agent_one in environment.firms and agent_two in environment.firms:
+                return False
+            else:
+                return True
 
         # We find the pairs of capital ownership transfers
         # We move the capital proportionately with respect to demand
         rationed = market.rationing_proportional(for_rationing)
+        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
 
         # We add these to the books
         for ration in rationed:
             environment.new_transaction("capital", "",  ration[0].identifier, ration[1].identifier,
                                         ration[2], 0,  0, -1)
             # And print it to the screen for easy greping
-            print("%s sold %d worth of capital to %s at time %d.") % (ration[0].identifier,
+            print("%s sold %f worth of capital to %s at time %d.") % (ration[0].identifier,
                                                                       ration[2], ration[1].identifier, time)
 
         # And net the capital transactions, so we don't accumulate
