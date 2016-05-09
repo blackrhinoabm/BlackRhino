@@ -97,6 +97,8 @@ class Updater(BaseModel):
         self.remove_perishable(environment, time)
         # And add capital to balance the books
         self.capitalise(environment, time)
+        # Investing of the banks
+        self.invest(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
@@ -113,6 +115,20 @@ class Updater(BaseModel):
         # First, add interests to all the transactions
         # The function in environment makes sure we don't double count interests
         environment.accrue_interests()
+        # And returns for assets
+        # First, we update the current step returns
+        environment.update_asset_returns()
+        # Then update the books of each bank
+        for bank in environment.banks:
+            # We go asset by asset
+            for asset_key in environment.assets:
+                # And find investment transactions
+                for tranx in bank.accounts:
+                    if tranx.type_ == "investment":
+                        # For the specific asset
+                        if tranx.asset == asset_key:
+                            # And amend its value by the current returns
+                            tranx.amount = tranx.amount * (1 + environment.assets[asset_key][2])
         # Then, banks give their revenue as dividends to households
         # which own the banks in the model
         # for now we have them given out through ownership weights
@@ -517,7 +533,7 @@ class Updater(BaseModel):
 
         # If necessary, another line for banks will be added here
 
-        logging.info("  deposits and loans netted on step: %s",  time)
+        logging.info("  perishables removed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -678,4 +694,63 @@ class Updater(BaseModel):
 
         logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # invest(environment, time)
+    # This function checks the optimal portfolio volume for banks and their
+    # allocations, then looks at the current ones and makes appropriate
+    # investment decisions
+    # -------------------------------------------------------------------------
+    def invest(self, environment, time):
+        # We do this for every bank
+        for bank in environment.banks:
+            # Every bank finds out what leverage they want to use by using their
+            # own leverage from config file unless it's prohibited by the policy
+            target_leverage = 0.0
+            target_leverage = min(bank.target_leverage, environment.max_leverage_ratio)
+            # Then from the loans banks have and the leverage ration above
+            # We find how much the banks want to be investing
+            investment_volume = 0.0
+            investment_volume = bank.get_account("loans")*(target_leverage-1)
+
+            # Then we add or remove central bank loans
+            # We assume that since there is only one central bank we can keep those
+            # in one transaction for now, if we fiddle with maturities this may change
+            # If we don't yet have a central bank loan we create one
+            if bank.get_account_num_transactions("cb_loans") == 0:
+                environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
+                                            investment_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
+            # If we have a prior central bank loan we just adjust the amount
+            else:
+                for tranx in bank.accounts:
+                    if tranx.type_ == "cb_loans":
+                        tranx.amount = investment_volume
+
+            # Then we add or remove investments
+            # We do it for every investment class, for now we have 1/n portfolio
+            for asset_key in environment.assets:
+                # Thus each asset is invested in linearly, 1/n times the total inv volume
+                one_investment_volume = investment_volume / len(environment.assets)
+                # We find if there are already transactions
+                # We will want one transaction of one type of investment also, as above
+                number_of_asset_transactions = 0
+                # We go through the books
+                for tranx in bank.accounts:
+                    if tranx.asset == asset_key:
+                        # And find the transactions that match
+                        number_of_asset_transactions = number_of_asset_transactions + 1
+                # If the bank doesn't yet have an investment we create one
+                if number_of_asset_transactions == 0:
+                    environment.new_transaction("investment", asset_key,  bank.identifier, bank.identifier,
+                                                one_investment_volume, 0,  0, -1)
+                # If they do have one we just amend the amount
+                elif number_of_asset_transactions == 1:
+                    for tranx in bank.accounts:
+                        if tranx.type_ == "investment":
+                            if tranx.asset == asset_key:
+                                tranx.amount = one_investment_volume
+                # If there are multiple investments in one asset we raise an error
+                else:
+                    raise LookupError("More than one transaction of the same asset.")
     # -------------------------------------------------------------------------

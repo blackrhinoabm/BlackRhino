@@ -153,7 +153,7 @@ class Runner(BaseRunner):
             #     if tranx.type_ == "capital" and tranx.to == environment.firms[2]:
             #         capital = capital - tranx.amount
             # print(environment.firms[2].get_account("deposits")+capital-environment.firms[2].get_account("loans"))
-            print(environment.firms[0])
+            print(environment.banks[0])
             # print(environment.firms[0])
         # Close the output file at the end of the simulation
         measurement.close_file()
