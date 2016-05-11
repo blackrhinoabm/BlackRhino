@@ -83,7 +83,6 @@ class Updater(BaseModel):
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
-        self.find_interbank_liquidity(environment, time)
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (e.g. work hours to spend)
         # For now we don't need to keep track of labour left as there is no queue
@@ -104,47 +103,6 @@ class Updater(BaseModel):
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # find_interbank_liquidity(environment, time)
-    # This method accrues interest on all transaction
-    # making sure we don't double count the transactions that are
-    # on the books of multiple agents, interest is specified within the
-    # transaction itself
-    # -------------------------------------------------------------------------
-    def find_interbank_liquidity(self,  environment, time):
-        environment.update_asset_returns()
-        for bank in environment.banks:
-            bank.state_variables["interbank_liquidity"] = 0.0
-            for asset_key in environment.assets:
-                # And find investment transactions
-                for tranx in bank.accounts:
-                    if tranx.type_ == "investment":
-                        # For the specific asset
-                        if tranx.asset == asset_key:
-                            # And amend its value by the current returns
-                            bank.interbank_liquidity = bank.interbank_liquidity + tranx.amount * environment.assets[asset_key][2]
-            for tranx in bank.accounts:
-                if tranx.type_ == "ib_loans":
-                    if tranx.from_ == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity + tranx.amount * (1 + bank.interbank_interest_rate)
-                    if tranx.to == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity - tranx.amount * (1 + bank.interbank_interest_rate)
-            for tranx in bank.accounts:
-                if tranx.type_ == "cb_loans":
-                    if tranx.to == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity - tranx.amount * environment.central_bank[0].interest_rate_cb_loans
-        # REMOVE CENTRAL BANK LOANS AND INTERBANK LOANS
-        to_delete = []
-        for bank in environment.banks:
-            for tranx in bank.accounts:
-                if tranx.type_ == "ib_loans" or tranx.type_ == "cb_loans":
-                    to_delete.append(tranx)
-        for tranx in to_delete:
-            tranx.remove_transaction()
-        logging.info("  found interbank liquidity on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -775,94 +733,6 @@ class Updater(BaseModel):
             for asset_key in environment.assets:
                 # Thus each asset is invested in linearly, 1/n times the total inv volume
                 one_investment_volume = investment_volume / len(environment.assets)
-                # We find if there are already transactions
-                # We will want one transaction of one type of investment also, as above
-                number_of_asset_transactions = 0
-                # We go through the books
-                for tranx in bank.accounts:
-                    if tranx.asset == asset_key:
-                        # And find the transactions that match
-                        number_of_asset_transactions = number_of_asset_transactions + 1
-                # If the bank doesn't yet have an investment we create one
-                if number_of_asset_transactions == 0:
-                    environment.new_transaction("investment", asset_key,  bank.identifier, bank.identifier,
-                                                one_investment_volume, 0,  0, -1)
-                # If they do have one we just amend the amount
-                elif number_of_asset_transactions == 1:
-                    for tranx in bank.accounts:
-                        if tranx.type_ == "investment":
-                            if tranx.asset == asset_key:
-                                tranx.amount = one_investment_volume
-                # If there are multiple investments in one asset we raise an error
-                else:
-                    raise LookupError("More than one transaction of the same asset.")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # invest_interbank(environment, time)
-    # This function checks the optimal portfolio volume for banks and their
-    # allocations, then looks at the current ones and makes appropriate
-    # investment decisions
-    # -------------------------------------------------------------------------
-    def invest_interbank(self, environment, time):
-        # TARGET VOLUME OF INVESTMENTS
-        # We do this for every bank
-        for bank in environment.banks:
-            # Every bank finds out what leverage they want to use by using their
-            # own leverage from config file unless it's prohibited by the policy
-            target_leverage = 0.0
-            target_leverage = min(bank.target_leverage, environment.max_leverage_ratio)
-            # Then from the loans banks have and the leverage ration above
-            # We find how much the banks want to be investing
-            bank.state_variables["investment_volume"] = 0.0
-            bank.investment_volume = bank.get_account("loans")*(target_leverage-1)
-
-        # INTERBANK LENDING
-        from market import Market
-        # Put the appropriate settings, i.e. desired identifier
-        market = Market("market")
-        for_rationing = []
-        for bank in environment.banks:
-            value = bank.interbank_liquidity - (bank.investment_volume - bank.get_account("loans"))
-            for_rationing.append([bank, value])
-        rationed = market.rationing_proportional(for_rationing)
-
-        for ration in rationed:
-            environment.new_transaction("ib_loans", "",  ration[0].identifier, ration[1].identifier,
-                                        ration[2], 0,  0, -1)
-            # And print it to the screen for easy greping
-            print("%s lent %f worth of interbank loans to %s at time %d.") % (ration[0].identifier,
-                                                                              ration[2], ration[1].identifier, time)
-
-        for bank in environment.banks:
-            # Then we add or remove central bank loans
-            # We assume that since there is only one central bank we can keep those
-            # in one transaction for now, if we fiddle with maturities this may change
-            # If we don't yet have a central bank loan we create one
-            cb_volume = bank.investment_volume
-            for tranx in bank.accounts:
-                if tranx.type_ == "ib_loans":
-                    if tranx.from_ == bank:
-                        cb_volume = cb_volume - tranx.amount
-                    elif tranx.to == bank:
-                        cb_volume = cb_volume + tranx.amount
-            if bank.get_account_num_transactions("cb_loans") == 0:
-                environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
-                                            cb_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
-            # If we have a prior central bank loan we just adjust the amount
-            elif bank.get_account_num_transactions("cb_loans") == 1:
-                for tranx in bank.accounts:
-                    if tranx.type_ == "cb_loans":
-                        tranx.amount = cb_volume
-            else:
-                raise LookupError("Too many central bank loans present on bank's books.")
-
-        for bank in environment.banks:
-            # Then we add or remove investments
-            # We do it for every investment class, for now we have 1/n portfolio
-            for asset_key in environment.assets:
-                # Thus each asset is invested in linearly, 1/n times the total inv volume
-                one_investment_volume = bank.investment_volume / len(environment.assets)
                 # We find if there are already transactions
                 # We will want one transaction of one type of investment also, as above
                 number_of_asset_transactions = 0
