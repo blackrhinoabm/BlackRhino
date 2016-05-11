@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
-Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import logging
+from abm_template.src.basemeasurement import BaseMeasurement
 
 # ============================================================================
 #
@@ -28,111 +30,151 @@ import logging
 # ============================================================================
 
 
-class Measurement(object):
+class Measurement(BaseMeasurement):
     #
     # VARIABLES
     #
-    activeBanks = []
-    I = []
-    D = []
-    L = []
-    LC = []
 
-    histoActiveBanks = []
-    histoI = []
-    histoD = []
-    histoL = []
-    histoLC = []
+    # identifier for usual purposes
+    identifier = ""
+    # Now we set up a config for the measurements
+    # see notes on the xml config file in the method below
+    config = {}
+    # environment for access
+    environment = type('', (), {})()
+    # filename for the output csv
+    # runner for access
+    runner = type('', (), {})()
+    filename = ""
+    # and the file we're writing to
+    file = None
+    # plus the csv writer
+    csv_writer = None
 
     #
     # METHODS
     #
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, identifier):
+        super(Measurement, self).set_identifier(identifier)
+
+    def get_config(self):
+        return self.config
+
+    def set_config(self, config):
+        super(Measurement, self).set_config(config)
+
+    def get_environment(self):
+        return self.environment
+
+    def set_environment(self, environment):
+        super(Measurement, self).set_environment(environment)
+
+    def get_runner(self):
+        return self.runner
+
+    def set_runner(self, runner):
+        super(Measurement, self).set_runner(runner)
+
+    def get_filename(self):
+        return self.filename
+
+    def set_filename(self, filename):
+        super(Measurement, self).set_filename(filename)
+
+    def get_file(self):
+        return self.file
+
+    def set_file(self, file):
+        super(Measurement, self).set_file(file)
+
+    def get_csv_writer(self):
+        return self.csv_writer
+
+    def set_csv_writer(self, csv_writer):
+        super(Measurement, self).set_csv_writer(csv_writer)
+
     # -------------------------------------------------------------------------
+    # __init__(self, environment, runner)
+    # Initialises the Measurements object and reads the config
+    # -------------------------------------------------------------------------
+    def __init__(self, environment, runner):
+        super(Measurement, self).__init__(environment, runner)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # open_file(self)
+    # Opens the file and writes the headers
+    # -------------------------------------------------------------------------
+    def open_file(self):
+        super(Measurement, self).open_file()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # write_to_file(self)
+    # Writes a row of values for to store the state of the system
+    # at the time of calling this method
+    # -------------------------------------------------------------------------
+    def write_to_file(self):
+        super(Measurement, self).write_to_file()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # close_file(self, filename)
+    # Closes the file so we don't have issues with the disk and the file
+    # -------------------------------------------------------------------------
+    def close_file(self):
+        super(Measurement, self).close_file()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_xml_config_file(self, config_file_name)
+    # Read the xml config file specifying the config file
+    # which is a list of lists
+    # We need to specify the filename
+    # We also need to specify each output:
+    # - type: 'output'
+    # - column: integer specifying which column will be used for this
+    # - header: string written as header in the csv file in the column
+    # - value: string or number, identifier for the wrapper function
+    # specifying what the wrapper function returns
+    # Thus:
+    # {column_number: [header, output, wrapper_id],...:[...]]
+    # [int: [string, string, string],...:[...]]
+    #
+    # Now we pass this on to the Measurement class through an xml file
+    # which should look like this
+    #
+    # <measurement identifier='test_output'>
+    #     <parameter type='filename' value='TestMeasurement.csv'></parameter>
+    #     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    #     <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
+    # </measurement>
     #
     # -------------------------------------------------------------------------
-    def __init__(self):
-        logging.info("  measurement started...")
+    def read_xml_config_file(self, config_file_name):
+        super(Measurement, self).read_xml_config_file(config_file_name)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # def initialize
+    # wrapper(self, id)
+    # Wrapper for functions returning the desired values to be written
     # -------------------------------------------------------------------------
-    def initialize(self):
-        self.activeBanks = []
-        self.I = []
-        self.D = []
-        self.L = []
-        self.LC = []
-    # -------------------------------------------------------------------------
+    def wrapper(self, ident):
+        if ident == "current_step":
+            return self.runner.current_step+1
 
-    # -------------------------------------------------------------------------
-    # def do_measurement()
-    # -------------------------------------------------------------------------
-    def do_measurement(self,  banks):
-        sumActiveBanks = 0
-        sumI = 0.0
-        sumD = 0.0
-        sumL = 0.0
-        sumLC = 0.0
-
-        for bank in banks:
-            # first, check if the bank is active
-            if (bank.parameters["active"] >= 0.0):
-                sumActiveBanks = sumActiveBanks + 1
-                # then, get the different balance sheet items
-                sumI = sumI + bank.get_account("I")
-                sumD = sumD + bank.get_account("D")
-                sumL = sumL + bank.get_account("L")
-                sumLC = sumLC + bank.get_account("LC")
-
-        self.activeBanks.append(sumActiveBanks)
-        self.I.append(sumI)
-        self.D.append(sumD)
-        self.L.append(sumL)
-        self.LC.append(sumLC)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # def do_histograms()
-    # -------------------------------------------------------------------------
-    def do_histograms(self):
-        self.histoActiveBanks.append(self.activeBanks)
-        self.histoI.append(self.I)
-        self.histoD.append(self.D)
-        self.histoL.append(self.L)
-        self.histoLC.append(self.LC)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # def write_histograms()
-    # -------------------------------------------------------------------------
-    def write_histograms(self, baselineDirectory,  environment):
-        # first, construct the file name for the parameter set
-        baseFileName = baselineDirectory + environment.identifier
-
-        # then, write the different histograms
-        fileName = baseFileName + "-histoActiveBanks.dat"
-        self.write_histogram(self.histoActiveBanks,  fileName)
-        fileName = baseFileName + "-histoI.dat"
-        self.write_histogram(self.histoI,  fileName)
-        fileName = baseFileName + "-histoD.dat"
-        self.write_histogram(self.histoD,  fileName)
-        fileName = baseFileName + "-histoL.dat"
-        self.write_histogram(self.histoL,  fileName)
-        fileName = baseFileName + "-histoLC.dat"
-        self.write_histogram(self.histoLC,  fileName)
-
-        logging.info("  ....measurement finished")
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # def write_histogram()
-    # -------------------------------------------------------------------------
-    def write_histogram(self,  histogram,  fileName):
-        file = open(fileName,  "w")
-        for line in histogram:
-            for entry in line:
-                file.write(str(round(float(entry), 4)) + " ")
-            file.write("\n")
-        file.close()
+        if ident == "household_deposits":
+            #return self.environment.households[0].get_account("deposits")
+            wealth = 0.0
+            for household in self.environment.households:
+                for tranx in household.accounts:
+                    if tranx.type_ == "deposits" and tranx.from_ == household:
+                        wealth = wealth + tranx.amount
+                    if tranx.type_ == "loans" and tranx.to == household:
+                        wealth = wealth - tranx.amount
+            return wealth
     # -------------------------------------------------------------------------

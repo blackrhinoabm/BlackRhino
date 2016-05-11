@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:300]
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
-Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
+Pawel Fiedor (pawel@fiedor.eu)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +22,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 import os
-import networkx as nx
 from abm_template.src.baseconfig import BaseConfig
 
 
@@ -31,520 +31,593 @@ from abm_template.src.baseconfig import BaseConfig
 #
 # -------------------------------------------------------------------------
 class Environment(BaseConfig):
-    # from state import State
-    # from parameters import Parameters
-    from src.network import Network
-
+    #
     #
     # VARIABLES
     #
-    identifier = ""
-
-    # parameters = Parameters()
-    # state = State()
-    banks = []
-    network = Network("")
-    # assets = []
-
-    static_parameters = {}
-    static_parameters["numSimulations"] = 0
-    static_parameters["numSweeps"] = 0
-    static_parameters["numBanks"] = 0
-    static_parameters["bankDirectory"] = ""
-    # parameters for the networks
-    static_parameters["graphType"] = ""
-    static_parameters["graphParameter1"] = 0.0
-    static_parameters["graphParameter2"] = 0.0
-    static_parameters["contractsNetworkFile"] = ""
-    # the array of parameters that changes during the simulation
-    # parameters = []
-    variable_parameters = {}
-
-    # state _ variables
     #
-    # VARIABLES
-    #
-    # parameters determining the cash flow of banks
-    static_parameters["rb"] = 0.0  # interbank interest rate
-    static_parameters["rd"] = 0.0  # interest rate on deposits
-    # parameters for the central bank
-    static_parameters["collateralQuality"] = 0.0  # the fraction of a bank's portfolio that the central bank accepts as collateral
-    # firm parameters
-    static_parameters["successProbabilityFirms"] = 0.0  # probability of successful credit
-    static_parameters["positiveReturnFirms"] = 0.0  # return for a successful credit
-    static_parameters["firmLoanMaturity"] = 0.0  # maturity of loans to firms
-    # household parameters
-    static_parameters["scaleFactorHouseholds"] = 0.0  # scaling factor for deposit fluctuations
-    # bank parameters
-    static_parameters["dividendLevel"] = 0.0  # dividend level as paid out by banks
-    static_parameters["pBank"] = 0.0  # bank's assumed credit success probability
-    static_parameters["rhoBank"] = 0.0  # expected return of banks
-    static_parameters["pFinancial"] = 0.0  # bank's assumed credit success probability
-    static_parameters["rhoFinancial"] = 0.0  # expected return of banks
-    static_parameters["thetaBank"] = 0.0  # bank's risk aversion parameter
-    static_parameters["xiBank"] = 0.0  # scaling factor for CRRA
-    static_parameters["gammaBank"] = 0.0  # fraction of interbank lending in overall balance sheet
-    static_parameters["assetNumber"] = 0  # number of assets in the economy
-    static_parameters["interbankLoanMaturity"] = 0.0  # the maturity of interbank loans
-    # simulation specific parameters
-    static_parameters["shockType"] = 0  # type of shock that hits the system in the current state
-    static_parameters["liquidationDiscountFactor"] = 0.0  # the discount factor delta in exp(-delta x) when liquidating assets
-    static_parameters["riskAversionDiscountFactor"] = 0.0  # the risk aversion discount when there was no default in the previous period
-    static_parameters["riskAversionAmplificationFactor"] = 0.0  # the risk aversion amplification when there *was* a default in the previous or current period
-    # regulation specific parameters
-    static_parameters["r"] = 0.0  # minimum required deposit rate
-    static_parameters["sifiSurchargeFactor"] = 1.0  # the surcharge on banking capital that SIFIs have to hold
-    static_parameters["liquidityCoverageRatio"] = 0.0  # the fraction of assets that must have a high liquidation value
-    static_parameters["netStableFundingRatio"] = 0.0  # the fraction of deposits that must have low volatility
-    static_parameters["leverageRatio"] = 0.0  # the minimal ratio of banking capital to total assets
-    static_parameters["requiredCapitalRatio"] = 0.08  # the required capital ratio for banks
+    identifier = ""  # identifier of the environment
 
-    # bookkeeping parameters
-    static_parameters["insolvencyHistory"] = []  # [num, time] the number of bank insolvencies and when they occured
+    banks = []  # a list containing all banks (instances of class Bank)
+    households = []  # a list containing all households (instances of class Household)
+    firms = []  # a list containing all firms (instances of class Firm)
+    central_bank = []  # to be consistent there's a list of central banks, but will consist of just one instance of class CentralBank
+    agents = []
+
+    assets = {}  # dictionary of assets: "name": ["expected return", "return volatility", "current returns"]
+    shocks = []  # list of shocks: [sweep_from, sweep_to, kind_of_shock]
+
+    static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
+    variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
+    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
+    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
+    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
+    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
+    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
+    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
+    static_parameters["num_simulations"] = 0  # number of simulations to be performed
+    static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
+
+    static_parameters["num_banks"] = 0  # number of banks in a simulation
+    static_parameters["num_firms"] = 0  # number of firms in a simulation
+    static_parameters["num_households"] = 0  # number of households in a simulation
+
+    static_parameters["bank_directory"] = ""  # directory containing bank config files
+    static_parameters["firm_directory"] = ""  # directory containing firm config files
+    static_parameters["household_directory"] = ""  # directory containing household config files
+    static_parameters["central_bank_directory"] = ""  # directory containing central bank config file
+
+    static_parameters["max_leverage_ratio"] = ""  # max allowed leverage ratio of the banks (policy bound)
+
+    #
+    #
+    # CODE
+    #
+    #
+
+    # -------------------------------------------------------------------------
+    # functions for setting/changing id, parameters, and state variables
+    # these either return or set specific value to the above variables
+    # with the exception of add (2 first ones) which append the dictionaries
+    # which contain static parameters or variable parameters
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # add_static_parameter(self, type, value)
+    # add a given parameter to the stack of static parameters
+    # -------------------------------------------------------------------------
+    def add_static_parameter(self, name, value):
+        super(Environment, self).add_static_parameter(name, value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # add_variable_parameter(self, type, range_from, range_to)
+    # adds a given parameter to the stack of variable parameters
+    # -------------------------------------------------------------------------
+    def add_variable_parameter(self, name, range_from, range_to):
+        super(Environment, self).add_variable_parameter(name, range_from, range_to)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # __init__(self,  environment_directory,  identifier)
+    # initializes the bank given the directory containing the config
+    # files and the identifier (name of the config file)
+    # -------------------------------------------------------------------------
+    def __init__(self,  environment_directory,  identifier):
+        self.initialize(environment_directory,  identifier)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_identifier(self)
+    # returns the identifier of the environment
+    # -------------------------------------------------------------------------
+    def get_identifier(self):
+        return self.identifier
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_identifier(self, value)
+    # changes the environment to the supplied value
+    # -------------------------------------------------------------------------
+    def set_identifier(self, value):
+        super(Environment, self).set_identifier(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_static_parameters(self)
+    # returns static parameters of the environment
+    # -------------------------------------------------------------------------
+    def get_static_parameters(self):
+        return self.static_parameters
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_static_parameters(self, value)
+    # changes static parameters to the supplied value
+    # -------------------------------------------------------------------------
+    def set_static_parameters(self, value):
+        super(Environment, self).set_static_parameters(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_variable_parameters(self)
+    # returns variable parameters of the environment
+    # -------------------------------------------------------------------------
+    def get_variable_parameters(self):
+        return self.variable_parameters
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_variable_parameters(self, value):
+    # changes variable parameters to the supplied value
+    # -------------------------------------------------------------------------
+    def set_variable_parameters(self, value):
+        super(Environment, self).set_variable_parameters(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_assets(self)
+    # returns assets of the environment
+    # -------------------------------------------------------------------------
+    def get_assets(self):
+        return self.assets
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_assets(self, value):
+    # changes assets to the supplied value
+    # -------------------------------------------------------------------------
+    def set_assets(self, value):
+        super(Environment, self).set_assets(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_shocks(self)
+    # returns shocks of the environment
+    # -------------------------------------------------------------------------
+    def get_shocks(self):
+        return self.shocks
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_shocks(self, value):
+    # changes shocks to the supplied value
+    # -------------------------------------------------------------------------
+    def set_shocks(self, value):
+        super(Environment, self).set_shocks(value)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # add_shock(self, shock):
+    # adds shock to the list of shocks
+    # -------------------------------------------------------------------------
+    def add_shock(self, shock):
+        super(Environment, self).add_shock(shock)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # agents_generator(self):
+    # generator yielding all agents
+    # -------------------------------------------------------------------------
+    def agents_generator(self):
+        # self.agents = [self.banks, self.firms, self.households]
+        return super(Environment, self).agents_generator()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_agent_by_id
+    # returns an agent based on the id
+    # -------------------------------------------------------------------------
+    def get_agent_by_id(self, ident):
+        # self.agents = [self.banks, self.firms, self.households]
+        return super(Environment, self).get_agent_by_id(ident)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # __getattr__
+    # if the attribute isn't found by Python we tell Python
+    # to look for it first in static and then in variable parameters
+    # which allows for directly fetching parameters from the Environment
+    # i.e. environment.num_banks instead of a bit more bulky
+    # environment.static_parameters["num_banks"]
+    # makes sure we don't have it in both containers, which
+    # would be bad practice [provides additional checks]
+    # -------------------------------------------------------------------------
+    def __getattr__(self, attr):
+        return super(Environment, self).__getattr__(attr)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # Functions for printing and writing
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # __str__
+    # returns the environment as an xml like config file
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        environment_string = super(Environment, self).__str__()
+        # abstract class uses config, we use environment, so we amend the string
+        environment_string = environment_string.replace("<config", "<environment", 1)
+        environment_string = environment_string.replace("</config>", "</environment>", 1)
+        return environment_string
+    # ------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # print_parameters(self)
+    # prints the parameters within the environment (static + variable)
     # -------------------------------------------------------------------------
     def print_parameters(self):
-        print "identifier: " + self.identifier
-        print "numSweeps: " + str(self.static_parameters["numSweeps"])
-        print "numSimulations: " + str(self.static_parameters["numSimulations"])
-        print "numBanks: " + str(self.static_parameters["numBanks"])
-        print "graphType: " + str(self.static_parameters["graphType"])
-        for key in self.variable_parameters:
-            print str(key) + " ; " + str(self.variable_parameters[key]['value']) + " ; " + str(self.variable_parameters[key]['validity'][0]) + "-" + str(self.variable_parameters[key]['validity'][1])
+        super(Environment, self).print_parameters()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # add_parameter(self, type, value, validFrom, validTo)
+    # write_environment_file(file_name)
+    # writes the environment as an xml config file to an .xml file
+    # with the given file_name to the current directory
     # -------------------------------------------------------------------------
-    def add_parameter(self,  name,  value,  validFrom,  validTo):
-        # add the parameter to the stack of parameters
-        self.variable_parameters[name] = {'value': value, 'validity': [validFrom, validTo]}
+    def write_environment_file(self,  file_name):
+        super(Environment, self).write_environment_file(file_name)
     # -------------------------------------------------------------------------
-
-    def __init__(self,  environment_directory,  identifier):
-        self.initialize(environment_directory,  identifier)
-
-    def get_identifier(self):
-        return self.identifier
-
-    def set_identifier(self, _value):
-        """
-        Class variables: identifier
-        Local variables: _identifier
-        """
-        super(Environment, self).set_identifier(_value)
-
-    def get_static_parameters(self):
-        return self.static_parameters
-
-    def set_static_parameters(self, _value):
-        """
-        Class variables: static_parameters
-        Local variables: _params
-        """
-        super(Environment, self).set_static_parameters(_value)
-
-    def get_variable_parameters(self):
-        return self.variable_parameters
-
-    def set_variable_parameters(self, _value):
-        """
-        Class variables: variable_parameters
-        Local variables: _params
-        """
-        super(Environment, self).set_variable_parameters(_value)
 
     # -------------------------------------------------------------------------
-    # __str__
+    # Functions for reading config files and initializing
     # -------------------------------------------------------------------------
-    def __str__(self):
-        text = "<state>\n"
-        text += "  <!-- parameters determining the payment flow of banks -->\n"
-        text += "  <parameter type='changing' name='rb' value='" + str(self.static_parameters["rb"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='rd' value='" + str(self.static_parameters["rd"]) + "'></parameter>\n"
-        text += "  <!-- parameters for the central bank -->\n"
-        text += "  <parameter type='changing' name='collateralQuality' value='" + str(self.static_parameters["collateralQuality"]) + "'></parameter>\n"
-        text += "  <!-- firm parameters-->\n"
-        text += "  <parameter type='changing' name='successProbabilityFirms' value='" + str(self.static_parameters["successProbabilityFirms"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='positiveReturnFirms' value='" + str(self.static_parameters["positiveReturnFirms"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='firmLoanMaturity' value='" + str(self.static_parameters["firmLoanMaturity"]) + "'></parameter>\n"
-        text += "  <!-- household parameters -->\n"
-        text += "  <parameter type='changing' name='scaleFactorHouseholds' value='" + str(self.static_parameters["scaleFactorHouseholds"]) + "'></parameter>\n"
-        text += "  <!-- bank parameters -->\n"
-        text += "  <parameter type='changing' name='dividendLevel' value='" + str(self.static_parameters["dividendLevel"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='pBank' value='" + str(self.static_parameters["pBank"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='rhoBank' value='" + str(self.static_parameters["rhoBank"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='pFinancial' value='" + str(self.static_parameters["pFinancial"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='rhoFinancial' value='" + str(self.static_parameters["rhoFinancial"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='thetaBank' value='" + str(self.static_parameters["thetaBank"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='xiBank' value='" + str(self.static_parameters["xiBank"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='gammaBank' value='" + str(self.static_parameters["gammaBank"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='assetNumber' value='" + str(self.static_parameters["assetNumber"]) + "'></parameter>\n"
-        text += "  <!-- simulation specific parameters -->\n"
-        text += "  <parameter type='changing' name='shockType' value='" + str(self.static_parameters["shockType"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='liquidationDiscountFactor' value='" + str(self.static_parameters["liquidationDiscountFactor"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='riskAversionDiscountFactor' value='" + str(self.static_parameters["riskAversionDiscountFactor"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='riskAversionAmplificationFactor' value='" + str(self.static_parameters["riskAversionAmplificationFactor"]) + "'></parameter>\n"
-        text += "  <!-- regulation specific parameters -->\n"
-        text += "  <parameter type='changing' name='r' value='" + str(self.static_parameters["r"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='sifiSurchargeFactor' value='" + str(self.static_parameters["sifiSurchargeFactor"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='liquidityCoverageRatio' value='" + str(self.static_parameters["liquidityCoverageRatio"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='netStableFundingRatio' value='" + str(self.static_parameters["netStableFundingRatio"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='leverageRatio' value='" + str(self.static_parameters["leverageRatio"]) + "'></parameter>\n"
-        text += "  <parameter type='changing' name='requiredCapitalRatio' value='" + str(self.static_parameters["requiredCapitalRatio"]) + "'></parameter>\n"
-        text += "  <!-- bookkeeping parameters -->\n"
-        # find the number of total insolvencies
-        numberInsolvencies = 0
-        for entry in self.static_parameters["insolvencyHistory"]:
-            numberInsolvencies += entry[0]
-        text += "  <variable name='numberInsolvencies' value='" + str(numberInsolvencies) + "'></variable>\n"
-        text += "</state>\n"
-
-        return text
-    # ------------------------------------------------------------------------
-
-    def read_xml_config_file(self, _config_file_name):
-        """
-        Class variables: identifier, static_parameters, variable_parameters
-        Local variables: xmlText, config_file_name, element, subelement, name, value, format_correct, range_from, range_to
-        """
-        self.read_environment_file(_config_file_name)
-        # super(Environment, self).read_xml_config_file(_config_file_name)
-
-    #
-    # METHODS
-    #
+    # -------------------------------------------------------------------------
+    # read_xml_config_file(self, config_file_name)
+    # reads an xml file with config and sets identifier, static and variable
+    # parameters to whatever is in the config file
+    # -------------------------------------------------------------------------
+    def read_xml_config_file(self, config_file_name):
+        super(Environment, self).read_xml_config_file(config_file_name)
+    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize
+    # initialize(self,  environment_directory,  identifier)
+    # initializes the environment, initializing all the variables
+    # reading the config file from supplied environment_directory and
+    # identifier, and initializes all agents from the directories
+    # supplied in the main config file
     # -------------------------------------------------------------------------
     def initialize(self,  environment_directory,  identifier):
         self.identifier = identifier
 
         self.static_parameters = {}
-        self.static_parameters["numSimulations"] = 0
-        self.static_parameters["numSweeps"] = 0
-        self.static_parameters["numBanks"] = 0
-        self.static_parameters["bankDirectory"] = ""
-        # parameters for the networks
-        self.static_parameters["graphType"] = ""
-        self.static_parameters["graphParameter1"] = 0.0
-        self.static_parameters["graphParameter2"] = 0.0
-        self.static_parameters["contractsNetworkFile"] = ""
-        # the array of parameters that changes during the simulation
-        # parameters = []
+        self.static_parameters["num_simulations"] = 0
+        self.static_parameters["num_sweeps"] = 0
+        self.static_parameters["num_banks"] = 0
+        self.static_parameters["num_firms"] = 0
+        self.static_parameters["num_households"] = 0
+        self.static_parameters["bank_directory"] = ""
+        self.static_parameters["firm_directory"] = ""
+        self.static_parameters["household_directory"] = ""
+        self.static_parameters["central_bank_directory"] = ""
+        self.static_parameters["max_leverage_ratio"] = ""
         self.variable_parameters = {}
 
-        # state _ variables
-        #
-        # VARIABLES
-        #
-        # parameters determining the cash flow of banks
-        self.static_parameters["rb"] = 0.0  # interbank interest rate
-        self.static_parameters["rd"] = 0.0  # interest rate on deposits
-        # parameters for the central bank
-        self.static_parameters["collateralQuality"] = 0.0  # the fraction of a bank's portfolio that the central bank accepts as collateral
-        # firm parameters
-        self.static_parameters["successProbabilityFirms"] = 0.0  # probability of successful credit
-        self.static_parameters["positiveReturnFirms"] = 0.0  # return for a successful credit
-        self.static_parameters["firmLoanMaturity"] = 0.0  # maturity of loans to firms
-        # household parameters
-        self.static_parameters["scaleFactorHouseholds"] = 0.0  # scaling factor for deposit fluctuations
-        # bank parameters
-        self.static_parameters["dividendLevel"] = 0.0  # dividend level as paid out by banks
-        self.static_parameters["pBank"] = 0.0  # bank's assumed credit success probability
-        self.static_parameters["rhoBank"] = 0.0  # expected return of banks
-        self.static_parameters["pFinancial"] = 0.0  # bank's assumed credit success probability
-        self.static_parameters["rhoFinancial"] = 0.0  # expected return of banks
-        self.static_parameters["thetaBank"] = 0.0  # bank's risk aversion parameter
-        self.static_parameters["xiBank"] = 0.0  # scaling factor for CRRA
-        self.static_parameters["gammaBank"] = 0.0  # fraction of interbank lending in overall balance sheet
-        self.static_parameters["assetNumber"] = 0  # number of assets in the economy
-        self.static_parameters["interbankLoanMaturity"] = 0.0  # the maturity of interbank loans
-        # simulation specific parameters
-        self.static_parameters["shockType"] = 0  # type of shock that hits the system in the current state
-        self.static_parameters["liquidationDiscountFactor"] = 0.0  # the discount factor delta in exp(-delta x) when liquidating assets
-        self.static_parameters["riskAversionDiscountFactor"] = 0.0  # the risk aversion discount when there was no default in the previous period
-        self.static_parameters["riskAversionAmplificationFactor"] = 0.0  # the risk aversion amplification when there *was* a default in the previous or current period
-        # regulation specific parameters
-        self.static_parameters["r"] = 0.0  # minimum required deposit rate
-        self.static_parameters["sifiSurchargeFactor"] = 1.0  # the surcharge on banking capital that SIFIs have to hold
-        self.static_parameters["liquidityCoverageRatio"] = 0.0  # the fraction of assets that must have a high liquidation value
-        self.static_parameters["netStableFundingRatio"] = 0.0  # the fraction of deposits that must have low volatility
-        self.static_parameters["leverageRatio"] = 0.0  # the minimal ratio of banking capital to total assets
-        self.static_parameters["requiredCapitalRatio"] = 0.08  # the required capital ratio for banks
-
-        # bookkeeping parameters
-        self.static_parameters["insolvencyHistory"] = []  # [num, time] the number of bank insolvencies and when they occured
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
-        self.read_environment_file(environment_filename)
+        self.read_xml_config_file(environment_filename)
         logging.info("  environment file read: %s",  environment_filename)
 
         # then read in all the banks
-        if (self.static_parameters["bankDirectory"] != ""):
-            if (self.static_parameters["bankDirectory"] != "none"):  # none is used for tests only
-                self.initialize_banks_from_files(self.static_parameters["bankDirectory"],  self.get_state(0), 0)
-                logging.info("  banks read from directory: %s",  self.static_parameters["bankDirectory"])
+        if (self.bank_directory != ""):
+            if (self.bank_directory != "none"):  # none is used for tests only
+                self.initialize_banks_from_files(self.bank_directory)
+                logging.info("  banks read from directory: %s",  self.bank_directory)
         else:
-            logging.error("ERROR: no bankDirectory given in %s\n",  environment_filename)
+            logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
-        self.initial_assets = 0.0  # the initial assets are needed to determine the fire-sale price in bank.liquidate_assets
-        for bank in self.banks:
-            self.initial_assets += bank.get_account("I")
+        # then read in all the firms
+        if (self.firm_directory != ""):
+            if (self.firm_directory != "none"):  # none is used for tests only
+                self.initialize_firms_from_files(self.firm_directory)
+                logging.info("  firms read from directory: %s",  self.firm_directory)
+        else:
+            logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
-        # finally, create the network
-        # note: this has to be done after creating the banks, as they are
-        # passed to the network as node objects
-        self.network.identifier = self.identifier
-        self.network.initialize_networks(self)
+        # then read in all the households
+        if (self.household_directory != ""):
+            if (self.household_directory != "none"):  # none is used for tests only
+                self.initialize_households_from_files(self.household_directory)
+                logging.info("  households read from directory: %s",  self.household_directory)
+        else:
+            logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
 
-        # when there is a SIFI surcharge, implement it now on the banking capital
-        self.apply_sifi_surcharge()
-    # -------------------------------------------------------------------------
+        # then read in the central bank
+        if (self.central_bank_directory != ""):
+            if (self.bank_directory != "none"):  # none is used for tests only
+                self.initialize_central_bank_from_files(self.central_bank_directory)
+                logging.info("  central bank read from directory: %s",  self.central_bank_directory)
+        else:
+            logging.error("ERROR: no central_bank_directory given in %s\n",  environment_filename)
 
-    # -------------------------------------------------------------------------
-    # read_environment_file
-    # -------------------------------------------------------------------------
-    def read_environment_file(self,  environmentFilename):
-        from xml.etree import ElementTree
-        xmlText = open(environmentFilename).read()
+        # add agents to the list of all agents
+        self.agents = [self.banks, self.firms, self.households, self.central_bank]
 
-        element = ElementTree.XML(xmlText)
-        self.identifier = element.attrib['title']
+        # then, initialize transactions from the config files for banks
+        if (self.bank_directory != ""):
+            if (self.bank_directory != "none"):  # none is used for tests only
+                self.read_transactions_for_banks(self.bank_directory)
+                logging.info("  banks' transactions read from directory: %s",  self.bank_directory)
+        else:
+            logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
-        # self.parameters.identifier = self.identifier
+        # then, initialize transactions from the config files for firms
+        if (self.firm_directory != ""):
+            if (self.firm_directory != "none"):  # none is used for tests only
+                self.read_transactions_for_firms(self.firm_directory)
+                logging.info("  firms' transactions read from directory: %s",  self.firm_directory)
+        else:
+            logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
-        # loop over all entries in the xml file
-        for subelement in element:
-            # the first set of parameters will be valid for the whole simulation
-            if (subelement.attrib['type'] == 'numSweeps'):
-                self.static_parameters["numSweeps"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'numSimulations'):
-                self.static_parameters["numSimulations"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'numBanks'):
-                self.static_parameters["numBanks"] = int(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'bankDirectory'):
-                self.static_parameters["bankDirectory"] = str(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'graphType'):
-                self.static_parameters["graphType"] = str(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'graphParameter1'):
-                self.static_parameters["graphParameter1"] = float(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'graphParameter2'):
-                self.static_parameters["graphParameter2"] = float(subelement.attrib['value'])
-            if (subelement.attrib['type'] == 'contractsNetworkFile'):
-                self.static_parameters["contractsNetworkFile"] = str(subelement.attrib['value'])
-            # now also read in the parameters that can change during the simulation
-            if (subelement.attrib['type'] == 'changing'):
-                name = subelement.attrib['name']
-                value = float(subelement.attrib['value'])
-                validFrom = subelement.attrib['validity'].rsplit("-")[0]
-                validTo = subelement.attrib['validity'].rsplit("-")[1]
-                self.add_parameter(name,  value,  validFrom, validTo)
-    # -------------------------------------------------------------------------
+        # then, initialize transactions from the config files for households
+        if (self.household_directory != ""):
+            if (self.household_directory != "none"):  # none is used for tests only
+                self.read_transactions_for_households(self.household_directory)
+                logging.info("  households read from directory: %s",  self.household_directory)
+        else:
+            logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
 
-    # -------------------------------------------------------------------------
-    # write_environment_file(file_name)
-    # -------------------------------------------------------------------------
-    def write_environment_file(self,  file_name):
-        out_file = open(file_name + "-check.xml",  'w')
+        # then, initialize transactions from the config files for central bank
+        if (self.central_bank_directory != ""):
+            if (self.central_bank_directory != "none"):  # none is used for tests only
+                self.read_transactions_for_central_bank(self.central_bank_directory)
+                logging.info("  central bank's transactions read from directory: %s",  self.central_bank_directory)
+        else:
+            logging.error("ERROR: no central_bank_directory given in %s\n",  environment_filename)
 
-        text = "<environment title='" + self.identifier + "'>\n"
-        text += "    <parameter type='numSweeps' value='" + str(self.static_parameters["numSweeps"]) + "'></parameter>\n"
-        text += "    <parameter type='numSimulations' value='" + str(self.static_parameters["numSimulations"]) + "'></parameter>\n"
-        text += "    <parameter type='numBanks' value='" + str(self.static_parameters["numBanks"]) + "'></parameter>\n"
-        text += "    <parameter type='bankDirectory' value='" + str(self.static_parameters["bankDirectory"]) + "'></parameter>\n"
-        text += "    <parameter type='graphType' value='" + str(self.static_parameters["graphType"]) + "'></parameter>\n"
-        text += "    <parameter type='contractsNetworkFile' value='" + str(self.static_parameters["contractsNetworkFile"]) + "'></parameter>\n"
-
-        for entry in self.variable_parameters:
-            text += "    <parameter type='changing' name='" + str(entry) + "' value='" + str(self.variable_parameters[entry]['value']) + "' validity='" + str(self.variable_parameters[entry]['validity'][0]) + "-" + str(self.variable_parameters[entry]['validity'][1]) + "'></parameter>\n"
-
-        text += "</environment>\n"
-
-        out_file.write(text)
-        out_file.close()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize_banks_from_files
-    # banks have to be initialized for each simulation as a number of banks might become inactive
-    # in the previous simulation
+    # initialize_banks_from_files(self,  bank_directory)
+    # banks have to be initialized for each simulation as a number of
+    # banks might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes banks with the contents of these configs
     # -------------------------------------------------------------------------
-    def initialize_banks_from_files(self,  bankDirectory, state,  time):
+    def initialize_banks_from_files(self,  bank_directory):
         from src.bank import Bank
         # this routine is called more than once, so we have to reset the list of banks each time
-        self.banks = []
-
-        listing = os.listdir(bankDirectory)
-        if (len(listing) != self.static_parameters["numBanks"]):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match numBanks (=%s)",  bankDirectory,  str(len(listing)), str(self.static_parameters["numBanks"]))
-
+        while len(self.banks) > 0:
+            self.banks.pop()
+        # we list all the files in the specified directory
+        listing = os.listdir(bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_banks):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
+                          bank_directory,  str(len(listing)), str(self.num_banks))
+        # we read the files sequentially
         for infile in listing:
             bank = Bank()
-            bank.get_parameters_from_file(bankDirectory + infile,  self.get_state(0),  self.static_parameters["numBanks"], time)
+            bank.get_parameters_from_file(bank_directory + infile,  self)
+            # and read parameters to the banks, only to add them to the environment
             self.banks.append(bank)
-            bank.__del__()  # TODO not sure if this is really safe, but it is better than doing nothing about all those created instances...
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # get_state
+    # initialize_firms_from_files
+    # banks have to be initialized for each simulation as a number of
+    # banks might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes firms with the contents of these configs
     # -------------------------------------------------------------------------
-    def get_state(self,  time):  # TODO bring parameters in same order as in environment file and in state.__str__()
-        # for each time t in the simulation return the actual set of parameters
-        for parameter in self.variable_parameters:
-            validFrom = int(self.variable_parameters[parameter]['validity'][0])
-            validTo = int(self.variable_parameters[parameter]['validity'][1])
-            if (int(time) >= int(validFrom)) and (int(time) <= int(validTo)):  # we have a valid parameterset
-                if parameter == 'rb':
-                    self.static_parameters["rb"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'rd':
-                    self.static_parameters["rd"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'r':
-                    self.static_parameters["r"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'collateralQuality':
-                    self.static_parameters["collateralQuality"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'successProbabilityFirms':
-                    self.static_parameters["successProbabilityFirms"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'positiveReturnFirms':
-                    self.static_parameters["positiveReturnFirms"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'scaleFactorHouseholds':
-                    self.static_parameters["scaleFactorHouseholds"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'dividendLevel':
-                    self.static_parameters["dividendLevel"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'pFinancial':
-                    self.static_parameters["pFinancial"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'rhoFinancial':
-                    self.static_parameters["rhoFinancial"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'pReal':
-                    self.static_parameters["pReal"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'rhoReal':
-                    self.static_parameters["rhoReal"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'xiBank':
-                    self.static_parameters["xiBank"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'thetaBank':
-                    self.static_parameters["thetaBank"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'rhoBank':
-                    self.static_parameters["rhoBank"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'shockType':
-                    self.static_parameters["shockType"] = int(self.variable_parameters[parameter]['value'])
-                if parameter == 'gammaBank':
-                    self.static_parameters["gammaBank"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'assetNumber':
-                    self.static_parameters["assetNumber"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'liquidationDiscountFactor':
-                    self.static_parameters["liquidationDiscountFactor"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'riskAversionDiscountFactor':
-                    self.static_parameters["riskAversionDiscountFactor"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'riskAversionAmplificationFactor':
-                    self.static_parameters["riskAversionAmplificationFactor"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'interbankLoanMaturity':
-                    self.static_parameters["interbankLoanMaturity"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'firmLoanMaturity':
-                    self.static_parameters["firmLoanMaturity"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'sifiSurchargeFactor':
-                    self.static_parameters["sifiSurchargeFactor"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'requiredCapitalRatio':
-                    self.static_parameters["requiredCapitalRatio"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'liquidityCoverageRatio':
-                    self.static_parameters["liquidityCoverageRatio"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'netStableFundingRatio':
-                    self.static_parameters["netStableFundingRatio"] = float(self.variable_parameters[parameter]['value'])
-                if parameter == 'leverageRatio':
-                    self.static_parameters["leverageRatio"] = float(self.variable_parameters[parameter]['value'])
-
-        #
-        # at this point we have all the variables from the parameters[] list
-        # now we need to update them to incorporate past defaults to calculate
-        # new return and volatility for real and financial assets
-        # self.update_state(time)
-
-        return self
+    def initialize_firms_from_files(self,  firm_directory):
+        from src.firm import Firm
+        # this routine is called more than once, so we have to reset the list of firms each time
+        while len(self.firms) > 0:
+            self.firms.pop()
+        # we list all the files in the specified directory
+        listing = os.listdir(firm_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_firms):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_firms (=%s)",
+                          firm_directory,  str(len(listing)), str(self.num_firms))
+        # we read the files sequentially
+        for infile in listing:
+            firm = Firm()
+            firm.get_parameters_from_file(firm_directory + infile,  self)
+            # and read parameters to the firms, only to add them to the environment
+            self.firms.append(firm)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # apply_sifi_surcharge
+    # initialize_households_from_files
+    # households have to be initialized for each simulation as a number of
+    # households might become inactive in the previous simulation
+    # this reads all config files in the provided directory and
+    # initializes households with the contents of these configs
     # -------------------------------------------------------------------------
-    def apply_sifi_surcharge(self):
-        degree_sum = 0
-        for bank in self.network.contracts:
-            degree_sum += float(nx.degree(self.network.contracts)[bank])
-        average_degree = float(degree_sum / len(self.network.contracts.nodes()))
-
-        for bank in self.network.contracts:
-            # the sifi surcharge is the product of the sifiSurchargeFactor and the connectedness as measured
-            # by degree/average_degree
-            # the maximum ensures that no bank has to hold less than 1.0 times their banking capital
-            sifiSurcharge = max(self.get_state(0).static_parameters["sifiSurchargeFactor"]*(float(nx.degree(self.network.contracts)[bank]) / average_degree), 1.0)
-            bank.apply_sifi_surcharge(sifiSurcharge)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # print_state
-    # -------------------------------------------------------------------------
-    def print_state(self):
-        print "rb: " + str(self.static_parameters["rb"])
-        print "rd: " + str(self.static_parameters["rd"])
-        print "r: " + str(self.static_parameters["r"])
-        print "sifiSurchargeFactor: " + str(self.static_parameters["sifiSurchargeFactor"])
-        print "successProbabilityFirms: " + str(self.static_parameters["successProbabilityFirms"])
-        print "positiveReturnFirms: " + str(self.static_parameters["positiveReturnFirms"])
-        print "scaleFactorHouseholds: " + str(self.static_parameters["scaleFactorHouseholds"])
-        print "dividendLevel: " + str(self.static_parameters["dividendLevel"])
-        print "shockType: " + str(self.static_parameters["shockType"])
-        print "pBank: " + str(self.static_parameters["pBank"])
-        print "xiBank: " + str(self.static_parameters["xiBank"])
-        print "thetaBank: " + str(self.static_parameters["thetaBank"])
-        print "rhoBank: " + str(self.static_parameters["rhoBank"])
-        print "gammaBank: " + str(self.static_parameters["gammaBank"])
-        print "assetNumber: " + str(self.static_parameters["assetNumber"])
-        print "liquidationDiscountFactor: " + str(self.static_parameters["liquidationDiscountFactor"])
-        print "interbankLoanMaturity: " + str(self.static_parameters["interbankLoanMaturity"])
-        print "firmLoanMaturity: " + str(self.static_parameters["firmLoanMaturity"])
-        print "requiredCapitalRatio: " + str(self.static_parameters["requiredCapitalRatio"])
-        print "liquidityCoverageRatio: " + str(self.static_parameters["liquidityCoverageRatio"])
-        print "netStableFundingRatio: " + str(self.static_parameters["netStableFundingRatio"])
-        print "leverageRatio: " + str(self.static_parameters["leverageRatio"])
+    def initialize_households_from_files(self,  household_directory):
+        from src.household import Household
+        # this routine is called more than once, so we have to reset the list of households each time
+        while len(self.households) > 0:
+            self.households.pop()
+        # we list all the files in the specified directory
+        listing = os.listdir(household_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_households):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
+                          household_directory,  str(len(listing)), str(self.num_households))
+        # we read the files sequentially
+        for infile in listing:
+            household = Household()
+            household.get_parameters_from_file(household_directory + infile,  self)
+            # and read parameters to the firms, only to add them to the environment
+            self.households.append(household)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # addInsolvencyToHistory(time)
+    # initialize_central_bank_from_files
+    # central bank has to be initialized for each simulation
+    # this reads all config files in the provided directory and
+    # initializes central bank with the contents of the config
     # -------------------------------------------------------------------------
-    def addInsolvencyToHistory(self, time):
-        lastInsolvency = [0, -1]  # if we have no insolvency yet
-        for insolvency in self.static_parameters["insolvencyHistory"]:  # loop over the insolvencyHistory
-            if insolvency[1] == time:  # to see if we have an insolvency in this time period
-                lastInsolvency = insolvency  # if we do, update lastInsolvency
+    def initialize_central_bank_from_files(self,  central_bank_directory):
+        from src.central_bank import CentralBank
+        # this routine is called more than once, so we have to reset the list of households each time
+        while len(self.central_bank) > 0:
+            self.central_bank.pop()
+        # we list all the files in the specified directory
+        listing = os.listdir(central_bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != 1):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match one central bank",
+                          central_bank_directory,  str(len(listing)))
+        # we read the files sequentially
+        for infile in listing:
+            cb = CentralBank()
+            cb.get_parameters_from_file(central_bank_directory + infile,  self)
+            # and read parameters to the firms, only to add them to the environment
+            self.central_bank.append(cb)
+    # -------------------------------------------------------------------------
 
-        if lastInsolvency[1] > -1:  # see if we found an insolvency in this time step
-            lastInsolvency[0] += 1  # add one to the number of insolvencies
-        else:  # there has not been an insolvency yet, so add one
-            self.static_parameters["insolvencyHistory"].append([1, time])
+    # -------------------------------------------------------------------------
+    # read_transactions_from_files(self,  bank_directory)
+    # reads transactions for banks from the config files
+    # -------------------------------------------------------------------------
+    def read_transactions_for_banks(self,  bank_directory):
+        from xml.etree import ElementTree
+        # we list all the files in the specified directory
+        listing = os.listdir(bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_banks):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
+                          bank_directory,  str(len(listing)), str(self.num_banks))
+        # we read the files sequentially)
+        for infile in listing:
+            # we open the file and find the identifier of the config
+            xmlText = open(bank_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            # and we find the bank with this identifier
+            bank = self.get_agent_by_id(identifier)
+            # then we read the transactions from the config to the appropriate bank
+            bank.get_transactions_from_file(bank_directory + infile, self)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # update_state(time)
-    # this method calculates the new expected returns for real and
-    # financial assets
+    # read_transactions_for_firms
+    # reads transactions for firms from the config files
     # -------------------------------------------------------------------------
-    def update_state(self,  time):
-        #
-        # real assets have an expected return as given in the environment file
-        #
-        pReal = self.static_parameters["pBank"]  # TODO change pBank to pReal everywhere in code
-        rhoReal = self.static_parameters["rhoBank"]
-        # TODO change rhoBank to rhoReal everywhere in code
-        # TODO: now one could make the process for real assets a bit more interesting
-        self.static_parameters["pBank"] = pReal
-        self.static_parameters["rhoBank"] = rhoReal
+    def read_transactions_for_firms(self,  firm_directory):
+        from xml.etree import ElementTree
+        # we list all the files in the specified directory
+        listing = os.listdir(firm_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_firms):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_firms (=%s)",
+                          firm_directory,  str(len(listing)), str(self.num_firms))
+        # we read the files sequentially
+        for infile in listing:
+            # we open the file and find the identifier of the config
+            xmlText = open(firm_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            # and we find the firm with this identifier
+            firm = self.get_agent_by_id(identifier)
+            # then we read the transactions from the config to the appropriate firm
+            firm.get_transactions_from_file(firm_directory + infile, self)
+    # -------------------------------------------------------------------------
 
-        # financial assets start with some initial expected return and mean
-        # then they are updated when the simulation proceeds and become
-        # more volatile when more banks go into insolvency
-        pFinancial = self.static_parameters["pFinancial"]
-        rhoFinancial = self.static_parameters["rhoFinancial"]
-        # TODO now we could make something interesting
-        self.static_parameters["pFinancial"] = pFinancial
-        self.static_parameters["rhoFinancial"] = rhoFinancial
+    # -------------------------------------------------------------------------
+    # read_transactions_for_households
+    # reads transactions for households from the config files
+    # -------------------------------------------------------------------------
+    def read_transactions_for_households(self,  household_directory):
+        from xml.etree import ElementTree
+        # we list all the files in the specified directory
+        listing = os.listdir(household_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != self.num_households):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
+                          household_directory,  str(len(listing)), str(self.num_households))
+        # we read the files sequentially
+        for infile in listing:
+            # we open the file and find the identifier of the config
+            xmlText = open(household_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            # and we find the firm with this identifier
+            household = self.get_agent_by_id(identifier)
+            # then we read the transactions from the config to the appropriate firm
+            household.get_transactions_from_file(household_directory + infile, self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_transactions_for_central_bank(self,  central_bank_directory)
+    # reads transactions for central bank from the config file
+    # -------------------------------------------------------------------------
+    def read_transactions_for_central_bank(self,  central_bank_directory):
+        from xml.etree import ElementTree
+        # we list all the files in the specified directory
+        listing = os.listdir(central_bank_directory)
+        # and check if the number of files is in line with the parameters
+        if (len(listing) != 1):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match one central bank",
+                          central_bank_directory,  str(len(listing)))
+        # we read the files sequentially
+        for infile in listing:
+            # we open the file and find the identifier of the config
+            xmlText = open(central_bank_directory + infile).read()
+            element = ElementTree.XML(xmlText)
+            identifier = element.attrib['identifier']
+            # and we find the bank with this identifier
+            cb = self.get_agent_by_id(identifier)
+            # then we read the transactions from the config to the appropriate bank
+            cb.get_transactions_from_file(central_bank_directory + infile, self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_global_transaction_balance
+    # checks if transaction type (ie 'deposits') balances out globally
+    # I suppose this should presumably be used in the Updater after every
+    # step to ensure consistency, along with appropriately using the
+    # check_consistency function, and appropriately synchronising the update
+    # itself
+    # -------------------------------------------------------------------------
+    def check_global_transaction_balance(self, type_):
+        super(Environment, self).check_global_transaction_balance(type_)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # accrue_interests()
+    # This method accrues interest on all transaction
+    # making sure we don't double count the transactions that are
+    # on the books of multiple agents, interest is specified within the
+    # transaction itself
+    # -------------------------------------------------------------------------
+    def accrue_interests(self):
+        super(Environment, self).accrue_interests()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # new_transaction()
+    # -------------------------------------------------------------------------
+    def new_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default)
+        transaction.add_transaction(self)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_agent_homogeneity(type_)
+    # -------------------------------------------------------------------------
+    def check_agent_homogeneity(self, type_):
+        for agent_one in eval("self."+str(type_)):
+            for agent_two in eval("self."+str(type_)):
+                if agent_one != agent_two:
+                    for key in agent_one.parameters:
+                        if agent_one.parameters[key] != agent_two.parameters[key]:
+                            return False
+                    for key in agent_one.state_variables:
+                        if agent_one.state_variables[key] != agent_two.state_variables[key]:
+                            return False
+        return True
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # update_asset_returns()
+    # -------------------------------------------------------------------------
+    def update_asset_returns(self):
+        super(Environment, self).update_asset_returns()
+    # -------------------------------------------------------------------------

@@ -1,0 +1,3 @@
+<central_bank identifier='central_bank_test_config_id'>
+    <parameter type='static' name='interest_rate_cb_loans' value='0.00'></parameter>
+</central_bank>

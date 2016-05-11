@@ -1,5 +1,27 @@
 This is the new repository for black_rhino and takes over from http://sourceforge.net/projects/oxblackrhino/?source=directory as of 2015-11-07.
+Minimal rhino branch aims at a complete overhaul in terms of code for an agent-based model, it is implemented from the very basics to provide greater clarity and quality.
 
+INSTALL
+git clone https://github.com/cogeorg/black_rhino
+once you have the repo, you need to clone abm_template as well
+git submodule update --init --recursive
+
+FOLDER STRUCTURE
+
++---.git    			-git structure files
++---abm_template		-abstract base classes (submodule from https://github.com/cogeorg/abm_template)
++---agents    			-config files for agents
+|   +---banks
+|   +---firms
+|   \---households
++---environments		-config files for environment
++---log    				-log files
++---networkx			-networkx package for network capabilities
++---src    				-source code files
++---tests    			-redundant structure for tests
+\---tools    			-specific tools
+
+INSTRUCTIONS -- to be updated with the new code
 
 Introduction
 
