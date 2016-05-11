@@ -1,0 +1,7 @@
+<bank identifier='bank_test_config_id'>
+	<parameter type='static' name='interest_rate_loans' value='0.004'></parameter>
+    <parameter type='static' name='interest_rate_deposits' value='0.002'></parameter>
+    <parameter type='static' name='target_leverage' value='2'></parameter>
+    <transaction type='deposits' asset='' from='household_test_config_id' to='bank_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
+    <transaction type='loans' asset='' from='bank_test_config_id' to='firm_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
+</bank>
