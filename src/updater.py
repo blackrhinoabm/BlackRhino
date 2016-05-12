@@ -83,9 +83,6 @@ class Updater(BaseModel):
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
         self.accrue_interests(environment, time)
-        # Then agents get their labour endowment for the step (e.g. work hours to spend)
-        # For now we don't need to keep track of labour left as there is no queue
-        # self.endow_labour(environment, time)
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
@@ -157,29 +154,12 @@ class Updater(BaseModel):
             # We distribute the excess as
             # IMPLEMENTATION NOTE: same as above
             if round(excess, 2) > 0.0:
-                # TODO: bank_ownership parameter for households to weigh this
-                # For now, we add these proportionately to the households
                 # Deposit these to households appropriately
                 for household in environment.households:
                     amount = excess * (household.ownership_of_banks / total_ownership)
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                                                 amount, bank.interest_rate_deposits,  0, -1)
         logging.info("  interest accrued on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # endow_labour
-    # This function makes sure that all households have the appropriate
-    # labour endowment for every step, in line with the parameters
-    # -------------------------------------------------------------------------
-    def endow_labour(self,  environment, time):
-        # We make sure household get their labour endowment per step
-        # labour is a parameter, doesn't change in the simulation
-        # sweep_labour is a state variable and can be depleted within the sweep
-        for household in environment.households:
-            household.sweep_labour = household.labour
-        logging.info("  labour endowed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -326,20 +306,7 @@ class Updater(BaseModel):
         market = Market("market")
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
-        # TESTING THE ABSTRACT RATIONING
-        # The matching function means that all pairs will have the same priority
-
-        def matching_agents_basic(agent_one, agent_two):
-            # return 1.0
-            return random.random()
-
-        # The below function means that all pairs are allowed
-
-        def allow_match_basic(agent_one, agent_two):
-            return True
-
         # We find the actual trades
-        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
         rationed = market.rationing_proportional(for_rationing)
         # Then we go through the rationing
         # and move the goods and cash appropriately
@@ -618,23 +585,9 @@ class Updater(BaseModel):
         from market import Market
         market = Market("market")
 
-        # The below functions means that the pairing will be linear
-
-        def matching_agents_basic(agent_one, agent_two):
-            return random.random()
-
-        # The below function means that all pairs are allowed
-
-        def allow_match_basic(agent_one, agent_two):
-            if agent_one in environment.firms and agent_two in environment.firms:
-                return False
-            else:
-                return True
-
         # We find the pairs of capital ownership transfers
         # We move the capital proportionately with respect to demand
         rationed = market.rationing_proportional(for_rationing)
-        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
 
         # We add these to the books
         for ration in rationed:
