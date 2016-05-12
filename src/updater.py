@@ -82,7 +82,6 @@ class Updater(BaseModel):
         # As a first step, we accrue all interest over the transactions
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
-        # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (e.g. work hours to spend)
         # For now we don't need to keep track of labour left as there is no queue
@@ -98,8 +97,7 @@ class Updater(BaseModel):
         # And add capital to balance the books
         self.capitalise(environment, time)
         # Investing of the banks
-        # self.invest(environment, time)
-        self.invest_interbank(environment, time)
+        self.invest(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
@@ -382,14 +380,6 @@ class Updater(BaseModel):
                 environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
                                             current_amount, current_bank.interest_rate_loans,  0, -1)
                 to_finance = to_finance - current_amount
-            # Below is the old code for legacy comparison, to be deleted later
-            '''
-            random_bank = random.choice(environment.banks)
-            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
-            environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-                                        ration[2]*price, random_bank.interest_rate_loans,  0, -1)
-            '''
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                   ration[2], price, ration[1].identifier, time)
