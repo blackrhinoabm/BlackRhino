@@ -2,16 +2,15 @@ This is the new repository for black_rhino and takes over from http://sourceforg
 
 This new repository aims at a complete overhaul in terms of code for an agent-based model, it is implemented from the very basics to provide greater clarity and quality.
 
-In particular it is based on an abstract framework for economic agent-based models found in github.com/cogeorg/abm_template which means it is very modular, and that it is possible
-to interchange parts of the models without too much overhead, as the interface should remain the same due to the constraints of the abstract classes within abm_template.
+In particular it is based on an abstract framework for economic agent-based models found in https://github.com/cogeorg/abm_template which means it is very modular, and that it is possible to interchange parts of the models without too much overhead, as the interface should remain the same due to the constraints of the abstract classes within abm_template.
 
-INSTALL
+__INSTALL__
 
 git clone https://github.com/cogeorg/black_rhino  
 once you have the repo, you need to clone abm_template as well (submodule)  
 git submodule update --init --recursive  
 
-FOLDER STRUCTURE
+__FOLDER STRUCTURE__
 
 +---.git    			-git structure files  
 +---abm_template		-abstract base classes (submodule from https://github.com/cogeorg/abm_template)  
@@ -29,9 +28,9 @@ FOLDER STRUCTURE
 +---tests    			-tests for the source code, and sample configs  
 \---tools    			-specific tools  
 
-INSTRUCTIONS
+__INSTRUCTIONS__
 
-Introduction
+__Introduction__
 
 black_rhino is an open source easy-to-use-and-adapt economic/financial network multi-agent simulation (MAS) that serves two purposes. First, it can be used as a practical tool to simulate and analyse a model economic / banking system. This is particularly handy for central banks and policy makers, as black_rhino fills a gap in the policy-toolbox. Second, and perhaps more importantly, it is a python module that can be easily adapted, changed, and modified for research purposes. It is intended to reduce the amount of work necessary to write an economic or financial MAS and hence allows researchers to focus on the economic questions instead of worrying about code design patterns and basic functionality. As such it may be particularly useful for both experienced researchers as well as graduate and PhD students.
 
@@ -40,7 +39,7 @@ This software is intended for educational and research purposes. Despite best ef
 Please note: black_rhino is published under the GNU GPL v3. If you are unsure about the implications, check the website of the Free Software Foundations.
 
 
-Using black_rhino
+__Using black_rhino__
 
 First of all, you have to distinguish between a Python version based on Windows and a version based on Linux. Depending on your system you have to un/comment on statement in the main black_rhino start file. In order to execute black_rhino for Window you have to use
 args=['./black_rhino.py',  "tests/environments/", "test_all_methods",  "tests/log/"]
@@ -61,8 +60,7 @@ The other type of output is a log file, created in log_directory/ (typically log
 
 Note that more details about specific files within black_rhino can be found within the files themselves as docstrings and code comments, as well as within the examples/ where you can see .docx documentation files.
 
-
-The Internal Organisation of black_rhino
+__The Internal Organisation of black_rhino__
 
 Besides using black_rhino for financial/economic multi-agent simulations, modifying the source code will be the most common task one faces. This section outlines the internal organization of black_rhino and explains some of its design principles.
 
@@ -107,17 +105,29 @@ Typically, the structure of the environment file will look like this:
 The optimization behavior of agents is based on the Solow growth model, and described in principle in http://www.pitt.edu/~mgahagan/Solow.htm
 
 Bank is only an intermediary in the exchange the labour for ownership of capital (when household sells labour they get a deposit financed by the loan given to the firm, when the firm sells goods they get a deposit financed by the loan given to the household, these are netted at the end of each simulation step; conversely the imbalance between trade of labour and goods is netted and represents the ownership of firm’s capital by household). We can’t start with zero capital for technical reasons (Cobb-Douglas production function gives zero for zero capital), so the config file has starting capital ownership of 30 monetary units (and corresponding loan/deposit structure of 30 monetary units). The household is endowed every step of the simulation with 24 units of labour. We fix the price of the good produced in the economy (perishable) to 10 units, the price of the labour is found through Walrasian auction based on Cobb-Douglas production function, maximisation of profits for firms, and utility for households given by ln(units_consumed)+ln(25-labour_sold). The details of the math involved will be found immediately below. This cycle runs the number of times specified and works as the original Solow model, so that is there is growth in capital accumulated, but it’s slowing down with time. The derivation of the supply and demand functions follow, which are instrumental to the way the model works. The price of goods (p) is fixed to 10, the price of labour (w) is found through Walrasian auction, there is a capital stock (c), and at equilibrium household sells some amount of labour (l), and the firm in turns produces some amount of goods (y) and sells them at price p. The household maximises utility given as:
+
 U=ln⁡(y)+ln⁡(25-l)
+
 Taking into account the production function (Cobb-Douglas):
+
 y=α*l^β*c^γ
+
 Maximum utility is given by:
+
 (d/dl)ln⁡(α*l^β*c^γ)+ln⁡(25-l)=0
+
 Which finds the demand function of the household as:
+
 l=(25*w-c)/(2*w)
+
 Firm maximises profits: π=yp-wl, or:
-max┬(α*l^β*c^γ p-wl)
+
+max(α*l^β*c^γ p-wl)
+
 Which gives the firm’s supply of labour function as:
+
 l=(w/(α*β*c^γ*p))^(1/(β-1))
+
 After firms acquire labour as explain below they produce given the C-D production function, and attempt to sell all their stock (as the good is perishable, and the price is fixed). The household attempts to buy goods for the percentage of their wealth given by their propensity to consume (1 – propensity to save). As can be readily seen this step depends entirely on the step above, where labour was sold.
 
 The above roughly specifies the update algorithm that describes how the system evolves from one state to another. This update algorithm is part of the class Updater and constitutes the main part of the model Dynamics. To simplify debugging, the updater is not called directly from __main__(), there rather is a class Runner which contains a runner.do_run() that is executed in a loop within __main__().
@@ -127,7 +137,7 @@ The runner does three things. First, it takes care of the actual update step by 
 This structure ensures that the code is easier to debug and adapt. Details about the interface of each class can be found within the actual .py files.
 
 
-Test Your Code
+__Test Your Code__
 
 One of the most critical steps in developing extensions and modifications to black_rhino is writing tests. Typically, a researcher will try to avoid this "unecessary" step in the code development as no "new" results are being produced. New modifications to the code will only be accepted, however, if they are properly tested to ensure the integrity of the code. There are two types of tests: (extended) unit tests, and simulation tests. While unit tests ensure the proper functioning of a small piece of code, simulation tests are larger tests that simulate extreme economic conditions. The behavior and economic interpretation of the observables and hence the economic transmission channels of the model can be understood in these extreme situations.
 
