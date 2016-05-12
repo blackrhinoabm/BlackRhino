@@ -12,6 +12,7 @@ git submodule update --init --recursive
 
 __FOLDER STRUCTURE__
 
+```
 +---.git    			-git structure files  
 +---abm_template		-abstract base classes (submodule from https://github.com/cogeorg/abm_template)  
 +---agents    			-config files for agents  
@@ -27,6 +28,7 @@ __FOLDER STRUCTURE__
 +---src    				-source code files  
 +---tests    			-tests for the source code, and sample configs  
 \---tools    			-specific tools  
+```
 
 __INSTRUCTIONS__
 
