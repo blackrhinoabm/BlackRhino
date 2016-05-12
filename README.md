@@ -69,6 +69,7 @@ black_rhino (other financial or economic network multi-agent simulations will be
 The Environment describes the world the simulation takes place in. It is implemented in the class Environment (inherits from class BaseConfig in abm_template) and consists all the parameters that are unchanged during the run of a simulation (e.g. the simulation identifier, the number of simulations num_simulations, the number of update steps num_sweeps, the number of banks at the start of a simulation num_banks, the directory where the initial bank data can be found: bank_directory. This set of parameters is specified in the environment file $environment_directory/$environment_identifier.xml.
 
 Typically, the structure of the environment file will look like this:
+```xml
 <environment identifier='tests_for_all_methods'>
     <!-- simulation parameters -->
     <parameter type='static' name='num_sweeps' value='50'></parameter>
@@ -88,12 +89,14 @@ Typically, the structure of the environment file will look like this:
     <parameter type='asset' name='ABS' mean='0.07' variance='0.002'></parameter>
     <!-- parameters determining the dynamics -->
 </environment>
+```
 
 The class Environment also contains a list parameters[] of parameters which may change during the run of a simulation. These are identified by type='changing' and the range for which a given parameter is valid is given by validity='to-from'. The class Environment includes a container that holds all the parameters needed in the course of the simulation.
 
 The Agents are described in the classes Bank, CentralBank, Household, and Firm (all those inherit from BaseAgent in abm_template). Each agent has a list accounts[] where all the transactions (which are objects of the class Transaction) an agent has performed are stored. The balance sheet of a bank is effectively expressed through the set of transactions which an agent has performed (and which are still on the agent's books at the current point in time). Agents also have their own parameters and variables, much like the Environment, the difference is that these affect only specific agents and not the whole system. Note that starting transactions can also be stored in agents' config files. This set of parameters is specified in the config file $agent_type_directory/$agent_identifier.xml.
 
 Typically, the structure of the environment file will look like this:
+```xml
 <bank identifier='bank_test_config_id'>
     <parameter type='static' name='interest_rate_loans' value='0.004'></parameter>
     <parameter type='static' name='interest_rate_deposits' value='0.002'></parameter>
@@ -101,6 +104,7 @@ Typically, the structure of the environment file will look like this:
     <transaction type='deposits' asset='' from='household_test_config_id' to='bank_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
     <transaction type='loans' asset='' from='bank_test_config_id' to='firm_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
 </bank>
+```
 
 The optimization behavior of agents is based on the Solow growth model, and described in principle in http://www.pitt.edu/~mgahagan/Solow.htm
 
