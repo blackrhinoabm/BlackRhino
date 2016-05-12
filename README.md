@@ -108,6 +108,30 @@ Typically, the structure of the environment file will look like this:
 </bank>
 ```
 
+```xml
+<central_bank identifier='central_bank_test_config_id'>
+    <parameter type='static' name='interest_rate_cb_loans' value='0.003'></parameter>
+</central_bank>
+```
+
+```xml
+<firm identifier='firm_test_config_id'>
+    <parameter name='productivity' value='1.25'></parameter>
+    <parameter name='total_factor_productivity' value='1.8'></parameter>
+    <parameter name='labour_elasticity' value='0.3'></parameter>
+    <parameter name='capital_elasticity' value='0.7'></parameter>
+    <transaction type='capital' asset='' from='firm_test_config_id' to='household_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
+</firm>
+```
+
+```xml
+<household identifier='household_test_config_id'>
+    <parameter name='labour' value='24.00'></parameter>
+    <parameter name='propensity_to_save' value='0.4'></parameter>
+    <parameter name='ownership_of_banks' value='1'></parameter>
+</household>
+```
+
 The optimization behavior of agents is based on the Solow growth model, and described in principle in http://www.pitt.edu/~mgahagan/Solow.htm
 
 Bank is only an intermediary in the exchange the labour for ownership of capital (when household sells labour they get a deposit financed by the loan given to the firm, when the firm sells goods they get a deposit financed by the loan given to the household, these are netted at the end of each simulation step; conversely the imbalance between trade of labour and goods is netted and represents the ownership of firm’s capital by household). We can’t start with zero capital for technical reasons (Cobb-Douglas production function gives zero for zero capital), so the config file has starting capital ownership of 30 monetary units (and corresponding loan/deposit structure of 30 monetary units). The household is endowed every step of the simulation with 24 units of labour. We fix the price of the good produced in the economy (perishable) to 10 units, the price of the labour is found through Walrasian auction based on Cobb-Douglas production function, maximisation of profits for firms, and utility for households given by ln(units_consumed)+ln(25-labour_sold). The details of the math involved will be found immediately below. This cycle runs the number of times specified and works as the original Solow model, so that is there is growth in capital accumulated, but it’s slowing down with time. The derivation of the supply and demand functions follow, which are instrumental to the way the model works. The price of goods (p) is fixed to 10, the price of labour (w) is found through Walrasian auction, there is a capital stock (c), and at equilibrium household sells some amount of labour (l), and the firm in turns produces some amount of goods (y) and sells them at price p. The household maximises utility given as:
@@ -138,7 +162,15 @@ After firms acquire labour as explain below they produce given the C-D productio
 
 The above roughly specifies the update algorithm that describes how the system evolves from one state to another. This update algorithm is part of the class Updater and constitutes the main part of the model Dynamics. To simplify debugging, the updater is not called directly from __main__(), there rather is a class Runner which contains a runner.do_run() that is executed in a loop within __main__().
 
-The runner does three things. First, it takes care of the actual update step by calling updater.do_update(). Second, it checks whether there is a Shock in the current update step. If so, class Shock can execute a shock (shocks can easily be expanded). And third, the runner takes care of the Measurements, implemented in class Measurement. At each update step, there will be a measurement of all the state variables, stored in a histogram that is written to the hard disk at the end of the run.
+The runner does three things. First, it takes care of the actual update step by calling updater.do_update(). Second, it checks whether there is a Shock in the current update step. If so, class Shock can execute a shock (shocks can easily be expanded). And third, the runner takes care of the Measurements, implemented in class Measurement. At each update step, there will be a measurement of all the state variables, stored in a histogram that is written to the hard disk at the end of the run. For reference, measurement config file typically looks like this:
+
+```xml
+<measurement identifier='test_output'>
+    <parameter type='filename' value='TestMeasurement.csv'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
+</measurement>
+```
 
 This structure ensures that the code is easier to debug and adapt. Details about the interface of each class can be found within the actual .py files.
 
