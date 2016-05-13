@@ -160,9 +160,33 @@ class Firm(BaseAgent):
     # NOT IMPLEMENTED FOR FIRM YET, NEED TO FILL assets & liabilities
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        assets = []
-        liabilities = []
-        return super(Firm, self).check_consistency(assets, liabilities)
+        # assets = []
+        # liabilities = []
+        # return super(Firm, self).check_consistency(assets, liabilities)
+        assets = 0.0
+        liabilities = 0.0
+        for tranx in self.accounts:
+            if tranx.type_ == "loans":
+                if tranx.from_ == self:
+                    raise LookupError("Companies cannot grant loans to firms.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
+            elif tranx.type_ == "deposits":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Deposits cannot be held by banks in firms.")
+            elif tranx.type_ == "capital":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Firms cannot own capital of households.")
+            else:
+                raise LookupError("Unknown transaction type on firm's books.")
+        if round(assets, 2) == round(liabilities, 2):
+            return True
+        else:
+            return False
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

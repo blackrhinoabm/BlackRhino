@@ -162,9 +162,33 @@ class Household(BaseAgent):
     # NOT IMPLEMENTED FOR HOUSEHOLD YET, NEED TO FILL assets & liabilities
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        assets = []
-        liabilities = []
-        return super(Household, self).check_consistency(assets, liabilities)
+        # assets = []
+        # liabilities = []
+        # return super(Household, self).check_consistency(assets, liabilities)
+        assets = 0.0
+        liabilities = 0.0
+        for tranx in self.accounts:
+            if tranx.type_ == "loans":
+                if tranx.from_ == self:
+                    raise LookupError("Household should not have loans.")
+                if tranx.to == self:
+                    raise LookupError("Household should not have loans.")
+            elif tranx.type_ == "deposits":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Deposits cannot be held by banks in households.")
+            elif tranx.type_ == "capital":
+                if tranx.from_ == self:
+                    raise LookupError("Firms cannot own capital of households.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
+            else:
+                raise LookupError("Unknown transaction type on firm's books.")
+        if round(assets, 2) == round(liabilities, 2):
+            return True
+        else:
+            return False
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

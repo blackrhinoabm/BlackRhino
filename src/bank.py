@@ -152,9 +152,40 @@ class Bank(BaseAgent):
     # controlled by the lists below
     # -------------------------------------------------------------------------
     def check_consistency(self):
-        assets = ["loans", "cash"]
-        liabilities = ["deposits"]
-        return super(Bank, self).check_consistency(assets, liabilities)
+        # assets = ["loans", "cash"]
+        # liabilities = ["deposits"]
+        # return super(Bank, self).check_consistency(assets, liabilities)
+        assets = 0.0
+        liabilities = 0.0
+        for tranx in self.accounts:
+            if tranx.type_ == "loans":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Companies cannot grant loans to firms.")
+            elif tranx.type_ == "deposits":
+                if tranx.from_ == self:
+                    raise LookupError("Deposits cannot be held by banks in households.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
+            elif tranx.type_ == "investment":
+                assets = assets + tranx.amount
+            elif tranx.type_ == "ib_loans":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
+            elif tranx.type_ == "cb_loans":
+                if tranx.from_ == self:
+                    raise LookupError("Central bank loans can't be granted from bank to central bank.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
+            else:
+                raise LookupError("Unknown transaction type on bank's books.")
+        if round(assets, 2) == round(liabilities, 2):
+            return True
+        else:
+            return False
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
