@@ -128,33 +128,7 @@ class Runner(BaseRunner):
                 if int(shock[0]) <= i+1 and int(shock[1]) >= i+1:
                     shock_class.do_shock(environment, i, shock[2], "end")
             # HELPER, to be removed in production
-            # for firm in environment.households:
-            #    print(firm)
-            # print(environment.households[0])
-            # print(environment.firms[0])
-            # capital = 0.0
-            # for tranx in environment.firms[0].accounts:
-            #     if tranx.type_ == "capital" and tranx.from_ == environment.firms[0]:
-            #         capital = capital + tranx.amount
-            #     if tranx.type_ == "capital" and tranx.to == environment.firms[0]:
-            #         capital = capital - tranx.amount
-            # print(environment.firms[0].get_account("deposits")+capital-environment.firms[0].get_account("loans"))
-            # capital = 0.0
-            # for tranx in environment.firms[1].accounts:
-            #     if tranx.type_ == "capital" and tranx.from_ == environment.firms[1]:
-            #         capital = capital + tranx.amount
-            #     if tranx.type_ == "capital" and tranx.to == environment.firms[1]:
-            #         capital = capital - tranx.amount
-            # print(environment.firms[1].get_account("deposits")+capital-environment.firms[1].get_account("loans"))
-            # capital = 0.0
-            # for tranx in environment.firms[2].accounts:
-            #     if tranx.type_ == "capital" and tranx.from_ == environment.firms[2]:
-            #         capital = capital + tranx.amount
-            #     if tranx.type_ == "capital" and tranx.to == environment.firms[2]:
-            #         capital = capital - tranx.amount
-            # print(environment.firms[2].get_account("deposits")+capital-environment.firms[2].get_account("loans"))
             print(environment.banks[0])
-            # print(environment.firms[0])
         # Close the output file at the end of the simulation
         measurement.close_file()
     # ------------------------------------------------------------------------

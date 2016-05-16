@@ -104,6 +104,19 @@ class Updater(BaseModel):
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
+        # This to a separate function later
+        for bank in environment.banks:
+            check_status = bank.check_consistency()
+            if check_status is False:
+                raise LookupError("Bank's books are not balanced.")
+        for firm in environment.firms:
+            check_status = firm.check_consistency()
+            if check_status is False:
+                raise LookupError("Firm's books are not balanced.")
+        for household in environment.households:
+            check_status = household.check_consistency()
+            if check_status is False:
+                raise LookupError("Household's books are not balanced.")
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -196,10 +209,14 @@ class Updater(BaseModel):
             # IMPLEMENTATION NOTE: while we want full accuracy in the model for
             # now, the floating error around 0 means we need to round before checking
             if round(excess, 2) < 0.0:
-                raise LookupError("Bank lost money on interests.")
-            # If there is excess of loans over deposits
-            # We distribute the excess as
-            # IMPLEMENTATION NOTE: same as above
+                # raise LookupError("Bank lost money on interests.")
+                # If there is excess of loans over deposits
+                # We distribute the excess as
+                # IMPLEMENTATION NOTE: same as above
+                for firm in environment.firms:
+                    amount = -excess / len(environment.firms)
+                    environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
+                                                amount, bank.interest_rate_loans,  0, -1)
             if round(excess, 2) > 0.0:
                 # TODO: bank_ownership parameter for households to weigh this
                 # For now, we add these proportionately to the households
@@ -291,6 +308,7 @@ class Updater(BaseModel):
             # and an asset of the household
             environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
                                         ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
+            random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
             environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
@@ -406,6 +424,9 @@ class Updater(BaseModel):
             random.shuffle(itrange)
             # And we iterate over the agents randomly by proxy of iterating
             # through their places on the list [agents]
+            random_bank = random.choice(environment.banks)
+            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
+                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
             for i in itrange:
                 current_bank = self.environment.banks[i]
                 # We find how much in deposits the household has
@@ -419,19 +440,9 @@ class Updater(BaseModel):
                 # We find the amount of deposits the household can spend for this particular bank
                 current_amount = min(to_finance, deposits_available)
                 # And add the appropriate transactions
-                environment.new_transaction("deposits", "",  ration[0].identifier, current_bank.identifier,
-                                            current_amount, current_bank.interest_rate_deposits,  0, -1)
                 environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
                                             current_amount, current_bank.interest_rate_loans,  0, -1)
                 to_finance = to_finance - current_amount
-            # Below is the old code for legacy comparison, to be deleted later
-            '''
-            random_bank = random.choice(environment.banks)
-            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
-            environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-                                        ration[2]*price, random_bank.interest_rate_loans,  0, -1)
-            '''
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                   ration[2], price, ration[1].identifier, time)
@@ -597,6 +608,12 @@ class Updater(BaseModel):
 
         # First resolve capital shortfall for firms
         # ie when firm needs to sell existing  capital instead of getting new owners
+        adjustments = {}
+        for firm in environment.firms:
+            adjustments[firm] = {}
+            for household in environment.households:
+                adjustments[firm][household] = 0.0
+
         for firm in environment.firms:
             # We calculate how much capital the firm has
             capital = 0.0
@@ -608,18 +625,27 @@ class Updater(BaseModel):
                         capital = capital - tranx.amount
             # Then find the firm's supply of capital given current books
             supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
+            supply = round(supply, 8)
             # If there is a shortfall of capital supply
             if supply < 0.0:
-                # We go through the books
-                for tranx in firm.accounts:
-                    # And find capital transactions
-                    if tranx.type_ == "capital" and tranx.from_ == firm:
-                        # Then we sell the appropriate amount to cover the shortfall
-                        # TODO: we may want the sellout to be proportional or at least
-                        # going through books at random, though in the current model it shouldn't matter
-                        to_remove = min(-supply, tranx.amount)
-                        tranx.amount = tranx.amount - to_remove
-                        supply = supply + to_remove
+                # We remove all capital, and will realocate anew
+                # The model is not about household<>firm relationships
+                # So it doesn't matter if these stay constant as long
+                # As they are correct locally and globally
+                to_delete = []
+                for firm in environment.firms:
+                    for tranx in firm.accounts:
+                        if tranx.type_ == "capital":
+                            to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+                to_delete = []
+                for household in environment.households:
+                    for tranx in household.accounts:
+                        if tranx.type_ == "capital":
+                            to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
 
         # First, we create the list that will be used for rationing
         # method from Market class, containing agents and their
@@ -647,6 +673,7 @@ class Updater(BaseModel):
                         capital = capital - tranx.amount
             # demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
             demand = deposits - loans - capital
+            demand = round(demand, 8)
             # And we add the household together with its demand to the list
             for_rationing.append([household, -demand])
 
@@ -662,6 +689,7 @@ class Updater(BaseModel):
                     if tranx.to == firm:
                         capital = capital - tranx.amount
             supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
+            supply = round(supply, 8)
             # supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
             # And we add the firm together with its supply to the list
             for_rationing.append([firm, supply])
@@ -679,6 +707,8 @@ class Updater(BaseModel):
 
         def allow_match_basic(agent_one, agent_two):
             if agent_one in environment.firms and agent_two in environment.firms:
+                return False
+            elif agent_one in environment.households and agent_two in environment.households:
                 return False
             else:
                 return True
@@ -815,7 +845,7 @@ class Updater(BaseModel):
             # Then from the loans banks have and the leverage ration above
             # We find how much the banks want to be investing
             bank.state_variables["investment_volume"] = 0.0
-            bank.investment_volume = bank.get_account("loans")*(target_leverage-1)
+            bank.investment_volume = max(bank.get_account("deposits")*target_leverage - bank.get_account("loans"), 0.00)
 
         # INTERBANK LENDING
         from market import Market
@@ -823,8 +853,11 @@ class Updater(BaseModel):
         market = Market("market")
         for_rationing = []
         for bank in environment.banks:
-            value = bank.interbank_liquidity - (bank.investment_volume - bank.get_account("loans"))
+            # value = bank.interbank_liquidity - (bank.investment_volume - bank.get_account("loans"))
+            # value = bank.investment_volume
+            value = bank.get_account("loans") - bank.get_account("deposits") + bank.investment_volume
             for_rationing.append([bank, value])
+        print(for_rationing)
         rationed = market.rationing_proportional(for_rationing)
 
         for ration in rationed:
@@ -839,7 +872,7 @@ class Updater(BaseModel):
             # We assume that since there is only one central bank we can keep those
             # in one transaction for now, if we fiddle with maturities this may change
             # If we don't yet have a central bank loan we create one
-            cb_volume = bank.investment_volume
+            cb_volume = bank.investment_volume + bank.get_account("loans") - bank.get_account("deposits")
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     if tranx.from_ == bank:
