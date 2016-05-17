@@ -171,6 +171,16 @@ class Firm(BaseAgent):
                     raise LookupError("Companies cannot grant loans to firms.")
                 if tranx.to == self:
                     liabilities = liabilities + tranx.amount
+            elif tranx.type_ == "shares":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Companies cannot own shares of banks.")
+            elif tranx.type_ == "ownership":
+                if tranx.from_ == self:
+                    raise LookupError("Banks cannot own shares of households.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
             elif tranx.type_ == "deposits":
                 if tranx.from_ == self:
                     assets = assets + tranx.amount
@@ -307,10 +317,10 @@ class Firm(BaseAgent):
         capital = 0.0
         for tranx in self.accounts:
             # Own capital stock is added here
-            if tranx.type_ == "capital" and tranx.from_ == self:
+            if tranx.type_ == "loan" and tranx.to == self:
                 capital = capital + tranx.amount
             # Owned capital of other agents is subtracted here
-            if tranx.type_ == "capital" and tranx.to == self:
+            if tranx.type_ == "deposits" and tranx.from_ == self:
                 capital = capital - tranx.amount
         # Finally max(U) given particular wage
         return max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1)))

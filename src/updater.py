@@ -83,11 +83,8 @@ class Updater(BaseModel):
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
-        self.find_interbank_liquidity(environment, time)
+        # self.find_interbank_liquidity(environment, time)
         self.accrue_interests(environment, time)
-        # Then agents get their labour endowment for the step (e.g. work hours to spend)
-        # For now we don't need to keep track of labour left as there is no queue
-        # self.endow_labour(environment, time)
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
@@ -97,26 +94,17 @@ class Updater(BaseModel):
         # We remove the perishable transactions
         self.remove_perishable(environment, time)
         # And add capital to balance the books
-        self.capitalise(environment, time)
+        # self.capitalise(environment, time)
+        self.capitalise_new(environment, time)
         # Investing of the banks
         # self.invest(environment, time)
-        self.invest_interbank(environment, time)
+        # self.invest_interbank(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
         transaction.purge_accounts(environment)
-        # This to a separate function later
-        for bank in environment.banks:
-            check_status = bank.check_consistency()
-            if check_status is False:
-                raise LookupError("Bank's books are not balanced.")
-        for firm in environment.firms:
-            check_status = firm.check_consistency()
-            if check_status is False:
-                raise LookupError("Firm's books are not balanced.")
-        for household in environment.households:
-            check_status = household.check_consistency()
-            if check_status is False:
-                raise LookupError("Household's books are not balanced.")
+        # And finally we check if all the books are balanced
+        print(environment.firms[0])
+        self.check_consistency(environment, time)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -226,21 +214,6 @@ class Updater(BaseModel):
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                                                 amount, bank.interest_rate_deposits,  0, -1)
         logging.info("  interest accrued on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # endow_labour
-    # This function makes sure that all households have the appropriate
-    # labour endowment for every step, in line with the parameters
-    # -------------------------------------------------------------------------
-    def endow_labour(self,  environment, time):
-        # We make sure household get their labour endowment per step
-        # labour is a parameter, doesn't change in the simulation
-        # sweep_labour is a state variable and can be depleted within the sweep
-        for household in environment.households:
-            household.sweep_labour = household.labour
-        logging.info("  labour endowed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -770,6 +743,30 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # capitalise(environment, time)
+    # This function makes capital transactions which represent final
+    # ownership of firms by the household which is done through the bank
+    # deposits and bank loans, these are in principle not necessary for the
+    # model to work, as we can assume the loans are the capital, and produce off
+    # that assumption, but this ensures the books are balanced for all agents
+    # -------------------------------------------------------------------------
+    def capitalise_new(self,  environment, time):
+        for bank in environment.banks:
+            for tranx in bank.accounts:
+                if tranx.type_ == "loans":
+                    if tranx.from_ == bank:
+                        environment.new_transaction("shares", "",  tranx.to.identifier, bank.identifier,
+                                                    tranx.amount, 0,  0, -1)
+                elif tranx.type_ == "deposits":
+                    if tranx.to == bank:
+                        environment.new_transaction("ownership", "", bank.identifier, tranx.from_.identifier,
+                                                    tranx.amount, 0,  0, -1)
+
+        logging.info("  capitalised on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # invest(environment, time)
     # This function checks the optimal portfolio volume for banks and their
     # allocations, then looks at the current ones and makes appropriate
@@ -917,4 +914,26 @@ class Updater(BaseModel):
                 # If there are multiple investments in one asset we raise an error
                 else:
                     raise LookupError("More than one transaction of the same asset.")
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # check_consistency(environment, time)
+    # This function checks whether the books of agents are balanced
+    # Based on the functions defined for agents
+    # Note that central bank does not have a balanced book as they can
+    # always create money, so to speak
+    # -------------------------------------------------------------------------
+    def check_consistency(self, environment, time):
+        for bank in environment.banks:
+            check_status = bank.check_consistency()
+            if check_status is False:
+                raise LookupError("Bank's books are not balanced.")
+        for firm in environment.firms:
+            check_status = firm.check_consistency()
+            if check_status is False:
+                raise LookupError("Firm's books are not balanced.")
+        for household in environment.households:
+            check_status = household.check_consistency()
+            if check_status is False:
+                raise LookupError("Household's books are not balanced.")
     # -------------------------------------------------------------------------
