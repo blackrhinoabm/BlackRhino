@@ -167,14 +167,60 @@ class Measurement(BaseMeasurement):
         if ident == "current_step":
             return self.runner.current_step+1
 
+        # if ident == "household_deposits":
+        #     #return self.environment.households[0].get_account("deposits")
+        #     wealth = 0.0
+        #     for household in self.environment.households:
+        #         for tranx in household.accounts:
+        #             if tranx.type_ == "deposits" and tranx.from_ == household:
+        #                 wealth = wealth + tranx.amount
+        #             if tranx.type_ == "loans" and tranx.to == household:
+        #                 wealth = wealth - tranx.amount
+        #     return wealth
         if ident == "household_deposits":
             #return self.environment.households[0].get_account("deposits")
             wealth = 0.0
-            for household in self.environment.households:
-                for tranx in household.accounts:
-                    if tranx.type_ == "deposits" and tranx.from_ == household:
-                        wealth = wealth + tranx.amount
-                    if tranx.type_ == "loans" and tranx.to == household:
+            for firm in self.environment.firms:
+                for tranx in firm.accounts:
+                    if tranx.type_ == "deposits" and tranx.from_ == firm:
                         wealth = wealth - tranx.amount
+                    if tranx.type_ == "loans" and tranx.to == firm:
+                        wealth = wealth + tranx.amount
+            return wealth
+        if ident == "one":
+            wealth = 0.0
+            for tranx in self.environment.firms[0].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.firms[0]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "two":
+            wealth = 0.0
+            for tranx in self.environment.firms[0].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.firms[0]:
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "thr":
+            wealth = 0.0
+            for tranx in self.environment.firms[1].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.firms[1]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "fou":
+            wealth = 0.0
+            for tranx in self.environment.firms[1].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.firms[1]:
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "fiv":
+            wealth = 0.0
+            for tranx in self.environment.firms[2].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.firms[2]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "six":
+            wealth = 0.0
+            for tranx in self.environment.firms[2].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.firms[2]:
+                    wealth = wealth + tranx.amount
             return wealth
     # -------------------------------------------------------------------------

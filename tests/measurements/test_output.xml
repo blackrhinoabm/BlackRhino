@@ -1,5 +1,10 @@
 <measurement identifier='test_output'>
     <parameter type='filename' value='TestMeasurement.csv'></parameter>
     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
-    <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
+    <parameter type='output' column='2' header='Deposits' value='one' ></parameter>
+    <parameter type='output' column='3' header='Deposits' value='two' ></parameter>
+    <parameter type='output' column='4' header='Deposits' value='thr' ></parameter>
+    <parameter type='output' column='5' header='Deposits' value='fou' ></parameter>
+    <parameter type='output' column='6' header='Deposits' value='fiv' ></parameter>
+    <parameter type='output' column='7' header='Deposits' value='six' ></parameter>
 </measurement>

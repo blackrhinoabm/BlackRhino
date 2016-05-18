@@ -103,7 +103,16 @@ class Updater(BaseModel):
         transaction = Transaction()
         transaction.purge_accounts(environment)
         # And finally we check if all the books are balanced
-        print(environment.firms[0])
+        # print(environment.banks[0])
+        # print(environment.firms[0])
+        # print(environment.households[0])
+        # TODO here:
+        # - simplify the code
+        # - don't double count - treat all loans as investments
+        # - assume that deposits are ownership of banks
+        # - only check if banks have balanced books (as this time we're doing it this way anyway)
+        # - move the labor/goods (flows, not balance sheet items) to parameter space instead of transactions
+        # - so banks will have A: loans(investments)+reserves L: deposits+cb_loans
         self.check_consistency(environment, time)
     # -------------------------------------------------------------------------
 
@@ -321,10 +330,10 @@ class Updater(BaseModel):
             capital = 0.0
             for tranx in firm.accounts:
                 # This is own capital stock
-                if tranx.type_ == "capital" and tranx.from_ == firm:
+                if tranx.type_ == "loans" and tranx.to == firm:
                     capital = capital + tranx.amount
                 # And here is the ownership of other agents' stock
-                if tranx.type_ == "capital" and tranx.to == firm:
+                if tranx.type_ == "deposits" and tranx.from_ == firm:
                     capital = capital - tranx.amount
             # We find the amount produced through the Cobb-Douglas function
             amount = helper.cobb_douglas(firm.get_account("labour"), capital,
@@ -565,185 +574,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # capitalise(environment, time)
-    # This function makes capital transactions which represent final
-    # ownership of firms by the household which is done through the bank
-    # deposits and bank loans, these are in principle not necessary for the
-    # model to work, as we can assume the loans are the capital, and produce off
-    # that assumption, but this ensures the books are balanced for all agents
-    # -------------------------------------------------------------------------
-    def capitalise(self,  environment, time):
-        # We will ration the remaining excess deposits
-        # and loan as capital ownership transfers
-        # to balance books, if books don't need to be
-        # balanced the same would work strictly on deposits
-        # and loans with no capital explicitly
-
-        # First resolve capital shortfall for firms
-        # ie when firm needs to sell existing  capital instead of getting new owners
-        adjustments = {}
-        for firm in environment.firms:
-            adjustments[firm] = {}
-            for household in environment.households:
-                adjustments[firm][household] = 0.0
-
-        for firm in environment.firms:
-            # We calculate how much capital the firm has
-            capital = 0.0
-            for tranx in firm.accounts:
-                if tranx.type_ == "capital":
-                    if tranx.from_ == firm:
-                        capital = capital + tranx.amount
-                    if tranx.to == firm:
-                        capital = capital - tranx.amount
-            # Then find the firm's supply of capital given current books
-            supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
-            supply = round(supply, 8)
-            # If there is a shortfall of capital supply
-            if supply < 0.0:
-                # We remove all capital, and will realocate anew
-                # The model is not about household<>firm relationships
-                # So it doesn't matter if these stay constant as long
-                # As they are correct locally and globally
-                to_delete = []
-                for firm in environment.firms:
-                    for tranx in firm.accounts:
-                        if tranx.type_ == "capital":
-                            to_delete.append(tranx)
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                to_delete = []
-                for household in environment.households:
-                    for tranx in household.accounts:
-                        if tranx.type_ == "capital":
-                            to_delete.append(tranx)
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-
-        # First, we create the list that will be used for rationing
-        # method from Market class, containing agents and their
-        # excess supply or demand
-        for_rationing = []
-
-        # First we find household's demand for buying capital of the firms
-        for household in environment.households:
-            # We calculate the demand as the amount of wealth (deposits-loans) minus previously owned capital
-            # We calculate capital by hand in case there is some reverse ownership
-            deposits = 0.0
-            loans = 0.0
-            capital = 0.0
-            for tranx in household.accounts:
-                if tranx.type_ == "deposits":
-                    if tranx.from_ == household:
-                        deposits = deposits + tranx.amount
-                if tranx.type_ == "loans":
-                    if tranx.to == household:
-                        loans = loans + tranx.amount
-                if tranx.type_ == "capital":
-                    if tranx.to == household:
-                        capital = capital + tranx.amount
-                    if tranx.from_ == household:
-                        capital = capital - tranx.amount
-            # demand = household.get_account("deposits") - household.get_account("loans") - household.get_account("capital")
-            demand = deposits - loans - capital
-            demand = round(demand, 8)
-            # And we add the household together with its demand to the list
-            for_rationing.append([household, -demand])
-
-        for firm in environment.firms:
-            # Supply of the firms is the opposite of the demand of the household
-            # that is the loans minus issued capital claims minus deposits
-            # We calculate capital by hand in case there is some reverse ownership
-            capital = 0.0
-            for tranx in firm.accounts:
-                if tranx.type_ == "capital":
-                    if tranx.from_ == firm:
-                        capital = capital + tranx.amount
-                    if tranx.to == firm:
-                        capital = capital - tranx.amount
-            supply = -capital - firm.get_account("deposits") + firm.get_account("loans")
-            supply = round(supply, 8)
-            # supply = -firm.get_account("capital") - firm.get_account("deposits") + firm.get_account("loans")
-            # And we add the firm together with its supply to the list
-            for_rationing.append([firm, supply])
-
-        # We initialise the market clearing class
-        from market import Market
-        market = Market("market")
-
-        # The below functions means that the pairing will be linear
-
-        def matching_agents_basic(agent_one, agent_two):
-            return random.random()
-
-        # The below function means that all pairs are allowed
-
-        def allow_match_basic(agent_one, agent_two):
-            if agent_one in environment.firms and agent_two in environment.firms:
-                return False
-            elif agent_one in environment.households and agent_two in environment.households:
-                return False
-            else:
-                return True
-
-        # We find the pairs of capital ownership transfers
-        # We move the capital proportionately with respect to demand
-        rationed = market.rationing_proportional(for_rationing)
-        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
-
-        # We add these to the books
-        for ration in rationed:
-            environment.new_transaction("capital", "",  ration[0].identifier, ration[1].identifier,
-                                        ration[2], 0,  0, -1)
-            # And print it to the screen for easy greping
-            print("%s sold %f worth of capital to %s at time %d.") % (ration[0].identifier,
-                                                                      ration[2], ration[1].identifier, time)
-
-        # And net the capital transactions, so we don't accumulate
-        # them over the course of the transaction
-        # Again, we create a proxy list for deleting transactions
-        # as deleting them from a list upon which we are looping is bad
-        to_delete = []
-
-        # We go through the firms
-        for firm in environment.firms:
-            # And then pair them with households
-            for household in environment.households:
-                # We will look for the capital balance of the pair
-                balance = 0.0
-                # So we need to look through all their books
-                for tranx in household.accounts:
-                    # Find the capital transactions
-                    if tranx.type_ == "capital":
-                        # And if they are ownership of the firm's equity
-                        # We add them to the balance
-                        # And mark for deletion
-                        if tranx.from_ == firm:
-                            balance = balance + tranx.amount
-                            to_delete.append(tranx)
-                        # If they are the other way around for some reason
-                        # we would subtract them and mark for deletion
-                        elif tranx.to == firm:
-                            balance = balance - tranx.amount
-                            to_delete.append(tranx)
-                # We create a new transactions from the balance
-                # depending on what the value of the balance is
-                if balance > 0.0:
-                    environment.new_transaction("capital", "",  firm.identifier, household.identifier,
-                                                balance, 0,  0, -1)
-                elif balance < 0.0:
-                    environment.new_transaction("capital", "",  household.identifier, firm.identifier,
-                                                balance, 0,  0, -1)
-        # And at the end, we remove all the transactions that we marked before
-        for tranx in to_delete:
-            tranx.remove_transaction()
-
-        logging.info("  capitalised on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # capitalise(environment, time)
+    # capitalise_new(environment, time)
     # This function makes capital transactions which represent final
     # ownership of firms by the household which is done through the bank
     # deposits and bank loans, these are in principle not necessary for the
@@ -752,77 +583,46 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
         for bank in environment.banks:
-            for tranx in bank.accounts:
-                if tranx.type_ == "loans":
-                    if tranx.from_ == bank:
-                        environment.new_transaction("shares", "",  tranx.to.identifier, bank.identifier,
-                                                    tranx.amount, 0,  0, -1)
-                elif tranx.type_ == "deposits":
-                    if tranx.to == bank:
-                        environment.new_transaction("ownership", "", bank.identifier, tranx.from_.identifier,
-                                                    tranx.amount, 0,  0, -1)
+            for firm in environment.firms:
+                paired = 0.0
+                to_delete = []
+                for tranx in bank.accounts:
+                    if tranx.type_ == "loans" and tranx.from_ == bank and tranx.to == firm:
+                        paired = paired + tranx.amount
+                    elif tranx.type_ == "shares" and tranx.from_ == firm and tranx.to == bank:
+                        to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+                environment.new_transaction("shares", "",  firm.identifier, bank.identifier,
+                                            paired, 0,  0, -1)
+            for household in environment.households:
+                paired = 0.0
+                to_delete = []
+                for tranx in bank.accounts:
+                    if tranx.type_ == "deposits" and tranx.from_ == household and tranx.to == bank:
+                        paired = paired + tranx.amount
+                    elif tranx.type_ == "ownership" and tranx.from_ == bank and tranx.to == household:
+                        to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+                environment.new_transaction("ownership", "", bank.identifier, household.identifier,
+                                            paired, 0,  0, -1)
+
+            for firm in environment.firms:
+                paired = 0.0
+                to_delete = []
+                for tranx in bank.accounts:
+                    if tranx.type_ == "deposits" and tranx.from_ == firm and tranx.to == bank:
+                        paired = paired + tranx.amount
+                    elif tranx.type_ == "ownership" and tranx.from_ == bank and tranx.to == firm:
+                        to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+                environment.new_transaction("ownership", "", bank.identifier, firm.identifier,
+                                            paired, 0,  0, -1)
 
         logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # invest(environment, time)
-    # This function checks the optimal portfolio volume for banks and their
-    # allocations, then looks at the current ones and makes appropriate
-    # investment decisions
-    # -------------------------------------------------------------------------
-    def invest(self, environment, time):
-        # We do this for every bank
-        for bank in environment.banks:
-            # Every bank finds out what leverage they want to use by using their
-            # own leverage from config file unless it's prohibited by the policy
-            target_leverage = 0.0
-            target_leverage = min(bank.target_leverage, environment.max_leverage_ratio)
-            # Then from the loans banks have and the leverage ration above
-            # We find how much the banks want to be investing
-            investment_volume = 0.0
-            investment_volume = bank.get_account("loans")*(target_leverage-1)
-
-            # Then we add or remove central bank loans
-            # We assume that since there is only one central bank we can keep those
-            # in one transaction for now, if we fiddle with maturities this may change
-            # If we don't yet have a central bank loan we create one
-            if bank.get_account_num_transactions("cb_loans") == 0:
-                environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
-                                            investment_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
-            # If we have a prior central bank loan we just adjust the amount
-            else:
-                for tranx in bank.accounts:
-                    if tranx.type_ == "cb_loans":
-                        tranx.amount = investment_volume
-
-            # Then we add or remove investments
-            # We do it for every investment class, for now we have 1/n portfolio
-            for asset_key in environment.assets:
-                # Thus each asset is invested in linearly, 1/n times the total inv volume
-                one_investment_volume = investment_volume / len(environment.assets)
-                # We find if there are already transactions
-                # We will want one transaction of one type of investment also, as above
-                number_of_asset_transactions = 0
-                # We go through the books
-                for tranx in bank.accounts:
-                    if tranx.asset == asset_key:
-                        # And find the transactions that match
-                        number_of_asset_transactions = number_of_asset_transactions + 1
-                # If the bank doesn't yet have an investment we create one
-                if number_of_asset_transactions == 0:
-                    environment.new_transaction("investment", asset_key,  bank.identifier, bank.identifier,
-                                                one_investment_volume, 0,  0, -1)
-                # If they do have one we just amend the amount
-                elif number_of_asset_transactions == 1:
-                    for tranx in bank.accounts:
-                        if tranx.type_ == "investment":
-                            if tranx.asset == asset_key:
-                                tranx.amount = one_investment_volume
-                # If there are multiple investments in one asset we raise an error
-                else:
-                    raise LookupError("More than one transaction of the same asset.")
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -927,13 +727,16 @@ class Updater(BaseModel):
         for bank in environment.banks:
             check_status = bank.check_consistency()
             if check_status is False:
+                print(bank)
                 raise LookupError("Bank's books are not balanced.")
         for firm in environment.firms:
             check_status = firm.check_consistency()
             if check_status is False:
+                print(firm)
                 raise LookupError("Firm's books are not balanced.")
         for household in environment.households:
             check_status = household.check_consistency()
             if check_status is False:
+                print(household)
                 raise LookupError("Household's books are not balanced.")
     # -------------------------------------------------------------------------

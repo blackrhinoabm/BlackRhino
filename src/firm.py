@@ -317,7 +317,7 @@ class Firm(BaseAgent):
         capital = 0.0
         for tranx in self.accounts:
             # Own capital stock is added here
-            if tranx.type_ == "loan" and tranx.to == self:
+            if tranx.type_ == "loans" and tranx.to == self:
                 capital = capital + tranx.amount
             # Owned capital of other agents is subtracted here
             if tranx.type_ == "deposits" and tranx.from_ == self:
