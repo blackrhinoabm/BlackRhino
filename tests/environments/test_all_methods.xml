@@ -1,6 +1,6 @@
 <environment identifier='tests_for_all_methods'>
     <!-- simulation parameters -->
-    <parameter type='static' name='num_sweeps' value='30'></parameter>
+    <parameter type='static' name='num_sweeps' value='300'></parameter>
     <parameter type='static' name='num_simulations' value='1'></parameter>
     <parameter type='static' name='num_banks' value='3'></parameter>
     <parameter type='static' name='num_firms' value='3'></parameter>
@@ -11,6 +11,7 @@
     <parameter type='static' name='central_bank_directory' value='tests/agents/central_bank/'></parameter>
     <parameter type='static' name='measurement_config' value='tests/measurements/test_output.xml'></parameter>
     <parameter type='static' name='max_leverage_ratio' value='3.0'></parameter>
+    <parameter type='static' name='required_reserves' value='0.1'></parameter>
     <parameter type='shock' name='productivity' range='1000-2000'></parameter>
     <parameter type='shock' name='labour' range='4000-5000'></parameter>
     <parameter type='asset' name='MBS' mean='0.05' variance='0.001'></parameter>

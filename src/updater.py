@@ -84,7 +84,7 @@ class Updater(BaseModel):
         # Unless transaction should carry interest
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
-        self.accrue_interests(environment, time)
+        # self.accrue_interests(environment, time)
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
@@ -108,10 +108,7 @@ class Updater(BaseModel):
         # print(environment.households[0])
         # TODO here:
         # - simplify the code
-        # - don't double count - treat all loans as investments
-        # - assume that deposits are ownership of banks
-        # - only check if banks have balanced books (as this time we're doing it this way anyway)
-        # - move the labor/goods (flows, not balance sheet items) to parameter space instead of transactions
+        # - careful about acrrue interests - so it doesn't explode, and think about the fluctuations
         # - so banks will have A: loans(investments)+reserves L: deposits+cb_loans
         self.check_consistency(environment, time)
     # -------------------------------------------------------------------------
@@ -168,20 +165,6 @@ class Updater(BaseModel):
         # First, add interests to all the transactions
         # The function in environment makes sure we don't double count interests
         environment.accrue_interests()
-        # And returns for assets
-        # First, we update the current step returns
-        environment.update_asset_returns()
-        # Then update the books of each bank
-        for bank in environment.banks:
-            # We go asset by asset
-            for asset_key in environment.assets:
-                # And find investment transactions
-                for tranx in bank.accounts:
-                    if tranx.type_ == "investment":
-                        # For the specific asset
-                        if tranx.asset == asset_key:
-                            # And amend its value by the current returns
-                            tranx.amount = tranx.amount * (1 + environment.assets[asset_key][2])
         # Then, banks give their revenue as dividends to households
         # which own the banks in the model
         # for now we have them given out through ownership weights
@@ -235,6 +218,8 @@ class Updater(BaseModel):
     # in later time
     # -------------------------------------------------------------------------
     def sell_labour(self,  environment, time):
+        for firm in environment.firms:
+            firm.state_variables["labour"] = 0.0
         # First we find the market equilibrium price
         # Important to note that this currently does
         # not depend on the wealth of the buyers
@@ -283,8 +268,9 @@ class Updater(BaseModel):
         for ration in rationed:
             # The labour is an asset (production factor) for the firm
             # and a liability (promise to work) for the household
-            environment.new_transaction("labour", "",  ration[1].identifier, ration[0].identifier,
-                                        ration[2], 0,  0, -1)
+            # ration[0]: household
+            # ration[1]: firm
+            ration[1].state_variables["labour"] = ration[1].state_variables["labour"] + ration[2]
             random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
@@ -336,7 +322,7 @@ class Updater(BaseModel):
                 if tranx.type_ == "deposits" and tranx.from_ == firm:
                     capital = capital - tranx.amount
             # We find the amount produced through the Cobb-Douglas function
-            amount = helper.cobb_douglas(firm.get_account("labour"), capital,
+            amount = helper.cobb_douglas(firm.state_variables["labour"], capital,
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
@@ -387,6 +373,8 @@ class Updater(BaseModel):
         rationed = market.rationing_proportional(for_rationing)
         # Then we go through the rationing
         # and move the goods and cash appropriately
+        for household in environment.households:
+            household.state_variables["consumption_goods"] = 0.0
         for ration in rationed:
             #
             #             A (from)    L (to)
@@ -395,8 +383,9 @@ class Updater(BaseModel):
             # firm        deposit     goods
             #
             # TODO: in the new version this may be irrelevant
-            environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
-                                        ration[2], 0,  0, -1)
+            ration[1].state_variables["consumption_goods"] = ration[1].state_variables["consumption_goods"] + ration[2]
+            # environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
+            #                             ration[2], 0,  0, -1)
             # The below makes sure the allocations of loans are correct
             # That is the banks don't allow overdraft for buying
             # consumption goods by the households
@@ -525,49 +514,8 @@ class Updater(BaseModel):
     # before this method, currently it removes labour and goods
     # -------------------------------------------------------------------------
     def remove_perishable(self,  environment, time):
-        # First, remove labour, goods from firms
         for firm in environment.firms:
-            # We create a list of things to be removed
-            # since removing things from a list
-            # in a loop over this list is not a good idea
-            to_delete = []
-            # Then go through transactions
-            for tranx in firm.accounts:
-                # Append the things to delete
-                # if it's a labour
-                if tranx.type_ == "labour":
-                    to_delete.append(tranx)
-                # or goods transaction
-                if tranx.type_ == "goods":
-                    to_delete.append(tranx)
-            # And once we have them all we
-            # go through the things to delete
-            # and remove them from the books of agents
-            for tranx in to_delete:
-                tranx.remove_transaction()
-
-        # Then, remove labour, goods from households
-        for household in environment.households:
-            # We create a list of things to be removed
-            # since removing things from a list
-            # in a loop over this list is not a good idea
-            to_delete = []
-            # Then go through transactions
-            for tranx in firm.accounts:
-                # Append the things to delete
-                # if it's a labour
-                if tranx.type_ == "labour":
-                    to_delete.append(tranx)
-                # or goods transaction
-                if tranx.type_ == "goods":
-                    to_delete.append(tranx)
-            # And once we have them all we
-            # go through the things to delete
-            # and remove them from the books of agents
-            for tranx in to_delete:
-                tranx.remove_transaction()
-
-        # If necessary, another line for banks will be added here
+            firm.state_variables["labour"] = 0.0
 
         logging.info("  perishables removed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -582,81 +530,36 @@ class Updater(BaseModel):
     # that assumption, but this ensures the books are balanced for all agents
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
+        #
+        # add reserves
+        #
+        to_delete = []
+        for tranx in environment.central_bank[0].accounts:
+            if tranx.type_ == "cb_reserves":
+                to_delete.append(tranx)
+        for tranx in to_delete:
+            tranx.remove_transaction()
         for bank in environment.banks:
-            for firm in environment.firms:
-                paired = 0.0
-                to_delete = []
-                for tranx in bank.accounts:
-                    if tranx.type_ == "loans" and tranx.from_ == bank and tranx.to == firm:
-                        paired = paired + tranx.amount
-                    elif tranx.type_ == "shares" and tranx.from_ == firm and tranx.to == bank:
-                        to_delete.append(tranx)
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                environment.new_transaction("shares", "",  firm.identifier, bank.identifier,
-                                            paired, 0,  0, -1)
-            for household in environment.households:
-                paired = 0.0
-                to_delete = []
-                for tranx in bank.accounts:
-                    if tranx.type_ == "deposits" and tranx.from_ == household and tranx.to == bank:
-                        paired = paired + tranx.amount
-                    elif tranx.type_ == "ownership" and tranx.from_ == bank and tranx.to == household:
-                        to_delete.append(tranx)
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                environment.new_transaction("ownership", "", bank.identifier, household.identifier,
-                                            paired, 0,  0, -1)
-
-            for firm in environment.firms:
-                paired = 0.0
-                to_delete = []
-                for tranx in bank.accounts:
-                    if tranx.type_ == "deposits" and tranx.from_ == firm and tranx.to == bank:
-                        paired = paired + tranx.amount
-                    elif tranx.type_ == "ownership" and tranx.from_ == bank and tranx.to == firm:
-                        to_delete.append(tranx)
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                environment.new_transaction("ownership", "", bank.identifier, firm.identifier,
-                                            paired, 0,  0, -1)
-
-        logging.info("  capitalised on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # invest_interbank(environment, time)
-    # This function checks the optimal portfolio volume for banks and their
-    # allocations, then looks at the current ones and makes appropriate
-    # investment decisions
-    # -------------------------------------------------------------------------
-    def invest_interbank(self, environment, time):
-        # TARGET VOLUME OF INVESTMENTS
-        # We do this for every bank
-        for bank in environment.banks:
-            # Every bank finds out what leverage they want to use by using their
-            # own leverage from config file unless it's prohibited by the policy
-            target_leverage = 0.0
-            target_leverage = min(bank.target_leverage, environment.max_leverage_ratio)
-            # Then from the loans banks have and the leverage ration above
-            # We find how much the banks want to be investing
-            bank.state_variables["investment_volume"] = 0.0
-            bank.investment_volume = max(bank.get_account("deposits")*target_leverage - bank.get_account("loans"), 0.00)
-
-        # INTERBANK LENDING
+            reserves = environment.required_reserves * bank.get_account("deposits")
+            environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
+                                        reserves, 0,  0, -1)
+        #
+        # add interbank market
+        #
+        for_rationing = []
         from market import Market
         # Put the appropriate settings, i.e. desired identifier
         market = Market("market")
-        for_rationing = []
+        to_delete = []
         for bank in environment.banks:
-            # value = bank.interbank_liquidity - (bank.investment_volume - bank.get_account("loans"))
-            # value = bank.investment_volume
-            value = bank.get_account("loans") - bank.get_account("deposits") + bank.investment_volume
-            for_rationing.append([bank, value])
-        print(for_rationing)
+            demand = -bank.get_account("loans")-bank.get_account("cb_reserves")+bank.get_account("deposits")
+            for tranx in bank.accounts:
+                if tranx.type_ == "ib_loans":
+                    to_delete.append(tranx)
+            for_rationing.append([bank, demand])
+        for tranx in to_delete:
+            tranx.remove_transaction()
         rationed = market.rationing_proportional(for_rationing)
-
         for ration in rationed:
             environment.new_transaction("ib_loans", "",  ration[0].identifier, ration[1].identifier,
                                         ration[2], 0,  0, -1)
@@ -664,56 +567,41 @@ class Updater(BaseModel):
             print("%s lent %f worth of interbank loans to %s at time %d.") % (ration[0].identifier,
                                                                               ration[2], ration[1].identifier, time)
 
+        #
+        # central bank loans
+        #
+
+        to_delete = []
+        for tranx in environment.central_bank[0].accounts:
+            if tranx.type_ == "cb_loans":
+                to_delete.append(tranx)
+        for tranx in to_delete:
+            tranx.remove_transaction()
+
         for bank in environment.banks:
             # Then we add or remove central bank loans
             # We assume that since there is only one central bank we can keep those
             # in one transaction for now, if we fiddle with maturities this may change
             # If we don't yet have a central bank loan we create one
-            cb_volume = bank.investment_volume + bank.get_account("loans") - bank.get_account("deposits")
+            cb_volume = bank.get_account("loans") + bank.get_account("cb_reserves") - bank.get_account("deposits")
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     if tranx.from_ == bank:
-                        cb_volume = cb_volume - tranx.amount
-                    elif tranx.to == bank:
                         cb_volume = cb_volume + tranx.amount
-            if bank.get_account_num_transactions("cb_loans") == 0:
+                    elif tranx.to == bank:
+                        cb_volume = cb_volume - tranx.amount
+            if cb_volume > 0.0:
                 environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
                                             cb_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
-            # If we have a prior central bank loan we just adjust the amount
-            elif bank.get_account_num_transactions("cb_loans") == 1:
-                for tranx in bank.accounts:
-                    if tranx.type_ == "cb_loans":
-                        tranx.amount = cb_volume
-            else:
-                raise LookupError("Too many central bank loans present on bank's books.")
+            elif cb_volume < 0.0:
+                environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
+                                            -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
+        #
+        # excess reserves ???
+        #
 
-        for bank in environment.banks:
-            # Then we add or remove investments
-            # We do it for every investment class, for now we have 1/n portfolio
-            for asset_key in environment.assets:
-                # Thus each asset is invested in linearly, 1/n times the total inv volume
-                one_investment_volume = bank.investment_volume / len(environment.assets)
-                # We find if there are already transactions
-                # We will want one transaction of one type of investment also, as above
-                number_of_asset_transactions = 0
-                # We go through the books
-                for tranx in bank.accounts:
-                    if tranx.asset == asset_key:
-                        # And find the transactions that match
-                        number_of_asset_transactions = number_of_asset_transactions + 1
-                # If the bank doesn't yet have an investment we create one
-                if number_of_asset_transactions == 0:
-                    environment.new_transaction("investment", asset_key,  bank.identifier, bank.identifier,
-                                                one_investment_volume, 0,  0, -1)
-                # If they do have one we just amend the amount
-                elif number_of_asset_transactions == 1:
-                    for tranx in bank.accounts:
-                        if tranx.type_ == "investment":
-                            if tranx.asset == asset_key:
-                                tranx.amount = one_investment_volume
-                # If there are multiple investments in one asset we raise an error
-                else:
-                    raise LookupError("More than one transaction of the same asset.")
+        logging.info("  capitalised on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -729,14 +617,14 @@ class Updater(BaseModel):
             if check_status is False:
                 print(bank)
                 raise LookupError("Bank's books are not balanced.")
-        for firm in environment.firms:
-            check_status = firm.check_consistency()
-            if check_status is False:
-                print(firm)
-                raise LookupError("Firm's books are not balanced.")
-        for household in environment.households:
-            check_status = household.check_consistency()
-            if check_status is False:
-                print(household)
-                raise LookupError("Household's books are not balanced.")
+        # for firm in environment.firms:
+        #     check_status = firm.check_consistency()
+        #     if check_status is False:
+        #         print(firm)
+        #         raise LookupError("Firm's books are not balanced.")
+        # for household in environment.households:
+        #     check_status = household.check_consistency()
+        #     if check_status is False:
+        #         print(household)
+        #         raise LookupError("Household's books are not balanced.")
     # -------------------------------------------------------------------------

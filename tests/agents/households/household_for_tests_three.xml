@@ -2,5 +2,4 @@
     <parameter name='labour' value='24.00'></parameter>
     <parameter name='propensity_to_save' value='0.4'></parameter>
     <parameter name='ownership_of_banks' value='1'></parameter>
-    <transaction type='ownership' asset='' from='bank_test_config_id_three' to='household_test_config_id_three' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
 </household>

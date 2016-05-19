@@ -163,6 +163,11 @@ class Bank(BaseAgent):
                     assets = assets + tranx.amount
                 if tranx.to == self:
                     raise LookupError("Companies cannot grant loans to firms.")
+            elif tranx.type_ == "cb_reserves":
+                if tranx.from_ == self:
+                    assets = assets + tranx.amount
+                if tranx.to == self:
+                    raise LookupError("Banks cannot keep reserves from central bank.")
             elif tranx.type_ == "shares":
                 if tranx.from_ == self:
                     raise LookupError("Companies cannot own shares of banks.")
