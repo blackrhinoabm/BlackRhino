@@ -1,10 +1,10 @@
-This is the new repository for black_rhino and takes over from http://sourceforge.net/projects/oxblackrhino/?source=directory as of 2015-11-07.
+﻿This is the new repository for black_rhino and takes over from http://sourceforge.net/projects/oxblackrhino/?source=directory as of 2015-11-07.
 
 This new repository aims at a complete overhaul in terms of code for an agent-based model, it is implemented from the very basics to provide greater clarity and quality.
 
 In particular it is based on an abstract framework for economic agent-based models found in https://github.com/cogeorg/abm_template which means it is very modular, and that it is possible to interchange parts of the models without too much overhead, as the interface should remain the same due to the constraints of the abstract classes within abm_template.
 
-Mika is the branch aimed at a model of the financial system, particularly interested in modelling the interbank lending and common portfolios networks.
+Mika is the branch aimed at a model of the financial system, particularly interested in modelling the interbank lending and common portfolios networks. The main branch is the base for a financial model, and is aimed to be the base for further models.
 
 __INSTALL__
 
@@ -95,7 +95,7 @@ Typically, the structure of the environment file will look like this:
 </environment>
 ```
 
-The class Environment also contains a list parameters[] of parameters which may change during the run of a simulation. These are identified by type='changing' and the range for which a given parameter is valid is given by validity='to-from'. The class Environment includes a container that holds all the parameters needed in the course of the simulation.
+The class Environment also contains a list parameters[] of parameters which may change during the run of a simulation. These are identified by type='changing' (as opposed to 'static', 'shock', or 'asset' seen above) and the range for which a given parameter is valid is given by validity='to-from'. The class Environment includes a container that holds all the parameters needed in the course of the simulation.
 
 The Agents are described in the classes Bank, CentralBank, Household, and Firm (all those inherit from BaseAgent in abm_template). Each agent has a list accounts[] where all the transactions (which are objects of the class Transaction) an agent has performed are stored. The balance sheet of a bank is effectively expressed through the set of transactions which an agent has performed (and which are still on the agent's books at the current point in time). Agents also have their own parameters and variables, much like the Environment, the difference is that these affect only specific agents and not the whole system. Note that starting transactions can also be stored in agents' config files. This set of parameters is specified in the config file $agent_type_directory/$agent_identifier.xml.
 
