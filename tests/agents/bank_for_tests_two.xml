@@ -1,4 +1,4 @@
-<bank identifier='bank_test_config_id'>
+<bank identifier='bank_test_config_id_two'>
 	<parameter type='static' name='interest_rate_loans' value='0.00'></parameter>
     <parameter type='static' name='interest_rate_deposits' value='0.00'></parameter>
     <parameter type='static' name='target_leverage' value='2'></parameter>

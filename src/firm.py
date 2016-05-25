@@ -325,3 +325,37 @@ class Firm(BaseAgent):
         # Finally max(U) given particular wage
         return max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1)))
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # demand_for_labour_grid(price)
+    # -------------------------------------------------------------------------
+    def demand_for_labour_grid(self, price_of_labour):
+        from src.helper import Helper
+        helper = Helper()
+
+        minimum = 0.0
+        maximum = 0.0
+        minimum = self.capital
+        maximum = self.capital + self.funding/price_of_labour
+        lump = 0.05
+
+        max_production = 0.0
+        max_labour = 0.0
+
+        def my_range(start, end, step):
+            while start <= end:
+                yield start
+                start += step
+
+        for test_capital in my_range(minimum, maximum, lump):
+            test_labour = self.funding/price_of_labour - (test_capital - self.capital)
+            test_production = helper.cobb_douglas(test_labour, test_capital, self.total_factor_productivity,
+                                                  self.labour_elasticity, self.capital_elasticity)
+            if test_production > max_production:
+                max_production = test_production
+                max_labour = test_labour
+
+        # TODO: exponential search if we do it this way
+
+        return max_labour
+    # -------------------------------------------------------------------------

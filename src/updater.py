@@ -85,6 +85,8 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
         # self.accrue_interests(environment, time)
+        self.amortisation(environment, time)
+        self.get_funding(environment, time)
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
@@ -111,47 +113,6 @@ class Updater(BaseModel):
         # - careful about acrrue interests - so it doesn't explode, and think about the fluctuations
         # - so banks will have A: loans(investments)+reserves L: deposits+cb_loans
         self.check_consistency(environment, time)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # find_interbank_liquidity(environment, time)
-    # This method accrues interest on all transaction
-    # making sure we don't double count the transactions that are
-    # on the books of multiple agents, interest is specified within the
-    # transaction itself
-    # -------------------------------------------------------------------------
-    def find_interbank_liquidity(self,  environment, time):
-        environment.update_asset_returns()
-        for bank in environment.banks:
-            bank.state_variables["interbank_liquidity"] = 0.0
-            for asset_key in environment.assets:
-                # And find investment transactions
-                for tranx in bank.accounts:
-                    if tranx.type_ == "investment":
-                        # For the specific asset
-                        if tranx.asset == asset_key:
-                            # And amend its value by the current returns
-                            bank.interbank_liquidity = bank.interbank_liquidity + tranx.amount * environment.assets[asset_key][2]
-            for tranx in bank.accounts:
-                if tranx.type_ == "ib_loans":
-                    if tranx.from_ == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity + tranx.amount * (1 + bank.interbank_interest_rate)
-                    if tranx.to == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity - tranx.amount * (1 + bank.interbank_interest_rate)
-            for tranx in bank.accounts:
-                if tranx.type_ == "cb_loans":
-                    if tranx.to == bank:
-                        bank.interbank_liquidity = bank.interbank_liquidity - tranx.amount * environment.central_bank[0].interest_rate_cb_loans
-        # REMOVE CENTRAL BANK LOANS AND INTERBANK LOANS
-        to_delete = []
-        for bank in environment.banks:
-            for tranx in bank.accounts:
-                if tranx.type_ == "ib_loans" or tranx.type_ == "cb_loans":
-                    to_delete.append(tranx)
-        for tranx in to_delete:
-            tranx.remove_transaction()
-        logging.info("  found interbank liquidity on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -210,6 +171,74 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # amortisation(environment, time)
+    # -------------------------------------------------------------------------
+    def amortisation(self,  environment, time):
+        for firm in environment.firms:
+            firm.capital = firm.capital * (1 - firm.amortisation)
+
+        total_capital = 0.0
+        for firm in environment.firms:
+            total_capital = total_capital + firm.capital
+        print(total_capital)
+
+        total_loans = 0.0
+        for firm in environment.firms:
+            total_loans = total_loans + firm.get_account("loans")
+        if time > 1:
+            total_loans = total_loans / environment.variable_parameters["price_of_labour"]
+        print(total_loans)
+
+        logging.info("  capital amortisation performed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_funding(environment, time)
+    # -------------------------------------------------------------------------
+    def get_funding(self,  environment, time):
+        if time == 0:
+            for firm in environment.firms:
+                firm.funding = 30.0
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
+                                            firm.funding, random_bank.interest_rate_loans,  0, -1)
+        else:
+            for firm in environment.firms:
+                new_loans = (0.92 * firm.capital * environment.variable_parameters["price_of_labour"]) - firm.get_account("loans")
+                if new_loans > 0.0:
+                    random_bank = random.choice(environment.banks)
+                    firm.funding = firm.funding + new_loans
+                    environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
+                                                new_loans, random_bank.interest_rate_loans,  0, -1)
+                elif new_loans < 0.0:
+                    print("THISNEEDSCAREFULATTENTION")
+
+            logging.info("  capital amortisation performed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # capital_investments(environment, time)
+    # This method accrues provides random opportunities for companies
+    # to invest, these need to be negotiated with banks then
+    # -------------------------------------------------------------------------
+    def capital_investments(self,  environment, time):
+        for firm in environment.firms:
+            investment_opportunity = 0.0
+            investment_opportunity = random.random() * environment.max_investment_size
+            # I suppose firm wants to have them (demand/supply functions?)
+            # cost of the loan vs change in return from Cobb-Douglas (more or less, ignoring demand)
+            # if capital is not perishable (ignoring amortisation), then conceivably they would want it pretty much always
+
+            # Now the banks should decide but based on what?
+            # Risk and returns on portfolio
+
+        logging.info("  capital investments made on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # sell_labour(environment, time)
     # This function allows the households to sell their labour to firms
     # For now we assume that firms want to buy all the labour they can get
@@ -219,7 +248,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def sell_labour(self,  environment, time):
         for firm in environment.firms:
-            firm.state_variables["labour"] = 0.0
+            firm.parameters["labour"] = 0.0
         # First we find the market equilibrium price
         # Important to note that this currently does
         # not depend on the wealth of the buyers
@@ -233,7 +262,7 @@ class Updater(BaseModel):
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
-            buyers.append([agent, agent.demand_for_labour_solow])
+            buyers.append([agent, agent.demand_for_labour_grid])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
@@ -255,7 +284,7 @@ class Updater(BaseModel):
         for household in environment.households:
             for_rationing.append([household, household.supply_of_labour_solow(price)])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.demand_for_labour_solow(price)])
+            for_rationing.append([firm, -firm.demand_for_labour_grid(price)])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing_proportional(for_rationing)
@@ -270,20 +299,24 @@ class Updater(BaseModel):
             # and a liability (promise to work) for the household
             # ration[0]: household
             # ration[1]: firm
-            ration[1].state_variables["labour"] = ration[1].state_variables["labour"] + ration[2]
+            ration[1].parameters["labour"] = ration[1].parameters["labour"] + ration[2]
             random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
             environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
                                         ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
-            random_bank = random.choice(environment.banks)
+            # random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
-            environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-                                        ration[2]*price, random_bank.interest_rate_loans,  0, -1)
+            ration[1].funding = ration[1].funding - ration[2]*price
+            # environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
+            #                             ration[2]*price, random_bank.interest_rate_loans,  0, -1)
             # We print the action of selling to the screen
             print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                    ration[2], price, ration[1].identifier, time)
+        for firm in environment. firms:
+            firm.capital = firm.capital + firm.funding/price
+
         logging.info("  labour sold to firms on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -322,7 +355,7 @@ class Updater(BaseModel):
                 if tranx.type_ == "deposits" and tranx.from_ == firm:
                     capital = capital - tranx.amount
             # We find the amount produced through the Cobb-Douglas function
-            amount = helper.cobb_douglas(firm.state_variables["labour"], capital,
+            amount = helper.cobb_douglas(firm.parameters["labour"], capital,
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
@@ -515,7 +548,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def remove_perishable(self,  environment, time):
         for firm in environment.firms:
-            firm.state_variables["labour"] = 0.0
+            firm.parameters["labour"] = 0.0
 
         logging.info("  perishables removed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
