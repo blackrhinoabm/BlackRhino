@@ -1,0 +1,6 @@
+<agent identifier='agent_one'>
+  <parameter type='static' name='starting_opinion' value='1'></parameter>
+  <parameter type='transition' name='agent_one' value='0.5'></parameter>
+  <parameter type='transition' name='agent_two' value='0.25'></parameter>
+  <parameter type='transition' name='agent_three' value='0.25'></parameter>
+</agent>
