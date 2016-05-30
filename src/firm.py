@@ -337,7 +337,11 @@ class Firm(BaseAgent):
         maximum = 0.0
         minimum = self.capital
         maximum = self.capital + self.funding/price_of_labour
-        lump = 0.05
+        # lump = 0.05
+        # if maximum > minimum:
+        lump = (maximum - minimum) / 20
+        # else:
+            # lump = 0.05
 
         max_production = 0.0
         max_labour = 0.0
@@ -348,7 +352,7 @@ class Firm(BaseAgent):
                 start += step
 
         for test_capital in my_range(minimum, maximum, lump):
-            test_labour = self.funding/price_of_labour - (test_capital - self.capital)
+            test_labour = max(0, self.funding/price_of_labour - (test_capital - self.capital))
             test_production = helper.cobb_douglas(test_labour, test_capital, self.total_factor_productivity,
                                                   self.labour_elasticity, self.capital_elasticity)
             if test_production > max_production:

@@ -174,9 +174,14 @@ class Updater(BaseModel):
     # amortisation(environment, time)
     # -------------------------------------------------------------------------
     def amortisation(self,  environment, time):
+        # We perform amortisation of capital at each firm
+        # the amortisation parameter shows the % of capital
+        # that is lost at each time step (due to age, use, etc.)
         for firm in environment.firms:
+            # And here it's depreciated
             firm.capital = firm.capital * (1 - firm.amortisation)
 
+        # BELOW IS THE TEST CODE
         total_capital = 0.0
         for firm in environment.firms:
             total_capital = total_capital + firm.capital
@@ -197,22 +202,48 @@ class Updater(BaseModel):
     # get_funding(environment, time)
     # -------------------------------------------------------------------------
     def get_funding(self,  environment, time):
+        # This part is for kickstarting the simulation
+        # We give each firm starting capital of 30
+        # And a loan of equal value from a random bank
         if time == 0:
             for firm in environment.firms:
                 firm.funding = 30.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
                                             firm.funding, random_bank.interest_rate_loans,  0, -1)
+        # During the simulation, i.e. after the first time step
+        # We find the amount of new loans based on the previous capital stock
+        # (we assume firms want to have a specific), and existing loans
         else:
+            # For every firm
             for firm in environment.firms:
+                # We find the demand for loans in the firms
+                # As difference between demand for capital and labour minus the existing loans
+                # here we assume, as in the rest of the code that price of labour and capital is equal
                 new_loans = (0.92 * firm.capital * environment.variable_parameters["price_of_labour"]) - firm.get_account("loans")
+                # If we have loans to take
                 if new_loans > 0.0:
+                    # We take it with the random bank (HERE PORTFOLIO STUFF WILL HAPPEN LATER)
                     random_bank = random.choice(environment.banks)
+                    # We add new loans to the funding
                     firm.funding = firm.funding + new_loans
+                    # And add the loan to the books
                     environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
                                                 new_loans, random_bank.interest_rate_loans,  0, -1)
+                # If we have too much funding already
                 elif new_loans < 0.0:
-                    print("THISNEEDSCAREFULATTENTION")
+                    if abs(new_loans) <= firm.get_account("loans"):
+                        # sell capital / get deposits
+                        new_loans_temp = abs(new_loans)
+                        for tranx in firm.accounts:
+                            if tranx.type_ == "loans" and tranx.to == firm:
+                                to_remove = min(tranx.amount, new_loans_temp)
+                                tranx.amount = tranx.amount - to_remove
+                                new_loans_temp = new_loans_temp - to_remove
+                        firm.capital = firm.capital + new_loans/environment.variable_parameters["price_of_labour"]
+                        pass
+                    else:
+                        raise LookupError("Not enough capital to sell out")
 
             logging.info("  capital amortisation performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
