@@ -38,7 +38,7 @@ class Agent(object):
     #
 
     identifier = ""  # identifier of the specific bank
-    opinion = 0.0   # parameters of 'opinion' of the agent
+    opinion = 0.0   # initial 'opinion' of the agent
     transition_probabilities= {}  # weights of the opinions
 
     #
@@ -109,7 +109,7 @@ class Agent(object):
             # loop over all <parameter> entries in the xml file
             for subelement in element:
                 name = subelement.attrib['name']
-                value=subelement.attrib['value']
+                value = subelement.attrib['value']
 
             # take 'starting opinion' from static type
                 if subelement.attrib['type']=='static':
@@ -127,9 +127,9 @@ class Agent(object):
     #     <parameter name='string' value='string'></parameter>
     # </agent>
 
+    def create_temporary_variable(self, )
+        tempv =
 
-
- -temporary variable 
- multiply matrices 
+    def multiply_matrices
 
  return 
