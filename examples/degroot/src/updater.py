@@ -20,8 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-import random
-import logging
+from src.agent import Agent
 
 
 # -------------------------------------------------------------------------
@@ -37,30 +36,29 @@ class Updater(object):
     #
 
     identifier = ""
-    model_parameters = {}
+    new_opinion = {}
 
     #
     #
     # METHODS
     #
-    #
-
 
     # -------------------------------------------------------------------------
     # __init__
     # -------------------------------------------------------------------------
-    def __init__(self,  environment):
+    def __init__(self, environment):
         self.environment = environment
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_update
     # -------------------------------------------------------------------------
-    def do_update(self,  environment,  time):
+    def do_update(self, environment):
+        new_opinion = {}
 
-        update with all functions and 
-        save them somewhere 
+        for agent in environment.agents:
+            agent.create_temp_variable(environment) = new_opinion[agent.identifier]
 
-    # -------------------------------------------------------------------------
-
+            for agent in environment.agents:
+                new_opinion[agent.identifier] = agent.opinion
     # -------------------------------------------------------------------------

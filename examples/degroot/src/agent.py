@@ -66,7 +66,7 @@ class Agent(object):
     def __init__(self):
         self.identifier = ""  # identifier of the specific agent
         self.opinion = 0.0  # opinion of the specific agent
-        self.transition_probabilities = {} # dictionary with weights
+        self.transition_probabilities = {}  # dictionary with weights
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
@@ -116,7 +116,7 @@ class Agent(object):
     # which weight to multiply with which opinion
     # return is needed to pass the tempv variable back to the updater script
     # -------------------------------------------------------------------------
-    def create_temporary_variable(self, environment):
+    def create_temp_variable(self, environment):
         tempv = 0.0
 
         for agent in environment.agents:

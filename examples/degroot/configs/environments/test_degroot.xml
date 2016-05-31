@@ -1,4 +1,4 @@
-<environment title='tests_for_degroot_learning_example'>
+<environment identifier='tests_for_degroot_learning'>
     <!-- simulation parameters -->
     <parameter type='num_sweeps' value='5'></parameter>
     <parameter type='num_simulations' value='2'></parameter>
