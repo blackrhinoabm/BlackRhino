@@ -322,3 +322,10 @@ class Household(BaseAgent):
         # Thus (see docs for the economics):
         return min(self.labour, max(0, ((self.labour + 1) * price - wealth)/(2*price)))
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # update_maturity
+    # -------------------------------------------------------------------------
+    def update_maturity(self):
+        super(Bank, self).update_maturity()
+    # -------------------------------------------------------------------------

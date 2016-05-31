@@ -276,3 +276,26 @@ class Bank(BaseAgent):
     def __getattr__(self, attr):
         return super(Bank, self).__getattr__(attr)
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # update_maturity
+    # -------------------------------------------------------------------------
+    def update_maturity(self):
+        super(Bank, self).update_maturity()
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # liquidate_due_transactions
+    # -------------------------------------------------------------------------
+    def liquidate_due_transactions(self,  type):
+        volume = 0.0
+        to_remove = []
+
+        for tranx in self.accounts:
+            if ((tranx.type == type) and (int(tranx.maturity) == 0)):
+                volume = volume + float(tranx.transactionValue)
+
+        return volume
+        # THIS NEEDS TO BE IN UPDATER METHINKS
+        # ONE FOR EACH TYPE OF STUFF
+    # -------------------------------------------------------------------------

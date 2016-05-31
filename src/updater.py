@@ -85,6 +85,7 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
         # self.accrue_interests(environment, time)
+        # self.maturities(environment, time)
         self.amortisation(environment, time)
         self.get_funding(environment, time)
         # The households sell labour to firms
@@ -157,7 +158,7 @@ class Updater(BaseModel):
                 for firm in environment.firms:
                     amount = -excess / len(environment.firms)
                     environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
-                                                amount, bank.interest_rate_loans,  0, -1)
+                                                amount, bank.interest_rate_loans,  -1, -1)
             if round(excess, 2) > 0.0:
                 # TODO: bank_ownership parameter for households to weigh this
                 # For now, we add these proportionately to the households
@@ -165,8 +166,29 @@ class Updater(BaseModel):
                 for household in environment.households:
                     amount = excess * (household.ownership_of_banks / total_ownership)
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                amount, bank.interest_rate_deposits,  0, -1)
+                                                amount, bank.interest_rate_deposits,  -1, -1)
         logging.info("  interest accrued on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # maturities(environment, time)
+    # -------------------------------------------------------------------------
+    def maturities(self,  environment, time):
+        # Update maturities
+        for agent in environment.agents_generator:
+            agent.update_maturities()
+
+            # If maturity is zero then we must remove the transaction
+            # (remembering the economics properly)
+            # liquidate_due_transactions()
+
+        for tranx in self.accounts:
+            if ((tranx.type == 'deposits') and (int(tranx.maturity) == 0)):
+                tranx.from_.funding = tranx.from_.funding + float(tranx.amount)
+                tranx.to.liquidity = tranx.to.liquidity - float(tranx.amount)
+
+        logging.info("  maturities resolved on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -210,7 +232,7 @@ class Updater(BaseModel):
                 firm.funding = 30.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                            firm.funding, random_bank.interest_rate_loans,  0, -1)
+                                            firm.funding, random_bank.interest_rate_loans,  -1, -1)
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -229,7 +251,7 @@ class Updater(BaseModel):
                     firm.funding = firm.funding + new_loans
                     # And add the loan to the books
                     environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                                new_loans, random_bank.interest_rate_loans,  0, -1)
+                                                new_loans, random_bank.interest_rate_loans,  -1, -1)
                 # If we have too much funding already
                 elif new_loans < 0.0:
                     if abs(new_loans) <= firm.get_account("loans"):
@@ -335,13 +357,13 @@ class Updater(BaseModel):
             # Deposit is a liability of the bank
             # and an asset of the household
             environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
+                                        ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
             # random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
             ration[1].funding = ration[1].funding - ration[2]*price
             # environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
-            #                             ration[2]*price, random_bank.interest_rate_loans,  0, -1)
+            #                             ration[2]*price, random_bank.interest_rate_loans,  -1, -1)
             # We print the action of selling to the screen
             print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                    ration[2], price, ration[1].identifier, time)
@@ -449,7 +471,7 @@ class Updater(BaseModel):
             # TODO: in the new version this may be irrelevant
             ration[1].state_variables["consumption_goods"] = ration[1].state_variables["consumption_goods"] + ration[2]
             # environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
-            #                             ration[2], 0,  0, -1)
+            #                             ration[2], 0,  -1, -1)
             # The below makes sure the allocations of loans are correct
             # That is the banks don't allow overdraft for buying
             # consumption goods by the households
@@ -461,7 +483,7 @@ class Updater(BaseModel):
             # through their places on the list [agents]
             random_bank = random.choice(environment.banks)
             environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  0, -1)
+                                        ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
             for i in itrange:
                 current_bank = self.environment.banks[i]
                 # We find how much in deposits the household has
@@ -476,7 +498,7 @@ class Updater(BaseModel):
                 current_amount = min(to_finance, deposits_available)
                 # And add the appropriate transactions
                 environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
-                                            current_amount, current_bank.interest_rate_loans,  0, -1)
+                                            current_amount, current_bank.interest_rate_loans,  -1, -1)
                 to_finance = to_finance - current_amount
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
@@ -525,11 +547,11 @@ class Updater(BaseModel):
                 if balance > 0.0:
                     # If the balance is positive it's a deposit
                     environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
-                                                balance, bank.interest_rate_deposits,  0, -1)
+                                                balance, bank.interest_rate_deposits,  -1, -1)
                 elif balance < 0.0:
                     # If the balance is negative it's a loan
                     environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
-                                                abs(balance), bank.interest_rate_loans,  0, -1)
+                                                abs(balance), bank.interest_rate_loans,  -1, -1)
         # We do it from the bank's perspective
         for bank in environment.banks:
             # And first go through the households
@@ -561,11 +583,11 @@ class Updater(BaseModel):
                 if balance > 0.0:
                     # If the balance is positive it's a deposit
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                balance, bank.interest_rate_deposits,  0, -1)
+                                                balance, bank.interest_rate_deposits,  -1, -1)
                 elif balance < 0.0:
                     # If the balance is negative it's a loan
                     environment.new_transaction("loans", "",  bank.identifier, household.identifier,
-                                                abs(balance), bank.interest_rate_loans,  0, -1)
+                                                abs(balance), bank.interest_rate_loans,  -1, -1)
         logging.info("  deposits and loans netted on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -606,7 +628,7 @@ class Updater(BaseModel):
         for bank in environment.banks:
             reserves = environment.required_reserves * bank.get_account("deposits")
             environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
-                                        reserves, 0,  0, -1)
+                                        reserves, 0,  -1, -1)
         #
         # add interbank market
         #
@@ -626,7 +648,7 @@ class Updater(BaseModel):
         rationed = market.rationing_proportional(for_rationing)
         for ration in rationed:
             environment.new_transaction("ib_loans", "",  ration[0].identifier, ration[1].identifier,
-                                        ration[2], 0,  0, -1)
+                                        ration[2], 0,  -1, -1)
             # And print it to the screen for easy greping
             print("%s lent %f worth of interbank loans to %s at time %d.") % (ration[0].identifier,
                                                                               ration[2], ration[1].identifier, time)
@@ -656,10 +678,10 @@ class Updater(BaseModel):
                         cb_volume = cb_volume - tranx.amount
             if cb_volume > 0.0:
                 environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
-                                            cb_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
+                                            cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
             elif cb_volume < 0.0:
                 environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
-                                            -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  0, -1)
+                                            -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
         #
         # excess reserves ???
         #
