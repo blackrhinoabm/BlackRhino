@@ -38,6 +38,7 @@ class Environment(object):
     #
     identifier = ""  # identifier of the environment
     env_parameters = {}  # a dictionary containing all environmenet parameters
+    agents = []
 
     env_parameters["num_simulations"] = 0  # number of simulations
     env_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
@@ -67,14 +68,15 @@ class Environment(object):
             # loop over all entries in the xml file
             for subelement in element:
 
-                try:  # we see whether the value is a float
-                    value = float(subelement.attrib['value'])
-                    type = subelement.attrib['value']
-                    self.env_parameters[type] = value
+                try:  # we see whether the value is a int
+                    value = int(subelement.attrib['value'])
+                    type_ = subelement.attrib['type']
+                    self.env_parameters[type_] = value
 
                 except:  # if not, it is a string
                     value = str(subelement.attrib['value'])
-                    self.env_parameters[type] = value
+                    type_ = subelement.attrib['type']
+                    self.env_parameters[type_] = value
 
         except:
             logging.error("    ERROR: %s could not be parsed", env_filename)
@@ -101,10 +103,7 @@ class Environment(object):
         logging.info(" environment file read: %s", environment_filename)
 
         # then read in all the agents
-        if (self._directory != ""):
-            if (self.agent_directory != "none"):  # none is used for tests only
-                self.initialize_agents_from_files(self.agent_directory)
-                logging.info("  agents read from directory: %s", self.agent_directory)
+        self.initialize_agents_from_files(self.env_parameters['agent_directory'])
 
     # -------------------------------------------------------------------------
     # initialize_agents_from_files(self,  agent_directory)
@@ -115,20 +114,10 @@ class Environment(object):
     # -------------------------------------------------------------------------
     def initialize_agents_from_files(self, agent_directory):
         from src.agent import Agent
-        # this routine is called more than once, so we have to
-        # reset the list of agent each time
-        while len(self.agent) > 0:
-            self.agent.pop()
-        # we list all the files in the specified directory
-        listing = os.listdir(agent_directory)
-        # and check if the number of files is in line with the parameters
-        if (len(listing) != self.agent):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_agents (=%s)",
-                          agent_directory,  str(len(listing)), str(self.num_agents))
-        # we read the files sequentially
-        for infile in listing:
+
+        agent_files = os.listdir(agent_directory)
+        for each_agent_file in agent_files:
             agent = Agent()
-            agent.get_parameters_from_file(agent_directory + infile,  self)
-            # and read parameters to the agents, only to add them
-            # to the environment
-            self.agent.append(agent)
+            agent_filename = agent_directory + each_agent_file
+            agent.get_parameters_from_file(agent_filename, self)
+            self.agents.append(agent)

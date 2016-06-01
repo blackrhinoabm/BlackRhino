@@ -38,7 +38,6 @@ class Runner(object):
 
     identifier = ""
     num_sweeps = 0
-    current_step = 0
 
     #
     #
@@ -52,17 +51,13 @@ class Runner(object):
     def __init__(self, environment):
         self.initialize(environment)
     # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # get_identifier
-    # -------------------------------------------------------------------------
-
     # -------------------------------------------------------------------------
     # initialize()
     # -------------------------------------------------------------------------
-    def initialize(self,  environment):
+
+    def initialize(self, environment):
         self.identifier = environment.identifier
-        self.num_sweeps = int(environment.num_sweeps)
+        self.num_sweeps = int(environment.env_parameters['num_sweeps'])
         self.updater = Updater(environment)
     # -------------------------------------------------------------------------
 
@@ -74,10 +69,5 @@ class Runner(object):
 
         # For each update step
         for i in range(self.num_sweeps):
-
-            # the update step
-            # append current step, this is mostly for measurements
-            self.current_step = i
-            # do the actual update
-            self.updater.do_update(environment, i)
+            self.updater.do_update(environment)
     # ------------------------------------------------------------------------

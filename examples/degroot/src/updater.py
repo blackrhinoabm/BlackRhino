@@ -48,17 +48,17 @@ class Updater(object):
     # -------------------------------------------------------------------------
     def __init__(self, environment):
         self.environment = environment
+        self.new_opinion = {}
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self, environment):
-        new_opinion = {}
 
         for agent in environment.agents:
-            agent.create_temp_variable(environment) = new_opinion[agent.identifier]
+            self.new_opinion[agent.identifier] = agent.create_temp_variable(environment)
 
-            for agent in environment.agents:
-                new_opinion[agent.identifier] = agent.opinion
-    # -------------------------------------------------------------------------
+        for agent in environment.agents:
+            agent.opinion = self.new_opinion[agent.identifier]
+    # ----------------------------------------------------------------- d--------
