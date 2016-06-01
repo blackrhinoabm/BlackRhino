@@ -333,34 +333,49 @@ class Firm(BaseAgent):
         from src.helper import Helper
         helper = Helper()
 
+        # We find minimum and maximum possible amount of capital
+        # for Cobb-Douglas function
         minimum = 0.0
         maximum = 0.0
+        # Minimum is the current capital held by the firm
         minimum = self.capital
+        # And maximum is the minimum plus whatever can be bought by the funding
+        # available to the firm
         maximum = self.capital + self.funding/price_of_labour
         # lump = 0.05
         # if maximum > minimum:
+        # The lump specifies the step in the search algorithm
+        # We want it to be only 20 iterations, since it's within another loop
         lump = (maximum - minimum) / 20
         # else:
             # lump = 0.05
 
+        # Then we look for maximum possible production output given above and parameters
         max_production = 0.0
+        # And what amount of labour allows for this maximum
         max_labour = 0.0
 
+        # This function allows us to use a for loop with minimum, maximum, and step
         def my_range(start, end, step):
             while start <= end:
                 yield start
                 start += step
 
+        # We go through the possible amounts of capital stock
         for test_capital in my_range(minimum, maximum, lump):
+            # Find what amount of labour can be bought for residual funding
+            # We use the fact that Cobb-Douglas production function behaves nicely
+            # That is more labour will be better than less labor, ceteris paribus
             test_labour = max(0, self.funding/price_of_labour - (test_capital - self.capital))
+            # And check what the production output would be
             test_production = helper.cobb_douglas(test_labour, test_capital, self.total_factor_productivity,
                                                   self.labour_elasticity, self.capital_elasticity)
+            # Then we find whiever of these configurations is the best
             if test_production > max_production:
                 max_production = test_production
                 max_labour = test_labour
 
-        # TODO: exponential search if we do it this way
-
+        # And return it
         return max_labour
     # -------------------------------------------------------------------------
 

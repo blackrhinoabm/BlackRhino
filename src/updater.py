@@ -88,6 +88,7 @@ class Updater(BaseModel):
         # self.maturities(environment, time)
         self.amortisation(environment, time)
         self.get_funding(environment, time)
+        # TODO: make sure finding in firms is positive
         # The households sell labour to firms
         self.sell_labour(environment, time)
         # The firms sell goods to households
@@ -182,12 +183,15 @@ class Updater(BaseModel):
             # If maturity is zero then we must remove the transaction
             # (remembering the economics properly)
             # liquidate_due_transactions()
-
+        to_delete = []
         for tranx in self.accounts:
-            if ((tranx.type == 'deposits') and (int(tranx.maturity) == 0)):
-                tranx.from_.funding = tranx.from_.funding + float(tranx.amount)
-                tranx.to.liquidity = tranx.to.liquidity - float(tranx.amount)
-
+            if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
+                tranx.to.funding = tranx.to.funding - float(tranx.amount)
+                to_delete.append(tranx)
+                # Nor particularly necessary since banks close books anyway
+                # tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount)
+        for tranx in to_delete:
+            tranx.remove_transaction()
         logging.info("  maturities resolved on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -232,7 +236,7 @@ class Updater(BaseModel):
                 firm.funding = 30.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                            firm.funding, random_bank.interest_rate_loans,  -1, -1)
+                                            firm.funding, random_bank.interest_rate_loans,  2, -1)
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -242,7 +246,8 @@ class Updater(BaseModel):
                 # We find the demand for loans in the firms
                 # As difference between demand for capital and labour minus the existing loans
                 # here we assume, as in the rest of the code that price of labour and capital is equal
-                new_loans = (0.92 * firm.capital * environment.variable_parameters["price_of_labour"]) - firm.get_account("loans")
+                target_loans = 0.92 * firm.capital * environment.variable_parameters["price_of_labour"]
+                new_loans = target_loans - firm.get_account("loans")
                 # If we have loans to take
                 if new_loans > 0.0:
                     # We take it with the random bank (HERE PORTFOLIO STUFF WILL HAPPEN LATER)
@@ -251,43 +256,19 @@ class Updater(BaseModel):
                     firm.funding = firm.funding + new_loans
                     # And add the loan to the books
                     environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                                new_loans, random_bank.interest_rate_loans,  -1, -1)
+                                                new_loans, random_bank.interest_rate_loans,  2, -1)
                 # If we have too much funding already
-                elif new_loans < 0.0:
-                    if abs(new_loans) <= firm.get_account("loans"):
-                        # sell capital / get deposits
-                        new_loans_temp = abs(new_loans)
-                        for tranx in firm.accounts:
-                            if tranx.type_ == "loans" and tranx.to == firm:
-                                to_remove = min(tranx.amount, new_loans_temp)
-                                tranx.amount = tranx.amount - to_remove
-                                new_loans_temp = new_loans_temp - to_remove
-                        firm.capital = firm.capital + new_loans/environment.variable_parameters["price_of_labour"]
-                        pass
+                # Remember to check funding at the end and sell capital if necessary
+                if firm.funding < 0.0:
+                    # sell capital to level it to 0 (or above for labour)
+                    # TO THINK ABOUT: if we want firm to always produce then we must make it > 0.0
+                    # in the current version the firm will just not produce if it doesn't get funding
+                    if abs(firm.funding) > firm.capital:
+                        firm.capital = firm.capital + firm.funding
+                        firm.funding = 0.0
                     else:
-                        raise LookupError("Not enough capital to sell out")
-
-            logging.info("  capital amortisation performed on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # capital_investments(environment, time)
-    # This method accrues provides random opportunities for companies
-    # to invest, these need to be negotiated with banks then
-    # -------------------------------------------------------------------------
-    def capital_investments(self,  environment, time):
-        for firm in environment.firms:
-            investment_opportunity = 0.0
-            investment_opportunity = random.random() * environment.max_investment_size
-            # I suppose firm wants to have them (demand/supply functions?)
-            # cost of the loan vs change in return from Cobb-Douglas (more or less, ignoring demand)
-            # if capital is not perishable (ignoring amortisation), then conceivably they would want it pretty much always
-
-            # Now the banks should decide but based on what?
-            # Risk and returns on portfolio
-
-        logging.info("  capital investments made on step: %s",  time)
+                        raise LookupError("Firm has negative cashflow higher than its capital.")
+            logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -356,8 +337,9 @@ class Updater(BaseModel):
             random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
-            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
+            ration[0].funding = ration[0].funding + ration[2]*price
+            # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
+            #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
             # random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
@@ -367,8 +349,11 @@ class Updater(BaseModel):
             # We print the action of selling to the screen
             print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                    ration[2], price, ration[1].identifier, time)
-        for firm in environment. firms:
+        for firm in environment.firms:
             firm.capital = firm.capital + firm.funding/price
+            firm.funding = 0.0
+            if firm.capital <= 0.0:
+                raise LookupError("Capital in a firm is non-positive.")
 
         logging.info("  labour sold to firms on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -399,16 +384,8 @@ class Updater(BaseModel):
             # Firms produce based on their capital, for generality
             # we use their net capital, as in their capital stock
             # minus the capital owned of other agents
-            capital = 0.0
-            for tranx in firm.accounts:
-                # This is own capital stock
-                if tranx.type_ == "loans" and tranx.to == firm:
-                    capital = capital + tranx.amount
-                # And here is the ownership of other agents' stock
-                if tranx.type_ == "deposits" and tranx.from_ == firm:
-                    capital = capital - tranx.amount
             # We find the amount produced through the Cobb-Douglas function
-            amount = helper.cobb_douglas(firm.parameters["labour"], capital,
+            amount = helper.cobb_douglas(firm.parameters["labour"], firm.capital,
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
@@ -429,6 +406,7 @@ class Updater(BaseModel):
                     wealth = wealth - tranx.amount
             # Then the demand is determined by the agent's propensity to save
             # and the wealth calculated above
+            wealth = wealth + household.funding
             demand = -((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
@@ -482,24 +460,26 @@ class Updater(BaseModel):
             # And we iterate over the agents randomly by proxy of iterating
             # through their places on the list [agents]
             random_bank = random.choice(environment.banks)
-            environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-                                        ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
-            for i in itrange:
-                current_bank = self.environment.banks[i]
-                # We find how much in deposits the household has
-                deposits_available = 0.0
-                for tranx in ration[1].accounts:
-                    if tranx.type_ == "deposits" and tranx.to == current_bank:
-                        deposits_available = deposits_available + tranx.amount
-                    # This should be irrelevant, but for completeness:
-                    if tranx.type_ == "loans" and tranx.from_ == current_bank:
-                        deposits_available = deposits_available - tranx.amount
-                # We find the amount of deposits the household can spend for this particular bank
-                current_amount = min(to_finance, deposits_available)
-                # And add the appropriate transactions
-                environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
-                                            current_amount, current_bank.interest_rate_loans,  -1, -1)
-                to_finance = to_finance - current_amount
+            ration[0].funding = ration[0].funding + ration[2]*price
+            # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
+            #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
+            ration[1].funding = ration[1].funding - ration[2]*price
+            # for i in itrange:
+            #     current_bank = self.environment.banks[i]
+            #     # We find how much in deposits the household has
+            #     deposits_available = 0.0
+            #     for tranx in ration[1].accounts:
+            #         if tranx.type_ == "deposits" and tranx.to == current_bank:
+            #             deposits_available = deposits_available + tranx.amount
+            #         # This should be irrelevant, but for completeness:
+            #         if tranx.type_ == "loans" and tranx.from_ == current_bank:
+            #             deposits_available = deposits_available - tranx.amount
+            #     # We find the amount of deposits the household can spend for this particular bank
+            #     current_amount = min(to_finance, deposits_available)
+            #     # And add the appropriate transactions
+            #     environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
+            #                                 current_amount, current_bank.interest_rate_loans,  -1, -1)
+            #     to_finance = to_finance - current_amount
             # We print the action of selling to the screen
             print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                   ration[2], price, ration[1].identifier, time)
@@ -516,6 +496,9 @@ class Updater(BaseModel):
     # to be easier and move all cash to deposits in the banks
     # -------------------------------------------------------------------------
     def net_loans_deposits(self,  environment, time):
+        # TODO: stop netting stuff
+        # And instead get the funding to be deposited at the end of step
+        # TO THINK: should we just turn deposits into funding at the beginning?
         # We do it from the bank's perspective
         for bank in environment.banks:
             # And first go through the firms
