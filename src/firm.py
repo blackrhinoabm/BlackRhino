@@ -108,6 +108,7 @@ class Firm(BaseAgent):
         # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
         self.parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
         self.parameters["active"] = 0  # this is a control parameter checking whether firm is active
+        self.parameters["funding"] = 0.0  # intratemporal liquidity
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -341,14 +342,14 @@ class Firm(BaseAgent):
         minimum = self.capital
         # And maximum is the minimum plus whatever can be bought by the funding
         # available to the firm
-        maximum = self.capital + self.funding/price_of_labour
+        maximum = max(minimum, self.capital + self.funding/price_of_labour)
         # lump = 0.05
         # if maximum > minimum:
         # The lump specifies the step in the search algorithm
         # We want it to be only 20 iterations, since it's within another loop
         lump = (maximum - minimum) / 20
         # else:
-            # lump = 0.05
+        #     lump = 0.05
 
         # Then we look for maximum possible production output given above and parameters
         max_production = 0.0

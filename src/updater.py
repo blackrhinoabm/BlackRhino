@@ -94,7 +94,7 @@ class Updater(BaseModel):
         # The firms sell goods to households
         self.consume_rationed(environment, time)
         # We net deposits and loans
-        self.net_loans_deposits(environment, time)
+        # self.net_loans_deposits(environment, time)
         # We remove the perishable transactions
         self.remove_perishable(environment, time)
         # And add capital to balance the books
@@ -177,19 +177,25 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def maturities(self,  environment, time):
         # Update maturities
+        already_matured = []
         for agent in environment.agents_generator:
-            agent.update_maturities()
+            for tranx in agent.accounts:
+                if (int(tranx.maturity) > 0):  # reduce maturity if duration longer than 0
+                    if tranx not in already_matured:
+                        tranx.maturity = int(tranx.maturity) - 1
+                        already_matured.append(tranx)
 
             # If maturity is zero then we must remove the transaction
             # (remembering the economics properly)
             # liquidate_due_transactions()
         to_delete = []
-        for tranx in self.accounts:
-            if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
-                tranx.to.funding = tranx.to.funding - float(tranx.amount)
-                to_delete.append(tranx)
-                # Nor particularly necessary since banks close books anyway
-                # tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount)
+        for bank in environment.banks:
+            for tranx in bank.accounts:
+                if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
+                    tranx.to.funding = tranx.to.funding - float(tranx.amount)
+                    to_delete.append(tranx)
+                    # Nor particularly necessary since banks close books anyway
+                    # tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount)
         for tranx in to_delete:
             tranx.remove_transaction()
         logging.info("  maturities resolved on step: %s",  time)
@@ -246,7 +252,7 @@ class Updater(BaseModel):
                 # We find the demand for loans in the firms
                 # As difference between demand for capital and labour minus the existing loans
                 # here we assume, as in the rest of the code that price of labour and capital is equal
-                target_loans = 0.92 * firm.capital * environment.variable_parameters["price_of_labour"]
+                target_loans = 1.5 * firm.capital * environment.variable_parameters["price_of_labour"]
                 new_loans = target_loans - firm.get_account("loans")
                 # If we have loans to take
                 if new_loans > 0.0:
@@ -296,6 +302,7 @@ class Updater(BaseModel):
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
+            print(agent.capital)
             buyers.append([agent, agent.demand_for_labour_grid])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
@@ -334,7 +341,7 @@ class Updater(BaseModel):
             # ration[0]: household
             # ration[1]: firm
             ration[1].parameters["labour"] = ration[1].parameters["labour"] + ration[2]
-            random_bank = random.choice(environment.banks)
+            # random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
             ration[0].funding = ration[0].funding + ration[2]*price
@@ -453,13 +460,13 @@ class Updater(BaseModel):
             # The below makes sure the allocations of loans are correct
             # That is the banks don't allow overdraft for buying
             # consumption goods by the households
-            to_finance = ration[2]*price
-            itrange = list(range(0, len(environment.banks)))
-            # And randomise this list for the purposes of iterating randomly
-            random.shuffle(itrange)
-            # And we iterate over the agents randomly by proxy of iterating
-            # through their places on the list [agents]
-            random_bank = random.choice(environment.banks)
+            # to_finance = ration[2]*price
+            # itrange = list(range(0, len(environment.banks)))
+            # # And randomise this list for the purposes of iterating randomly
+            # random.shuffle(itrange)
+            # # And we iterate over the agents randomly by proxy of iterating
+            # # through their places on the list [agents]
+            # random_bank = random.choice(environment.banks)
             ration[0].funding = ration[0].funding + ration[2]*price
             # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
             #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
@@ -488,94 +495,6 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # net_loans_deposits(environment, time)
-    # This function makes deposits of all the remaining cash of the households
-    # It is important to notice that this ultimately depends on the propensity
-    # to save parameter, but indirectly, since it influences how much in goods
-    # the agents buy from firms prior to this step, thus allowing this step
-    # to be easier and move all cash to deposits in the banks
-    # -------------------------------------------------------------------------
-    def net_loans_deposits(self,  environment, time):
-        # TODO: stop netting stuff
-        # And instead get the funding to be deposited at the end of step
-        # TO THINK: should we just turn deposits into funding at the beginning?
-        # We do it from the bank's perspective
-        for bank in environment.banks:
-            # And first go through the firms
-            for firm in environment.firms:
-                # Finding what their balance of deposits (+) and loans (-) is
-                balance = 0.0
-                # And mark all the loan and deposits we account for to be deleted
-                to_delete = []
-                # We go through the firm's accounts
-                for tranx in firm.accounts:
-                    # And find deposits from the firm to the bank
-                    if tranx.type_ == "deposits":
-                        if tranx.to == bank:
-                            # If we find one we append the balance
-                            balance = balance + tranx.amount
-                            # And mark the transaction for deletion
-                            to_delete.append(tranx)
-                    # And find loans from the bank to the firm
-                    if tranx.type_ == "loans":
-                        if tranx.from_ == bank:
-                            # If we find one we append the balance
-                            balance = balance - tranx.amount
-                            # And mark the transaction for deletio
-                            to_delete.append(tranx)
-                # Then we delete all market transactions
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                # And add the netted transaction to the firm's and bank's books
-                if balance > 0.0:
-                    # If the balance is positive it's a deposit
-                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
-                                                balance, bank.interest_rate_deposits,  -1, -1)
-                elif balance < 0.0:
-                    # If the balance is negative it's a loan
-                    environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
-                                                abs(balance), bank.interest_rate_loans,  -1, -1)
-        # We do it from the bank's perspective
-        for bank in environment.banks:
-            # And first go through the households
-            for household in environment.households:
-                # Finding what their balance of deposits (+) and loans (-) is
-                balance = 0.0
-                # And mark all the loan and deposits we account for to be deleted
-                to_delete = []
-                # We go through the household's accounts
-                for tranx in household.accounts:
-                    # And find deposits from the household to the bank
-                    if tranx.type_ == "deposits":
-                        if tranx.to == bank:
-                            # If we find one we append the balance
-                            balance = balance + tranx.amount
-                            # And mark the transaction for deletion
-                            to_delete.append(tranx)
-                    # And find loans from the bank to the household
-                    if tranx.type_ == "loans":
-                        if tranx.from_ == bank:
-                            # If we find one we append the balance
-                            balance = balance - tranx.amount
-                            # And mark the transaction for deletion
-                            to_delete.append(tranx)
-                # Then we delete all market transactions
-                for tranx in to_delete:
-                    tranx.remove_transaction()
-                # And add the netted transaction to the household's and bank's books
-                if balance > 0.0:
-                    # If the balance is positive it's a deposit
-                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                balance, bank.interest_rate_deposits,  -1, -1)
-                elif balance < 0.0:
-                    # If the balance is negative it's a loan
-                    environment.new_transaction("loans", "",  bank.identifier, household.identifier,
-                                                abs(balance), bank.interest_rate_loans,  -1, -1)
-        logging.info("  deposits and loans netted on step: %s",  time)
-        # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
     # remove_perishable(environment, time)
     # This function removes the perishable transactions in the system
     # which need to be removed from the books before the end of the step
@@ -585,6 +504,35 @@ class Updater(BaseModel):
     def remove_perishable(self,  environment, time):
         for firm in environment.firms:
             firm.parameters["labour"] = 0.0
+
+        for firm in environment.firms:
+            if firm.funding >= 0.0:
+                # add a deposit
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
+                                            firm.funding, random_bank.interest_rate_deposits,  -1, -1)
+                firm.funding = 0.0
+            else:
+                raise LookupError("Firm has negative funding at the end of the step.")
+
+        for household in environment.households:
+            if household.funding >= 0.0:
+                # add a deposit
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
+                                            household.funding, random_bank.interest_rate_deposits,  -1, -1)
+                household.funding = 0.0
+            else:
+                # remove old deposits randomly (can do proportional but let's have some fun)
+                if abs(household.funding) <= household.get_account("deposits"):
+                    # remove the deposits
+                    for tranx in household.accounts:
+                        if tranx.type_ == "deposits":
+                            to_remove = min(abs(household.funding), tranx.amount)
+                            tranx.amount = tranx.amount - to_remove
+                            household.funding = household.funding + to_remove
+                else:
+                    raise LookupError("Household has more shortfall than deposits.")
 
         logging.info("  perishables removed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
