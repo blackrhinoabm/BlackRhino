@@ -128,7 +128,7 @@ class Runner(BaseRunner):
                 if int(shock[0]) <= i+1 and int(shock[1]) >= i+1:
                     shock_class.do_shock(environment, i, shock[2], "end")
             # HELPER, to be removed in production
-            print(environment.banks[0])
+            # print(environment.banks[0])
         # Close the output file at the end of the simulation
         measurement.close_file()
     # ------------------------------------------------------------------------

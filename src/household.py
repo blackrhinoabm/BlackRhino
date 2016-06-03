@@ -328,5 +328,5 @@ class Household(BaseAgent):
     # update_maturity
     # -------------------------------------------------------------------------
     def update_maturity(self):
-        super(Bank, self).update_maturity()
+        super(Household, self).update_maturity()
     # -------------------------------------------------------------------------

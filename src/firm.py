@@ -324,7 +324,7 @@ class Firm(BaseAgent):
             if tranx.type_ == "deposits" and tranx.from_ == self:
                 capital = capital - tranx.amount
         # Finally max(U) given particular wage
-        return max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1)))
+        return min(self.funding/price_of_labour, max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1))))
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -384,5 +384,5 @@ class Firm(BaseAgent):
     # update_maturity
     # -------------------------------------------------------------------------
     def update_maturity(self):
-        super(Bank, self).update_maturity()
+        super(Firm, self).update_maturity()
     # -------------------------------------------------------------------------

@@ -239,10 +239,11 @@ class Updater(BaseModel):
         # And a loan of equal value from a random bank
         if time == 0:
             for firm in environment.firms:
-                firm.funding = 30.0
+                firm.funding = 100.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
                                             firm.funding, random_bank.interest_rate_loans,  2, -1)
+                firm.parameters['max_labour'] = 100.0
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -252,8 +253,10 @@ class Updater(BaseModel):
                 # We find the demand for loans in the firms
                 # As difference between demand for capital and labour minus the existing loans
                 # here we assume, as in the rest of the code that price of labour and capital is equal
-                target_loans = 1.5 * firm.capital * environment.variable_parameters["price_of_labour"]
+                target_loans = 3.0 * firm.capital * 10.0
                 new_loans = target_loans - firm.get_account("loans")
+                print("CCC")
+                print(new_loans)
                 # If we have loans to take
                 if new_loans > 0.0:
                     # We take it with the random bank (HERE PORTFOLIO STUFF WILL HAPPEN LATER)
@@ -265,15 +268,14 @@ class Updater(BaseModel):
                                                 new_loans, random_bank.interest_rate_loans,  2, -1)
                 # If we have too much funding already
                 # Remember to check funding at the end and sell capital if necessary
-                if firm.funding < 0.0:
-                    # sell capital to level it to 0 (or above for labour)
-                    # TO THINK ABOUT: if we want firm to always produce then we must make it > 0.0
-                    # in the current version the firm will just not produce if it doesn't get funding
-                    if abs(firm.funding) > firm.capital:
-                        firm.capital = firm.capital + firm.funding
-                        firm.funding = 0.0
-                    else:
-                        raise LookupError("Firm has negative cashflow higher than its capital.")
+
+                total_funding = firm.funding + firm.capital * 10.0
+                firm.capital = firm.capital_elasticity * total_funding / 10.0
+                firm.funding = (1 - firm.capital_elasticity) * total_funding
+                print("AAA")
+                print(firm.capital)
+                print("BBB")
+                print(firm.funding)
             logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -325,7 +327,7 @@ class Updater(BaseModel):
         for household in environment.households:
             for_rationing.append([household, household.supply_of_labour_solow(price)])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.demand_for_labour_grid(price)])
+            for_rationing.append([firm, -firm.demand_for_labour_solow(price)])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing_proportional(for_rationing)
@@ -356,11 +358,6 @@ class Updater(BaseModel):
             # We print the action of selling to the screen
             print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
                                                                                    ration[2], price, ration[1].identifier, time)
-        for firm in environment.firms:
-            firm.capital = firm.capital + firm.funding/price
-            firm.funding = 0.0
-            if firm.capital <= 0.0:
-                raise LookupError("Capital in a firm is non-positive.")
 
         logging.info("  labour sold to firms on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
