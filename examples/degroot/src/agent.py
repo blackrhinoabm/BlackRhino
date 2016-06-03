@@ -95,7 +95,7 @@ class Agent(object):
                     name = subelement.attrib['name']
                     value = subelement.attrib['value']
 
-                    if name == 'starting opinion':
+                    if name == 'starting_opinion':
                         self.opinion = float(value)
 
                 if subelement.attrib['type'] == 'transition':

@@ -96,6 +96,7 @@ class Environment(object):
         self.env_parameters["num_sweeps"] = 0
         self.env_parameters["num_agents"] = 0
         self.env_parameters["agent_directory"] = ""
+        self.agents = []
 
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
@@ -114,10 +115,11 @@ class Environment(object):
     # -------------------------------------------------------------------------
     def initialize_agents_from_files(self, agent_directory):
         from src.agent import Agent
-
         agent_files = os.listdir(agent_directory)
         for each_agent_file in agent_files:
-            agent = Agent()
-            agent_filename = agent_directory + each_agent_file
-            agent.get_parameters_from_file(agent_filename, self)
-            self.agents.append(agent)
+
+            if '.xml' in each_agent_file:
+                agent = Agent()
+                agent_filename = agent_directory + each_agent_file
+                agent.get_parameters_from_file(agent_filename, self)
+                self.agents.append(agent)

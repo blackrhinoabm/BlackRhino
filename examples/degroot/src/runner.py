@@ -69,5 +69,11 @@ class Runner(object):
 
         # For each update step
         for i in range(self.num_sweeps):
+
+            print(i)
+
+            for agent in environment.agents:
+                print(agent.opinion)
+
             self.updater.do_update(environment)
     # ------------------------------------------------------------------------
