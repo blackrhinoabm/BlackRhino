@@ -1,0 +1,13 @@
+<environment identifier='tests_for_all_methods'>
+    <!-- simulation parameters -->
+    <parameter type='static' name='num_sweeps' value='50'></parameter>
+    <parameter type='static' name='num_simulations' value='1'></parameter>
+    <parameter type='static' name='num_banks' value='1'></parameter>
+    <parameter type='static' name='num_firms' value='1'></parameter>
+    <parameter type='static' name='num_households' value='1'></parameter>
+    <parameter type='static' name='bank_directory' value='tests/agents/banks/'></parameter>
+    <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
+    <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
+    <parameter type='static' name='measurement_config' value='tests/measurements/test_output.xml'></parameter>
+    <!-- parameters determining the dynamics -->
+</environment>
