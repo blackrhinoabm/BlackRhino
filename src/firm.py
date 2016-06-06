@@ -324,7 +324,7 @@ class Firm(BaseAgent):
             if tranx.type_ == "deposits" and tranx.from_ == self:
                 capital = capital - tranx.amount
         # Finally max(U) given particular wage
-        return min(self.funding/price_of_labour, max(0, (price_of_labour / (a * b * goods_price * capital ** c)) ** (1 / (b-1))))
+        return min(self.funding/price_of_labour, max(0, (price_of_labour / (a * b * goods_price * self.capital ** c)) ** (1 / (b-1))))
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

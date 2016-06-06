@@ -315,6 +315,8 @@ class Household(BaseAgent):
             # And subtracting the loans household has in the banks
             if tranx.type_ == "loans" and tranx.to == self:
                 wealth = wealth - tranx.amount
+        # check if this works???
+        wealth = wealth + self.funding
         # Armed with the savings of the household, and its labour endowment
         # We find its supply of labour at a given price (wage)
         # We have to remember that the supply of labour has to be bounded

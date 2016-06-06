@@ -85,7 +85,7 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
         # self.accrue_interests(environment, time)
-        # self.maturities(environment, time)
+        self.maturities(environment, time)
         self.amortisation(environment, time)
         self.get_funding(environment, time)
         # TODO: make sure finding in firms is positive
@@ -127,47 +127,19 @@ class Updater(BaseModel):
     def accrue_interests(self,  environment, time):
         # First, add interests to all the transactions
         # The function in environment makes sure we don't double count interests
-        environment.accrue_interests()
-        # Then, banks give their revenue as dividends to households
-        # which own the banks in the model
-        # for now we have them given out through ownership weights
-        total_ownership = 0.0
-        for household in environment.households:
-            total_ownership = total_ownership + household.ownership_of_banks
-        # We calculate dividends for every bank
+        # environment.accrue_interests()
         for bank in environment.banks:
-            # Find the excess of assets over liabilities
-            excess = 0.0
-            # To do that we go through all transactions
-            # and add or subtract them appropriately
             for tranx in bank.accounts:
-                if tranx.type_ == "loans" and tranx.from_ == bank:
-                    excess = excess + tranx.amount
-                if tranx.type_ == "deposits" and tranx.to == bank:
-                    excess = excess - tranx.amount
-            # If there is shortfall we throw an error for now
-            # since it is assumed that in the moden banks should have balanced
-            # books and interests on assets are higher, but in principle
-            # we may add some other behaviour here if necessary
-            # IMPLEMENTATION NOTE: while we want full accuracy in the model for
-            # now, the floating error around 0 means we need to round before checking
-            if round(excess, 2) < 0.0:
-                # raise LookupError("Bank lost money on interests.")
-                # If there is excess of loans over deposits
-                # We distribute the excess as
-                # IMPLEMENTATION NOTE: same as above
-                for firm in environment.firms:
-                    amount = -excess / len(environment.firms)
-                    environment.new_transaction("loans", "",  bank.identifier, firm.identifier,
-                                                amount, bank.interest_rate_loans,  -1, -1)
-            if round(excess, 2) > 0.0:
-                # TODO: bank_ownership parameter for households to weigh this
-                # For now, we add these proportionately to the households
-                # Deposit these to households appropriately
-                for household in environment.households:
-                    amount = excess * (household.ownership_of_banks / total_ownership)
-                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                amount, bank.interest_rate_deposits,  -1, -1)
+                if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans":
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
+                    tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
+                elif trans.type_ == "cb_loans":
+                    tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
+                elif trans.type_ == "cb_reserves":
+                    tranx.from_.funding = tranx.from_.funding - tranx.amount * tranx.interest
+                else:
+                    pass
+        # Change funding to liquidity for banks and do dividends
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -178,8 +150,8 @@ class Updater(BaseModel):
     def maturities(self,  environment, time):
         # Update maturities
         already_matured = []
-        for agent in environment.agents_generator:
-            for tranx in agent.accounts:
+        for agent in environment.agents_generator():
+            for tranx in agent.axccounts:
                 if (int(tranx.maturity) > 0):  # reduce maturity if duration longer than 0
                     if tranx not in already_matured:
                         tranx.maturity = int(tranx.maturity) - 1
@@ -253,10 +225,8 @@ class Updater(BaseModel):
                 # We find the demand for loans in the firms
                 # As difference between demand for capital and labour minus the existing loans
                 # here we assume, as in the rest of the code that price of labour and capital is equal
-                target_loans = 3.0 * firm.capital * 10.0
+                target_loans = 2.0 * firm.capital * 10.0  # TO THINK ABOUT
                 new_loans = target_loans - firm.get_account("loans")
-                print("CCC")
-                print(new_loans)
                 # If we have loans to take
                 if new_loans > 0.0:
                     # We take it with the random bank (HERE PORTFOLIO STUFF WILL HAPPEN LATER)
@@ -272,10 +242,10 @@ class Updater(BaseModel):
                 total_funding = firm.funding + firm.capital * 10.0
                 firm.capital = firm.capital_elasticity * total_funding / 10.0
                 firm.funding = (1 - firm.capital_elasticity) * total_funding
-                print("AAA")
-                print(firm.capital)
-                print("BBB")
-                print(firm.funding)
+                # print("firm.capital")
+                # print(firm.capital)
+                # print("firm.funding")
+                # print(firm.funding)
             logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -393,11 +363,16 @@ class Updater(BaseModel):
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
+        # Here firms sell
+        # TODO
+        for ration in for_rationing:
+            ration[0].funding = ration[0].funding + ration[1]*price
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they
         # do not want to save (determined through propensity to save)
         # We denote demand in units of the goods, so we divide the cash
         # households want to spend by price to get the demand
+        for_rationing = []
         for household in environment.households:
             demand = 0.0
             wealth = 0.0
@@ -411,83 +386,14 @@ class Updater(BaseModel):
             # Then the demand is determined by the agent's propensity to save
             # and the wealth calculated above
             wealth = wealth + household.funding
+            print("wealth")
+            print(wealth)
             demand = -((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
-        from market import Market
-        # Put the appropriate settings, i.e.
-        # tolerance of error, resolution of search
-        # and amplification for exponential search
-        # This does not matter for rationing
-        # But in principle we need to initialize
-        # with these values
-        market = Market("market")
-        # And we find the rationing, ie the amounts
-        # of goods sold between pairs of agents
-        # TESTING THE ABSTRACT RATIONING
-        # The matching function means that all pairs will have the same priority
-
-        def matching_agents_basic(agent_one, agent_two):
-            # return 1.0
-            return random.random()
-
-        # The below function means that all pairs are allowed
-
-        def allow_match_basic(agent_one, agent_two):
-            return True
-
-        # We find the actual trades
-        # rationed = market.rationing_abstract(for_rationing, matching_agents_basic, allow_match_basic)
-        rationed = market.rationing_proportional(for_rationing)
-        # Then we go through the rationing
-        # and move the goods and cash appropriately
-        for household in environment.households:
-            household.state_variables["consumption_goods"] = 0.0
-        for ration in rationed:
-            #
-            #             A (from)    L (to)
-            # bank        loan        deposit
-            # household   goods       loan
-            # firm        deposit     goods
-            #
-            # TODO: in the new version this may be irrelevant
-            ration[1].state_variables["consumption_goods"] = ration[1].state_variables["consumption_goods"] + ration[2]
-            # environment.new_transaction("goods", "",  ration[1].identifier, ration[0].identifier,
-            #                             ration[2], 0,  -1, -1)
-            # The below makes sure the allocations of loans are correct
-            # That is the banks don't allow overdraft for buying
-            # consumption goods by the households
-            # to_finance = ration[2]*price
-            # itrange = list(range(0, len(environment.banks)))
-            # # And randomise this list for the purposes of iterating randomly
-            # random.shuffle(itrange)
-            # # And we iterate over the agents randomly by proxy of iterating
-            # # through their places on the list [agents]
-            # random_bank = random.choice(environment.banks)
-            ration[0].funding = ration[0].funding + ration[2]*price
-            # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
-            #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
-            ration[1].funding = ration[1].funding - ration[2]*price
-            # for i in itrange:
-            #     current_bank = self.environment.banks[i]
-            #     # We find how much in deposits the household has
-            #     deposits_available = 0.0
-            #     for tranx in ration[1].accounts:
-            #         if tranx.type_ == "deposits" and tranx.to == current_bank:
-            #             deposits_available = deposits_available + tranx.amount
-            #         # This should be irrelevant, but for completeness:
-            #         if tranx.type_ == "loans" and tranx.from_ == current_bank:
-            #             deposits_available = deposits_available - tranx.amount
-            #     # We find the amount of deposits the household can spend for this particular bank
-            #     current_amount = min(to_finance, deposits_available)
-            #     # And add the appropriate transactions
-            #     environment.new_transaction("loans", "",  current_bank.identifier, ration[1].identifier,
-            #                                 current_amount, current_bank.interest_rate_loans,  -1, -1)
-            #     to_finance = to_finance - current_amount
-            # We print the action of selling to the screen
-            print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
-                                                                                  ration[2], price, ration[1].identifier, time)
-        logging.info("  goods consumed on step: %s",  time)
+        for ration in for_rationing:
+            ration[0].funding = ration[0].funding - ration[1]*price
+        logging.info("  goods produced, sold, and consumed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
