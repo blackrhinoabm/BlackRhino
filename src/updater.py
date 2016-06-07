@@ -84,7 +84,7 @@ class Updater(BaseModel):
         # Unless transaction should carry interest
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
-        # self.accrue_interests(environment, time)
+        self.accrue_interests(environment, time)
         self.maturities(environment, time)
         self.amortisation(environment, time)
         self.get_funding(environment, time)
@@ -133,13 +133,25 @@ class Updater(BaseModel):
                 if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans":
                     tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
                     tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
-                elif trans.type_ == "cb_loans":
+                elif tranx.type_ == "cb_loans":
                     tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
-                elif trans.type_ == "cb_reserves":
+                elif tranx.type_ == "cb_reserves":
                     tranx.from_.funding = tranx.from_.funding - tranx.amount * tranx.interest
                 else:
                     pass
-        # Change funding to liquidity for banks and do dividends
+        # Do dividends
+        for bank in environment.banks:
+            if round(bank.funding, 3) > 0.0:
+                num_households = len(environment.households)
+                to_fund = bank.funding / num_households
+                for household in environment.households:
+                    household.funding = household.funding + to_fund
+                bank.funding = 0.0
+            elif round(bank.funding, 3) == 0.0:
+                pass  # do nothing, neutral on interests
+            else:
+                raise LookupError("Bank has negative position on interests. To implement.")
+                # Should that not be negative funding to households (negative dividend)?
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -151,7 +163,7 @@ class Updater(BaseModel):
         # Update maturities
         already_matured = []
         for agent in environment.agents_generator():
-            for tranx in agent.axccounts:
+            for tranx in agent.accounts:
                 if (int(tranx.maturity) > 0):  # reduce maturity if duration longer than 0
                     if tranx not in already_matured:
                         tranx.maturity = int(tranx.maturity) - 1
@@ -167,7 +179,7 @@ class Updater(BaseModel):
                     tranx.to.funding = tranx.to.funding - float(tranx.amount)
                     to_delete.append(tranx)
                     # Nor particularly necessary since banks close books anyway
-                    # tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount)
+                    # tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount))
         for tranx in to_delete:
             tranx.remove_transaction()
         logging.info("  maturities resolved on step: %s",  time)
@@ -184,20 +196,6 @@ class Updater(BaseModel):
         for firm in environment.firms:
             # And here it's depreciated
             firm.capital = firm.capital * (1 - firm.amortisation)
-
-        # BELOW IS THE TEST CODE
-        total_capital = 0.0
-        for firm in environment.firms:
-            total_capital = total_capital + firm.capital
-        print(total_capital)
-
-        total_loans = 0.0
-        for firm in environment.firms:
-            total_loans = total_loans + firm.get_account("loans")
-        if time > 1:
-            total_loans = total_loans / environment.variable_parameters["price_of_labour"]
-        print(total_loans)
-
         logging.info("  capital amortisation performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -215,7 +213,6 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
                                             firm.funding, random_bank.interest_rate_loans,  2, -1)
-                firm.parameters['max_labour'] = 100.0
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -225,7 +222,14 @@ class Updater(BaseModel):
                 # We find the demand for loans in the firms
                 # As difference between demand for capital and labour minus the existing loans
                 # here we assume, as in the rest of the code that price of labour and capital is equal
-                target_loans = 2.0 * firm.capital * 10.0  # TO THINK ABOUT
+                to_delete = []
+                for tranx in firm.accounts:
+                    if tranx.type_ == "deposits":
+                        firm.funding = firm.funding + tranx.amount / 10.0
+                        to_delete.append(tranx)
+                for tranx in to_delete:
+                    tranx.remove_transaction()
+                target_loans = 1.1 * firm.capital * 10.0  # TO THINK ABOUT
                 new_loans = target_loans - firm.get_account("loans")
                 # If we have loans to take
                 if new_loans > 0.0:
@@ -242,10 +246,6 @@ class Updater(BaseModel):
                 total_funding = firm.funding + firm.capital * 10.0
                 firm.capital = firm.capital_elasticity * total_funding / 10.0
                 firm.funding = (1 - firm.capital_elasticity) * total_funding
-                # print("firm.capital")
-                # print(firm.capital)
-                # print("firm.funding")
-                # print(firm.funding)
             logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
