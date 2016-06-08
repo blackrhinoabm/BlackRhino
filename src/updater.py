@@ -279,9 +279,23 @@ class Updater(BaseModel):
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
-        starting_price = 10.0
-        # We initialize the price
-        price = 0.0
+
+        if time == 0:
+            self.price = 10.0
+            price = self.price
+            # We initialize the price
+        else:
+            from random import Random
+            random = Random()
+            oldValue = self.price
+            newValue = 0.0
+            scaleFactor = 0.01
+
+            newValue = max((1.0 - scaleFactor + 2.0*scaleFactor*random.random())*oldValue, 0.0)  # make sure we have only positive prices
+
+            self.price = newValue
+            price = self.price
+
         # Import market clearing class
         from market import Market
         # Put the appropriate settings, i.e. desired identifier
@@ -290,14 +304,15 @@ class Updater(BaseModel):
         # given supply and demand of the agents
         # and tolerance of error, resolution of search
         # and amplification factor for exponential search
-        price = market.tatonnement(sellers, buyers, starting_price, 0.001, 0.01, 1.1)
+        price = market.tatonnement(sellers, buyers, price, 0.001, 0.01, 1.1)
         environment.variable_parameters["price_of_labour"] = price
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
         for household in environment.households:
-            for_rationing.append([household, household.supply_of_labour_solow(price)])
+            for_rationing.append([household, household.supply_of_labour_solow(price)])  # TODO: some function of price, maybe the original now, since it's constrained anyway
+            # for_rationing.append([household, household.labour])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.demand_for_labour_solow(price)])
+            for_rationing.append([firm, -firm.funding/price])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing_proportional(for_rationing)
@@ -388,7 +403,7 @@ class Updater(BaseModel):
             wealth = wealth + household.funding
             print("wealth")
             print(wealth)
-            demand = -((wealth * (1 - household.propensity_to_save)) / price)
+            demand = ((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
         for ration in for_rationing:
