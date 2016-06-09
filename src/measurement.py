@@ -223,4 +223,52 @@ class Measurement(BaseMeasurement):
                 if tranx.type_ == "loans" and tranx.to == self.environment.firms[2]:
                     wealth = wealth + tranx.amount
             return wealth
+        if ident == "h1d":
+            wealth = 0.0
+            for tranx in self.environment.households[0].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.households[0]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "h1l":
+            wealth = 0.0
+            for tranx in self.environment.households[0].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.households[0]:
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "h2d":
+            wealth = 0.0
+            for tranx in self.environment.households[1].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.households[1]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "h2l":
+            wealth = 0.0
+            for tranx in self.environment.households[1].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.households[1]:
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "h3d":
+            wealth = 0.0
+            for tranx in self.environment.households[2].accounts:
+                if tranx.type_ == "deposits" and tranx.from_ == self.environment.households[2]:
+                    wealth = wealth - tranx.amount
+            return wealth
+        if ident == "h3l":
+            wealth = 0.0
+            for tranx in self.environment.households[2].accounts:
+                if tranx.type_ == "loans" and tranx.to == self.environment.households[2]:
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "bank_loans":
+            wealth = 0.0
+            for tranx in self.environment.banks[0].accounts:
+                if tranx.type_ == "loans":
+                    wealth = wealth + tranx.amount
+            return wealth
+        if ident == "bank_deposits":
+                wealth = 0.0
+                for tranx in self.environment.banks[0].accounts:
+                    if tranx.type_ == "deposits":
+                        wealth = wealth + tranx.amount
+                return wealth
     # -------------------------------------------------------------------------

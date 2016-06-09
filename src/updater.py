@@ -139,6 +139,7 @@ class Updater(BaseModel):
                     tranx.from_.funding = tranx.from_.funding - tranx.amount * tranx.interest
                 else:
                     pass
+
         # Do dividends
         for bank in environment.banks:
             if round(bank.funding, 3) > 0.0:
@@ -151,6 +152,11 @@ class Updater(BaseModel):
                 pass  # do nothing, neutral on interests
             else:
                 raise LookupError("Bank has negative position on interests. To implement.")
+                # num_households = len(environment.households)
+                # to_fund = bank.funding / num_households
+                # for household in environment.households:
+                #     household.funding = household.funding + to_fund
+                # bank.funding = 0.0
                 # Should that not be negative funding to households (negative dividend)?
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -172,6 +178,24 @@ class Updater(BaseModel):
             # If maturity is zero then we must remove the transaction
             # (remembering the economics properly)
             # liquidate_due_transactions()
+        to_delete = []
+        for firm in environment.firms:
+            for tranx in firm.accounts:
+                if tranx.type_ == "deposits":
+                    to_delete.append(tranx)
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount
+        for tranx in to_delete:
+            tranx.remove_transaction()
+
+        to_delete = []
+        for household in environment.households:
+            for tranx in household.accounts:
+                if tranx.type_ == "deposits":
+                    to_delete.append(tranx)
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount
+        for tranx in to_delete:
+            tranx.remove_transaction()
+
         to_delete = []
         for bank in environment.banks:
             for tranx in bank.accounts:
@@ -426,9 +450,13 @@ class Updater(BaseModel):
         for firm in environment.firms:
             if firm.funding >= 0.0:
                 # add a deposit
-                random_bank = random.choice(environment.banks)
-                environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
-                                            firm.funding, random_bank.interest_rate_deposits,  -1, -1)
+                one_deposits = firm.funding/len(environment.banks)  # add a network here later
+                for bank in environment.banks:
+                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
+                                                one_deposits, bank.interest_rate_deposits,  -1, -1)
+                # random_bank = random.choice(environment.banks)
+                # environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
+                #                             firm.funding, random_bank.interest_rate_deposits,  -1, -1)
                 firm.funding = 0.0
             else:
                 raise LookupError("Firm has negative funding at the end of the step.")
@@ -436,9 +464,13 @@ class Updater(BaseModel):
         for household in environment.households:
             if household.funding >= 0.0:
                 # add a deposit
-                random_bank = random.choice(environment.banks)
-                environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
-                                            household.funding, random_bank.interest_rate_deposits,  -1, -1)
+                one_deposits = firm.funding/len(environment.banks)  # add a network here later
+                for bank in environment.banks:
+                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
+                                                one_deposits, bank.interest_rate_deposits,  -1, -1)
+                # random_bank = random.choice(environment.banks)
+                # environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
+                #                             household.funding, random_bank.interest_rate_deposits,  -1, -1)
                 household.funding = 0.0
             else:
                 # remove old deposits randomly (can do proportional but let's have some fun)

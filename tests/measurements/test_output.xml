@@ -1,10 +1,18 @@
 <measurement identifier='test_output'>
     <parameter type='filename' value='TestMeasurement.csv'></parameter>
     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
-    <parameter type='output' column='2' header='Deposits' value='one' ></parameter>
-    <parameter type='output' column='3' header='Deposits' value='two' ></parameter>
-    <parameter type='output' column='4' header='Deposits' value='thr' ></parameter>
-    <parameter type='output' column='5' header='Deposits' value='fou' ></parameter>
-    <parameter type='output' column='6' header='Deposits' value='fiv' ></parameter>
-    <parameter type='output' column='7' header='Deposits' value='six' ></parameter>
+    <parameter type='output' column='2' header='Firm1 Deposits' value='one' ></parameter>
+    <parameter type='output' column='3' header='Firm1 Loans' value='two' ></parameter>
+    <parameter type='output' column='4' header='Firm2 Deposits' value='thr' ></parameter>
+    <parameter type='output' column='5' header='Firm2 Loans' value='fou' ></parameter>
+    <parameter type='output' column='6' header='Firm3 Deposits' value='fiv' ></parameter>
+    <parameter type='output' column='7' header='Firm3 Loans' value='six' ></parameter>
+    <parameter type='output' column='8' header='Household1 Deposits' value='h1d' ></parameter>
+    <parameter type='output' column='9' header='Household1 Loans' value='h1l' ></parameter>
+    <parameter type='output' column='10' header='Household2 Deposits' value='h2d' ></parameter>
+    <parameter type='output' column='11' header='Household2 Loans' value='h2l' ></parameter>
+    <parameter type='output' column='12' header='Household3 Deposits' value='h3d' ></parameter>
+    <parameter type='output' column='13' header='Household3 Loans' value='h3l' ></parameter>
+    <parameter type='output' column='14' header='Bank Deposist' value='bank_loans' ></parameter>
+    <parameter type='output' column='15' header='Bank Loans' value='bank_deposits' ></parameter>
 </measurement>
