@@ -101,15 +101,16 @@ class Runner(BaseRunner):
         # loop over all time steps and do the updating
 
         # For each update step
+
+        measurement = Measurement(environment, self)
+        measurement.open_file()
+
         for i in range(self.num_sweeps):
 
             self.current_step = i
-            measurement = Measurement(environment, self)
-            measurement.open_file()
 
-            self.updater.do_update(environment)
             measurement.write_to_file()
-
+            self.updater.do_update(environment)
 
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.current_step, environment.static_parameters['num_simulations'])
         print("Check the output file that was written as csv in the main folder\n***")
@@ -118,7 +119,6 @@ class Runner(BaseRunner):
         # print(self.get_num_sweeps())
         # print(environment.agents[0])
         # print(environment.agents[1])
-
 
         # parameters={'deposit_rate':-0.02}
         # agent.append_parameters(parameters)
