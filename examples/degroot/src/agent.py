@@ -34,6 +34,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 
+from abm_template.src.baseagent import BaseAgent
+
 # ============================================================================
 #
 # class Bank
@@ -41,7 +43,7 @@ import logging
 # ============================================================================
 
 
-class Agent(object):
+class Agent(BaseAgent):
     #
     #
     # VARIABLES
@@ -51,12 +53,95 @@ class Agent(object):
     identifier = ""  # identifier of the specific agent
     opinion = 0.0   # initial 'opinion' of the agent
     transition_probabilities = {}  # weights of the opinions
+    state_variables = {}
+    parameters = {}
 
+    accounts = []
     #
     #
     # CODE
     #
     #
+
+    #
+    #
+    # all the methods inherited from the abstract class BaseAgent
+    # that we need to include so the agent class gets instantiated
+    # we can use them to modify the program easier (e.g. set_num_sweeps)
+    #
+    #
+
+    def __getattr__(self):
+        super(Agent, self).__getattr__()
+
+    def __str__(self):
+        ret_str = "  <agent identifier='" + self.identifier + "'>\n "
+
+        ret_str = ret_str + "    <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
+
+        # the below kind of worked, but wrong starting opinion???!
+        # opinion = self.opinion
+        # if isinstance(opinion, int) or isinstance(opinion, float) or isinstance(opinion, str):
+        #     ret_str = ret_str + "    <parameter type='static' name=starting_opinion value='" + str(opinion) + "'></parameter>\n"
+        # else:
+        #     raise TypeError
+
+        for each_agent in self.transition_probabilities:
+            weight = self.transition_probabilities[each_agent]
+            if isinstance(weight, int) or isinstance(weight, float) or isinstance(weight, str):
+                ret_str = ret_str + "    <parameter type='transition' + 'name='" + each_agent + "' value='" + str(weight) + "'></parameter>\n"
+            else:
+                raise TypeError
+
+        ret_str = ret_str + "</agent>\n"
+
+        return ret_str
+
+
+    def get_parameters(self):
+        return self.parameters
+
+    def append_parameters(self, values):
+        super(Agent, self).append_parameters(values)
+
+    def set_parameters(self, values):
+        super(Agent, self).append_parameters(values)
+
+    def append_state_variables(self, values):
+        super(Agent, self).append_state_variables(values)
+
+    def get_state_variables(self):
+        return self.state_variables
+
+    def set_state_variables(self, _variables):
+        super(Agent, self).set_state_variables(_variables)
+
+    def check_consistency(self, assets, liabilities):
+        super(Agent, self).check_consistency(assets,liabilities)
+
+    def clear_accounts(self):
+        super(Agent, self).clear_accounts()
+
+    def get_account(self, _type):
+        super(Agent, self).get_account(_type)
+
+    def purge_accounts(self, environment):
+        super(Agent, self).purge_accounts(environment)
+
+    def get_account_num_transactions(self, _type):
+        super(Agent, self).get_account_num_transactions(_type)
+
+    def get_transactions_from_file(self, filename, environment):
+        super(Agent, self).get_transactions_from_file(filename, environment)
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, value):
+        super(Agent, self).set_identifier(value)
+
+    def update_maturity(self):
+        super(Agent, self).update_maturity()
 
     # -----------------------------------------------------------------------
     # __init__  used to automatically instantiate an agent as an object when
@@ -116,6 +201,7 @@ class Agent(object):
     # which weight to multiply with which opinion
     # return is needed to pass the tempv variable back to the updater script
     # -------------------------------------------------------------------------
+
     def create_temp_variable(self, environment):
         tempv = 0.0
 

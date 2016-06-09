@@ -19,9 +19,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-
+from src.agent import Agent
+from src.measurement import Measurement
 from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
+
+
+# from abm_template.src.baserunner import BaseRunner
 
 # -------------------------------------------------------------------------
 #
@@ -52,20 +56,30 @@ class Runner(BaseRunner):
     def __init__(self, environment):
         self.initialize(environment)
     # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # initialize()
+    # -------------------------------------------------------------------------
 
+    def initialize(self, environment):
+        self.identifier = environment.identifier
+        self.num_sweeps = int(environment.static_parameters['num_sweeps'])
+        self.updater = Updater(environment)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
     # get_identifier
     # -------------------------------------------------------------------------
+
     def get_identifier(self):
         return self.identifier
-    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
     # set_identifier
     # -------------------------------------------------------------------------
-    def set_identifier(self, _value):
-        super(Runner, self).set_identifier(_value)
-    # -------------------------------------------------------------------------
+    def set_identifier(self, value):
+        return super(Runner, self).set_identifier(value)
 
     # -------------------------------------------------------------------------
     # get_num_sweeps
@@ -75,23 +89,10 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # set_num_sweeps
+    # set_num_simulations
     # -------------------------------------------------------------------------
-    def set_num_sweeps(self, _value):
-        super(Runner, self).set_num_sweeps(_value)
-    # -------------------------------------------------------------------------
-
-
-    # -------------------------------------------------------------------------
-    # initialize()
-    # -------------------------------------------------------------------------
-
-    def initialize(self, environment):
-        self.identifier = environment.identifier
-        self.num_sweeps = int(environment.env_parameters['num_sweeps'])
-        self.updater = Updater(environment)
-    # -------------------------------------------------------------------------
-
+    def set_num_sweeps(self, value):
+        super(Runner, self).set_num_sweeps(value)
 
     # -------------------------------------------------------------------------
     # do_run
@@ -102,13 +103,23 @@ class Runner(BaseRunner):
         # For each update step
         for i in range(self.num_sweeps):
 
-            print(i)
-
-            for agent in environment.agents:
-                print(agent.opinion)
+            self.curret_step = i
+            measurement = Measurement(environment, self)
+            measurement.open_file()
 
             self.updater.do_update(environment)
+            measurement.write_to_file()
 
-        print(self.get_identifier())
-        print(self.get_num_sweeps())
+        # agent = Agent()
+        # print(self.get_identifier())
+        # print(self.get_num_sweeps())
+        # print(environment.agents[0])
+        # print(environment.agents[1])
+
+
+        # parameters={'deposit_rate':-0.02}
+        # agent.append_parameters(parameters)
+        # print(agent.get_parameters())
+
+        measurement.close_file()
     # ------------------------------------------------------------------------

@@ -19,7 +19,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-
+from abm_template.src.basemodel import BaseModel
 from src.agent import Agent
 
 
@@ -28,7 +28,7 @@ from src.agent import Agent
 # -------------------------------------------------------------------------
 
 
-class Updater(object):
+class Updater(BaseModel):
     #
     #
     # VARIABLES
@@ -38,10 +38,36 @@ class Updater(object):
     identifier = ""
     new_opinion = {}
 
+    model_parameters = {}
+
     #
     #
     # METHODS
     #
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, value):
+        super(Updater, self).set_identifier(value)
+
+    def __str__(self):
+        super(Updater, self).__str__(self)
+
+    def get_model_parameters(self):
+        return self.model_parameters
+
+    def set_model_parameters(self, values):
+        super(Updater, self).set_model_parameters(values)
+
+    def get_interactions(self):
+        return self.interactions
+
+    def interactions(self):
+        super(Updater, self).interactions(self)
+
+    def set_interactions(self, values):
+        super(Updater, self).set_interactions(values)
 
     # -------------------------------------------------------------------------
     # __init__
