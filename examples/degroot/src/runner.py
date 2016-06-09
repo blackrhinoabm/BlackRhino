@@ -103,13 +103,16 @@ class Runner(BaseRunner):
         # For each update step
         for i in range(self.num_sweeps):
 
-            self.curret_step = i
+            self.current_step = i
             measurement = Measurement(environment, self)
             measurement.open_file()
 
             self.updater.do_update(environment)
             measurement.write_to_file()
 
+
+        print("***\nThis run had %s sweeps and %s simulations" ) % (self.current_step, environment.static_parameters['num_simulations'])
+        print("Check the output file that was written as csv in the main folder\n***")
         # agent = Agent()
         # print(self.get_identifier())
         # print(self.get_num_sweeps())

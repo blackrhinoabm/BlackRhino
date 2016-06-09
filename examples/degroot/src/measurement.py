@@ -41,6 +41,8 @@ class Measurement(BaseMeasurement):
 
     filename = ""
 
+    config = {}
+
     file = None
 
     csv_writer = None
