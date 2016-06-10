@@ -151,12 +151,12 @@ class Updater(BaseModel):
             elif round(bank.funding, 3) == 0.0:
                 pass  # do nothing, neutral on interests
             else:
-                raise LookupError("Bank has negative position on interests. To implement.")
-                # num_households = len(environment.households)
-                # to_fund = bank.funding / num_households
-                # for household in environment.households:
-                #     household.funding = household.funding + to_fund
-                # bank.funding = 0.0
+                # raise LookupError("Bank has negative position on interests. To implement.")
+                num_households = len(environment.households)
+                to_fund = bank.funding / num_households
+                for household in environment.households:
+                    household.funding = household.funding + to_fund  # note that this is negative
+                bank.funding = 0.0
                 # Should that not be negative funding to households (negative dividend)?
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -254,6 +254,10 @@ class Updater(BaseModel):
                 for tranx in to_delete:
                     tranx.remove_transaction()
                 target_loans = 1.1 * firm.capital * 10.0  # TO THINK ABOUT
+                # TODO: think if it's not better to do this at the end of the step
+                # TODO: this way we have the deposits already figured out in the step
+                # TODO: and we do portfolio optimisation knowing deposits, and not
+                # TODO: guessing from the previous term, but then investments are lagged
                 new_loans = target_loans - firm.get_account("loans")
                 # If we have loans to take
                 if new_loans > 0.0:
