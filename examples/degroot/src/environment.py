@@ -22,8 +22,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import logging
+import networkx as nx
+
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
+
 # -------------------------------------------------------------------------
 #
 #  class Environment
@@ -177,6 +180,7 @@ class Environment(BaseConfig):
 
         # then read in all the agents
         self.initialize_agents_from_files(self.static_parameters['agent_directory'])
+        # nx.write_gefx(self.transition_probabilities, 'test.gefx')
 
     # -------------------------------------------------------------------------
     # initialize_agents_from_files(self,  agent_directory)
@@ -189,6 +193,16 @@ class Environment(BaseConfig):
 
         from src.agent import Agent
         agent_files = os.listdir(agent_directory)
+
+        self.transition_probabilities = nx.DiGraph()
+
+        for each_agent_file in agent_files:
+
+            if '.xml' in each_agent_file:
+                agent = Agent()
+                agent_filename = agent_directory + each_agent_file
+                agent.get_nodes_for_graph(agent_filename, self)
+
         for each_agent_file in agent_files:
 
             if '.xml' in each_agent_file:

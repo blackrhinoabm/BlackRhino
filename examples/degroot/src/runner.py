@@ -114,6 +114,9 @@ class Runner(BaseRunner):
 
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.current_step, environment.static_parameters['num_simulations'])
         print("Check the output file that was written as csv in the main folder\n***")
+
+        # environment.print_parameters()
+
         # agent = Agent()
         # print(self.get_identifier())
         # print(self.get_num_sweeps())
