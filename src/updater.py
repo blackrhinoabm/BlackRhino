@@ -186,8 +186,7 @@ class Updater(BaseModel):
                 if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
                     tranx.to.funding = tranx.to.funding - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
-                    # Nor particularly necessary since banks close books anyway
-                    tranx.from_.liquidity = tranx.from_.liquidity + float(tranx.amount)  # bank loses liquidity
+                    tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
         for tranx in to_delete:
             tranx.remove_transaction()
 
@@ -196,6 +195,8 @@ class Updater(BaseModel):
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount
+                    tranx.to.funding = tranx.to.funding - tranx.amount
         for tranx in to_delete:
             tranx.remove_transaction()
 
@@ -203,6 +204,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
+                tranx.from_.funding = tranx.from_.funding + tranx.amount
         for tranx in to_delete:
             tranx.remove_transaction()
 
@@ -210,6 +212,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
+                tranx.to.funding = tranx.to.funding - tranx.amount
         for tranx in to_delete:
             tranx.remove_transaction()
 
@@ -251,11 +254,11 @@ class Updater(BaseModel):
             # For every firm
                 # If we have too much funding already
                 # Remember to check funding at the end and sell capital if necessary
-
+            for firm in environment.firms:
                 total_funding = firm.funding + firm.capital * 10.0
                 firm.capital = firm.capital_elasticity * total_funding / 10.0
                 firm.funding = (1 - firm.capital_elasticity) * total_funding
-            logging.info("  funding performed on step: %s",  time)
+        logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -482,43 +485,24 @@ class Updater(BaseModel):
     # that assumption, but this ensures the books are balanced for all agents
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
-
+        for_rationing = []
+        for bank in environment.banks:
+            supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
+            for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
-            # We find the demand for loans in the firms
-            # As difference between demand for capital and labour minus the existing loans
-            # here we assume, as in the rest of the code that price of labour and capital is equal
-            to_delete = []
-            for tranx in firm.accounts:
-                if tranx.type_ == "deposits":
-                    firm.funding = firm.funding + tranx.amount / 10.0
-                    to_delete.append(tranx)
-            for tranx in to_delete:
-                tranx.remove_transaction()
-            target_loans = 1.1 * firm.capital * 10.0  # TO THINK ABOUT
-            # TODO: think if it's not better to do this at the end of the step
-            # TODO: this way we have the deposits already figured out in the step
-            # TODO: and we do portfolio optimisation knowing deposits, and not
-            # TODO: guessing from the previous term, but then investments are lagged
-            new_loans = target_loans - firm.get_account("loans")
-            # If we have loans to take
-            if new_loans > 0.0:
-                # We take it with the random bank (HERE PORTFOLIO STUFF WILL HAPPEN LATER)
-                random_bank = random.choice(environment.banks)
-                # We add new loans to the funding
-                firm.funding = firm.funding + new_loans
-                # And add the loan to the books
-                environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                            new_loans, random_bank.interest_rate_loans,  2, -1)
+            demand_for_loans = 0.4 * bank.capital * 10.0
+            for_rationing.append([firm, -demand_for_loans])
+
+        rationed = market.rationing_proportional(for_rationing)
+
+        for ration in rationed:
+            ration[1].funding = ration[1].funding + ration[2]
+            environment.new_transaction("loans", "",  ration[0].identifier, ration[1].identifier,
+                                        ration[2], ration[0].interest_rate_deposits,  2, -1)
 
         #
-        # add reserves
+        # add required reserves
         #
-        # to_delete = []
-        # for tranx in environment.central_bank[0].accounts:
-        #     if tranx.type_ == "cb_reserves":
-        #         to_delete.append(tranx)
-        # for tranx in to_delete:
-        #     tranx.remove_transaction()
         for bank in environment.banks:
             reserves = environment.required_reserves * bank.get_account("deposits")
             environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
@@ -532,7 +516,7 @@ class Updater(BaseModel):
         market = Market("market")
         # to_delete = []
         for bank in environment.banks:
-            demand = -bank.get_account("loans")-bank.get_account("cb_reserves")+bank.get_account("deposits")
+            demand = -bank.get_account("loans")-bank.get_account("cb_reserves")+bank.get_account("deposits")  # TODO: rethink
             # for tranx in bank.accounts:
             #     if tranx.type_ == "ib_loans":
             #         to_delete.append(tranx)
@@ -546,24 +530,15 @@ class Updater(BaseModel):
             # And print it to the screen for easy greping
             print("%s lent %f worth of interbank loans to %s at time %d.") % (ration[0].identifier,
                                                                               ration[2], ration[1].identifier, time)
-
         #
         # central bank loans
         #
-
-        # to_delete = []
-        # for tranx in environment.central_bank[0].accounts:
-        #     if tranx.type_ == "cb_loans":
-        #         to_delete.append(tranx)
-        # for tranx in to_delete:
-        #     tranx.remove_transaction()
-
         for bank in environment.banks:
             # Then we add or remove central bank loans
             # We assume that since there is only one central bank we can keep those
             # in one transaction for now, if we fiddle with maturities this may change
             # If we don't yet have a central bank loan we create one
-            cb_volume = bank.get_account("loans") + bank.get_account("cb_reserves") - bank.get_account("deposits")
+            cb_volume = bank.get_account("loans") + bank.get_account("cb_reserves") - bank.get_account("deposits")  # TODO: rethink
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     if tranx.from_ == bank:
