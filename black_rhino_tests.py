@@ -260,7 +260,7 @@ if __name__ == '__main__':
     test_updater.updater__str(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__init(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__accrue_interests(["tests/environments/", "test_all_methods", "tests/log/"])
-    test_updater.updater__endow_labour(["tests/environments/", "test_all_methods", "tests/log/"])
+    # test_updater.updater__endow_labour(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__sell_labour(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__consume_rationed(["tests/environments/", "test_all_methods", "tests/log/"])
     test_updater.updater__net_loans_deposits(["tests/environments/", "test_all_methods", "tests/log/"])

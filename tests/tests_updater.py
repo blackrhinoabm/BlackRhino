@@ -584,65 +584,6 @@ class TestsUpdater(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # updater__endow_labour
-    # -------------------------------------------------------------------------
-
-    def updater__endow_labour(self, args):
-        import os
-        from src.bank import Bank
-        from src.household import Household
-        from src.firm import Firm
-        from src.environment import Environment
-        from src.transaction import Transaction
-        from src.market import Market
-        from src.updater import Updater
-
-        text = "This test checks updater.endow_labour \n"
-        self.print_info(text)
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[0])
-        identifier = str(args[1])
-        log_directory = str(args[2])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                            filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__endow_labour in run: %s',
-                     environment_directory + identifier + ".xml")
-
-        # Construct household filename
-        environment = Environment(environment_directory,  identifier)
-
-        # generate a bank
-        bank = Bank()
-        bank.identifier = "test_bank"
-        environment.banks.append(bank)
-
-        # generate a firm
-        firm = Firm()
-        firm.identifier = "test_firm"
-        environment.firms.append(firm)
-
-        # generate a household
-        household = Household()
-        household.identifier = "test_household"
-        environment.households.append(household)
-
-        #
-        # TESTING
-        #
-        model = Updater(environment)
-        environment.get_agent_by_id("test_household").sweep_labour = 0
-        print(environment.get_agent_by_id("test_household").sweep_labour)
-        print("Endowing labour")
-        model.endow_labour(environment, 0)
-        print(environment.get_agent_by_id("test_household").sweep_labour)
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
     # updater__sell_labour
     # -------------------------------------------------------------------------
 

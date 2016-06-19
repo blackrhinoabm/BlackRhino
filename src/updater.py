@@ -128,37 +128,37 @@ class Updater(BaseModel):
         # Then, banks give their revenue as dividends to households
         # which own the banks in the model
         # for now we have them given out through ownership weights
-        total_ownership = 0.0
-        for household in environment.households:
-            total_ownership = total_ownership + household.ownership_of_banks
+        # total_ownership = 0.0
+        # for household in environment.households:
+        #     total_ownership = total_ownership + household.ownership_of_banks
         # We calculate dividends for every bank
-        for bank in environment.banks:
-            # Find the excess of assets over liabilities
-            excess = 0.0
-            # To do that we go through all transactions
-            # and add or subtract them appropriately
-            for tranx in bank.accounts:
-                if tranx.type_ == "loans" and tranx.from_ == bank:
-                    excess = excess + tranx.amount
-                if tranx.type_ == "deposits" and tranx.to == bank:
-                    excess = excess - tranx.amount
-            # If there is shortfall we throw an error for now
-            # since it is assumed that in the moden banks should have balanced
-            # books and interests on assets are higher, but in principle
-            # we may add some other behaviour here if necessary
-            # IMPLEMENTATION NOTE: while we want full accuracy in the model for
-            # now, the floating error around 0 means we need to round before checking
-            if round(excess, 2) < 0.0:
-                raise LookupError("Bank lost money on interests.")
-            # If there is excess of loans over deposits
-            # We distribute the excess as
-            # IMPLEMENTATION NOTE: same as above
-            if round(excess, 2) > 0.0:
-                # Deposit these to households appropriately
-                for household in environment.households:
-                    amount = excess * (household.ownership_of_banks / total_ownership)
-                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                amount, bank.interest_rate_deposits,  0, -1)
+        #for bank in environment.banks:
+        #     # Find the excess of assets over liabilities
+        #     excess = 0.0
+        #     # To do that we go through all transactions
+        #     # and add or subtract them appropriately
+        #     for tranx in bank.accounts:
+        #         if tranx.type_ == "loans" and tranx.from_ == bank:
+        #             excess = excess + tranx.amount
+        #         if tranx.type_ == "deposits" and tranx.to == bank:
+        #             excess = excess - tranx.amount
+        #     # If there is shortfall we throw an error for now
+        #     # since it is assumed that in the moden banks should have balanced
+        #     # books and interests on assets are higher, but in principle
+        #     # we may add some other behaviour here if necessary
+        #     # IMPLEMENTATION NOTE: while we want full accuracy in the model for
+        #     # now, the floating error around 0 means we need to round before checking
+        #     if round(excess, 2) < 0.0:
+        #         raise LookupError("Bank lost money on interests.")
+        #     # If there is excess of loans over deposits
+        #     # We distribute the excess as
+        #     # IMPLEMENTATION NOTE: same as above
+        #     if round(excess, 2) > 0.0:
+        #         # Deposit these to households appropriately
+        #         for household in environment.households:
+        #             amount = excess * (household.ownership_of_banks / total_ownership)
+        #             environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
+        #                                         amount, bank.interest_rate_deposits,  0, -1)
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------

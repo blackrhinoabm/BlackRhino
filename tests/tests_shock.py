@@ -102,11 +102,11 @@ class TestsShock(object):
         print("Starting labour")
         print(household.labour)
         print("Running do_shock with parameter start")
-        shock.do_shock(environment, 46, "start")
+        shock.do_shock(environment, 46, "labour", "start")
         print("Current labour")
         print(household.labour)
         print("Running do_shock with parameter end")
-        shock.do_shock(environment, 46, "end")
+        shock.do_shock(environment, 46, "labour", "end")
         print("Current labour")
         print(household.labour)
 
