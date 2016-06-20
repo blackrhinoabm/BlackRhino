@@ -53,11 +53,18 @@ class Agent(BaseAgent):
     identifier = ""  # identifier of the specific agent
     opinion = 0.0   # initial 'opinion' of the agent
 
-    # transition_probabilities = {}  # weights of the opinions
     state_variables = {}
     parameters = {}
 
+    ''' Accounts is not used in our example, but it's in the BaseAgent
+    parent class'''
     accounts = []
+
+    '''The below is from an older version, where weights were stored in
+    a dictionary We are using network graphs now, so its no needed anymore
+    transition_probabilities = {}   '''
+
+
     #
     #
     # CODE
@@ -78,14 +85,7 @@ class Agent(BaseAgent):
     def __str__(self):
         ret_str = "  <agent identifier='" + self.identifier + "'>\n "
 
-        ret_str = ret_str + "    <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
-
-        # the below kind of worked, but wrong starting opinion???!
-        # opinion = self.opinion
-        # if isinstance(opinion, int) or isinstance(opinion, float) or isinstance(opinion, str):
-        #     ret_str = ret_str + "    <parameter type='static' name=starting_opinion value='" + str(opinion) + "'></parameter>\n"
-        # else:
-        #     raise TypeError
+        ret_str = ret_str + " <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
 
         for each_agent in self.transition_probabilities:
             weight = self.transition_probabilities[each_agent]
@@ -97,7 +97,6 @@ class Agent(BaseAgent):
         ret_str = ret_str + "</agent>\n"
 
         return ret_str
-
 
     def get_parameters(self):
         return self.parameters
