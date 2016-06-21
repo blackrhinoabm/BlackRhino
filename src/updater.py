@@ -102,6 +102,7 @@ class Updater(BaseModel):
         self.capitalise_new(environment, time)
         # Investing of the banks
         # self.invest(environment, time)
+        self.dividends(environment, time)
         # self.invest_interbank(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
@@ -129,16 +130,23 @@ class Updater(BaseModel):
         # The function in environment makes sure we don't double count interests
         # environment.accrue_interests()
         for bank in environment.banks:
+            # It's enough that we go through banks as all the transactions with interest
+            # Are on banks' books
             for tranx in bank.accounts:
                 if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans":
                     tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
+                    # The side offering deposits or loans gets the interest
                     tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
+                    # The counterparty pays the interests
                 elif tranx.type_ == "cb_loans":
                     tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
+                    # We ignore liquidity of the central bank
                 elif tranx.type_ == "cb_reserves":
-                    tranx.from_.funding = tranx.from_.funding - tranx.amount * tranx.interest
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
+                    # We ignore liquidity of the central bank
                 else:
                     pass
+                    # All the other types of transactions are not accounted for
 
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -150,70 +158,93 @@ class Updater(BaseModel):
     def maturities(self,  environment, time):
         # Update maturities
         already_matured = []
+        # We keep a list so we don't update maturities twice for the same
+        # transaction on both ends (from_ and to)
         for agent in environment.agents_generator():
+            # Going through all agents
             for tranx in agent.accounts:
+                # And all accounts
                 if (int(tranx.maturity) > 0):  # reduce maturity if duration longer than 0
                     if tranx not in already_matured:
+                        # And check if it's already matured, if not:
                         tranx.maturity = int(tranx.maturity) - 1
+                        # Change maturity (decrease by 1)
                         already_matured.append(tranx)
+                        # And add to already matured
 
-            # If maturity is zero then we must remove the transaction
-            # (remembering the economics properly)
-            # liquidate_due_transactions()
+        # If maturity is zero then we must remove the transaction
+        # (remembering the economics properly)
+
         to_delete = []
+        # We will delete the matured transactions after
         for firm in environment.firms:
+            # First we mature firms' deposits
             for tranx in firm.accounts:
+                # Deposits mature at each step currently
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # firm gains funding
                     tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         to_delete = []
         for household in environment.households:
+            # THen we mature households' deposits
             for tranx in household.accounts:
+                # Deposits mature at each step currently
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # household gains funding
                     tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         to_delete = []
+        # We will delete the matured transactions after
         for bank in environment.banks:
+            # THen we mature loans
             for tranx in bank.accounts:
                 if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
                     tranx.to.funding = tranx.to.funding - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         to_delete = []
+        # We will delete the matured transactions after
         for bank in environment.banks:
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount
-                    tranx.to.funding = tranx.to.funding - tranx.amount
+                    tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
+                    tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         to_delete = []
+        # We will delete the matured transactions after
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
-                tranx.from_.funding = tranx.from_.funding + tranx.amount
+                tranx.from_.funding = tranx.from_.funding + tranx.amount  # reserves back from CB
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         to_delete = []
+        # We will delete the matured transactions after
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
-                tranx.to.funding = tranx.to.funding - tranx.amount
+                tranx.to.funding = tranx.to.funding - tranx.amount  # cb loans paid back to CB
         for tranx in to_delete:
+            # Deleting the matured transactions
             tranx.remove_transaction()
 
         logging.info("  maturities resolved on step: %s",  time)
@@ -413,8 +444,8 @@ class Updater(BaseModel):
             # Then the demand is determined by the agent's propensity to save
             # and the wealth calculated above
             wealth = wealth + household.funding
-            print("wealth")
-            print(wealth)
+            print("wealth")  # todo: remove
+            print(wealth)  # todo: remove
             demand = ((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
@@ -435,6 +466,7 @@ class Updater(BaseModel):
         for firm in environment.firms:
             firm.parameters["labour"] = 0.0
 
+        # Firms deposit excess funding
         for firm in environment.firms:
             if firm.funding >= 0.0:
                 # add a deposit
@@ -447,8 +479,10 @@ class Updater(BaseModel):
                 #                             firm.funding, random_bank.interest_rate_deposits,  -1, -1)
                 firm.funding = 0.0
             else:
+                # This should not happen as the firms would have to have negative capital
                 raise LookupError("Firm has negative funding at the end of the step.")
 
+        # Households deposit excess funding
         for household in environment.households:
             if household.funding >= 0.0:
                 # add a deposit
@@ -485,13 +519,18 @@ class Updater(BaseModel):
     # that assumption, but this ensures the books are balanced for all agents
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
+        # TODO: think about this
         for_rationing = []
         for bank in environment.banks:
             supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
-            demand_for_loans = 0.4 * bank.capital * 10.0
+            demand_for_loans = 0.4 * firm.capital * 10.0
             for_rationing.append([firm, -demand_for_loans])
+
+        from market import Market
+        # Put the appropriate settings, i.e. desired identifier
+        market = Market("market")
 
         rationed = market.rationing_proportional(for_rationing)
 
@@ -546,9 +585,11 @@ class Updater(BaseModel):
                     elif tranx.to == bank:
                         cb_volume = cb_volume - tranx.amount
             if cb_volume > 0.0:
+                # cb loans
                 environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
                                             cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
             elif cb_volume < 0.0:
+                # excess reserves
                 environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
                                             -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
         #
@@ -572,6 +613,7 @@ class Updater(BaseModel):
                     household.funding = household.funding + to_fund
                 bank.funding = 0.0
             else:
+                # To think about what happens here and above
                 raise LookupError('Cannot do dividends from a negative funding.')
                 # Should that not be negative funding to households (negative dividend)?
     # -------------------------------------------------------------------------
