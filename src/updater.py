@@ -102,7 +102,6 @@ class Updater(BaseModel):
         self.capitalise_new(environment, time)
         # Investing of the banks
         # self.invest(environment, time)
-        self.dividends(environment, time)
         # self.invest_interbank(environment, time)
         # Purging accounts at every step just in case
         transaction = Transaction()
@@ -127,27 +126,19 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def accrue_interests(self,  environment, time):
         # First, add interests to all the transactions
-        # The function in environment makes sure we don't double count interests
-        # environment.accrue_interests()
-        for bank in environment.banks:
-            # It's enough that we go through banks as all the transactions with interest
-            # Are on banks' books
-            for tranx in bank.accounts:
-                if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans":
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
-                    # The side offering deposits or loans gets the interest
-                    tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
-                    # The counterparty pays the interests
-                elif tranx.type_ == "cb_loans":
-                    tranx.to.funding = tranx.to.funding - tranx.amount * tranx.interest
-                    # We ignore liquidity of the central bank
-                elif tranx.type_ == "cb_reserves":
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount * tranx.interest
-                    # We ignore liquidity of the central bank
-                else:
-                    pass
-                    # All the other types of transactions are not accounted for
-
+        already_done = []
+        # We keep a list so we don't update interests twice for the same
+        # transaction on both ends (from_ and to)
+        for agent in environment.agents_generator():
+            # Going through all agents
+            for tranx in agent.accounts:
+                # And all accounts (below we specify explicitly just in case but should work if we remove the if also)
+                if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans" or tranx.type_ == "cb_loans" or tranx.type_ == "cb_reserves":
+                    if tranx not in already_done:
+                        # We add the interest
+                        tranx.amount = tranx.amount * (1 + tranx.interest)
+                        # And append the list of already processed transactions
+                        already_done.append(tranx)
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -184,7 +175,7 @@ class Updater(BaseModel):
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # firm gains funding
-                    tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -197,7 +188,7 @@ class Updater(BaseModel):
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # household gains funding
-                    tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -210,7 +201,7 @@ class Updater(BaseModel):
                 if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
                     tranx.to.funding = tranx.to.funding - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
-                    tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
+                    # tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -221,8 +212,8 @@ class Updater(BaseModel):
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
-                    tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
+                    # tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
+                    # tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -232,7 +223,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
-                tranx.from_.funding = tranx.from_.funding + tranx.amount  # reserves back from CB
+                # tranx.from_.funding = tranx.from_.funding + tranx.amount  # reserves back from CB
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -242,7 +233,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
-                tranx.to.funding = tranx.to.funding - tranx.amount  # cb loans paid back to CB
+                # tranx.to.funding = tranx.to.funding - tranx.amount  # cb loans paid back to CB
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -522,7 +513,8 @@ class Updater(BaseModel):
         # TODO: think about this
         for_rationing = []
         for bank in environment.banks:
-            supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
+            # supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
+            supply_of_loans = 2.0 * bank.get_account("deposits")
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
             demand_for_loans = 0.4 * firm.capital * 10.0
@@ -589,33 +581,22 @@ class Updater(BaseModel):
                 environment.new_transaction("cb_loans", "",  environment.central_bank[0].identifier, bank.identifier,
                                             cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
             elif cb_volume < 0.0:
-                # excess reserves
+                # dividends??
                 environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
                                             -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
         #
         # excess reserves ???
         #
+        # for bank in environment.banks:
+        #     if round(bank.funding, 3) > 0.0:
+        #         num_households = len(environment.households)
+        #         to_fund = bank.funding / num_households
+        #         for household in environment.households:
+        #             household.funding = household.funding + to_fund
+        #         bank.funding = 0.0
 
         logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # dividends(environment, time)
-    # -------------------------------------------------------------------------
-    def dividends(self,  environment, time):
-        # Do dividends
-        for bank in environment.banks:
-            if round(bank.funding, 3) > 0.0:
-                num_households = len(environment.households)
-                to_fund = bank.funding / num_households
-                for household in environment.households:
-                    household.funding = household.funding + to_fund
-                bank.funding = 0.0
-            else:
-                # To think about what happens here and above
-                raise LookupError('Cannot do dividends from a negative funding.')
-                # Should that not be negative funding to households (negative dividend)?
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
