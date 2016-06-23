@@ -1,0 +1,10 @@
+<environment identifier='contagion_test'>
+    <!-- simulation parameters -->
+    <parameter type='theta' value='0'></parameter>
+    <parameter type='m' value='2'></parameter>
+    <parameter type='num_sweeps' value='5'></parameter>
+    <parameter type='num_simulations' value='1'></parameter>
+    <parameter type='num_agents' value='4'></parameter>
+    <parameter type='agent_directory' value='configs/agents/'></parameter>
+    <parameter type='measurement_config' value='configs/output_strategy.xml'></parameter>
+</environment>

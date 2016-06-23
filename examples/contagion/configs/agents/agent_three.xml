@@ -1,0 +1,5 @@
+<agent identifier='agent_three'>
+  <parameter type='link' name='agent_one' value='0'></parameter>
+  <parameter type='link' name='agent_two' value='1'></parameter>
+  <parameter type='link' name='agent_four' value='1'></parameter>
+</agent>
