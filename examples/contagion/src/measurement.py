@@ -167,19 +167,19 @@ class Measurement(BaseMeasurement):
         if ident == "a1_decision_after_current_step":
             for agent in self.environment.agents:
                 if agent.identifier == 'agent_one':
-                    return agent.choice
+                    return agent.state_variables['choice']
 
         if ident == "a2_decision_after_current_step":
             for agent in self.environment.agents:
                 if agent.identifier == 'agent_two':
-                    return agent.choice
+                    return agent.state_variables['choice']
 
         if ident == "a3_decision_after_current_step":
             for agent in self.environment.agents:
                 if agent.identifier == 'agent_three':
-                    return agent.choice
+                    return agent.state_variables['choice']
 
         if ident == "a4_decision_after_current_step":
             for agent in self.environment.agents:
                 if agent.identifier == 'agent_four':
-                    return agent.choice
+                    return agent.state_variables['choice']

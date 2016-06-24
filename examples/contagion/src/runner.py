@@ -104,8 +104,8 @@ class Runner(BaseRunner):
 
         # For each update step
 
-        # measurement = Measurement(environment, self)
-        # measurement.open_file()
+        measurement = Measurement(environment, self)
+        measurement.open_file()
 
         for i in range(self.num_sweeps):
 
@@ -133,5 +133,5 @@ class Runner(BaseRunner):
         # agent.append_parameters(parameters)
         # print(agent.get_parameters())
 
-        # measurement.close_file()
+        measurement.close_file()
     # ------------------------------------------------------------------------

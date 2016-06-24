@@ -213,7 +213,6 @@ class Agent(BaseAgent):
         for agent in environment.agents:
 
             if self.identifier != agent.identifier:
-
                 if environment.network[self.identifier][agent.identifier]['weight'] == 1:
                         count_neighbors = count_neighbors + 1
                         sum_social_belief = sum_social_belief + agent.state_variables['choice']
@@ -240,9 +239,9 @@ class Agent(BaseAgent):
                                 return weight_var
 
     def investment_decision(self, environment):
+        print("hello")
+        if self.weighting_f_equal(environment) > 0.5:
+                self.choice = 1
 
-            if self.weighting_f_equal(environment) > 0.5:
-                    self.choice = 1
-
-            else:
-                    self.choice = 0
+        else:
+                self.choice = 0
