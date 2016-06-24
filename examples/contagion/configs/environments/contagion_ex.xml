@@ -1,7 +1,7 @@
 <environment identifier='contagion_test'>
     <!-- simulation parameters -->
     <parameter type='theta' value='0'></parameter>
-    <parameter type='m' value='2'></parameter>
+    <parameter type='m' value='0.5'></parameter>
     <parameter type='num_sweeps' value='5'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value='4'></parameter>

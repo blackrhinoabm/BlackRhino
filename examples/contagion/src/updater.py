@@ -23,6 +23,7 @@ from abm_template.src.basemodel import BaseModel
 from src.agent import Agent
 
 
+
 # -------------------------------------------------------------------------
 #  class Updater
 # -------------------------------------------------------------------------
@@ -78,19 +79,19 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     # do_update
     # -------------------------------------------------------------------------
-    def do_update(self, environment):
+    def do_update(self, environment, current_step):
 
         for agent in environment.agents:
 
             agent.calc_private_belief(environment)
-            print(agent.private_belief)
+            # print(agent.private_belief)
 
         for agent in environment.agents:
-                if environment.static_parameters['num_sweeps'] > 1:
+                if current_step > 0:
                         agent.calc_social_belief(environment)
-                        print(agent.social_belief)
+                        # print(agent.social_belief)
 
         for agent in environment.agents:
-            agent.investment_decision(environment)
+            agent.investment_decision(environment, current_step)
             print(agent.choice)
     # -----------------------------------------------------------------------

@@ -208,40 +208,38 @@ class Agent(BaseAgent):
 
         count_neighbors = 0
 
-        sum_social_belief = 0
+        sum_social_belief = 0.0
 
         for agent in environment.agents:
 
             if self.identifier != agent.identifier:
                 if environment.network[self.identifier][agent.identifier]['weight'] == 1:
                         count_neighbors = count_neighbors + 1
-                        sum_social_belief = sum_social_belief + agent.state_variables['choice']
+                        sum_social_belief = sum_social_belief + float(agent.choice)
 
         if count_neighbors != 0:
-            self.social_belief = sum_social_belief / count_neighbors
+            self.social_belief = float(sum_social_belief) / float(count_neighbors)
         else:
             self.social_belief = None
 
     '''scenario 1: equal weighting function'''
-    def weighting_f_equal(self, environment):
-        count_neighbors = 0
-        for agent in environment.agents:
+    def weighting_f_equal(self):
 
-            if self.identifier != agent.identifier:
-                if environment.network[self.identifier][agent.identifier]['weight'] == 1:
-                        count_neighbors = count_neighbors + 1
+        if self.social_belief is None:
+            return self.private_belief
+        else:
+            return (self.private_belief + self.social_belief) / 2
 
-                        if count_neighbors != 0:
-                                weight_var = (self.private_belief + self.social_belief) / 2
-                                return weight_var
-                        else:
-                                weight_var = self.private_belief
-                                return weight_var
+    def investment_decision(self, environment, current_step):
+        if current_step > 0:
 
-    def investment_decision(self, environment):
-        print("hello")
-        if self.weighting_f_equal(environment) > 0.5:
+            if self.weighting_f_equal() > 0.5:
                 self.choice = 1
 
+            else:
+                self.choice = 0
         else:
+            if self.private_belief > 0.5:
+                self.choice = 1
+            else:
                 self.choice = 0

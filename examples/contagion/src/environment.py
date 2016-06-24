@@ -149,9 +149,15 @@ class Environment(BaseConfig):
             for subelement in element:
 
                 try:  # we see whether the value is a int
-                    value = int(subelement.attrib['value'])
-                    type_ = subelement.attrib['type']
-                    self.static_parameters[type_] = value
+                    if subelement.attrib['type'] == 'm':
+                        value = float(subelement.attrib['value'])
+                        type_ = subelement.attrib['type']
+                        self.static_parameters[type_] = value
+
+                    else:
+                        value = int(subelement.attrib['value'])
+                        type_ = subelement.attrib['type']
+                        self.static_parameters[type_] = value
 
                 except:  # if not, it is a string
                     value = str(subelement.attrib['value'])
