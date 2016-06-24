@@ -477,9 +477,9 @@ class Updater(BaseModel):
         for household in environment.households:
             if household.funding >= 0.0:
                 # add a deposit
-                one_deposits = firm.funding/len(environment.banks)  # add a network here later
+                one_deposits = household.funding/len(environment.banks)  # add a network here later
                 for bank in environment.banks:
-                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
+                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                                                 one_deposits, bank.interest_rate_deposits,  -1, -1)
                 # random_bank = random.choice(environment.banks)
                 # environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
