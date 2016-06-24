@@ -79,8 +79,8 @@ class Agent(BaseAgent):
     #
     #
 
-    def __getattr__(self):
-        super(Agent, self).__getattr__()
+    def __getattr__(self, attr):
+        super(Agent, self).__getattr__(attr)
 
     def __str__(self):
         ret_str = "  <agent identifier='" + self.identifier + "'>\n "
