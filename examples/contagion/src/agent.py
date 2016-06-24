@@ -62,7 +62,6 @@ class Agent(BaseAgent):
 
     state_variables['choice'] = 0
 
-    t = 0
 
     ''' Accounts is not used in our example, but it's in the BaseAgent
     parent class'''
@@ -82,8 +81,9 @@ class Agent(BaseAgent):
     #
     #
 
-    def __getattr__(self):
-        super(Agent, self).__getattr__()
+    def __getattr__(self, attr):
+        super(Agent, self).__getattr__(attr)
+
 
     def __str__(self):
         super(Agent, self).__str__()
@@ -156,7 +156,7 @@ class Agent(BaseAgent):
         self.state_variables['private_belief'] = 0
         self.state_variables['social_belief'] = 0
         self.state_variables['choice'] = 0
-        self.t = 0
+        self.weight_var = 0
 
     def get_nodes_for_graph(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -187,7 +187,7 @@ class Agent(BaseAgent):
 
                 if subelement.attrib['type'] == 'link':
                     name = str(subelement.attrib['name'])
-                    value = float(subelement.attrib['value'])
+                    value = int(subelement.attrib['value'])
                     environment.network.add_edge(self.identifier, name, weight=value)
         except:
             logging.error("    ERROR: %s could not be parsed", agent_filename)
@@ -204,8 +204,7 @@ class Agent(BaseAgent):
     def calc_social_belief(self, environment):
 
         '''only 'in' the second step when current step ''>'' 1
-        average of private belief of neighbors
-        using generator expression to include if in for loop!! '''
+        average of private belief of neighbors'''
 
         count_neighbors = 0
 
@@ -217,7 +216,7 @@ class Agent(BaseAgent):
 
                 if environment.network[self.identifier][agent.identifier]['weight'] == 1:
                         count_neighbors = count_neighbors + 1
-                        sum_social_belief = sum_social_belief + agent.choice
+                        sum_social_belief = sum_social_belief + agent.state_variables['choice']
 
         if count_neighbors != 0:
             self.social_belief = sum_social_belief / count_neighbors
@@ -226,26 +225,24 @@ class Agent(BaseAgent):
 
     '''scenario 1: equal weighting function'''
     def weighting_f_equal(self, environment):
-
+        count_neighbors = 0
         for agent in environment.agents:
 
-            if environment.network[self.identifier][agent.identifier]['weight'] == 1:
-                    count_neighbors = count_neighbors + 1
+            if self.identifier != agent.identifier:
+                if environment.network[self.identifier][agent.identifier]['weight'] == 1:
+                        count_neighbors = count_neighbors + 1
 
-                    if count_neighbors != 0:
-                            self.t = (self.private_belief + self.social_belief) / 2
-
-                    else:
-                            self.t = self.private_belief
+                        if count_neighbors != 0:
+                                weight_var = (self.private_belief + self.social_belief) / 2
+                                return weight_var
+                        else:
+                                weight_var = self.private_belief
+                                return weight_var
 
     def investment_decision(self, environment):
-
-        for agent in environment.agents:
 
             if self.weighting_f_equal(environment) > 0.5:
                     self.choice = 1
 
             else:
                     self.choice = 0
-
-            return self.choice

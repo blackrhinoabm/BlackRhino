@@ -85,8 +85,12 @@ class Updater(BaseModel):
             agent.calc_private_belief(environment)
             print(agent.private_belief)
 
-            agent.calc_social_belief(environment)
+        for agent in environment.agents:
+                if environment.static_parameters['num_sweeps'] > 1:
+                        agent.calc_social_belief(environment)
+                        print(agent.social_belief)
 
+        for agent in environment.agents:
             agent.investment_decision(environment)
-
-    # ------    -------------------------------------------------------------------
+            print(agent.choice)
+    # -----------------------------------------------------------------------

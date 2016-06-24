@@ -109,8 +109,6 @@ class Runner(BaseRunner):
 
         for i in range(self.num_sweeps):
 
-            while i > 1:
-
                 self.current_step = i
 
                 # measurement.write_to_file()
@@ -119,9 +117,11 @@ class Runner(BaseRunner):
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
         print("Check the output file that was written as csv in the measurements folder\n***")
 
-        print(agent.private_belief)
-
         # agent = Agent()
+        # print(agent.private_belief)
+        # print(agent.calc_social_belief)
+        # print(agent.investment_decision(environment))
+
         # for keys, values in agent.parameters.items():
         #     print keys, '-->', values
 
@@ -129,8 +129,6 @@ class Runner(BaseRunner):
         # print(self.get_identifier())
         # print(self.get_num_sweeps())
         # print(environment.agents[0])
-        # print(environment.agents[1])
-
         # parameters={'deposit_rate':-0.02}
         # agent.append_parameters(parameters)
         # print(agent.get_parameters())
