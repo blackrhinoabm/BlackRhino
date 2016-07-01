@@ -212,6 +212,7 @@ class Updater(BaseModel):
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
+                    # TODO: think this through since the interests on ib loans don't make sense with this setup
                     # tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
                     # tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
         for tranx in to_delete:
@@ -461,10 +462,18 @@ class Updater(BaseModel):
         for firm in environment.firms:
             if firm.funding >= 0.0:
                 # add a deposit
-                one_deposits = firm.funding/len(environment.banks)  # add a network here later
+                # TODO: add the deposits randomly as to get the fluctuations
+                # TODO: if we're worried about too much fluctuations (albeit should be okay for lots of agents)
+                # TODOL we may store their exces in a network and then only disturb the percentages
                 for bank in environment.banks:
+                    if bank is not environment.banks[-1]:
+                        current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
+                    else:
+                        current_dep_perc = 1.0
+                    one_deposit = current_dep_perc * firm.funding
+                    firm.funding = firm.funding - one_deposit
                     environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
-                                                one_deposits, bank.interest_rate_deposits,  -1, -1)
+                                                one_deposit, bank.interest_rate_deposits,  -1, -1)
                 # random_bank = random.choice(environment.banks)
                 # environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
                 #                             firm.funding, random_bank.interest_rate_deposits,  -1, -1)
@@ -477,10 +486,16 @@ class Updater(BaseModel):
         for household in environment.households:
             if household.funding >= 0.0:
                 # add a deposit
-                one_deposits = household.funding/len(environment.banks)  # add a network here later
                 for bank in environment.banks:
+                    if bank is not environment.banks[-1]:
+                        current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
+                    else:
+                        current_dep_perc = 1.0
+                    one_deposit = current_dep_perc * household.funding
+                    household.funding = household.funding - one_deposit
+
                     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                one_deposits, bank.interest_rate_deposits,  -1, -1)
+                                                one_deposit, bank.interest_rate_deposits,  -1, -1)
                 # random_bank = random.choice(environment.banks)
                 # environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
                 #                             household.funding, random_bank.interest_rate_deposits,  -1, -1)
@@ -489,11 +504,11 @@ class Updater(BaseModel):
                 # remove old deposits randomly (can do proportional but let's have some fun)
                 if abs(household.funding) <= household.get_account("deposits"):
                     # remove the deposits
+                    perc_to_liquidate = abs(household.funding) / household.get_account("deposits")
                     for tranx in household.accounts:
                         if tranx.type_ == "deposits":
-                            to_remove = min(abs(household.funding), tranx.amount)
-                            tranx.amount = tranx.amount - to_remove
-                            household.funding = household.funding + to_remove
+                            household.funding = household.funding + tranx.amount * perc_to_liquidate
+                            tranx.amount = tranx.amount * (1 - perc_to_liquidate)
                 else:
                     raise LookupError("Household has more shortfall than deposits.")
 
@@ -511,6 +526,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
         # TODO: think about this
+        # TODO: proper economics of loans (supply.demand > one can be infinite in principle)
         for_rationing = []
         for bank in environment.banks:
             # supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
@@ -541,6 +557,9 @@ class Updater(BaseModel):
         #
         # add interbank market
         #
+        # TODO: network of banks like in old_br (start with full network and we can work off it later)
+        # TODO: the network would then be used by the function in market (create new one that works on networks instead of functions)
+        # TODO: (or create a function checking if they're connected in the network which may be better)
         for_rationing = []
         from market import Market
         # Put the appropriate settings, i.e. desired identifier
