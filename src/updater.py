@@ -465,18 +465,18 @@ class Updater(BaseModel):
                 # TODO: add the deposits randomly as to get the fluctuations
                 # TODO: if we're worried about too much fluctuations (albeit should be okay for lots of agents)
                 # TODOL we may store their exces in a network and then only disturb the percentages
-                for bank in environment.banks:
-                    if bank is not environment.banks[-1]:
-                        current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
-                    else:
-                        current_dep_perc = 1.0
-                    one_deposit = current_dep_perc * firm.funding
-                    firm.funding = firm.funding - one_deposit
-                    environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
-                                                one_deposit, bank.interest_rate_deposits,  -1, -1)
-                # random_bank = random.choice(environment.banks)
-                # environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
-                #                             firm.funding, random_bank.interest_rate_deposits,  -1, -1)
+                # for bank in environment.banks:
+                #     if bank is not environment.banks[-1]:
+                #         current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
+                #     else:
+                #         current_dep_perc = 1.0
+                #     one_deposit = current_dep_perc * firm.funding
+                #     firm.funding = firm.funding - one_deposit
+                #     environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
+                #                                 one_deposit, bank.interest_rate_deposits,  -1, -1)
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
+                                            firm.funding, random_bank.interest_rate_deposits,  -1, -1)
                 firm.funding = 0.0
             else:
                 # This should not happen as the firms would have to have negative capital
@@ -486,19 +486,18 @@ class Updater(BaseModel):
         for household in environment.households:
             if household.funding >= 0.0:
                 # add a deposit
-                for bank in environment.banks:
-                    if bank is not environment.banks[-1]:
-                        current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
-                    else:
-                        current_dep_perc = 1.0
-                    one_deposit = current_dep_perc * household.funding
-                    household.funding = household.funding - one_deposit
-
-                    environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
-                                                one_deposit, bank.interest_rate_deposits,  -1, -1)
-                # random_bank = random.choice(environment.banks)
-                # environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
-                #                             household.funding, random_bank.interest_rate_deposits,  -1, -1)
+                # for bank in environment.banks:
+                #     if bank is not environment.banks[-1]:
+                #         current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
+                #     else:
+                #         current_dep_perc = 1.0
+                #     one_deposit = current_dep_perc * household.funding
+                #     household.funding = household.funding - one_deposit
+                #     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
+                #                                 one_deposit, bank.interest_rate_deposits,  -1, -1)
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
+                                            household.funding, random_bank.interest_rate_deposits,  -1, -1)
                 household.funding = 0.0
             else:
                 # remove old deposits randomly (can do proportional but let's have some fun)
