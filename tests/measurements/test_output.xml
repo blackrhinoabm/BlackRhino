@@ -13,6 +13,6 @@
     <parameter type='output' column='11' header='Household2 Loans' value='h2l' ></parameter>
     <parameter type='output' column='12' header='Household3 Deposits' value='h3d' ></parameter>
     <parameter type='output' column='13' header='Household3 Loans' value='h3l' ></parameter>
-    <parameter type='output' column='14' header='Bank Deposist' value='bank_loans' ></parameter>
-    <parameter type='output' column='15' header='Bank Loans' value='bank_deposits' ></parameter>
+    <parameter type='output' column='14' header='Bank Deposist' value='bank_deposits' ></parameter>
+    <parameter type='output' column='15' header='Bank Loans' value='bank_loans' ></parameter>
 </measurement>

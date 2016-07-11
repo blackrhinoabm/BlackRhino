@@ -98,6 +98,7 @@ class Updater(BaseModel):
         # We remove the perishable transactions
         self.remove_perishable(environment, time)
         # And add capital to balance the books
+        self.check_liquidity(environment, time)
         # self.capitalise(environment, time)
         self.capitalise_new(environment, time)
         # Investing of the banks
@@ -147,6 +148,10 @@ class Updater(BaseModel):
     # maturities(environment, time)
     # -------------------------------------------------------------------------
     def maturities(self,  environment, time):
+
+        for bank in environment.banks:
+            bank.liquidity = 0.0
+
         # Update maturities
         already_matured = []
         # We keep a list so we don't update maturities twice for the same
@@ -176,6 +181,7 @@ class Updater(BaseModel):
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # firm gains funding
                     # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -189,6 +195,7 @@ class Updater(BaseModel):
                     to_delete.append(tranx)
                     tranx.from_.funding = tranx.from_.funding + tranx.amount  # household gains funding
                     # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -202,6 +209,7 @@ class Updater(BaseModel):
                     tranx.to.funding = tranx.to.funding - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
                     # tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
+                    tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -215,6 +223,8 @@ class Updater(BaseModel):
                     # TODO: think this through since the interests on ib loans don't make sense with this setup
                     # tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
                     # tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
+                    tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
+                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -225,6 +235,7 @@ class Updater(BaseModel):
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
                 # tranx.from_.funding = tranx.from_.funding + tranx.amount  # reserves back from CB
+                tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -235,6 +246,7 @@ class Updater(BaseModel):
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
                 # tranx.to.funding = tranx.to.funding - tranx.amount  # cb loans paid back to CB
+                tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -477,6 +489,7 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
                                             firm.funding, random_bank.interest_rate_deposits,  -1, -1)
+                random_bank.liquidity = random_bank.liquidity + firm.funding
                 firm.funding = 0.0
             else:
                 # This should not happen as the firms would have to have negative capital
@@ -498,6 +511,7 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
                                             household.funding, random_bank.interest_rate_deposits,  -1, -1)
+                random_bank.liquidity = random_bank.liquidity + household.funding
                 household.funding = 0.0
             else:
                 # remove old deposits randomly (can do proportional but let's have some fun)
@@ -516,6 +530,21 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # check_liquidity(environment, time)
+    # This function checks whether banks are liquid, if they are illiquid they
+    # are removed from the system
+    # -------------------------------------------------------------------------
+    def check_liquidity(self, environment, time):
+        for bank in environment.banks:
+            if bank.liquidity < 0.0:
+                raise LookupError("The bank will go into default")  # placeholder
+                # pass  # here goes the removing part, which may be vaguely tricky
+                # deposits
+                # loans
+                # interbank stuff
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # capitalise_new(environment, time)
     # This function makes capital transactions which represent final
     # ownership of firms by the household which is done through the bank
@@ -529,10 +558,14 @@ class Updater(BaseModel):
         for_rationing = []
         for bank in environment.banks:
             # supply_of_loans = (((1+bank.interest_rate_loans)**(1-1.8))/bank.interest_rate_loans)**(1/1.8) * bank.get_account("deposits")
-            supply_of_loans = 2.0 * bank.get_account("deposits")
+            # HERE WE CAN HAVE A RATIO OF LOANS TO DEPOSITS BANK WANTS FIXED
+            # If loans are maturing in 2 steps, we get 2.0 from below times 2 steps and then ratio
+            # of loans to deposits will be 4, where the number of deposits is exogeneous to the bank
+            supply_of_loans = 0.6 * bank.get_account("deposits")
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
-            demand_for_loans = 0.4 * firm.capital * 10.0
+            # The above doesn't mean that firms will buy all the loans however
+            demand_for_loans = 2.0 * firm.capital * 10.0
             for_rationing.append([firm, -demand_for_loans])
 
         from market import Market

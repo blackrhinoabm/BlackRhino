@@ -3,4 +3,5 @@
     <parameter type='static' name='interest_rate_deposits' value='0.00'></parameter>
     <parameter type='static' name='target_leverage' value='2'></parameter>
     <parameter name='funding' value='0.0'></parameter>
+    <parameter name='liquidity' value='0.0'></parameter>
 </bank>
