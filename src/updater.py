@@ -99,7 +99,7 @@ class Updater(BaseModel):
         self.remove_perishable(environment, time)
         # And add capital to balance the books
         self.check_liquidity(environment, time)
-        # self.capitalise(environment, time)
+        # self.state_variables["capital"]ise(environment, time)
         self.capitalise_new(environment, time)
         # Investing of the banks
         # self.invest(environment, time)
@@ -179,8 +179,8 @@ class Updater(BaseModel):
                 # Deposits mature at each step currently
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount  # firm gains funding
-                    # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # firm gains funding
+                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
                     tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
@@ -193,8 +193,8 @@ class Updater(BaseModel):
                 # Deposits mature at each step currently
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
-                    tranx.from_.funding = tranx.from_.funding + tranx.amount  # household gains funding
-                    # tranx.to.funding = tranx.to.funding - tranx.amount  # bank loses liquidity
+                    tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # household gains funding
+                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
                     tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
@@ -206,9 +206,9 @@ class Updater(BaseModel):
             # THen we mature loans
             for tranx in bank.accounts:
                 if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
-                    tranx.to.funding = tranx.to.funding - float(tranx.amount)  # firm loses funding
+                    tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
-                    # tranx.from_.funding = tranx.from_.funding + float(tranx.amount)  # bank loses liquidity
+                    # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + float(tranx.amount)  # bank loses liquidity
                     tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
@@ -221,8 +221,8 @@ class Updater(BaseModel):
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
                     # TODO: think this through since the interests on ib loans don't make sense with this setup
-                    # tranx.from_.funding = tranx.from_.funding + tranx.amount  # loans gotten back
-                    # tranx.to.funding = tranx.to.funding - tranx.amount  # debtor pays back
+                    # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # loans gotten back
+                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # debtor pays back
                     tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
                     tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
@@ -234,7 +234,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
-                # tranx.from_.funding = tranx.from_.funding + tranx.amount  # reserves back from CB
+                # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # reserves back from CB
                 tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
@@ -245,7 +245,7 @@ class Updater(BaseModel):
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
-                # tranx.to.funding = tranx.to.funding - tranx.amount  # cb loans paid back to CB
+                # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # cb loans paid back to CB
                 tranx.to.liquidity = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
@@ -264,7 +264,7 @@ class Updater(BaseModel):
         # that is lost at each time step (due to age, use, etc.)
         for firm in environment.firms:
             # And here it's depreciated
-            firm.capital = firm.capital * (1 - firm.amortisation)
+            firm.state_variables["capital"] = firm.capital * (1 - firm.amortisation)
         logging.info("  capital amortisation performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -278,10 +278,10 @@ class Updater(BaseModel):
         # And a loan of equal value from a random bank
         if time == 0:
             for firm in environment.firms:
-                firm.funding = 100.0
+                firm.state_variables["funding"] = 100.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
-                                            firm.funding, random_bank.interest_rate_loans,  2, -1)
+                                            firm.state_variables["funding"], random_bank.interest_rate_loans,  2, -1)
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -290,9 +290,9 @@ class Updater(BaseModel):
                 # If we have too much funding already
                 # Remember to check funding at the end and sell capital if necessary
             for firm in environment.firms:
-                total_funding = firm.funding + firm.capital * 10.0
-                firm.capital = firm.capital_elasticity * total_funding / 10.0
-                firm.funding = (1 - firm.capital_elasticity) * total_funding
+                total_funding = firm.state_variables["funding"] + firm.state_variables["capital"] * 10.0
+                firm.state_variables["capital"] = firm.capital_elasticity * total_funding / 10.0
+                firm.state_variables["funding"] = (1 - firm.capital_elasticity) * total_funding
         logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -321,7 +321,7 @@ class Updater(BaseModel):
         # And the list of buyers and their demand functions
         buyers = []
         for agent in environment.firms:
-            print(agent.capital)
+            print(agent.state_variables["capital"])
             buyers.append([agent, agent.demand_for_labour_grid])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
@@ -359,7 +359,7 @@ class Updater(BaseModel):
             for_rationing.append([household, household.supply_of_labour_solow(price)])  # TODO: some function of price, maybe the original now, since it's constrained anyway
             # for_rationing.append([household, household.labour])
         for firm in environment.firms:
-            for_rationing.append([firm, -firm.funding/price])
+            for_rationing.append([firm, -firm.state_variables["funding"]/price])
         # And we find the rationing, ie the amounts
         # of goods sold between pairs of agents
         rationed = market.rationing_proportional(for_rationing)
@@ -378,13 +378,13 @@ class Updater(BaseModel):
             # random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
-            ration[0].funding = ration[0].funding + ration[2]*price
+            ration[0].state_variables["funding"] = ration[0].state_variables["funding"] + ration[2]*price
             # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
             #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
             # random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
-            ration[1].funding = ration[1].funding - ration[2]*price
+            ration[1].state_variables["funding"] = ration[1].state_variables["funding"] - ration[2]*price
             # environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
             #                             ration[2]*price, random_bank.interest_rate_loans,  -1, -1)
             # We print the action of selling to the screen
@@ -421,14 +421,14 @@ class Updater(BaseModel):
             # we use their net capital, as in their capital stock
             # minus the capital owned of other agents
             # We find the amount produced through the Cobb-Douglas function
-            amount = helper.cobb_douglas(firm.parameters["labour"], firm.capital,
+            amount = helper.cobb_douglas(firm.parameters["labour"], firm.state_variables["capital"],
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
         # Here firms sell
         # TODO
         for ration in for_rationing:
-            ration[0].funding = ration[0].funding + ration[1]*price
+            ration[0].state_variables["funding"] = ration[0].state_variables["funding"] + ration[1]*price
         # Households give use their demand, we assume that they want to
         # consume the part of their wealth (cash and deposits) that they
         # do not want to save (determined through propensity to save)
@@ -447,14 +447,14 @@ class Updater(BaseModel):
                     wealth = wealth - tranx.amount
             # Then the demand is determined by the agent's propensity to save
             # and the wealth calculated above
-            wealth = wealth + household.funding
+            wealth = wealth + household.state_variables["funding"]
             print("wealth")  # todo: remove
             print(wealth)  # todo: remove
             demand = ((wealth * (1 - household.propensity_to_save)) / price)
             for_rationing.append([household, demand])
         # We import the market clearing class
         for ration in for_rationing:
-            ration[0].funding = ration[0].funding - ration[1]*price
+            ration[0].state_variables["funding"] = ration[0].state_variables["funding"] - ration[1]*price
         logging.info("  goods produced, sold, and consumed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -472,7 +472,7 @@ class Updater(BaseModel):
 
         # Firms deposit excess funding
         for firm in environment.firms:
-            if firm.funding >= 0.0:
+            if firm.state_variables["funding"] >= 0.0:
                 # add a deposit
                 # TODO: add the deposits randomly as to get the fluctuations
                 # TODO: if we're worried about too much fluctuations (albeit should be okay for lots of agents)
@@ -482,45 +482,45 @@ class Updater(BaseModel):
                 #         current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
                 #     else:
                 #         current_dep_perc = 1.0
-                #     one_deposit = current_dep_perc * firm.funding
-                #     firm.funding = firm.funding - one_deposit
+                #     one_deposit = current_dep_perc * firm.state_variables["funding"]
+                #     firm.state_variables["funding"] = firm.state_variables["funding"] - one_deposit
                 #     environment.new_transaction("deposits", "",  firm.identifier, bank.identifier,
                 #                                 one_deposit, bank.interest_rate_deposits,  -1, -1)
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
-                                            firm.funding, random_bank.interest_rate_deposits,  -1, -1)
-                random_bank.liquidity = random_bank.liquidity + firm.funding
-                firm.funding = 0.0
+                                            firm.state_variables["funding"], random_bank.interest_rate_deposits,  -1, -1)
+                random_bank.liquidity = random_bank.liquidity + firm.state_variables["funding"]
+                firm.state_variables["funding"] = 0.0
             else:
                 # This should not happen as the firms would have to have negative capital
                 raise LookupError("Firm has negative funding at the end of the step.")
 
         # Households deposit excess funding
         for household in environment.households:
-            if household.funding >= 0.0:
+            if household.state_variables["funding"] >= 0.0:
                 # add a deposit
                 # for bank in environment.banks:
                 #     if bank is not environment.banks[-1]:
                 #         current_dep_perc = random.random  # random should be read from 0 to 1 # for the first
                 #     else:
                 #         current_dep_perc = 1.0
-                #     one_deposit = current_dep_perc * household.funding
-                #     household.funding = household.funding - one_deposit
+                #     one_deposit = current_dep_perc * household.state_variables["funding"]
+                #     household.state_variables["funding"] = household.state_variables["funding"] - one_deposit
                 #     environment.new_transaction("deposits", "",  household.identifier, bank.identifier,
                 #                                 one_deposit, bank.interest_rate_deposits,  -1, -1)
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
-                                            household.funding, random_bank.interest_rate_deposits,  -1, -1)
-                random_bank.liquidity = random_bank.liquidity + household.funding
-                household.funding = 0.0
+                                            household.state_variables["funding"], random_bank.interest_rate_deposits,  -1, -1)
+                random_bank.liquidity = random_bank.liquidity + household.state_variables["funding"]
+                household.state_variables["funding"] = 0.0
             else:
                 # remove old deposits randomly (can do proportional but let's have some fun)
-                if abs(household.funding) <= household.get_account("deposits"):
+                if abs(household.state_variables["funding"]) <= household.get_account("deposits"):
                     # remove the deposits
-                    perc_to_liquidate = abs(household.funding) / household.get_account("deposits")
+                    perc_to_liquidate = abs(household.state_variables["funding"]) / household.get_account("deposits")
                     for tranx in household.accounts:
                         if tranx.type_ == "deposits":
-                            household.funding = household.funding + tranx.amount * perc_to_liquidate
+                            household.state_variables["funding"] = household.state_variables["funding"] + tranx.amount * perc_to_liquidate
                             tranx.amount = tranx.amount * (1 - perc_to_liquidate)
                 else:
                     raise LookupError("Household has more shortfall than deposits.")
@@ -565,7 +565,7 @@ class Updater(BaseModel):
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
             # The above doesn't mean that firms will buy all the loans however
-            demand_for_loans = 2.0 * firm.capital * 10.0
+            demand_for_loans = 2.0 * firm.state_variables["capital"] * 10.0
             for_rationing.append([firm, -demand_for_loans])
 
         from market import Market
@@ -575,7 +575,7 @@ class Updater(BaseModel):
         rationed = market.rationing_proportional(for_rationing)
 
         for ration in rationed:
-            ration[1].funding = ration[1].funding + ration[2]
+            ration[1].state_variables["funding"] = ration[1].state_variables["funding"] + ration[2]
             environment.new_transaction("loans", "",  ration[0].identifier, ration[1].identifier,
                                         ration[2], ration[0].interest_rate_deposits,  2, -1)
 
@@ -639,12 +639,12 @@ class Updater(BaseModel):
         # excess reserves ???
         #
         # for bank in environment.banks:
-        #     if round(bank.funding, 3) > 0.0:
+        #     if round(bank.state_variables["funding"], 3) > 0.0:
         #         num_households = len(environment.households)
-        #         to_fund = bank.funding / num_households
+        #         to_fund = bank.state_variables["funding"] / num_households
         #         for household in environment.households:
-        #             household.funding = household.funding + to_fund
-        #         bank.funding = 0.0
+        #             household.state_variables["funding"] = household.state_variables["funding"] + to_fund
+        #         bank.state_variables["funding"] = 0.0
 
         logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly

@@ -584,10 +584,10 @@ class TestsUpdater(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # updater__endow_labour
+    # updater__maturities
     # -------------------------------------------------------------------------
 
-    def updater__endow_labour(self, args):
+    def updater__maturities(self, args):
         import os
         from src.bank import Bank
         from src.household import Household
@@ -597,7 +597,7 @@ class TestsUpdater(object):
         from src.market import Market
         from src.updater import Updater
 
-        text = "This test checks updater.endow_labour \n"
+        text = "This test checks updater.maturities \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -609,7 +609,7 @@ class TestsUpdater(object):
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                             filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__endow_labour in run: %s',
+        logging.info('START logging for test updater__maturities in run: %s',
                      environment_directory + identifier + ".xml")
 
         # Construct household filename
@@ -618,6 +618,7 @@ class TestsUpdater(object):
         # generate a bank
         bank = Bank()
         bank.identifier = "test_bank"
+        bank.interest_rate_deposits = 0.05
         environment.banks.append(bank)
 
         # generate a firm
@@ -634,11 +635,135 @@ class TestsUpdater(object):
         # TESTING
         #
         model = Updater(environment)
-        environment.get_agent_by_id("test_household").sweep_labour = 0
-        print(environment.get_agent_by_id("test_household").sweep_labour)
-        print("Endowing labour")
-        model.endow_labour(environment, 0)
-        print(environment.get_agent_by_id("test_household").sweep_labour)
+        model.__init__(environment)
+        environment.new_transaction("deposits", "",  environment.get_agent_by_id("test_household").identifier, environment.get_agent_by_id("test_bank"),
+                                    10.0, environment.get_agent_by_id("test_bank").interest_rate_deposits,  0, -1)
+        print(environment.get_agent_by_id("test_household"))
+        model.maturities(environment, 1)
+        print(environment.get_agent_by_id("test_household"))
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # updater__amortisation
+    # -------------------------------------------------------------------------
+
+    def updater__amortisation(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+        from src.updater import Updater
+
+        text = "This test checks updater.amortisation \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__amortisation in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        bank.interest_rate_deposits = 0.05
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        model = Updater(environment)
+        model.__init__(environment)
+        environment.get_agent_by_id("test_firm").state_variables["capital"] = 20.0
+        environment.get_agent_by_id("test_firm").parameters["amortisation"] = 0.1
+        print(environment.get_agent_by_id("test_firm"))
+        model.amortisation(environment, 1)
+        print(environment.get_agent_by_id("test_firm"))
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # updater__get_funding
+    # -------------------------------------------------------------------------
+
+    def updater__get_funding(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+        from src.updater import Updater
+
+        text = "This test checks updater.get_funding \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__get_funding in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        # generate a bank
+        bank = Bank()
+        bank.identifier = "test_bank"
+        bank.interest_rate_deposits = 0.05
+        environment.banks.append(bank)
+
+        # generate a firm
+        firm = Firm()
+        firm.identifier = "test_firm"
+        environment.firms.append(firm)
+
+        # generate a household
+        household = Household()
+        household.identifier = "test_household"
+        environment.households.append(household)
+
+        #
+        # TESTING
+        #
+        model = Updater(environment)
+        model.__init__(environment)
+        environment.get_agent_by_id("test_firm").state_variables["funding"] = 20.0
+        environment.get_agent_by_id("test_firm").state_variables["capital"] = 0.1
+        environment.get_agent_by_id("test_firm").parameters["capital_elasticity"] = 0.4
+        print(environment.get_agent_by_id("test_firm"))
+        model.get_funding(environment, 1)
+        print(environment.get_agent_by_id("test_firm"))
 
     # -------------------------------------------------------------------------
 

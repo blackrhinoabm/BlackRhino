@@ -612,6 +612,7 @@ class TestsBank(object):
         #
 
         print("Checking consistency of the standard bank: ")
+        print(bank)
         print(bank.check_consistency())
         print("Adding additional deposits without adding appropriate cash/loans.")
         bank.add_transaction("deposits", "", environment.get_agent_by_id("test_household"),

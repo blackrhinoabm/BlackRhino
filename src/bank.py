@@ -108,6 +108,7 @@ class Bank(BaseAgent):
         # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
         self.parameters["interest_rate_loans"] = 0.0  # interest rate on loans
         self.parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
+        self.parameters["liquidity"] = 0.0  # interest rate on deposits
         self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
     # -------------------------------------------------------------------------
 
@@ -168,23 +169,11 @@ class Bank(BaseAgent):
                     assets = assets + tranx.amount
                 if tranx.to == self:
                     raise LookupError("Banks cannot keep reserves from central bank.")
-            elif tranx.type_ == "shares":
-                if tranx.from_ == self:
-                    raise LookupError("Companies cannot own shares of banks.")
-                if tranx.to == self:
-                    liabilities = liabilities + tranx.amount
-            elif tranx.type_ == "ownership":
-                if tranx.from_ == self:
-                    assets = assets + tranx.amount
-                if tranx.to == self:
-                    raise LookupError("Banks cannot own shares of households.")
             elif tranx.type_ == "deposits":
                 if tranx.from_ == self:
                     raise LookupError("Deposits cannot be held by banks in households.")
                 if tranx.to == self:
                     liabilities = liabilities + tranx.amount
-            elif tranx.type_ == "investment":
-                assets = assets + tranx.amount
             elif tranx.type_ == "ib_loans":
                 if tranx.from_ == self:
                     assets = assets + tranx.amount

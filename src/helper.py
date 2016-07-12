@@ -63,15 +63,15 @@ class Helper(object):
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
-        amount = 100.0
-        transaction = Transaction()
-        transaction.this_transaction("cash", "", bank.identifier, bank.identifier,
-                                     amount,  0,  0, -1)
-        transaction.add_transaction(environment)
+        # amount = 100.0
+        # transaction = Transaction()
+        # transaction.this_transaction("cash", "", bank.identifier, bank.identifier,
+        #                              amount,  0,  0, -1)
+        # transaction.add_transaction(environment)
 
         # loans - we get the first firm from the list of firms
         # if there are no firms it will be a blank which is fine for testing
-        amount = 150.0
+        amount = 250.0
         transaction = Transaction()
         transaction.this_transaction("loans", "", bank.identifier, environment.firms[0].identifier,
                                      amount,  bank.interest_rate_loans,  0, -1)
@@ -101,13 +101,13 @@ class Helper(object):
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
-        amount = 200.0
-        transaction = Transaction()
-        transaction.this_transaction("cash", "", firm.identifier, firm.identifier, amount,  0,  0, -1)
-        transaction.add_transaction(environment)
+        # amount = 200.0
+        # transaction = Transaction()
+        # transaction.this_transaction("cash", "", firm.identifier, firm.identifier, amount,  0,  0, -1)
+        # transaction.add_transaction(environment)
 
         # goods - unique production
-        amount = 50.0
+        amount = 250.0
         transaction = Transaction()
         transaction.this_transaction("goods", "", firm.identifier, firm.identifier, amount,  0,  0, -1)
         transaction.add_transaction(environment)
@@ -129,7 +129,7 @@ class Helper(object):
 
         # deposits - we get the first bank from the list of banks
         # if there are no banks it will be a blank which is fine for testing
-        amount = 200.0
+        amount = 250.0
         transaction = Transaction()
         transaction.this_transaction("deposits", "",  household.identifier, environment.banks[0].identifier,
                                      amount, environment.banks[0].interest_rate_deposits,  0, -1)
@@ -137,10 +137,10 @@ class Helper(object):
         transaction.add_transaction(environment)
 
         # money - cash and equivalents
-        amount = 50.0
-        transaction = Transaction()
-        transaction.this_transaction("cash", "", household.identifier, household.identifier, amount, 0,  0, -1)
-        transaction.add_transaction(environment)
+        # amount = 50.0
+        # transaction = Transaction()
+        # transaction.this_transaction("cash", "", household.identifier, household.identifier, amount, 0,  0, -1)
+        # transaction.add_transaction(environment)
 
         # manhours - labour to sell
         amount = 250.0

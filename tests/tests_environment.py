@@ -1240,12 +1240,14 @@ class TestsEnvironment(object):
         #
         # TESTING
         #
+        environment.banks = []
         bank = Bank()
         bank.identifier = "new bank"
         environment.banks.append(bank)
         environment.agents = [environment.banks, environment.firms, environment.households]
 
         print("Are banks homogeneous?")
+        print(environment.banks)
         print(environment.check_agent_homogeneity("banks"))
         print("Changing one of the banks...")
         environment.get_agent_by_id("new bank").parameters["active"] = 4
