@@ -803,6 +803,7 @@ class TestsUpdater(object):
         # TESTING
         #
         model = Updater(environment)
+        model.get_funding(environment, 0)
         print(environment.households[0])
         print("Selling labour")
         model.sell_labour(environment, 0)
@@ -846,55 +847,11 @@ class TestsUpdater(object):
         # TESTING
         #
         model = Updater(environment)
+        model.get_funding(environment, 0)
         model.sell_labour(environment, 0)
         print(environment.households[0])
         print("Consuming the production")
         model.consume_rationed(environment, 0)
-        print(environment.households[0])
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # updater__net_loans_deposits
-    # -------------------------------------------------------------------------
-
-    def updater__net_loans_deposits(self, args):
-        import os
-        from src.bank import Bank
-        from src.household import Household
-        from src.firm import Firm
-        from src.environment import Environment
-        from src.transaction import Transaction
-        from src.market import Market
-        from src.updater import Updater
-
-        text = "This test checks updater.net_loans_deposits \n"
-        self.print_info(text)
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[0])
-        identifier = str(args[1])
-        log_directory = str(args[2])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                            filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__net_loans_deposits in run: %s',
-                     environment_directory + identifier + ".xml")
-
-        # Construct household filename
-        environment = Environment(environment_directory,  identifier)
-
-        #
-        # TESTING
-        #
-        model = Updater(environment)
-        model.sell_labour(environment, 0)
-        model.consume_rationed(environment, 0)
-        print(environment.households[0])
-        print("Netting loans and deposits")
-        model.net_loans_deposits(environment, 0)
         print(environment.households[0])
 
     # -------------------------------------------------------------------------
@@ -935,9 +892,9 @@ class TestsUpdater(object):
         # TESTING
         #
         model = Updater(environment)
+        model.get_funding(environment, 0)
         model.sell_labour(environment, 0)
         model.consume_rationed(environment, 0)
-        model.net_loans_deposits(environment, 0)
         print(environment.households[0])
         print("Removing perishable")
         model.remove_perishable(environment, 0)
@@ -946,10 +903,10 @@ class TestsUpdater(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # updater__capitalise
+    # updater__check_liquidity
     # -------------------------------------------------------------------------
 
-    def updater__capitalise(self, args):
+    def updater__check_liquidity(self, args):
         import os
         from src.bank import Bank
         from src.household import Household
@@ -959,7 +916,7 @@ class TestsUpdater(object):
         from src.market import Market
         from src.updater import Updater
 
-        text = "This test checks updater.capitalise \n"
+        text = "This test checks updater.check_liquidity \n"
         self.print_info(text)
         #
         # INITIALIZATION
@@ -971,7 +928,7 @@ class TestsUpdater(object):
         # Configure logging parameters so we get output while the program runs
         logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                             filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test updater__capitalise in run: %s',
+        logging.info('START logging for test updater__check_liquidity in run: %s',
                      environment_directory + identifier + ".xml")
 
         # Construct household filename
@@ -981,13 +938,108 @@ class TestsUpdater(object):
         # TESTING
         #
         model = Updater(environment)
+        model.get_funding(environment, 0)
         model.sell_labour(environment, 0)
         model.consume_rationed(environment, 0)
-        model.net_loans_deposits(environment, 0)
+        model.remove_perishable(environment, 0)
+        print(environment.households[0])
+        print("Checking liquidity")
+        model.check_liquidity(environment, 0)
+        print(environment.households[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # updater__capitalise_new
+    # -------------------------------------------------------------------------
+
+    def updater__capitalise_new(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+        from src.updater import Updater
+
+        text = "This test checks updater.capitalise_new \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__capitalise_new in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        model = Updater(environment)
+        model.get_funding(environment, 0)
+        model.sell_labour(environment, 0)
+        model.consume_rationed(environment, 0)
         print(environment.households[0])
         model.remove_perishable(environment, 0)
         print("Capitalising")
-        model.capitalise(environment, 0)
+        model.capitalise_new(environment, 0)
+        print(environment.households[0])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # updater__check_consistency
+    # -------------------------------------------------------------------------
+
+    def updater__check_consistency(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+        from src.market import Market
+        from src.updater import Updater
+
+        text = "This test checks updater.check_consistency \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test updater__check_consistency in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+        model = Updater(environment)
+        model.get_funding(environment, 0)
+        model.sell_labour(environment, 0)
+        model.consume_rationed(environment, 0)
+        print(environment.households[0])
+        model.remove_perishable(environment, 0)
+        model.capitalise_new(environment, 0)
+        print("Checking consistency")
+        model.check_consistency(environment, 0)
         print(environment.households[0])
 
     # -------------------------------------------------------------------------
