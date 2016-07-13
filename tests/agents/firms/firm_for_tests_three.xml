@@ -4,6 +4,5 @@
     <parameter name='labour_elasticity' value='0.3'></parameter>
     <parameter name='capital_elasticity' value='0.7'></parameter>
     <parameter name='amortisation' value='0.1'></parameter>
-    <parameter name='capital' value='30.0'></parameter>
-    <parameter name='funding' value='0.0'></parameter>
+    <variable name='capital' value='30.0'></variable>
 </firm>

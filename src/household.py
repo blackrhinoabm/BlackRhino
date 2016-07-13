@@ -108,7 +108,7 @@ class Household(BaseAgent):
         self.parameters["labour"] = 0.0  # labour to sell every step (labour endowment)
         self.parameters["propensity_to_save"] = 0.40  # propensity to save, percentage of income household wants to save as deposits
         self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
-        self.parameters["funding"] = 0.0  # intratemporal liquidity
+        self.state_variables["funding"] = 0.0  # intratemporal liquidity
         # The below is not needed, but kept just in case it will become needed
         # state_variables["sweep_labour"] = 0.0  # labour left in the simulation step
     # -------------------------------------------------------------------------

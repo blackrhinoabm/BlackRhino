@@ -264,7 +264,7 @@ class Updater(BaseModel):
         # that is lost at each time step (due to age, use, etc.)
         for firm in environment.firms:
             # And here it's depreciated
-            firm.state_variables["capital"] = firm.capital * (1 - firm.amortisation)
+            firm.state_variables["capital"] = firm.state_variables["capital"] * (1 - firm.amortisation)
         logging.info("  capital amortisation performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------

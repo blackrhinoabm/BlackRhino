@@ -108,7 +108,8 @@ class Firm(BaseAgent):
         # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
         self.parameters["productivity"] = 0.0  # how many units of goods do we get from 1 unit of labour
         self.parameters["active"] = 0  # this is a control parameter checking whether firm is active
-        self.parameters["funding"] = 0.0  # intratemporal liquidity
+        self.state_variables["funding"] = 0.0  # intratemporal liquidity
+        self.state_variables["capital"] = 0.0
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
