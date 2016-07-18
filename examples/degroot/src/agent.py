@@ -151,7 +151,6 @@ class Agent(BaseAgent):
     def __init__(self):
         self.identifier = ""  # identifier of the specific agent
         self.opinion = 0.0  # opinion of the specific agent
-        self.transition_probabilities = {}  # dictionary with weights
 
     # -------------------------------------------------------------------------
     # get_parameters_from_file
@@ -163,18 +162,17 @@ class Agent(BaseAgent):
     # </agent>
     # -------------------------------------------------------------------------
 
-    def get_nodes_for_graph(self, agent_filename, environment):
-        from xml.etree import ElementTree
+    # def get_nodes_for_graph(self, agent_filename, environment):
+    #     from xml.etree import ElementTree
 
-        try:
-            xmlText = open(agent_filename).read()
-            element = ElementTree.XML(xmlText)
-            # we get the identifier
-            environment.transition_probabilities.add_node(element.attrib['identifier'])
-                        # self.transition_probabilities[name] = float(value)
+    #     try:
+    #         xmlText = open(agent_filename).read()
+    #         element = ElementTree.XML(xmlText)
+    #         # we get the identifier
+    #         environment.network.add_node(element.attrib['identifier'])
+    #     except:
+    #         logging.error("    ERROR: %s could not be parsed", agent_filename)
 
-        except:
-            logging.error("    ERROR: %s could not be parsed", agent_filename)
 
     def get_parameters_from_file(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -197,16 +195,8 @@ class Agent(BaseAgent):
                     if name == 'starting_opinion':
                         self.opinion = float(value)
 
-                if subelement.attrib['type'] == 'transition':
-                    name = str(subelement.attrib['name'])
-                    value = float(subelement.attrib['value'])
-                    environment.transition_probabilities.add_edge(self.identifier, name, weight=value)
-
-                    # self.transition_probabilities[name] = float(value)
-
         except:
             logging.error("    ERROR: %s could not be parsed", agent_filename)
-
 
     # -------------------------------------------------------------------------
     # The next function creates a temporary variable tempv (which needs some
@@ -223,7 +213,7 @@ class Agent(BaseAgent):
         tempv = 0.0
 
         for agent in environment.agents:
-            tempv = tempv + agent.opinion * environment.transition_probabilities[self.identifier][agent.identifier]['weight']
+            tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier]['weight']
             # tempv = tempv + agent.opinion * self.transition_probabilities[agent.identifier]
 
         return tempv

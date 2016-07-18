@@ -87,4 +87,4 @@ class Updater(BaseModel):
 
         for agent in environment.agents:
             agent.opinion = self.new_opinion[agent.identifier]
-    # ----------------------------------------------------------------- d--------
+    # --------------------------------------------------------------------------

@@ -23,6 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import os
 import logging
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
@@ -171,6 +172,7 @@ class Environment(BaseConfig):
         self.static_parameters["num_sweeps"] = 0
         self.static_parameters["num_agents"] = 0
         self.static_parameters["agent_directory"] = ""
+        self.static_parameters["network_config"] = ""
         self.agents = []
 
         # first, read in the environment file
@@ -194,14 +196,16 @@ class Environment(BaseConfig):
         from src.agent import Agent
         agent_files = os.listdir(agent_directory)
 
-        self.transition_probabilities = nx.DiGraph()
+        self.network = nx.read_gexf("configs/network.gexf.xml")
+        for source_node, target_node, attr in self.network.edges(data=True):
+            print source_node, target_node, attr['weight']
 
-        for each_agent_file in agent_files:
+        # for each_agent_file in agent_files:
 
-            if '.xml' in each_agent_file:
-                agent = Agent()
-                agent_filename = agent_directory + each_agent_file
-                agent.get_nodes_for_graph(agent_filename, self)
+        #     if '.xml' in each_agent_file:
+        #         agent = Agent()
+        #         agent_filename = agent_directory + each_agent_file
+        #         agent.get_nodes_for_graph(agent_filename, self)
 
         for each_agent_file in agent_files:
 
@@ -210,3 +214,9 @@ class Environment(BaseConfig):
                 agent_filename = agent_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.agents.append(agent)
+
+            # for agent in self.agents:
+            #     for node in self.network.nodes():
+            #         if agent.identifier == node:
+            #             node = agent.identifier
+                        # print(self.network.agent_identifier())

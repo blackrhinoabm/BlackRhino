@@ -5,4 +5,4 @@
     <parameter type='num_agents' value='3'></parameter>
     <parameter type='agent_directory' value='configs/agents/'></parameter>
     <parameter type='measurement_config' value='configs/output_opinion.xml'></parameter>
-</environment>
+  </environment>
