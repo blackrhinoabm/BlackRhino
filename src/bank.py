@@ -108,7 +108,7 @@ class Bank(BaseAgent):
         # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
         self.parameters["interest_rate_loans"] = 0.0  # interest rate on loans
         self.parameters["interest_rate_deposits"] = 0.0  # interest rate on deposits
-        self.parameters["liquidity"] = 0.0  # interest rate on deposits
+        self.state_variables["liquidity"] = 0.0  # interest rate on deposits
         self.parameters["active"] = 0  # this is a control parameter checking whether bank is active
     # -------------------------------------------------------------------------
 

@@ -150,7 +150,7 @@ class Updater(BaseModel):
     def maturities(self,  environment, time):
 
         for bank in environment.banks:
-            bank.liquidity = 0.0
+            bank.state_variables["liquidity"] = 0.0
 
         # Update maturities
         already_matured = []
@@ -181,7 +181,7 @@ class Updater(BaseModel):
                     to_delete.append(tranx)
                     tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # firm gains funding
                     # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
-                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
+                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -195,7 +195,7 @@ class Updater(BaseModel):
                     to_delete.append(tranx)
                     tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # household gains funding
                     # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
-                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
+                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -209,7 +209,7 @@ class Updater(BaseModel):
                     tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
                     # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + float(tranx.amount)  # bank loses liquidity
-                    tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
+                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -223,8 +223,8 @@ class Updater(BaseModel):
                     # TODO: think this through since the interests on ib loans don't make sense with this setup
                     # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # loans gotten back
                     # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # debtor pays back
-                    tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
-                    tranx.to.liquidity = tranx.to.liquidity - tranx.amount
+                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
+                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -235,7 +235,7 @@ class Updater(BaseModel):
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
                 # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # reserves back from CB
-                tranx.from_.liquidity = tranx.from_.liquidity + tranx.amount
+                tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -246,7 +246,7 @@ class Updater(BaseModel):
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
                 # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # cb loans paid back to CB
-                tranx.to.liquidity = tranx.to.liquidity - tranx.amount
+                tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -307,7 +307,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def sell_labour(self,  environment, time):
         for firm in environment.firms:
-            firm.parameters["labour"] = 0.0
+            firm.state_variables["labour"] = 0.0
         # First we find the market equilibrium price
         # Important to note that this currently does
         # not depend on the wealth of the buyers
@@ -374,7 +374,7 @@ class Updater(BaseModel):
             # and a liability (promise to work) for the household
             # ration[0]: household
             # ration[1]: firm
-            ration[1].parameters["labour"] = ration[1].parameters["labour"] + ration[2]
+            ration[1].state_variables["labour"] = ration[1].state_variables["labour"] + ration[2]
             # random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
@@ -421,7 +421,7 @@ class Updater(BaseModel):
             # we use their net capital, as in their capital stock
             # minus the capital owned of other agents
             # We find the amount produced through the Cobb-Douglas function
-            amount = helper.cobb_douglas(firm.parameters["labour"], firm.state_variables["capital"],
+            amount = helper.cobb_douglas(firm.state_variables["labour"], firm.state_variables["capital"],
                                          firm.total_factor_productivity, firm.labour_elasticity, firm.capital_elasticity)*price
             # And assume firm wants to sell whole production given the perishable nature of the goods
             for_rationing.append([firm, amount])
@@ -489,7 +489,7 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  firm.identifier, random_bank.identifier,
                                             firm.state_variables["funding"], random_bank.interest_rate_deposits,  -1, -1)
-                random_bank.liquidity = random_bank.liquidity + firm.state_variables["funding"]
+                random_bank.state_variables["liquidity"] = random_bank.liquidity + firm.state_variables["funding"]
                 firm.state_variables["funding"] = 0.0
             else:
                 # This should not happen as the firms would have to have negative capital
@@ -511,7 +511,7 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("deposits", "",  household.identifier, random_bank.identifier,
                                             household.state_variables["funding"], random_bank.interest_rate_deposits,  -1, -1)
-                random_bank.liquidity = random_bank.liquidity + household.state_variables["funding"]
+                random_bank.state_variables["liquidity"] = random_bank.liquidity + household.state_variables["funding"]
                 household.state_variables["funding"] = 0.0
             else:
                 # remove old deposits randomly (can do proportional but let's have some fun)
@@ -536,7 +536,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def check_liquidity(self, environment, time):
         for bank in environment.banks:
-            if bank.liquidity < 0.0:
+            if bank.state_variables["liquidity"] < 0.0:
                 raise LookupError("The bank will go into default")  # placeholder
                 # pass  # here goes the removing part, which may be vaguely tricky
                 # deposits
