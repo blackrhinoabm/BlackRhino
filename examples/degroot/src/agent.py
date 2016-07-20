@@ -203,17 +203,22 @@ class Agent(BaseAgent):
     # kind of starting value, here 0.0),
     # then we go through every agent in the list agents which is defined in the
     # environment class (in the environment script), take its opinion variable,
-    # multiply it with the weight stored in the transition_probabilities
-    # dictionary. We also need the key agent.identifier to tell python
-    # which weight to multiply with which opinion
-    # return is needed to pass the tempv variable back to the updater script
+    # multiply it with the weight stored in the network
     # -------------------------------------------------------------------------
 
     def create_temp_variable(self, environment):
         tempv = 0.0
 
         for agent in environment.agents:
-            tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier]['weight']
-            # tempv = tempv + agent.opinion * self.transition_probabilities[agent.identifier]
+
+            # print(environment.network['agent_two']['agent_two']['3']['weight'])
+            # print(environment.network['agent_one']['agent_two'][environment.network['agent_one']['agent_two'].keys()[0]]['weight'])
+
+            print(environment.network[self.identifier][agent.identifier][self.identifier]['weight'], agent.identifier, self.identifier)
+
+            tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier][self.identifier]['weight']
 
         return tempv
+
+        # tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier]['weight']
+        # tempv = tempv + agent.opinion * self.transition_probabilities[agent.identifier]

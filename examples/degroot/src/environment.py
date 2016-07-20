@@ -23,7 +23,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import os
 import logging
 import networkx as nx
-import matplotlib.pyplot as plt
 
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
@@ -181,7 +180,7 @@ class Environment(BaseConfig):
         logging.info(" environment file read: %s", environment_filename)
 
         # then read in all the agents
-        self.initialize_agents_from_files(self.static_parameters['agent_directory'])
+        self.initialize_agents_from_files(self.static_parameters['agent_directory'],self.static_parameters['network_config'])
         # nx.write_gefx(self.transition_probabilities, 'test.gefx')
 
     # -------------------------------------------------------------------------
@@ -191,21 +190,14 @@ class Environment(BaseConfig):
     # this reads all config files in the provided directory and
     # initializes agents with the contents of these configs
     # -------------------------------------------------------------------------
-    def initialize_agents_from_files(self, agent_directory):
+    def initialize_agents_from_files(self, agent_directory, network_config):
 
         from src.agent import Agent
         agent_files = os.listdir(agent_directory)
 
-        self.network = nx.read_gexf("configs/network.gexf.xml")
-        for source_node, target_node, attr in self.network.edges(data=True):
-            print source_node, target_node, attr['weight']
+        self.network = nx.read_gexf(network_config)
 
-        # for each_agent_file in agent_files:
-
-        #     if '.xml' in each_agent_file:
-        #         agent = Agent()
-        #         agent_filename = agent_directory + each_agent_file
-        #         agent.get_nodes_for_graph(agent_filename, self)
+        # print(self.network.edges(data=True))
 
         for each_agent_file in agent_files:
 
@@ -214,9 +206,3 @@ class Environment(BaseConfig):
                 agent_filename = agent_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.agents.append(agent)
-
-            # for agent in self.agents:
-            #     for node in self.network.nodes():
-            #         if agent.identifier == node:
-            #             node = agent.identifier
-                        # print(self.network.agent_identifier())
