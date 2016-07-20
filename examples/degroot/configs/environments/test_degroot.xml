@@ -1,6 +1,6 @@
 <environment identifier='tests_for_degroot_learning'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='1'></parameter>
+    <parameter type='num_sweeps' value='5'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value='3'></parameter>
     <parameter type='agent_directory' value='configs/agents/'></parameter>

@@ -211,12 +211,8 @@ class Agent(BaseAgent):
 
         for agent in environment.agents:
 
-            # print(environment.network['agent_two']['agent_two']['3']['weight'])
-            # print(environment.network['agent_one']['agent_two'][environment.network['agent_one']['agent_two'].keys()[0]]['weight'])
-
-            print(environment.network[self.identifier][agent.identifier][self.identifier]['weight'], agent.identifier, self.identifier)
-
-            tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier][self.identifier]['weight']
+            # print(environment.network[self.identifier][agent.identifier]['weight'])
+            tempv = tempv + agent.opinion * environment.network[self.identifier][agent.identifier]['weight']
 
         return tempv
 

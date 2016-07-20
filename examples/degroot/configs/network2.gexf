@@ -15,7 +15,7 @@
             <edge id="agent_two" source="agent_two" target="agent_three" weight="0.0" />
             <edge id="agent_three" source="agent_three" target="agent_three" weight="1.0" />
             <edge id="agent_three" source="agent_three" target="agent_one" weight="0.0" />
-            <edge id="agent_three" source="agent_three" target="agent_three" weight="0.0" />
+            <edge id="agent_three" source="agent_three" target="agent_two" weight="0.0" />
         </edges>
     </graph>
 </gexf>
