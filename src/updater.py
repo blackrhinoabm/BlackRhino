@@ -172,24 +172,9 @@ class Updater(BaseModel):
         # (remembering the economics properly)
 
         to_delete = []
-        # We will delete the matured transactions after
-        for firm in environment.firms:
-            # First we mature firms' deposits
-            for tranx in firm.accounts:
-                # Deposits mature at each step currently
-                if tranx.type_ == "deposits":
-                    to_delete.append(tranx)
-                    tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # firm gains funding
-                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
-                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
-        for tranx in to_delete:
-            # Deleting the matured transactions
-            tranx.remove_transaction()
-
-        to_delete = []
-        for household in environment.households:
-            # THen we mature households' deposits
-            for tranx in household.accounts:
+        for household in environment.banks:
+            # THen we mature households' or firms' deposits
+            for tranx in bank.accounts:
                 # Deposits mature at each step currently
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
@@ -534,7 +519,7 @@ class Updater(BaseModel):
     # This function checks whether banks are liquid, if they are illiquid they
     # are removed from the system
     # -------------------------------------------------------------------------
-    def check_liquidity(self, environment, time):
+    def check_liquidity(self, environment, time):  # TODO: what if it's not liquid
         for bank in environment.banks:
             if bank.state_variables["liquidity"] < 0.0:
                 raise LookupError("The bank will go into default")  # placeholder
