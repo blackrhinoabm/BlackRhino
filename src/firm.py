@@ -325,7 +325,7 @@ class Firm(BaseAgent):
             if tranx.type_ == "deposits" and tranx.from_ == self:
                 capital = capital - tranx.amount
         # Finally max(U) given particular wage
-        return min(self.funding/price_of_labour, max(0, (price_of_labour / (a * b * goods_price * self.capital ** c)) ** (1 / (b-1))))
+        return min(self.state_variables["funding"]/price_of_labour, max(0, (price_of_labour / (a * b * goods_price * self.state_variables["capital"] ** c)) ** (1 / (b-1))))
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -340,10 +340,10 @@ class Firm(BaseAgent):
         minimum = 0.0
         maximum = 0.0
         # Minimum is the current capital held by the firm
-        minimum = self.capital
+        minimum = self.state_variables["capital"]
         # And maximum is the minimum plus whatever can be bought by the funding
         # available to the firm
-        maximum = max(minimum, self.capital + self.funding/price_of_labour)
+        maximum = max(minimum, self.state_variables["capital"] + self.state_variables["funding"]/10.0)
         # lump = 0.05
         # if maximum > minimum:
         # The lump specifies the step in the search algorithm
@@ -368,7 +368,7 @@ class Firm(BaseAgent):
             # Find what amount of labour can be bought for residual funding
             # We use the fact that Cobb-Douglas production function behaves nicely
             # That is more labour will be better than less labor, ceteris paribus
-            test_labour = max(0, self.funding/price_of_labour - (test_capital - self.capital))
+            test_labour = max(0, (self.state_variables["funding"] - (self.state_variables["capital"] - self.state_variables["funding"])*10.0)/price_of_labour)
             # And check what the production output would be
             test_production = helper.cobb_douglas(test_labour, test_capital, self.total_factor_productivity,
                                                   self.labour_elasticity, self.capital_elasticity)

@@ -270,14 +270,14 @@ class Updater(BaseModel):
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
-        else:
-            # For every firm
-                # If we have too much funding already
-                # Remember to check funding at the end and sell capital if necessary
-            for firm in environment.firms:
-                total_funding = firm.state_variables["funding"] + firm.state_variables["capital"] * 10.0
-                firm.state_variables["capital"] = firm.capital_elasticity * total_funding / 10.0
-                firm.state_variables["funding"] = (1 - firm.capital_elasticity) * total_funding
+        # else:
+        # For every firm
+            # If we have too much funding already
+            # Remember to check funding at the end and sell capital if necessary
+        for firm in environment.firms:
+            total_funding = firm.state_variables["funding"] + firm.state_variables["capital"] * 10.0
+            firm.state_variables["capital"] = firm.capital_elasticity * total_funding / 10.0
+            firm.state_variables["funding"] = (1 - firm.capital_elasticity) * total_funding
         logging.info("  funding performed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -307,7 +307,7 @@ class Updater(BaseModel):
         buyers = []
         for agent in environment.firms:
             print(agent.state_variables["capital"])
-            buyers.append([agent, agent.demand_for_labour_grid])
+            buyers.append([agent, agent.demand_for_labour_solow])
         # We may start the search for price at some specific point
         # Here we pass 0, which means it'll start looking at a
         # random point between 0 and 10
