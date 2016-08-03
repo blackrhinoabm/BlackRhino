@@ -108,9 +108,6 @@ class Updater(BaseModel):
         transaction = Transaction()
         transaction.purge_accounts(environment)
         # And finally we check if all the books are balanced
-        # print(environment.banks[0])
-        # print(environment.firms[0])
-        # print(environment.households[0])
         # TODO here:
         # - simplify the code
         # - careful about acrrue interests - so it doesn't explode, and think about the fluctuations
@@ -267,6 +264,7 @@ class Updater(BaseModel):
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
                                             firm.state_variables["funding"], random_bank.interest_rate_loans,  2, -1)
+                random_bank.state_variables["liquidity"] = random_bank.state_variables["liquidity"] - firm.state_variables["funding"]
         # During the simulation, i.e. after the first time step
         # We find the amount of new loans based on the previous capital stock
         # (we assume firms want to have a specific), and existing loans
@@ -506,6 +504,7 @@ class Updater(BaseModel):
                     for tranx in household.accounts:
                         if tranx.type_ == "deposits":
                             household.state_variables["funding"] = household.state_variables["funding"] + tranx.amount * perc_to_liquidate
+                            tranx.to.state_variables["liquidity"] = tranx.to.state_variables["liquidity"] - tranx.amount * perc_to_liquidate
                             tranx.amount = tranx.amount * (1 - perc_to_liquidate)
                 else:
                     raise LookupError("Household has more shortfall than deposits.")
@@ -520,13 +519,29 @@ class Updater(BaseModel):
     # are removed from the system
     # -------------------------------------------------------------------------
     def check_liquidity(self, environment, time):  # TODO: what if it's not liquid
+
+        discount_factor = 0.85  # put this in config file?
+
         for bank in environment.banks:
             if bank.state_variables["liquidity"] < 0.0:
-                raise LookupError("The bank will go into default")  # placeholder
-                # pass  # here goes the removing part, which may be vaguely tricky
-                # deposits
-                # loans
-                # interbank stuff
+                if abs(bank.state_variables["liquidity"]) <= (bank.get_account("loans") * discount_factor):
+                    perc_to_liquidate = (abs(bank.state_variables["liquidity"]) / bank.get_account("loans")) / discount_factor
+                    for tranx in bank.accounts:
+                        if tranx.type_ == "loans":
+                            bank.state_variables["liquidity"] = bank.state_variables["liquidity"] + tranx.amount * perc_to_liquidate * discount_factor
+                            tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount * perc_to_liquidate * discount_factor
+                            tranx.amount = tranx.amount * (1 - perc_to_liquidate)
+                            # NOTE: do we sell everything and liquidate bank (deposits repaid with a discount?)
+                    # We don't have any excess reserves at this point in time so have to look at loans maturing in next steps
+                    # NOTE: when we have more than just loans we'll need to figure out what we can sell
+                else:
+                    # raise LookupError("The bank will go into default")  # placeholder
+                    for tranx in bank.accounts:
+                        if tranx.type_ == "loans":
+                            bank.state_variables["liquidity"] = bank.state_variables["liquidity"] + tranx.amount * discount_factor
+                            tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount * discount_factor
+                            tranx.amount = 0.0
+                            # NOTE: what happens with the negative liquidity here? guess the deposits are defaulted on
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
