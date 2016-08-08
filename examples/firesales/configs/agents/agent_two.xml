@@ -1,0 +1,8 @@
+<agent identifier='ABSA'>
+  <parameter type='parameters' name='equity' value='500'></parameter>
+  <parameter type='parameters' name='debt' value='2250'></parameter>
+  <parameter type='state_variables' name='leverage' value='4.5'></parameter>
+  <parameter type='state_variables' name='m_1' value='0.29'></parameter>
+  <parameter type='state_variables' name='m_2' value='0.44'></parameter>
+  <parameter type='state_variables' name='m_3' value='0.27'></parameter>
+</agent>

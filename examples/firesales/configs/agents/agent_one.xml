@@ -1,0 +1,8 @@
+<agent identifier='SBSA'>
+  <parameter type='parameters' name='equity' value='200.0'></parameter>
+  <parameter type='parameters' name='debt' value='400.0'></parameter>
+  <parameter type='state_variables' name='leverage' value='2.0'></parameter>
+  <parameter type='state_variables' name='m_1' value='0.33'></parameter>
+  <parameter type='state_variables' name='m_2' value='0.42'></parameter>
+  <parameter type='state_variables' name='m_3' value='0.25'></parameter>
+</agent>

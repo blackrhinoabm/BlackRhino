@@ -1,0 +1,8 @@
+<measurement identifier='output_investment_decision'>
+    <parameter type='filename' value='measurements/Measurement_contagion.csv'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    <parameter type='output' column='2' header='decision__agent_one' value='a1_decision_after_current_step'></parameter>
+    <parameter type='output' column='3' header='decision_agent_two' value='a2_decision_after_current_step'></parameter>
+    <parameter type='output' column='4' header='decision__agent_three' value='a3_decision_after_current_step'></parameter>
+    <parameter type='output' column='5' header='decision_agent_four' value='a4_decision_after_current_step'></parameter>
+</measurement>
