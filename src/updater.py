@@ -84,6 +84,7 @@ class Updater(BaseModel):
         # Unless transaction should carry interest
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
+        self.endow_equity(environment, time)
         self.accrue_interests(environment, time)
         self.maturities(environment, time)
         self.amortisation(environment, time)
@@ -113,6 +114,27 @@ class Updater(BaseModel):
         # - careful about acrrue interests - so it doesn't explode, and think about the fluctuations
         # - so banks will have A: loans(investments)+reserves L: deposits+cb_loans
         self.check_consistency(environment, time)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # endow_equity(environment, time)
+    # This method adds banking capital at the start of the simulation
+    # -------------------------------------------------------------------------
+    def endow_equity(self,  environment, time):
+        # We only do it at the start of the simulation
+        if time == 0:
+            # Each bank is endowed with some equity
+            starting_capital = 100.0  # to config
+            for bank in environment.banks:
+                # NOTE: We may want it to be stochastic around the above
+                # Each household owns an equal part of the bank's equity
+                single_capital = starting_capital / len(environment.households)
+                for household in environment.households:
+                    # We add the equity to the books
+                    environment.new_transaction("equity", "",  household.identifier, bank.identifier,
+                                                single_capital, 0.0,  0, -1)
+        logging.info("  banks' equity endowed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -522,6 +544,8 @@ class Updater(BaseModel):
 
         discount_factor = 0.85  # put this in config file?
 
+        # somewhere below we have to add check for leverage ratio
+
         for bank in environment.banks:
             if bank.state_variables["liquidity"] < 0.0:
                 if abs(bank.state_variables["liquidity"]) <= (bank.get_account("loans") * discount_factor):
@@ -554,6 +578,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def capitalise_new(self,  environment, time):
         # TODO: think about this
+        import math
         # TODO: proper economics of loans (supply.demand > one can be infinite in principle)
         for_rationing = []
         for bank in environment.banks:
@@ -561,11 +586,41 @@ class Updater(BaseModel):
             # HERE WE CAN HAVE A RATIO OF LOANS TO DEPOSITS BANK WANTS FIXED
             # If loans are maturing in 2 steps, we get 2.0 from below times 2 steps and then ratio
             # of loans to deposits will be 4, where the number of deposits is exogeneous to the bank
-            supply_of_loans = 0.6 * bank.get_account("deposits")
+
+            # NOTES FOR CRRA
+            pReal = 0.99
+            rhoReal = 0.04
+            theta = 1.67
+            xi = bank.get_account("deposits")
+            rb = 0.02
+            # parameters["pReal"] = 0.0  # probability of credit success
+            # parameters["rhoReal"] = 0.0  # interest charged on risky investment
+            # parameters["theta"] = 0.0  # risk aversion parameter of bank
+            # parameters["xi"] = 0.0  # scaling parameter in CRRA
+            # parameters["rb"] = 0.0  # refinancing costs of the bank -> tbd in environment
+            leverageRatio = 0.08
+
+            mu = pReal*rhoReal - (1.0 - pReal)
+            sigma2 = pReal*(rhoReal - mu)*(rhoReal - mu) + (1-pReal)*((-1-mu)*(-1-mu))
+
+            if sigma2 > 0.0:
+                lamb = max(0.0,  min((mu/(theta*sigma2)), 1.0))
+                volume = math.pow(xi * (1.0/rb)*math.pow((1.0+lamb*mu-0.5*lamb*lamb*sigma2), (1.0-theta)), (1.0/theta))
+
+                # leverage = self.get_account("BC")/self.parameters["V"]
+                # if (environment.static_parameters["leverageRatio"] > leverage) and (leverage > 0.0):
+                #     self.parameters["V"] = (1.0/environment.static_parameters["leverageRatio"])*self.get_account("BC")
+
+            else:
+                raise TypeError("Error: sigma2 < 0.0")
+
+            # supply_of_loans = 0.6 * bank.get_account("deposits")
+            target_leverage = 0.0
+            supply_of_loans = target_leverage * bank.get_account("equity")
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
             # The above doesn't mean that firms will buy all the loans however
-            demand_for_loans = 2.0 * firm.state_variables["capital"] * 10.0
+            demand_for_loans = 3.0 * firm.state_variables["capital"] * 10.0
             for_rationing.append([firm, -demand_for_loans])
 
         from market import Market
@@ -598,7 +653,7 @@ class Updater(BaseModel):
         market = Market("market")
         # to_delete = []
         for bank in environment.banks:
-            demand = -bank.get_account("loans")-bank.get_account("cb_reserves")+bank.get_account("deposits")  # TODO: rethink
+            demand = -bank.get_account("loans")-bank.get_account("cb_reserves")+bank.get_account("deposits")+bank.get_account("equity")  # TODO: rethink
             # for tranx in bank.accounts:
             #     if tranx.type_ == "ib_loans":
             #         to_delete.append(tranx)
@@ -620,7 +675,7 @@ class Updater(BaseModel):
             # We assume that since there is only one central bank we can keep those
             # in one transaction for now, if we fiddle with maturities this may change
             # If we don't yet have a central bank loan we create one
-            cb_volume = bank.get_account("loans") + bank.get_account("cb_reserves") - bank.get_account("deposits")  # TODO: rethink
+            cb_volume = bank.get_account("loans") + bank.get_account("cb_reserves") - bank.get_account("deposits") - bank.get_account("equity")  # TODO: rethink
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     if tranx.from_ == bank:

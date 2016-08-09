@@ -127,6 +127,8 @@ class Runner(BaseRunner):
             for shock in environment.shocks:
                 if int(shock[0]) <= i+1 and int(shock[1]) >= i+1:
                     shock_class.do_shock(environment, i, shock[2], "end")
+            for firm in environment.firms:
+                print(firm.total_factor_productivity)
             # HELPER, to be removed in production
         print(environment.banks[0])
         # Close the output file at the end of the simulation

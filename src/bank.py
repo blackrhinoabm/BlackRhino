@@ -174,6 +174,11 @@ class Bank(BaseAgent):
                     raise LookupError("Deposits cannot be held by banks in households.")
                 if tranx.to == self:
                     liabilities = liabilities + tranx.amount
+            elif tranx.type_ == "equity":
+                if tranx.from_ == self:
+                    raise LookupError("Equity cannot be held by banks in households.")
+                if tranx.to == self:
+                    liabilities = liabilities + tranx.amount
             elif tranx.type_ == "ib_loans":
                 if tranx.from_ == self:
                     assets = assets + tranx.amount

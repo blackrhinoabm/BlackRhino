@@ -84,10 +84,10 @@ class Shock(BaseShock):
         if shock_type == "productivity":
             if step == "start":
                 for firm in environment.firms:
-                    firm.total_factor_productivity = 0.5
+                    firm.total_factor_productivity = 0.05
             if step == "end":
                 for firm in environment.firms:
-                    firm.total_factor_productivity = 1.8
+                    firm.total_factor_productivity = 0.1
         # This shock changes the elasticities within the C-D production
         # function, simulating a shift in the production technology
         if shock_type == "elasticity":
