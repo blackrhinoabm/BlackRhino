@@ -1,8 +1,8 @@
 <agent identifier='CAPITEC'>
-  <parameter type='parameters' name='equity' value='500.0'></parameter>
-  <parameter type='parameters' name='debt' value='2250.0'></parameter>
-  <parameter type='state_variables' name='leverage' value='4.5'></parameter>
-  <parameter type='state_variables' name='m_1' value='0.29'></parameter>
-  <parameter type='state_variables' name='m_2' value='0.44'></parameter>
-  <parameter type='state_variables' name='m_3' value='0.27'></parameter>
+  <parameter type='parameters' name='equity' value='100.0'></parameter>
+  <parameter type='parameters' name='debt' value='350.0'></parameter>
+  <parameter type='state_variables' name='leverage' value='3.5'></parameter>
+  <parameter type='state_variables' name='m_1' value='0.33'></parameter>
+  <parameter type='state_variables' name='m_2' value='0.11'></parameter>
+  <parameter type='state_variables' name='m_3' value='0.56'></parameter>
 </agent>

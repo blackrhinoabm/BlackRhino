@@ -81,9 +81,10 @@ class Updater(BaseModel):
 
         for agent in environment.agents:
 
-            agent.calc_private_belief(environment)
-            print(agent.identifier)
-            print(agent.state_variables)
+            agent.calc_total_asset()
+            agent.calc_total_asset_sales(environment)
+            # print(agent.identifier)
+            # print(agent.state_variables)
 
         for agent in environment.agents:
                 if current_step > 0:

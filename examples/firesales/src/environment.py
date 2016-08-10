@@ -179,7 +179,7 @@ class Environment(BaseConfig):
         self.static_parameters["agent_directory"] = ""
         self.static_parameters["shock_config"] = ""
         self.agents = []
-
+        self.shocks = []
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
@@ -211,7 +211,12 @@ class Environment(BaseConfig):
         from src.shock import Shock
         shock = Shock(self, runner)
         shock.read_xml_config_file(shock_config)
+        self.shocks.append(shock)
+
 
         # you can use this code below to see if the function of reading the shock worked
         # for key in shock.asset_returns:
         #     print key, shock.asset_returns[key]
+        # or
+        # print shock.asset_returns.items()
+

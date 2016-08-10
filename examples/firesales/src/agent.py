@@ -34,6 +34,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 
+from src.shock import Shock
+from src.runner import Runner
+
 from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
@@ -56,6 +59,9 @@ class Agent(BaseAgent):
 
     parameters = {}
 
+    TAS = 0     # Total Asset Sales
+
+    total_assets = 0
 
     ''' Accounts is not used in our example, but it's in the BaseAgent
     parent class'''
@@ -149,7 +155,8 @@ class Agent(BaseAgent):
         self.identifier = ""  # identifier of the specific agent
         self.state_variables = {}
         self.parameters = {}
-
+        self.TAS = 0
+        self.total_assets = 0
 
     def get_parameters_from_file(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -181,10 +188,53 @@ class Agent(BaseAgent):
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
+    def calc_total_asset(self):
 
-    def calc_private_belief(self, environment):
+        self.total_assets = self.parameters['debt'] + self.parameters['equity']
+        print self.total_assets
+        # self.parameters['total_assets'] = total_assets
 
-        pass
+    def calc_total_asset_sales(self, environment):
+
+        self.TAS = 0
+
+        for shock in environment.shocks:
+
+            for k in set(self.state_variables) & set(shock.asset_returns):
+                    # if key in self.state_variables == key in shock.asset_returns:
+                self.TAS = self.TAS + self.state_variables[k] * shock.asset_returns[k]
+
+            # self.TAS * self.state_variables
+            self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
+            print (self.TAS, k, self.identifier)
+            return self.TAS
+
+
+        # print TAS
+
+        # for key in shock.asset_returns:
+
+
+
+                # TAS = TAS + self.state_variables[k] * shock.asset_returns[]
+
+        # for each_asset in self.identifier.state_variables:
+
+        # TAS = self.identifier * shock.asset_retur
+
+        # for agent in environment.agents:
+        #         if current_step > 0:
+        #                 agent.calc_social_belief(environment)
+        #                 # print(agent.social_belief)
+
+        # for agent in environment.agents:
+        #     agent.investment_decision(environment, current_step)
+
+                # TAS = TAS + self.state_variables[k] * shock.asset_returns[]
+
+        # for each_asset in self.identifier.state_variables:
+
+        # TAS = self.identifier * shock.asset_returns
 
     def calc_social_belief(self, environment):
 
