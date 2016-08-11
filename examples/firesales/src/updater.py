@@ -82,7 +82,7 @@ class Updater(BaseModel):
         for agent in environment.agents:
 
             agent.calc_total_asset()
-            agent.calc_total_asset_sales(environment)
+            agent.calc_total_asset_sales(environment, current_step)
             # print(agent.identifier)
             # print(agent.state_variables)
 

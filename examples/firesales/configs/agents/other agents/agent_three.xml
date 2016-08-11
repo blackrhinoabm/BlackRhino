@@ -1,0 +1,8 @@
+<agent identifier='CAPITEC'>
+  <parameter type='parameters' name='equity' value='100.0'></parameter>
+  <parameter type='parameters' name='debt' value='350.0'></parameter>
+  <parameter type='state_variables' name='leverage' value='3.5'></parameter>
+  <parameter type='state_variables' name='m_1' value='0.33'></parameter>
+  <parameter type='state_variables' name='m_2' value='0.11'></parameter>
+  <parameter type='state_variables' name='m_3' value='0.56'></parameter>
+</agent>

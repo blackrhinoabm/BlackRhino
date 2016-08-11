@@ -34,7 +34,7 @@ if __name__ == '__main__':
     from src.environment import Environment
     from src.runner import Runner
 
-    args = ["configs/environments/", "environment_config", "log/"]
+    args = ["configs/environment/", "environment_config", "log/"]
 
 #
 # INITIALIZATION

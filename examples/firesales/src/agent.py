@@ -191,23 +191,31 @@ class Agent(BaseAgent):
     def calc_total_asset(self):
 
         self.total_assets = self.parameters['debt'] + self.parameters['equity']
-        print self.total_assets
+        return self.total_assets
         # self.parameters['total_assets'] = total_assets
 
-    def calc_total_asset_sales(self, environment):
+    def calc_total_asset_sales(self, environment, current_step):
 
-        self.TAS = 0
+        if current_step == 0:
 
-        for shock in environment.shocks:
+            self.TAS = 0
 
-            for k in set(self.state_variables) & set(shock.asset_returns):
-                    # if key in self.state_variables == key in shock.asset_returns:
-                self.TAS = self.TAS + self.state_variables[k] * shock.asset_returns[k]
+            for shock in environment.shocks:
 
-            # self.TAS * self.state_variables
-            self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
-            print (self.TAS, k, self.identifier)
-            return self.TAS
+                for k in set(self.state_variables) & set(shock.asset_returns):
+                        # if key in self.state_variables == key in shock.asset_returns:
+                    self.TAS = self.TAS + self.state_variables[k] * shock.asset_returns[k]
+
+                # self.TAS * self.state_variables
+                self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
+
+        else:
+
+                for k in (s for s in self.state_variables if s != 'leverage'):
+                    self.sale_of_k_assets = self.state_variables[k] * self.TAS
+                    print self.sale_of_k_assets, self.identifier
+
+
 
 
         # print TAS
