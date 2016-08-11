@@ -152,13 +152,60 @@ class Updater(BaseModel):
         for agent in environment.agents_generator():
             # Going through all agents
             for tranx in agent.accounts:
-                # And all accounts (below we specify explicitly just in case but should work if we remove the if also)
-                if tranx.type_ == "loans" or tranx.type_ == "deposits" or tranx.type_ == "ib_loans" or tranx.type_ == "cb_loans" or tranx.type_ == "cb_reserves":
-                    if tranx not in already_done:
-                        # We add the interest
-                        tranx.amount = tranx.amount * (1 + tranx.interest)
-                        # And append the list of already processed transactions
-                        already_done.append(tranx)
+                # For loans the bank gets the profit converted into equity (retained earnings), and the firm pays interests to lower its funding
+                if tranx.type_ == "loans" and tranx not in already_done:
+                    for tranx_inner in tranx.from_.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount + (tranx.amount * tranx.interest / tranx.from_.get_account_num_transactions("equity"))
+                    tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount * tranx.interest
+                    # And append the list of already processed transactions
+                    already_done.append(tranx)
+                # For deposits the bank gets the loss converted into equity, and the firm/household gets interests to increase its funding
+                if tranx.type_ == "deposits" and tranx not in already_done:
+                    for tranx_inner in tranx.to.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount - (tranx.amount * tranx.interest / tranx.to.get_account_num_transactions("equity"))
+                    tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount * tranx.interest
+                    # And append the list of already processed transactions
+                    already_done.append(tranx)
+                # For interbank loans the bank which gives out the loan gets profit retained as earnings, and the other bank lowers its equity by the loss on interest
+                if tranx.type_ == "ib_loans" and tranx not in already_done:
+                    for tranx_inner in tranx.to.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount + (tranx.amount * tranx.interest / tranx.to.get_account_num_transactions("equity"))
+                    for tranx_inner in tranx.from_.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount - (tranx.amount * tranx.interest / tranx.from_.get_account_num_transactions("equity"))
+                    # And append the list of already processed transactions
+                    already_done.append(tranx)
+                # For central bank loans the bank lowers its equity by the loss on interests
+                if tranx.type_ == "cb_loans" and tranx not in already_done:
+                    for tranx_inner in tranx.to.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount - (tranx.amount * tranx.interest / tranx.to.get_account_num_transactions("equity"))
+                    # And append the list of already processed transactions
+                    already_done.append(tranx)
+                # For central bank reserves the bank increases its equity by the profit on interests
+                if tranx.type_ == "cb_reserves" and tranx not in already_done:
+                    for tranx_inner in tranx.from_.accounts:
+                        if tranx_inner.type_ == "equity":
+                            tranx_inner.amount = tranx_inner.amount + (tranx.amount * tranx.interest / tranx.from_.get_account_num_transactions("equity"))
+                    # And append the list of already processed transactions
+                    already_done.append(tranx)
+
+        # Each bank has a maximum equity above which they will send out dividends
+        for bank in environment.banks:
+            # We check if the equity excees maximum level
+            if bank.get_account("equity") > bank.parameters["max_equity"]:
+                # And find the percentage we need to shave into dividends
+                dividend_percentage = 1 - bank.parameters["max_equity"] / bank.get_account("equity")
+                # We look for the equity transactions
+                for tranx in bank.accounts:
+                    if tranx.type_ == "equity":
+                        # Send out dividends to the owners of equity
+                        tranx.from_.funding = tranx.from_.funding + tranx.amount * dividend_percentage
+                        # And shave the equity to maximum level
+                        tranx.amount = tranx.amount * (1 - dividend_percentage)
         logging.info("  interest accrued on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -615,7 +662,7 @@ class Updater(BaseModel):
                 raise TypeError("Error: sigma2 < 0.0")
 
             # supply_of_loans = 0.6 * bank.get_account("deposits")
-            target_leverage = 0.0
+            target_leverage = 30.0
             supply_of_loans = target_leverage * bank.get_account("equity")
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
@@ -632,7 +679,7 @@ class Updater(BaseModel):
         for ration in rationed:
             ration[1].state_variables["funding"] = ration[1].state_variables["funding"] + ration[2]
             environment.new_transaction("loans", "",  ration[0].identifier, ration[1].identifier,
-                                        ration[2], ration[0].interest_rate_deposits,  2, -1)
+                                        ration[2], ration[0].interest_rate_loans,  2, -1)
 
         #
         # add required reserves
@@ -640,7 +687,7 @@ class Updater(BaseModel):
         for bank in environment.banks:
             reserves = environment.required_reserves * bank.get_account("deposits")
             environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
-                                        reserves, 0,  -1, -1)
+                                        reserves, environment.central_bank[0].interest_rate_cb_reserves,  -1, -1)
         #
         # add interbank market
         #
@@ -689,7 +736,7 @@ class Updater(BaseModel):
             elif cb_volume < 0.0:
                 # dividends??
                 environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
-                                            -cb_volume, environment.central_bank[0].interest_rate_cb_loans,  -1, -1)
+                                            -cb_volume, environment.central_bank[0].interest_rate_cb_reserves,  -1, -1)
         #
         # excess reserves ???
         #

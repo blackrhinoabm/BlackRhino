@@ -1,7 +1,8 @@
 <bank identifier='bank_test_config_id'>
-	<parameter type='static' name='interest_rate_loans' value='0.1'></parameter>
-    <parameter type='static' name='interest_rate_deposits' value='0.00'></parameter>
+	<parameter type='static' name='interest_rate_loans' value='0.05'></parameter>
+    <parameter type='static' name='interest_rate_deposits' value='0.03'></parameter>
     <parameter type='static' name='target_leverage' value='2'></parameter>
+    <parameter type='static' name='max_equity' value='150.0'></parameter>
     <variable name='funding' value='0.0'></variable>
     <variable name='liquidity' value='0.0'></variable>
 </bank>
