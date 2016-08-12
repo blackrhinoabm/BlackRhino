@@ -63,6 +63,7 @@ class Agent(BaseAgent):
 
     total_assets = 0
 
+
     ''' Accounts is not used in our example, but it's in the BaseAgent
     parent class'''
     accounts = []
@@ -209,14 +210,19 @@ class Agent(BaseAgent):
                 # self.TAS * self.state_variables
                 self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
 
+                # self.sale_of_k_assets = 0
+
+
         else:
-
-                for k in (s for s in self.state_variables if s != 'leverage'):
-                    self.sale_of_k_assets = self.state_variables[k] * self.TAS
-                    print self.sale_of_k_assets, self.identifier
-
-
-
+            pass
+            # print self.sale_of_k_assets
+        # self.sale_of_k_assets = 0
+        #         for k in (s for s in self.state_variables if s != 'leverage'):
+        #             self.sale_of_k_assets = self.state_variables[k] * self.TAS
+        #             print self.sale_of_k_assets
+                    # for agent in environment.agents:
+                    #     v = agent.sale_of_k_assets * self.sale_of_k_assets
+                    #     print v
 
         # print TAS
 

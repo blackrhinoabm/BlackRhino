@@ -83,8 +83,17 @@ class Updater(BaseModel):
 
             agent.calc_total_asset()
             agent.calc_total_asset_sales(environment, current_step)
-            # print(agent.identifier)
-            # print(agent.state_variables)
+
+        for agent in environment.agents:
+
+            for k in (s for s in agent.state_variables if s == 'm_1'):
+                temp = agent.state_variables[k] * agent.TAS
+                print temp, agent.state_variables[k]
+
+
+
+            # for k in (s for s in self.state_variables if s != 'leverage'):
+            #         temp = self.state_variables[k] * self.TAS
 
         for agent in environment.agents:
                 if current_step > 0:
