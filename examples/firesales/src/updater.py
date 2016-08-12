@@ -90,11 +90,11 @@ class Updater(BaseModel):
 
             for k in (s for s in agent.state_variables if s == 'm_1'):
                 agent.temp = agent.state_variables[k] * agent.TAS
-                agent.sale_of_k_assets[k, agent.identifier] = agent.temp
+                agent.sale_of_k_assets[k] = agent.temp
 
             self.sales_across_banks['m_1'] = agent.sum_assets(environment, current_step)
 
-        print self.sales_across_banks['m_1']
+        print self.sales_across_banks.items()
             # for k in (s for s in self.state_variables if s != 'leverage'):
             #         temp = self.state_variables[k] * self.TAS
 

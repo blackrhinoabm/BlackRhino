@@ -227,9 +227,10 @@ class Agent(BaseAgent):
 
         for agent in environment.agents:
 
+            for k in set(self.sale_of_k_assets) & set(agent.sale_of_k_assets):
             # v = self.sale_of_k_assets["m_1", self.identifier] + agent.sale_of_k_assets["m_1", agent.identifier]
 
-            v = self.sale_of_k_assets["m_1", self.identifier] + agent.sale_of_k_assets["m_1", agent.identifier] + agent.sale_of_k_assets["m_1", agent.identifier]
+                v = self.sale_of_k_assets[k] + agent.sale_of_k_assets[k] + agent.sale_of_k_assets[k]
 
             return v
 
