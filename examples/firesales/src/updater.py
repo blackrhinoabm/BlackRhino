@@ -38,6 +38,7 @@ class Updater(BaseModel):
 
     model_parameters = {}
 
+    sales_across_banks = {}
     #
     #
     # METHODS
@@ -72,6 +73,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def __init__(self, environment):
         self.environment = environment
+        self.sales_across_banks = {}
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -87,11 +89,12 @@ class Updater(BaseModel):
         for agent in environment.agents:
 
             for k in (s for s in agent.state_variables if s == 'm_1'):
-                temp = agent.state_variables[k] * agent.TAS
-                print temp, agent.state_variables[k]
+                agent.temp = agent.state_variables[k] * agent.TAS
+                agent.sale_of_k_assets[k, agent.identifier] = agent.temp
 
+            self.sales_across_banks['m_1'] = agent.sum_assets(environment, current_step)
 
-
+        print self.sales_across_banks['m_1']
             # for k in (s for s in self.state_variables if s != 'leverage'):
             #         temp = self.state_variables[k] * self.TAS
 

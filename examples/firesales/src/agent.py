@@ -63,6 +63,9 @@ class Agent(BaseAgent):
 
     total_assets = 0
 
+    temp = 0
+
+    sale_of_k_assets = {}
 
     ''' Accounts is not used in our example, but it's in the BaseAgent
     parent class'''
@@ -158,6 +161,8 @@ class Agent(BaseAgent):
         self.parameters = {}
         self.TAS = 0
         self.total_assets = 0
+        self.temp = 0
+        self.sale_of_k_assets = {}
 
     def get_parameters_from_file(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -212,49 +217,25 @@ class Agent(BaseAgent):
 
                 # self.sale_of_k_assets = 0
 
-
         else:
             pass
             # print self.sale_of_k_assets
-        # self.sale_of_k_assets = 0
-        #         for k in (s for s in self.state_variables if s != 'leverage'):
-        #             self.sale_of_k_assets = self.state_variables[k] * self.TAS
-        #             print self.sale_of_k_assets
-                    # for agent in environment.agents:
-                    #     v = agent.sale_of_k_assets * self.sale_of_k_assets
-                    #     print v
 
-        # print TAS
+    def sum_assets(self, environment, current_step):
 
-        # for key in shock.asset_returns:
+        v = 0
 
+        for agent in environment.agents:
 
+            # v = self.sale_of_k_assets["m_1", self.identifier] + agent.sale_of_k_assets["m_1", agent.identifier]
 
-                # TAS = TAS + self.state_variables[k] * shock.asset_returns[]
+            v = self.sale_of_k_assets["m_1", self.identifier] + agent.sale_of_k_assets["m_1", agent.identifier] + agent.sale_of_k_assets["m_1", agent.identifier]
 
-        # for each_asset in self.identifier.state_variables:
+            return v
 
-        # TAS = self.identifier * shock.asset_retur
-
-        # for agent in environment.agents:
-        #         if current_step > 0:
-        #                 agent.calc_social_belief(environment)
-        #                 # print(agent.social_belief)
-
-        # for agent in environment.agents:
-        #     agent.investment_decision(environment, current_step)
-
-                # TAS = TAS + self.state_variables[k] * shock.asset_returns[]
-
-        # for each_asset in self.identifier.state_variables:
-
-        # TAS = self.identifier * shock.asset_returns
 
     def calc_social_belief(self, environment):
 
-        pass
-
-    def weighting_f_equal(self):
         pass
 
     def investment_decision(self, environment, current_step):
