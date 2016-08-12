@@ -119,6 +119,10 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     # endow_equity(environment, time)
     # This method adds banking capital at the start of the simulation
+    # The specific point at which equity starts off shouldn't matter too much
+    # And the results be rather dependent on the target equity set in the
+    # Config of each bank, unless the shock would happen strictly at the
+    # Beginning of the simulation which is not prudent anyway
     # -------------------------------------------------------------------------
     def endow_equity(self,  environment, time):
         # We only do it at the start of the simulation
@@ -127,10 +131,13 @@ class Updater(BaseModel):
             starting_capital = 100.0  # to config
             for bank in environment.banks:
                 # NOTE: We may want it to be stochastic around the above
+                # But since it shouldn't matter it could be a waste of time
                 # Each household owns an equal part of the bank's equity
+                # This could be done differently but shouldn't change the
+                # Results dramatically
                 single_capital = starting_capital / len(environment.households)
                 for household in environment.households:
-                    # We add the equity to the books
+                    # We add the equity to the books (we assume highly liquid equity as is common in literature)
                     environment.new_transaction("equity", "",  household.identifier, bank.identifier,
                                                 single_capital, 0.0,  0, -1)
         logging.info("  banks' equity endowed on step: %s",  time)
@@ -141,8 +148,10 @@ class Updater(BaseModel):
     # accrue_interests(environment, time)
     # This method accrues interest on all transaction
     # making sure we don't double count the transactions that are
-    # on the books of multiple agents, interest is specified within the
-    # transaction itself
+    # on the books of multiple agents, interest rates are specified within the
+    # transaction itself, the interest are accounted for in the retained
+    # earnings on the bank's side, and within funding used for consumption
+    # and production in firms and households
     # -------------------------------------------------------------------------
     def accrue_interests(self,  environment, time):
         # First, add interests to all the transactions
@@ -152,6 +161,9 @@ class Updater(BaseModel):
         for agent in environment.agents_generator():
             # Going through all agents
             for tranx in agent.accounts:
+                #
+                # We have specific logic for each type of transaction (not counting equity which doesn't carry interest in the model)
+                #
                 # For loans the bank gets the profit converted into equity (retained earnings), and the firm pays interests to lower its funding
                 if tranx.type_ == "loans" and tranx not in already_done:
                     for tranx_inner in tranx.from_.accounts:
@@ -172,10 +184,10 @@ class Updater(BaseModel):
                 if tranx.type_ == "ib_loans" and tranx not in already_done:
                     for tranx_inner in tranx.to.accounts:
                         if tranx_inner.type_ == "equity":
-                            tranx_inner.amount = tranx_inner.amount + (tranx.amount * tranx.interest / tranx.to.get_account_num_transactions("equity"))
+                            tranx_inner.amount = tranx_inner.amount - (tranx.amount * tranx.interest / tranx.to.get_account_num_transactions("equity"))
                     for tranx_inner in tranx.from_.accounts:
                         if tranx_inner.type_ == "equity":
-                            tranx_inner.amount = tranx_inner.amount - (tranx.amount * tranx.interest / tranx.from_.get_account_num_transactions("equity"))
+                            tranx_inner.amount = tranx_inner.amount + (tranx.amount * tranx.interest / tranx.from_.get_account_num_transactions("equity"))
                     # And append the list of already processed transactions
                     already_done.append(tranx)
                 # For central bank loans the bank lowers its equity by the loss on interests
@@ -193,6 +205,7 @@ class Updater(BaseModel):
                     # And append the list of already processed transactions
                     already_done.append(tranx)
 
+        # Then we take care of dividends
         # Each bank has a maximum equity above which they will send out dividends
         for bank in environment.banks:
             # We check if the equity excees maximum level
@@ -215,7 +228,9 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def maturities(self,  environment, time):
 
+        # Just in case we reset liquidity check for a bank
         for bank in environment.banks:
+            # It's a state variable within the bank class
             bank.state_variables["liquidity"] = 0.0
 
         # Update maturities
@@ -227,6 +242,7 @@ class Updater(BaseModel):
             for tranx in agent.accounts:
                 # And all accounts
                 if (int(tranx.maturity) > 0):  # reduce maturity if duration longer than 0
+                    # stuff that doesn't mature or mature always is handled separately
                     if tranx not in already_matured:
                         # And check if it's already matured, if not:
                         tranx.maturity = int(tranx.maturity) - 1
@@ -237,6 +253,8 @@ class Updater(BaseModel):
         # If maturity is zero then we must remove the transaction
         # (remembering the economics properly)
 
+        # It's easier to roll the deposits at each step since we keep track of each household's or firm's funding through the step
+        # But it works equivalently to just having the old deposits amended later
         to_delete = []
         for household in environment.banks:
             # THen we mature households' or firms' deposits
@@ -245,59 +263,58 @@ class Updater(BaseModel):
                 if tranx.type_ == "deposits":
                     to_delete.append(tranx)
                     tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # household gains funding
-                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # bank loses liquidity
-                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
+                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount  # banks lose liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
 
+        # Loans are paid off only at their maturity
+        # TODO: defaults (how to implement them on the firm's side?) and returns
         to_delete = []
         # We will delete the matured transactions after
         for bank in environment.banks:
             # THen we mature loans
             for tranx in bank.accounts:
                 if ((tranx.type_ == 'loans') and (int(tranx.maturity) == 0)):
-                    tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - float(tranx.amount)  # firm loses funding
                     to_delete.append(tranx)
-                    # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + float(tranx.amount)  # bank loses liquidity
-                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
+                    tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # firm loses funding
+                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount  # bank gains liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
 
+        # Interbank loans are paid back at each step
+        # TODO: think of term interbank market
         to_delete = []
         # We will delete the matured transactions after
         for bank in environment.banks:
             for tranx in bank.accounts:
                 if tranx.type_ == "ib_loans":
                     to_delete.append(tranx)
-                    # TODO: think this through since the interests on ib loans don't make sense with this setup
-                    # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # loans gotten back
-                    # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # debtor pays back
-                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
-                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
+                    tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount  # one bank gains liquidity
+                    tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount  # while the other loses liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
 
+        # Central bank reserves are paid off at each step
         to_delete = []
         # We will delete the matured transactions after
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_reserves":
                 to_delete.append(tranx)
-                # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] + tranx.amount  # reserves back from CB
-                tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount
+                tranx.from_.state_variables["liquidity"] = tranx.from_.liquidity + tranx.amount  # bank gains liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
 
+        # Central bank loans are repaid at each step
         to_delete = []
         # We will delete the matured transactions after
         for tranx in environment.central_bank[0].accounts:
             if tranx.type_ == "cb_loans":
                 to_delete.append(tranx)
-                # tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount  # cb loans paid back to CB
-                tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount
+                tranx.to.state_variables["liquidity"] = tranx.to.liquidity - tranx.amount  # bank loses liquidity
         for tranx in to_delete:
             # Deleting the matured transactions
             tranx.remove_transaction()
@@ -329,6 +346,7 @@ class Updater(BaseModel):
         # And a loan of equal value from a random bank
         if time == 0:
             for firm in environment.firms:
+                # The initial value of funding shouldn't really matter to the equilibrium
                 firm.state_variables["funding"] = 100.0
                 random_bank = random.choice(environment.banks)
                 environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
@@ -342,7 +360,12 @@ class Updater(BaseModel):
             # If we have too much funding already
             # Remember to check funding at the end and sell capital if necessary
         for firm in environment.firms:
+            # The assumption is that capital costs 10.0 units of money
             total_funding = firm.state_variables["funding"] + firm.state_variables["capital"] * 10.0
+            # The assumption is that capital used in production has a perfect market and is perfectly liquid
+            # Thus can be changed into labour at firm's discretion
+            # Thus the firm divides its capital + funding into chunks based on their
+            # Respective elasticities in the C-D production function, taking into consideration the price of capital
             firm.state_variables["capital"] = firm.capital_elasticity * total_funding / 10.0
             firm.state_variables["funding"] = (1 - firm.capital_elasticity) * total_funding
         logging.info("  funding performed on step: %s",  time)
@@ -375,26 +398,6 @@ class Updater(BaseModel):
         for agent in environment.firms:
             print(agent.state_variables["capital"])
             buyers.append([agent, agent.demand_for_labour_solow])
-        # We may start the search for price at some specific point
-        # Here we pass 0, which means it'll start looking at a
-        # random point between 0 and 10
-
-        if time == 0:
-            self.price = 10.0
-            price = self.price
-            # We initialize the price
-        else:
-            from random import Random
-            random = Random()
-            oldValue = self.price
-            newValue = 0.0
-            scaleFactor = 0.01
-
-            newValue = max((1.0 - scaleFactor + 2.0*scaleFactor*random.random())*oldValue, 0.0)  # make sure we have only positive prices
-
-            self.price = newValue
-            price = self.price
-
         # Import market clearing class
         from market import Market
         # Put the appropriate settings, i.e. desired identifier
@@ -403,12 +406,15 @@ class Updater(BaseModel):
         # given supply and demand of the agents
         # and tolerance of error, resolution of search
         # and amplification factor for exponential search
-        price = market.tatonnement(sellers, buyers, price, 0.001, 0.01, 1.1)
+        # We start the search around 0 for simplicity
+        # Shouldn't matter as the algorithm is quite efficient
+        price = market.tatonnement(sellers, buyers, 0.001, 0.001, 0.01, 1.1)
         environment.variable_parameters["price_of_labour"] = price
         # now we use rationing to find the actual transactions between agents
         for_rationing = []
         for household in environment.households:
-            for_rationing.append([household, household.supply_of_labour_solow(price)])  # TODO: some function of price, maybe the original now, since it's constrained anyway
+            for_rationing.append([household, household.supply_of_labour_solow(price)])
+            # TODO: some function of price, maybe the original now, since it's constrained anyway
             # for_rationing.append([household, household.labour])
         for firm in environment.firms:
             for_rationing.append([firm, -firm.state_variables["funding"]/price])
@@ -426,16 +432,19 @@ class Updater(BaseModel):
             # and a liability (promise to work) for the household
             # ration[0]: household
             # ration[1]: firm
+            # Firm's labour increases by the bought amount
             ration[1].state_variables["labour"] = ration[1].state_variables["labour"] + ration[2]
             # random_bank = random.choice(environment.banks)
             # Deposit is a liability of the bank
             # and an asset of the household
+            # Household's funding increases by the sold amount of labour * price
             ration[0].state_variables["funding"] = ration[0].state_variables["funding"] + ration[2]*price
             # environment.new_transaction("deposits", "",  ration[0].identifier, random_bank.identifier,
             #                             ration[2]*price, random_bank.interest_rate_deposits,  -1, -1)
             # random_bank = random.choice(environment.banks)
             # Loan is an asset of the bank
             # and a liability of the firm
+            # Firm's funding increases by the bought amount of labour * price
             ration[1].state_variables["funding"] = ration[1].state_variables["funding"] - ration[2]*price
             # environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
             #                             ration[2]*price, random_bank.interest_rate_loans,  -1, -1)
@@ -607,6 +616,7 @@ class Updater(BaseModel):
                     # NOTE: when we have more than just loans we'll need to figure out what we can sell
                 else:
                     # raise LookupError("The bank will go into default")  # placeholder
+                    # TODO: Here we'll dig into equity
                     for tranx in bank.accounts:
                         if tranx.type_ == "loans":
                             bank.state_variables["liquidity"] = bank.state_variables["liquidity"] + tranx.amount * discount_factor
@@ -634,6 +644,7 @@ class Updater(BaseModel):
             # If loans are maturing in 2 steps, we get 2.0 from below times 2 steps and then ratio
             # of loans to deposits will be 4, where the number of deposits is exogeneous to the bank
 
+            # <CRRA>
             # NOTES FOR CRRA
             pReal = 0.99
             rhoReal = 0.04
@@ -645,25 +656,18 @@ class Updater(BaseModel):
             # parameters["theta"] = 0.0  # risk aversion parameter of bank
             # parameters["xi"] = 0.0  # scaling parameter in CRRA
             # parameters["rb"] = 0.0  # refinancing costs of the bank -> tbd in environment
-            leverageRatio = 0.08
-
             mu = pReal*rhoReal - (1.0 - pReal)
             sigma2 = pReal*(rhoReal - mu)*(rhoReal - mu) + (1-pReal)*((-1-mu)*(-1-mu))
-
-            if sigma2 > 0.0:
-                lamb = max(0.0,  min((mu/(theta*sigma2)), 1.0))
-                volume = math.pow(xi * (1.0/rb)*math.pow((1.0+lamb*mu-0.5*lamb*lamb*sigma2), (1.0-theta)), (1.0/theta))
-
-                # leverage = self.get_account("BC")/self.parameters["V"]
-                # if (environment.static_parameters["leverageRatio"] > leverage) and (leverage > 0.0):
-                #     self.parameters["V"] = (1.0/environment.static_parameters["leverageRatio"])*self.get_account("BC")
-
-            else:
-                raise TypeError("Error: sigma2 < 0.0")
+            lamb = max(0.0,  min((mu/(theta*sigma2)), 1.0))
+            # </CRRA>
 
             # supply_of_loans = 0.6 * bank.get_account("deposits")
             target_leverage = 30.0
-            supply_of_loans = target_leverage * bank.get_account("equity")
+            volume = target_leverage * bank.get_account("equity")
+            supply_of_loans = volume * lamb
+            to_reserves = volume - supply_of_loans
+            environment.new_transaction("cb_reserves", "",  bank.identifier, environment.central_bank[0].identifier,
+                                        to_reserves, environment.central_bank[0].interest_rate_cb_reserves,  -1, -1)
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
             # The above doesn't mean that firms will buy all the loans however
