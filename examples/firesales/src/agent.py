@@ -221,23 +221,16 @@ class Agent(BaseAgent):
             pass
             # print self.sale_of_k_assets
 
-    def sum_assets(self, environment, current_step):
+    def sum_assets(self, environment, current_step, asset_type):
 
         v = 0
 
         for agent in environment.agents:
 
-            for k in set(self.sale_of_k_assets) & set(agent.sale_of_k_assets):
+            for asset_k in set(self.sale_of_k_assets) & set(agent.sale_of_k_assets):
+                if asset_k == asset_type:
             # v = self.sale_of_k_assets["m_1", self.identifier] + agent.sale_of_k_assets["m_1", agent.identifier]
 
-                v = self.sale_of_k_assets[k] + agent.sale_of_k_assets[k] + agent.sale_of_k_assets[k]
+                    v = self.sale_of_k_assets[asset_k] + agent.sale_of_k_assets[asset_k] + agent.sale_of_k_assets[asset_k]
 
-            return v
-
-
-    def calc_social_belief(self, environment):
-
-        pass
-
-    def investment_decision(self, environment, current_step):
-        pass
+                    return v

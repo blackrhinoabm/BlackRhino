@@ -91,18 +91,35 @@ class Updater(BaseModel):
             for k in (s for s in agent.state_variables if s == 'm_1'):
                 agent.temp = agent.state_variables[k] * agent.TAS
                 agent.sale_of_k_assets[k] = agent.temp
+                # print agent.sale_of_k_assets.items()
+                asset_type = k
+                self.sales_across_banks['m_1'] = agent.sum_assets(environment, current_step, asset_type)
 
-            self.sales_across_banks['m_1'] = agent.sum_assets(environment, current_step)
+        print self.sales_across_banks
 
-        print self.sales_across_banks.items()
+        for agent in environment.agents:
+
+            for k in (s for s in agent.state_variables if s == 'm_2'):
+                agent.temp = agent.state_variables[k] * agent.TAS
+                agent.sale_of_k_assets[k] = agent.temp
+                print agent.sale_of_k_assets.items()
+                asset_type = k
+                self.sales_across_banks['m_2'] = agent.sum_assets(environment, current_step, asset_type)
+
+        print self.sales_across_banks
+
+        # for agent in environment.agents:
+
+        #     for k in (s for s in agent.state_variables if s == 'm_2'):
+        #         agent.temp = (agent.state_variables[k] * agent.TAS)
+        #         agent.sale_of_k_assets[k] = agent.temp
+        #         print agent.sale_of_k_assets.items()
+        #         # print agent.temp
+
+                # self.sales_across_banks['m_2'] = agent.sum_assets(environment, current_step)
+
+        # print self.sales_across_banks.items()
             # for k in (s for s in self.state_variables if s != 'leverage'):
             #         temp = self.state_variables[k] * self.TAS
 
-        for agent in environment.agents:
-                if current_step > 0:
-                        agent.calc_social_belief(environment)
-                        # print(agent.social_belief)
-
-        for agent in environment.agents:
-            agent.investment_decision(environment, current_step)
     # -----------------------------------------------------------------------
