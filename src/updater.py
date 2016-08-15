@@ -85,6 +85,7 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
         self.endow_equity(environment, time)
+        self.firm_defaults(environment, time)
         self.accrue_interests(environment, time)
         self.maturities(environment, time)
         self.amortisation(environment, time)
@@ -141,6 +142,43 @@ class Updater(BaseModel):
                     environment.new_transaction("equity", "",  household.identifier, bank.identifier,
                                                 single_capital, 0.0,  0, -1)
         logging.info("  banks' equity endowed on step: %s",  time)
+        # Keep on the log with the number of step, for debugging mostly
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # firm_defaults(environment, time)
+    # This method checks if any firms have defaulted overnight, and if they
+    # have makes sure to account for it in the rest of the model
+    # -------------------------------------------------------------------------
+    def firm_defaults(self,  environment, time):
+        # Check every firm's default
+        chance_of_default = 0.01  # move that to config later
+        for firm in environment.firms:
+            if random.random() < chance_of_default:
+                # Here we default the company
+
+                # check funding + assets (deposits) vs liabilities (loans)
+                recovery = min(1, firm.get_account("loans") / (firm.state_variables["funding"] + firm.get_account("deposits")))
+                # and then get the % of loans back, rest vanishes
+                to_delete = []
+                for tranx in firm.accounts:
+                    if tranx.type_ == "loans":
+                        tranx.from_.state_variables["liquidity"] = tranx.from_.state_variables["liquidity"] + tranx.amount * recovery
+                        to_delete.append(tranx)
+                    if tranx.type_ == "deposits":
+                        tranx.to.state_variables["liquidity"] = tranx.to.state_variables["liquidity"] - tranx.amount
+                        to_delete.append(tranx)
+
+                for tranx in to_delete:
+                    # Deleting the matured transactions
+                    tranx.remove_transaction()
+
+                # remove the firm from firms
+                # problems with the measurement
+                # maybe make it inactive and check everywhere?
+                # environment.firms.remove(firm)
+
+        logging.info("  firms defaults processed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
 
@@ -600,7 +638,9 @@ class Updater(BaseModel):
 
         discount_factor = 0.85  # put this in config file?
 
+        # TODO: check solvency that is the leverage ratio
         # somewhere below we have to add check for leverage ratio
+        # if equity is bigger than minimum leverage then maybe we can sell equity???
 
         for bank in environment.banks:
             if bank.state_variables["liquidity"] < 0.0:
@@ -662,7 +702,8 @@ class Updater(BaseModel):
             # </CRRA>
 
             # supply_of_loans = 0.6 * bank.get_account("deposits")
-            target_leverage = 30.0
+            target_leverage = 12.5
+            # should be 1/leverage ratio I suppose
             volume = target_leverage * bank.get_account("equity")
             supply_of_loans = volume * lamb
             to_reserves = volume - supply_of_loans
@@ -671,6 +712,8 @@ class Updater(BaseModel):
             for_rationing.append([bank, supply_of_loans])
         for firm in environment.firms:
             # The above doesn't mean that firms will buy all the loans however
+            # TODO: rethink this since it doesn't make sense as is, with the %, it may not be productive to take all the loans
+            # is there a fast way to do it optimally?
             demand_for_loans = 3.0 * firm.state_variables["capital"] * 10.0
             for_rationing.append([firm, -demand_for_loans])
 
