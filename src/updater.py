@@ -154,29 +154,44 @@ class Updater(BaseModel):
         # Check every firm's default
         chance_of_default = 0.01  # move that to config later
         for firm in environment.firms:
+            # We assume that a default is a random exogeneous event, thus the below:
             if random.random() < chance_of_default:
                 # Here we default the company
 
-                # check funding + assets (deposits) vs liabilities (loans)
+                # Check funding + assets (deposits) vs liabilities (loans)
+                # We assume that the assets can be used to recovery the loans for banks
                 recovery = min(1, firm.get_account("loans") / (firm.state_variables["funding"] + firm.get_account("deposits")))
                 # and then get the % of loans back, rest vanishes
+                # we'll be deleting all the transactions from the firm's books
                 to_delete = []
+                # We loop through them
                 for tranx in firm.accounts:
+                    # There should only be loans and deposits
                     if tranx.type_ == "loans":
+                        # For loans bank gets the percentage recovered into their liquidity
                         tranx.from_.state_variables["liquidity"] = tranx.from_.state_variables["liquidity"] + tranx.amount * recovery
+                        # And we make sure to mark the transaction for deletion
                         to_delete.append(tranx)
                     if tranx.type_ == "deposits":
+                        # For deposits the bank loses liquidity equal to the removed deposits
                         tranx.to.state_variables["liquidity"] = tranx.to.state_variables["liquidity"] - tranx.amount
+                        # And we make sure to mark the transaction for deletion
                         to_delete.append(tranx)
 
                 for tranx in to_delete:
                     # Deleting the matured transactions
                     tranx.remove_transaction()
 
-                # remove the firm from firms
-                # problems with the measurement
-                # maybe make it inactive and check everywhere?
-                # environment.firms.remove(firm)
+                # For the easy simulation we make a new firm in its place for equal number of firms throughout
+                # The above may be changed later but will need some changes in the measurement (not stuff per firm)
+                # So we get a new firm in the place of the old one
+                # With initial funding
+                firm.state_variables["funding"] = 100.0
+                # Gotten from a random bank
+                random_bank = random.choice(environment.banks)
+                environment.new_transaction("loans", "",  random_bank.identifier, firm.identifier,
+                                            firm.state_variables["funding"], random_bank.interest_rate_loans,  2, -1)
+                random_bank.state_variables["liquidity"] = random_bank.state_variables["liquidity"] - firm.state_variables["funding"]
 
         logging.info("  firms defaults processed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
