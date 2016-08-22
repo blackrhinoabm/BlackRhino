@@ -80,46 +80,23 @@ class Updater(BaseModel):
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self, environment, current_step):
+        total_asset_sales = {}
 
         for agent in environment.agents:
-
             agent.calc_total_asset()
             agent.calc_total_asset_sales(environment, current_step)
 
-        for agent in environment.agents:
+        for asset_class in environment.agents[0].state_variables:
+            if asset_class != 'leverage':  # this is not elegant, since the leverage has to be manually included here. what happens if you have many non m_1 etc. state variables? Then this will be extra clumsy. So find a better way to handle this.
+                total_asset_sales[asset_class] = 0.0
+                for agent in environment.agents:
+                    total_asset_sales[asset_class] += agent.state_variables[asset_class]*agent.TAS
 
-            for k in (s for s in agent.state_variables if s == 'm_1'):
-                agent.temp = agent.state_variables[k] * agent.TAS
-                agent.sale_of_k_assets[k] = agent.temp
-                # print agent.sale_of_k_assets.items()
-                asset_type = k
-                self.sales_across_banks['m_1'] = agent.sum_assets(environment, current_step, asset_type)
+        print total_asset_sales 
 
-        print self.sales_across_banks
+        print(environment.agents[0].state_variables)
 
-        for agent in environment.agents:
 
-            for k in (s for s in agent.state_variables if s == 'm_2'):
-                agent.temp = agent.state_variables[k] * agent.TAS
-                agent.sale_of_k_assets[k] = agent.temp
-                print agent.sale_of_k_assets.items()
-                asset_type = k
-                self.sales_across_banks['m_2'] = agent.sum_assets(environment, current_step, asset_type)
-
-        print self.sales_across_banks
-
-        # for agent in environment.agents:
-
-        #     for k in (s for s in agent.state_variables if s == 'm_2'):
-        #         agent.temp = (agent.state_variables[k] * agent.TAS)
-        #         agent.sale_of_k_assets[k] = agent.temp
-        #         print agent.sale_of_k_assets.items()
-        #         # print agent.temp
-
-                # self.sales_across_banks['m_2'] = agent.sum_assets(environment, current_step)
-
-        # print self.sales_across_banks.items()
-            # for k in (s for s in self.state_variables if s != 'leverage'):
-            #         temp = self.state_variables[k] * self.TAS
+        # print self.sales_across_banks
 
     # -----------------------------------------------------------------------
