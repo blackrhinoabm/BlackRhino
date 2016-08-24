@@ -48,6 +48,8 @@ class Environment(BaseConfig):
     static_parameters["num_agents"] = 0  # number of agents in a simulation
     static_parameters["agent_directory"] = ""  # directory containing agent xmls
     static_parameters["shock_config"] = ""  # directory containing agent xmls
+    static_parameters["illiquidity"] = ""
+
 
     variable_parameters = {}
     assets = {}
@@ -144,7 +146,7 @@ class Environment(BaseConfig):
             for subelement in element:
 
                 try:  # we see whether the value is a int
-                    if subelement.attrib['type'] == 'm':
+                    if subelement.attrib['type'] == 'illiquidity':
                         value = float(subelement.attrib['value'])
                         type_ = subelement.attrib['type']
                         self.static_parameters[type_] = value
@@ -178,6 +180,7 @@ class Environment(BaseConfig):
         self.static_parameters["num_agents"] = 0
         self.static_parameters["agent_directory"] = ""
         self.static_parameters["shock_config"] = ""
+        self.static_parameters["illiquidity"] = ""
         self.agents = []
         self.shocks = []
         # first, read in the environment file
@@ -203,6 +206,7 @@ class Environment(BaseConfig):
                 agent_filename = agent_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.agents.append(agent)
+                agent.initialize_total_assets()
 
     def initialize_shock(self, shock_config):
         from src.runner import Runner

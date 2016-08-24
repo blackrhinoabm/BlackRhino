@@ -63,6 +63,8 @@ class Agent(BaseAgent):
 
     total_assets = 0
 
+    shock_for_agent = 0
+
     temp = 0
 
     sale_of_k_assets = {}
@@ -160,9 +162,14 @@ class Agent(BaseAgent):
         self.state_variables = {}
         self.parameters = {}
         self.TAS = 0
+
         self.total_assets = 0
         self.temp = 0
         self.sale_of_k_assets = {}
+
+        self.shock_for_agent = 0
+
+
 
     def get_parameters_from_file(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -194,29 +201,41 @@ class Agent(BaseAgent):
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
-    def calc_total_asset(self):
+    def initialize_total_assets(self):
 
         self.total_assets = self.parameters['debt'] + self.parameters['equity']
         return self.total_assets
         # self.parameters['total_assets'] = total_assets
 
-    def calc_total_asset_sales(self, environment, current_step):
+    def update_balance_sheet(self):
+        self.parameters['debt'] = self.parameters['debt'] + self.TAS
+        self.parameters['equity'] = self.parameters['equity'] + self.shock_for_agent * self.total_assets
 
-        if current_step == 0:
+        self.total_assets = self.parameters['debt'] + self.parameters['equity']
+
+    def check_accounts(self):
+        if self.total_assets == self.parameters['equity'] + self.parameters['debt']:
+            print "yes, great - the accounting worked for %s" %self.identifier
+        else:
+             print 'no.. what a bummer'
+
+
+    def start_shock(self, environment): 
+
+        self.shock_for_agent = 0
+
+        for shock in environment.shocks:
+            for k in set(self.state_variables) & set(shock.asset_returns):
+                self.shock_for_agent +=  self.state_variables[k] * shock.asset_returns[k]
+
+
+    def calc_total_asset_sales(self, environment, current_step):
 
             self.TAS = 0
 
             for shock in environment.shocks:
 
                 for k in set(self.state_variables) & set(shock.asset_returns):
-                        # if key in self.state_variables == key in shock.asset_returns:
                     self.TAS = self.TAS + self.state_variables[k] * shock.asset_returns[k]
 
-                # self.TAS * self.state_variables
                 self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
-
-                # self.sale_of_k_assets = 0
-
-        else:
-            pass
-            # print self.sale_of_k_assets
