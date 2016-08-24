@@ -1,6 +1,6 @@
 <firm identifier='firm_test_config_id'>
-    <parameter name='productivity' value='1.25'></parameter>
-    <parameter name='total_factor_productivity' value='0.1'></parameter>
+    <parameter name='productivity' value='1.5'></parameter>
+    <parameter name='total_factor_productivity' value='0.2'></parameter>
     <parameter name='labour_elasticity' value='0.3'></parameter>
     <parameter name='capital_elasticity' value='0.7'></parameter>
     <parameter name='amortisation' value='0.1'></parameter>

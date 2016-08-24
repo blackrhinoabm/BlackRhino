@@ -85,7 +85,7 @@ class Updater(BaseModel):
         # DON'T DO INTERESTS SO FAR, DO ONCE THE REST WORKS
         # self.find_interbank_liquidity(environment, time)
         self.endow_equity(environment, time)
-        self.firm_defaults(environment, time)
+        # self.firm_defaults(environment, time)
         self.accrue_interests(environment, time)
         self.maturities(environment, time)
         self.amortisation(environment, time)
@@ -152,7 +152,7 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def firm_defaults(self,  environment, time):
         # Check every firm's default
-        chance_of_default = 0.01  # move that to config later
+        chance_of_default = 0.00  # move that to config later
         for firm in environment.firms:
             # We assume that a default is a random exogeneous event, thus the below:
             if random.random() < chance_of_default:
@@ -677,6 +677,18 @@ class Updater(BaseModel):
                             bank.state_variables["liquidity"] = bank.state_variables["liquidity"] + tranx.amount * discount_factor
                             tranx.to.state_variables["funding"] = tranx.to.state_variables["funding"] - tranx.amount * discount_factor
                             tranx.amount = 0.0
+                            # Here equity gets lowered, if it'll get to zero we have to liquidate the bank
+                            # and shenanigans will ensue
+                            if abs(bank.state_variables["liquidity"]) <= bank.get_account("equity"):
+                                perc_to_liquidate = (abs(bank.state_variables["liquidity"]) / bank.get_account("equity"))
+                                for tranx in bank.accounts:
+                                    if tranx.type_ == "equity":
+                                        bank.state_variables["liquidity"] = bank.state_variables["liquidity"] + tranx.amount * perc_to_liquidate
+                                        # tranx.from_.state_variables["funding"] = tranx.from_.state_variables["funding"] - tranx.amount * perc_to_liquidate
+                                        tranx.amount = tranx.amount * (1 - perc_to_liquidate)
+                            else:
+                                raise LookupError("Bank went bankrupt, to be implemented.")
+                                # Here we need to liquidate the bank
                             # NOTE: what happens with the negative liquidity here? guess the deposits are defaulted on
     # -------------------------------------------------------------------------
 
@@ -704,7 +716,8 @@ class Updater(BaseModel):
             pReal = 0.99
             rhoReal = 0.04
             theta = 1.67
-            xi = bank.get_account("deposits")
+            # xi = bank.get_account("deposits")
+            xi = 1.0
             rb = 0.02
             # parameters["pReal"] = 0.0  # probability of credit success
             # parameters["rhoReal"] = 0.0  # interest charged on risky investment
@@ -717,8 +730,8 @@ class Updater(BaseModel):
             # </CRRA>
 
             # supply_of_loans = 0.6 * bank.get_account("deposits")
-            target_leverage = 12.5
-            # should be 1/leverage ratio I suppose
+            target_leverage = 12.0
+            # should be at max {1/leverage ratio} I suppose
             volume = target_leverage * bank.get_account("equity")
             supply_of_loans = volume * lamb
             to_reserves = volume - supply_of_loans
@@ -729,7 +742,7 @@ class Updater(BaseModel):
             # The above doesn't mean that firms will buy all the loans however
             # TODO: rethink this since it doesn't make sense as is, with the %, it may not be productive to take all the loans
             # is there a fast way to do it optimally?
-            demand_for_loans = 3.0 * firm.state_variables["capital"] * 10.0
+            demand_for_loans = 4.0 * firm.state_variables["capital"] * 10.0
             for_rationing.append([firm, -demand_for_loans])
 
         from market import Market

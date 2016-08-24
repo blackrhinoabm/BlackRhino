@@ -299,6 +299,9 @@ class Firm(BaseAgent):
         return max(0, (price / (a * b * goods_price)) ** (1 / (b-1)))
     # -------------------------------------------------------------------------
 
+    def demand_for_labour_test(self, price_of_labour):
+        return max(self.state_variables["funding"]/price_of_labour, 0)
+
     # -------------------------------------------------------------------------
     # demand_for_labour_solow(price)
     # Demand for labour stemming from the Solow model with C-D function
