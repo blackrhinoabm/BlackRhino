@@ -113,7 +113,6 @@ class Updater(BaseModel):
             for agent in environment.agents:
                 agent.start_shock(environment)
                 agent.calc_total_asset_sales(environment, current_step)
-                print agent.TAS
 
             self.add_sales_across_banks(environment)
 

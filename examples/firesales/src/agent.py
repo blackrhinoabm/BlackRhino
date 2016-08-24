@@ -217,17 +217,14 @@ class Agent(BaseAgent):
         if self.total_assets == self.parameters['equity'] + self.parameters['debt']:
             print "yes, great - the accounting worked for %s" %self.identifier
         else:
-             print 'no.. what a bummer'
+            print 'no.. what a bummer'
 
-
-    def start_shock(self, environment): 
-
+    def start_shock(self, environment):
         self.shock_for_agent = 0
 
         for shock in environment.shocks:
             for k in set(self.state_variables) & set(shock.asset_returns):
                 self.shock_for_agent +=  self.state_variables[k] * shock.asset_returns[k]
-
 
     def calc_total_asset_sales(self, environment, current_step):
 
