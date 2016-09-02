@@ -120,9 +120,7 @@ class Updater(BaseModel):
             for agent in environment.agents:
                 agent.update_balance_sheet()
 
-                # print agent.total_assets, agent.identifier
-                print self.asset_sales_across_banks
-
+                print agent.total_assets, agent.identifier
 
     def add_sales_across_banks(self, environment):
 
