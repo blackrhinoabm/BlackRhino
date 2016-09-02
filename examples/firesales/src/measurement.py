@@ -164,22 +164,52 @@ class Measurement(BaseMeasurement):
         if ident == "current_step":
             return self.runner.current_step + 1
 
-        if ident == "a1_decision_after_current_step":
+        if ident == "ABSA total assets":
             for agent in self.environment.agents:
-                if agent.identifier == 'agent_one':
-                    return agent.choice
+                if agent.identifier == 'ABSA':
+                    return agent.total_assets
 
-        if ident == "a2_decision_after_current_step":
+        if ident == "ABSA total equity":
             for agent in self.environment.agents:
-                if agent.identifier == 'agent_two':
-                    return agent.choice
+                if agent.identifier == 'ABSA':
+                    return agent.parameters['equity']
 
-        if ident == "a3_decision_after_current_step":
+        if ident == "ABSA total asset sales":
             for agent in self.environment.agents:
-                if agent.identifier == 'agent_three':
-                    return agent.choice
+                if agent.identifier == 'ABSA':
+                    return agent.TAS
 
-        if ident == "a4_decision_after_current_step":
+        if ident == "SBSA total assets":
             for agent in self.environment.agents:
-                if agent.identifier == 'agent_four':
-                    return agent.choice
+                if agent.identifier == 'ABSA':
+                    return agent.total_assets
+
+        if ident == "SBSA total equity":
+            for agent in self.environment.agents:
+                if agent.identifier == 'SBSA':
+                    return agent.parameters['equity']
+
+        if ident == "SBSA total assets":
+            for agent in self.environment.agents:
+                if agent.identifier == 'SBSA':
+                    return agent.total_assets
+
+        if ident == "SBSA total asset sales":
+            for agent in self.environment.agents:
+                if agent.identifier == 'SBSA':
+                    return agent.TAS
+
+        if ident == "CAPITEC total assets":
+            for agent in self.environment.agents:
+                if agent.identifier == 'CAPITEC':
+                    return agent.total_assets
+
+        if ident == "CAPITEC total equity":
+            for agent in self.environment.agents:
+                if agent.identifier == 'CAPITEC':
+                    return agent.parameters['equity']
+
+        if ident == "CAPITEC total asset sales":
+            for agent in self.environment.agents:
+                if agent.identifier == 'CAPITEC':
+                    return agent.TAS
