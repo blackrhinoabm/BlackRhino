@@ -217,17 +217,17 @@ class Measurement(BaseMeasurement):
                 if agent.identifier == 'CAPITEC':
                     return agent.TAS
 
-        if ident == "Nedbank total assets":
+        if ident == "NEDBANK total assets":
             for agent in self.environment.agents:
                 if agent.identifier == 'NEDBANK':
                     return agent.total_assets
 
-        if ident == "Nedbank total equity":
+        if ident == "NEDBANK total equity":
             for agent in self.environment.agents:
                 if agent.identifier == 'NEDBANK':
                     return agent.parameters['equity']
 
-        if ident == "Nedbank total asset sales":
+        if ident == "NEDBANK total asset sales":
             for agent in self.environment.agents:
                 if agent.identifier == 'NEDBANK':
                     return agent.TAS
@@ -292,17 +292,17 @@ class Measurement(BaseMeasurement):
                 if agent.identifier == 'STANDARD CHARTERED':
                     return agent.TAS
 
-        if ident == "Investec total assets":
+        if ident == "INVESTEC total assets":
             for agent in self.environment.agents:
                 if agent.identifier == 'INVESTEC':
                     return agent.total_assets
 
-        if ident == "Investec total equity":
+        if ident == "INVESTEC total equity":
             for agent in self.environment.agents:
                 if agent.identifier == 'INVESTEC':
                     return agent.parameters['equity']
 
-        if ident == "Investec total asset sales":
+        if ident == "INVESTEC total asset sales":
             for agent in self.environment.agents:
                 if agent.identifier == 'INVESTEC':
                     return agent.TAS
@@ -511,7 +511,7 @@ class Measurement(BaseMeasurement):
                 if agent.identifier == 'MERCANTILE BANK':
                     return agent.parameters['equity']
 
-        if ident == "MERCANTILE total asset sales":
+        if ident == "MERCANTILE BANK total asset sales":
             for agent in self.environment.agents:
                 if agent.identifier == 'MERCANTILE BANK':
                     return agent.TAS
@@ -536,7 +536,7 @@ class Measurement(BaseMeasurement):
                 if agent.identifier == 'FINBOND MUTUAL':
                     return agent.total_assets
 
-        if ident == "FINBOND MUTUAL equity":
+        if ident == "FINBOND MUTUAL total equity":
             for agent in self.environment.agents:
                 if agent.identifier == 'FINBOND MUTUAL':
                     return agent.parameters['equity']
@@ -605,3 +605,147 @@ class Measurement(BaseMeasurement):
             for agent in self.environment.agents:
                 if agent.identifier == 'CHINA CONSTR BANK JHB':
                     return agent.TAS
+# columns for shocks
+        if ident =="SBSA shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "SBSA":
+                    return agent.shock_for_agent
+        if ident =="VBS MUTUAL BANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "VBS MUTUAL BANK":
+                    return agent.shock_for_agent
+
+        if ident =="BANK OF BARODA shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "BANK OF BARODA":
+                    return agent.shock_for_agent
+
+        if ident =="UBANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "UBANK":
+                    return agent.shock_for_agent
+
+        if ident =="CITIBANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "CITIBANK":
+                    return agent.shock_for_agent
+
+        if ident =="DEUTSCHE BANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "DEUTSCHE BANK":
+                    return agent.shock_for_agent
+
+        if ident =="ALBARAKA BANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "ALBARAKA BANK":
+                    return agent.shock_for_agent
+
+        if ident =="HABIB OVERSEAS shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "HABIB OVERSEAS":
+                    return agent.shock_for_agent
+
+        if ident =="BANK OF TAIWAN SA BRANCH shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "BANK OF TAIWAN SA BRANCH":
+                    return agent.shock_for_agent
+
+        if ident =="GRINDROD shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "GRINDROD":
+                    return agent.shock_for_agent
+
+        if ident =="BANK OF CHINA JHB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "BANK OF CHINA JHB":
+                    return agent.shock_for_agent
+
+        if ident =="ABSA shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "ABSA":
+                    return agent.shock_for_agent
+
+        if ident =="MERCANTILE BANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "MERCANTILE BANK":
+                    return agent.shock_for_agent
+
+        if ident =="HBZ shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "HBZ":
+                    return agent.shock_for_agent
+
+        if ident =="FINBOND MUTUAL shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "FINBOND MUTUAL":
+                    return agent.shock_for_agent
+
+        if ident =="BANK OF INDIA JHB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "BANK OF INDIA JHB":
+                    return agent.shock_for_agent
+
+        if ident =="SOCIETE GENERALE JHB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "SOCIETE GENERALE JHB":
+                    return agent.shock_for_agent
+
+        if ident =="HONGKONG SHANGHAI BANKING CORP JHB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "HONGKONG SHANGHAI BANKING CORP JHB":
+                    return agent.shock_for_agent
+
+        if ident =="CHINA CONSTR BANK JHB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "CHINA CONSTR BANK JHB":
+                    return agent.shock_for_agent
+
+        if ident =="SASFIN shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "SASFIN":
+                    return agent.shock_for_agent
+
+        if ident =="JPMORGAN shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "JPMORGAN":
+                    return agent.shock_for_agent
+
+        if ident =="SA BANK OF ATHENS shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "SA BANK OF ATHENS":
+                    return agent.shock_for_agent
+
+        if ident =="CAPITEC shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "CAPITEC":
+                    return agent.shock_for_agent
+
+        if ident =="NEDBANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "NEDBANK":
+                    return agent.shock_for_agent
+
+        if ident =="FNB shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "FNB":
+                    return agent.shock_for_agent
+
+        if ident =="Bidvest shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "Bidvest":
+                    return agent.shock_for_agent
+
+        if ident =="STANDARD CHARTERED shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "STANDARD CHARTERED":
+                    return agent.shock_for_agent
+
+        if ident =="AFRICAN BANK shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "AFRICAN BANK":
+                    return agent.shock_for_agent
+
+        if ident =="INVESTEC shock on assets":
+            for agent in self.environment.agents:
+                if agent.identifier == "INVESTEC":
+                    return agent.shock_for_agent

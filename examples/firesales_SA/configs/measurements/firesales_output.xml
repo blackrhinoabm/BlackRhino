@@ -1,97 +1,122 @@
 <measurement identifier='firesales_output'>
     <parameter type='filename' value='measurements/Measurement_firesales.csv'></parameter>
     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
-    <parameter type='output' column='2' header='ABSA: total assets' value='ABSA total assets'></parameter>
-    <parameter type='output' column='3' header='ABSA: total equity ' value='ABSA total equity'></parameter>
-    <parameter type='output' column='4' header='ABSA: total asset sales' value='ABSA total asset sales'></parameter>
-    <parameter type='output' column='5' header='SBSA: total assets' value='SBSA total assets'></parameter>
-    <parameter type='output' column='6' header='SBSA: total equity' value='SBSA total equity'></parameter>
-    <parameter type='output' column='7' header='SBSA: total asset sales' value='SBSA total asset sales'></parameter>
-    <parameter type='output' column='8' header='CAPITEC: total assets' value='CAPITEC total assets'></parameter>
-    <parameter type='output' column='9' header='CAPITEC: total equity' value='CAPITEC total equity'></parameter>
-    <parameter type='output' column='10' header='CAPITEC: total asset sales' value='CAPITEC total asset sales' >
-    </parameter>
-   <parameter type='output' column='11' header='Nedbank: total assets' value='Nedbank total assets'></parameter>
-    <parameter type='output' column='12' header='Nedbank: total equity' value='Nedbank total equity'></parameter>
-    <parameter type='output' column='13' header='Nedbank: total asset sales' value='Nedbank total asset sales'></parameter>
-    <parameter type='output' column='14' header='FNB: total assets' value='FNB total assets'></parameter>
-    <parameter type='output' column='15' header='FNB: total equity' value='FNB total equity'></parameter>
-    <parameter type='output' column='16' header='FNB: total asset sales' value='FNB total asset sales'></parameter>
-    <parameter type='output' column='14' header='AFRICAN BANK: total assets' value='AFRICAN BANK total assets'></parameter>
-    <parameter type='output' column='15' header='AFRICAN BANK: total equity' value='AFRICAN BANK total equity'></parameter>
-    <parameter type='output' column='16' header='AFRICAN BANK: total asset sales' value='AFRICAN BANK total asset sales'></parameter>
-    <parameter type='output' column='17' header='Bidvest: total assets' value='Bidvest total assets'></parameter>
-    <parameter type='output' column='18' header='Bidvest: total equity' value='Bidvest total equity'></parameter>
-    <parameter type='output' column='19' header='Bidvest: total asset sales' value='Bidvest total asset sales'></parameter>
-    <parameter type='output' column='20' header='STANDARD CHARTERED: total assets' value='STANDARD CHARTERED total assets'></parameter>
-    <parameter type='output' column='21' header='STANDARD CHARTERED: total equity' value='STANDARD CHARTERED total equity'></parameter>
-    <parameter type='output' column='22' header='STANDARD CHARTERED: total asset sales' value='STANDARD CHARTERED total asset sales'></parameter>
-    <parameter type='output' column='23' header='Investec: total assets' value='Investec total assets'></parameter>
-    <parameter type='output' column='24' header='Investec: total equity' value='Investec total equity'></parameter>
-    <parameter type='output' column='25' header='Investec: total asset sales' value='Investec total asset sales'></parameter>
-    <parameter type='output' column='26' header='VBS MUTUAL BANK: total assets' value='VBS MUTUAL BANK total assets'></parameter>
-    <parameter type='output' column='27' header='VBS MUTUAL BANK: total equity' value='VBS MUTUAL BANK total equity'></parameter>
-    <parameter type='output' column='28' header='VBS MUTUAL BANK: total asset sales' value='VBS MUTUAL BANK total asset sales'></parameter>
-    <parameter type='output' column='29' header='SASFIN: total assets' value='SASFIN total assets'></parameter>
-    <parameter type='output' column='30' header='SASFIN: total equity' value='SASFIN total equity'></parameter>
-    <parameter type='output' column='31' header='SASFIN: total asset sales' value='BANK OF BARODA total asset sales'></parameter>
-    <parameter type='output' column='32' header='BANK OF BARODA: total assets' value='BANK OF BARODA total assets'></parameter>
-    <parameter type='output' column='33' header='BANK OF BARODA: total equity' value='BANK OF BARODA total equity'></parameter>
-    <parameter type='output' column='34' header='BANK OF BARODA: total asset sales' value='UBANK total asset sales'></parameter>
-    <parameter type='output' column='35' header='UBANK: total assets' value='UBANK total assets'></parameter>
-    <parameter type='output' column='36' header='UBANK: total equity' value='UBANK total equity'></parameter>
-    <parameter type='output' column='37' header='UBANK: total asset sales' value='UBANK total asset sales'></parameter>
-    <parameter type='output' column='38' header='CITIBANK: total assets' value='CITIBANK total assets'></parameter>
-    <parameter type='output' column='39' header='CITIBANK: total equity' value='CITIBANK total equity'></parameter>
-    <parameter type='output' column='40' header='CITIBANK: total asset sales' value='CITIBANK total asset sales'></parameter>
-    <parameter type='output' column='41' header='DEUTSCHE BANK: total assets' value='DEUTSCHE BANK total assets'></parameter>
-    <parameter type='output' column='42' header='DEUTSCHE BANK: total equity' value='DEUTSCHE BANK total equity'></parameter>
-    <parameter type='output' column='43' header='DEUTSCHE BANK: total asset sales' value='DEUTSCHE BANK total asset sales'></parameter>
-    <parameter type='output' column='44' header='ALBARAKA BANK: total assets' value='ALBARAKA BANK total assets'></parameter>
-    <parameter type='output' column='45' header='ALBARAKA BANK: total equity' value='ALBARAKA BANK total equity'></parameter>
-    <parameter type='output' column='46' header='ALBARAKA BANK: total asset sales' value='ALBARAKA BANK total asset sales'></parameter>
-    <parameter type='output' column='47' header='HABIB OVERSEAS: total assets' value='HABIB OVERSEAS total assets'></parameter>
-    <parameter type='output' column='48' header='HABIB OVERSEAS: total equity' value='HABIB OVERSEAS total equity'></parameter>
-    <parameter type='output' column='49' header='HABIB OVERSEAS: total asset sales' value='HABIB OVERSEAS total asset sales'></parameter>
-    <parameter type='output' column='50' header='BANK OF TAIWAN SA BRANCH: total assets' value='BANK OF TAIWAN SA BRANCH total assets'></parameter>
-    <parameter type='output' column='51' header='BANK OF TAIWAN SA BRANCH: total equity' value='BANK OF TAIWAN SA BRANCH total equity'></parameter>
-    <parameter type='output' column='52' header='BANK OF TAIWAN SA BRANCH: total asset sales' value='BANK OF TAIWAN SA BRANCH total asset sales'></parameter>
-    <parameter type='output' column='53' header='GRINDROD: total assets' value='GRINDROD total assets'></parameter>
-    <parameter type='output' column='54' header='GRINDROD: total equity' value='GRINDROD total equity'></parameter>
-    <parameter type='output' column='55' header='GRINDROD: total asset sales' value='GRINDROD total asset sales'></parameter>
-    <parameter type='output' column='56' header='JPMORGAN: total assets' value='JPMORGAN total assets'></parameter>
-    <parameter type='output' column='57' header='JPMORGAN: total equity' value='JPMORGAN total equity'></parameter>
-    <parameter type='output' column='58' header='JPMORGAN: total asset sales' value='JPMORGAN total asset sales'></parameter>
-    <parameter type='output' column='59' header='BANK OF CHINA JHB: total assets' value='BANK OF CHINA JHB total assets'></parameter>
-    <parameter type='output' column='60' header='BANK OF CHINA JHB: total equity' value='BANK OF CHINA JHB total equity'></parameter>
-    <parameter type='output' column='61' header='BANK OF CHINA JHB: total asset sales' value='BANK OF CHINA JHB total asset sales'></parameter>
-    <parameter type='output' column='62' header='SA BANK OF ATHENS: total assets' value='SA BANK OF ATHENS total assets'></parameter>
-    <parameter type='output' column='63' header='SA BANK OF ATHENS: total equity' value='SA BANK OF ATHENS total equity'></parameter>
-    <parameter type='output' column='64' header='SA BANK OF ATHENS: total asset sales' value='SA BANK OF ATHENS total asset sales'></parameter>
-    <parameter type='output' column='65' header='MERCANTILE BANK: total assets' value='MERCANTILE BANK total assets'></parameter>
-    <parameter type='output' column='66' header='MERCANTILE BANK: total equity' value='MERCANTILE BANK total equity'></parameter>
-    <parameter type='output' column='67' header='MERCANTILE BANK: total asset sales' value='MERCANTILE BANK total asset sales'></parameter>
-    <parameter type='output' column='68' header='HBZ: total assets' value='HBZ total assets'></parameter>
-    <parameter type='output' column='69' header='HBZ: total equity' value='HBZ total equity'></parameter>
-    <parameter type='output' column='70' header='HBZ: total asset sales' value='HBZ total asset sales'></parameter>
-    <parameter type='output' column='71' header='FINBOND MUTUAL: total assets' value='FINBOND MUTUAL total assets'></parameter>
-    <parameter type='output' column='72' header='FINBOND MUTUAL: total equity' value='FINBOND MUTUAL total equity'></parameter>
-    <parameter type='output' column='73' header='FINBOND MUTUAL: total asset sales' value='FINBOND MUTUAL total asset sales'></parameter>
-    <parameter type='output' column='74' header='BANK OF INDIA JHB: total assets' value='BANK OF INDIA JHB total assets'></parameter>
-    <parameter type='output' column='75' header='BANK OF INDIA JHB: total equity' value='BANK OF INDIA JHB total equity'></parameter>
-    <parameter type='output' column='76' header='BANK OF INDIA JHB: total asset sales' value='BANK OF INDIA JHB total asset sales'></parameter>
-    <parameter type='output' column='77' header='SOCIETE GENERALE JHB: total assets' value='SOCIETE GENERALE JHB total assets'></parameter>
-    <parameter type='output' column='78' header='SOCIETE GENERALE JHB: total equity' value='SOCIETE GENERALE JOHANNESBURG total equity'></parameter>
-    <parameter type='output' column='79' header='SOCIETE GENERALE JHB: total asset sales' value='SOCIETE GENERALE JHB total asset sales'></parameter>
-    <parameter type='output' column='80' header='HONGKONG SHANGHAI BANKING CORP JHB: total assets' value='HONGKONG SHANGHAI BANKING CORP JHB total assets'></parameter>
-    <parameter type='output' column='81' header='HONGKONG SHANGHAI BANKING CORP JHB: total equity' value='HONGKONG SHANGHAI BANKING CORP JHB total equity'></parameter>
-    <parameter type='output' column='82' header='HONGKONG SHANGHAI BANKING CORP JHB: total asset sales' value='HONGKONG SHANGHAI BANKING CORP JHB total asset sales'></parameter>
-    <parameter type='output' column='83' header='HONGKONG SHANGHAI BANKING CORP JHB: total assets' value='HONGKONG SHANGHAI BANKING CORP JHB total assets'></parameter>
-    <parameter type='output' column='84' header='HONGKONG SHANGHAI BANKING CORP JHB: total equity' value='HONGKONG SHANGHAI BANKING CORP JHB total equity'></parameter>
-    <parameter type='output' column='85' header='HONGKONG SHANGHAI BANKING CORP JHB: total asset sales' value='HONGKONG SHANGHAI BANKING CORP JHB total asset sales'></parameter>
-    <parameter type='output' column='86' header='CHINA CONSTR BANK JHB: total assets' value='CHINA CONSTR BANK JHB total assets'></parameter>
-    <parameter type='output' column='87' header='CHINA CONSTR BANK JHB: total equity' value='CHINA CONSTR BANK JHB total equity'></parameter>
-    <parameter type='output' column='88' header='CHINA CONSTR BANK JHB : total asset sales' value='CHINA CONSTR BANK JHB total asset sales'></parameter>
-    <parameter type='output' column='89' header='ASSETS SOLD ACROSS SYSTEM OF ALL CLASSES' value='global TAS'></parameter>
+        <parameter type="output" column="2" header="SBSA total assets" value="SBSA total assets"></parameter>
+    <parameter type="output" column="3" header="SBSA total equity" value="SBSA total equity"></parameter>
+    <parameter type="output" column="4" header="SBSA total asset sales" value="SBSA total asset sales"></parameter>
+    <parameter type="output" column="5" header="SBSA shock on assets" value="SBSA shock on assets"></parameter>
+    <parameter type="output" column="6" header="VBS MUTUAL BANK total assets" value="VBS MUTUAL BANK total assets"></parameter>
+    <parameter type="output" column="7" header="VBS MUTUAL BANK total equity" value="VBS MUTUAL BANK total equity"></parameter>
+    <parameter type="output" column="8" header="VBS MUTUAL BANK total asset sales" value="VBS MUTUAL BANK total asset sales"></parameter>
+    <parameter type="output" column="9" header="VBS MUTUAL BANK shock on assets" value="VBS MUTUAL BANK shock on assets"></parameter>
+    <parameter type="output" column="10" header="BANK OF BARODA total assets" value="BANK OF BARODA total assets"></parameter>
+    <parameter type="output" column="11" header="BANK OF BARODA total equity" value="BANK OF BARODA total equity"></parameter>
+    <parameter type="output" column="12" header="BANK OF BARODA total asset sales" value="BANK OF BARODA total asset sales"></parameter>
+    <parameter type="output" column="13" header="BANK OF BARODA shock on assets" value="BANK OF BARODA shock on assets"></parameter>
+    <parameter type="output" column="14" header="UBANK total assets" value="UBANK total assets"></parameter>
+    <parameter type="output" column="15" header="UBANK total equity" value="UBANK total equity"></parameter>
+    <parameter type="output" column="16" header="UBANK total asset sales" value="UBANK total asset sales"></parameter>
+    <parameter type="output" column="17" header="UBANK shock on assets" value="UBANK shock on assets"></parameter>
+    <parameter type="output" column="18" header="CITIBANK total assets" value="CITIBANK total assets"></parameter>
+    <parameter type="output" column="19" header="CITIBANK total equity" value="CITIBANK total equity"></parameter>
+    <parameter type="output" column="20" header="CITIBANK total asset sales" value="CITIBANK total asset sales"></parameter>
+    <parameter type="output" column="21" header="CITIBANK shock on assets" value="CITIBANK shock on assets"></parameter>
+    <parameter type="output" column="22" header="DEUTSCHE BANK total assets" value="DEUTSCHE BANK total assets"></parameter>
+    <parameter type="output" column="23" header="DEUTSCHE BANK total equity" value="DEUTSCHE BANK total equity"></parameter>
+    <parameter type="output" column="24" header="DEUTSCHE BANK total asset sales" value="DEUTSCHE BANK total asset sales"></parameter>
+    <parameter type="output" column="25" header="DEUTSCHE BANK shock on assets" value="DEUTSCHE BANK shock on assets"></parameter>
+    <parameter type="output" column="26" header="ALBARAKA BANK total assets" value="ALBARAKA BANK total assets"></parameter>
+    <parameter type="output" column="27" header="ALBARAKA BANK total equity" value="ALBARAKA BANK total equity"></parameter>
+    <parameter type="output" column="28" header="ALBARAKA BANK total asset sales" value="ALBARAKA BANK total asset sales"></parameter>
+    <parameter type="output" column="29" header="ALBARAKA BANK shock on assets" value="ALBARAKA BANK shock on assets"></parameter>
+    <parameter type="output" column="30" header="HABIB OVERSEAS total assets" value="HABIB OVERSEAS total assets"></parameter>
+    <parameter type="output" column="31" header="HABIB OVERSEAS total equity" value="HABIB OVERSEAS total equity"></parameter>
+    <parameter type="output" column="32" header="HABIB OVERSEAS total asset sales" value="HABIB OVERSEAS total asset sales"></parameter>
+    <parameter type="output" column="33" header="HABIB OVERSEAS shock on assets" value="HABIB OVERSEAS shock on assets"></parameter>
+    <parameter type="output" column="34" header="BANK OF TAIWAN SA BRANCH total assets" value="BANK OF TAIWAN SA BRANCH total assets"></parameter>
+    <parameter type="output" column="35" header="BANK OF TAIWAN SA BRANCH total equity" value="BANK OF TAIWAN SA BRANCH total equity"></parameter>
+    <parameter type="output" column="36" header="BANK OF TAIWAN SA BRANCH total asset sales" value="BANK OF TAIWAN SA BRANCH total asset sales"></parameter>
+    <parameter type="output" column="37" header="BANK OF TAIWAN SA BRANCH shock on assets" value="BANK OF TAIWAN SA BRANCH shock on assets"></parameter>
+    <parameter type="output" column="38" header="GRINDROD total assets" value="GRINDROD total assets"></parameter>
+    <parameter type="output" column="39" header="GRINDROD total equity" value="GRINDROD total equity"></parameter>
+    <parameter type="output" column="40" header="GRINDROD total asset sales" value="GRINDROD total asset sales"></parameter>
+    <parameter type="output" column="41" header="GRINDROD shock on assets" value="GRINDROD shock on assets"></parameter>
+    <parameter type="output" column="42" header="BANK OF CHINA JHB total assets" value="BANK OF CHINA JHB total assets"></parameter>
+    <parameter type="output" column="43" header="BANK OF CHINA JHB total equity" value="BANK OF CHINA JHB total equity"></parameter>
+    <parameter type="output" column="44" header="BANK OF CHINA JHB total asset sales" value="BANK OF CHINA JHB total asset sales"></parameter>
+    <parameter type="output" column="45" header="BANK OF CHINA JHB shock on assets" value="BANK OF CHINA JHB shock on assets"></parameter>
+    <parameter type="output" column="46" header="ABSA total assets" value="ABSA total assets"></parameter>
+    <parameter type="output" column="47" header="ABSA total equity" value="ABSA total equity"></parameter>
+    <parameter type="output" column="48" header="ABSA total asset sales" value="ABSA total asset sales"></parameter>
+    <parameter type="output" column="49" header="ABSA shock on assets" value="ABSA shock on assets"></parameter>
+    <parameter type="output" column="50" header="MERCANTILE BANK total assets" value="MERCANTILE BANK total assets"></parameter>
+    <parameter type="output" column="51" header="MERCANTILE BANK total equity" value="MERCANTILE BANK total equity"></parameter>
+    <parameter type="output" column="52" header="MERCANTILE BANK total asset sales" value="MERCANTILE BANK total asset sales"></parameter>
+    <parameter type="output" column="53" header="MERCANTILE BANK shock on assets" value="MERCANTILE BANK shock on assets"></parameter>
+    <parameter type="output" column="54" header="HBZ total assets" value="HBZ total assets"></parameter>
+    <parameter type="output" column="55" header="HBZ total equity" value="HBZ total equity"></parameter>
+    <parameter type="output" column="56" header="HBZ total asset sales" value="HBZ total asset sales"></parameter>
+    <parameter type="output" column="57" header="HBZ shock on assets" value="HBZ shock on assets"></parameter>
+    <parameter type="output" column="58" header="FINBOND MUTUAL total assets" value="FINBOND MUTUAL total assets"></parameter>
+    <parameter type="output" column="59" header="FINBOND MUTUAL total equity" value="FINBOND MUTUAL total equity"></parameter>
+    <parameter type="output" column="60" header="FINBOND MUTUAL total asset sales" value="FINBOND MUTUAL total asset sales"></parameter>
+    <parameter type="output" column="61" header="FINBOND MUTUAL shock on assets" value="FINBOND MUTUAL shock on assets"></parameter>
+    <parameter type="output" column="62" header="BANK OF INDIA JHB total assets" value="BANK OF INDIA JHB total assets"></parameter>
+    <parameter type="output" column="63" header="BANK OF INDIA JHB total equity" value="BANK OF INDIA JHB total equity"></parameter>
+    <parameter type="output" column="64" header="BANK OF INDIA JHB total asset sales" value="BANK OF INDIA JHB total asset sales"></parameter>
+    <parameter type="output" column="65" header="BANK OF INDIA JHB shock on assets" value="BANK OF INDIA JHB shock on assets"></parameter>
+    <parameter type="output" column="66" header="SOCIETE GENERALE JHB total assets" value="SOCIETE GENERALE JHB total assets"></parameter>
+    <parameter type="output" column="67" header="SOCIETE GENERALE JHB total equity" value="SOCIETE GENERALE JHB total equity"></parameter>
+    <parameter type="output" column="68" header="SOCIETE GENERALE JHB total asset sales" value="SOCIETE GENERALE JHB total asset sales"></parameter>
+    <parameter type="output" column="69" header="SOCIETE GENERALE JHB shock on assets" value="SOCIETE GENERALE JHB shock on assets"></parameter>
+    <parameter type="output" column="70" header="HONGKONG SHANGHAI BANKING CORP JHB total assets" value="HONGKONG SHANGHAI BANKING CORP JHB total assets"></parameter>
+    <parameter type="output" column="71" header="HONGKONG SHANGHAI BANKING CORP JHB total equity" value="HONGKONG SHANGHAI BANKING CORP JHB total equity"></parameter>
+    <parameter type="output" column="72" header="HONGKONG SHANGHAI BANKING CORP JHB total asset sales" value="HONGKONG SHANGHAI BANKING CORP JHB total asset sales"></parameter>
+    <parameter type="output" column="73" header="HONGKONG SHANGHAI BANKING CORP JHB shock on assets" value="HONGKONG SHANGHAI BANKING CORP JHB shock on assets"></parameter>
+    <parameter type="output" column="74" header="CHINA CONSTR BANK JHB total assets" value="CHINA CONSTR BANK JHB total assets"></parameter>
+    <parameter type="output" column="75" header="CHINA CONSTR BANK JHB total equity" value="CHINA CONSTR BANK JHB total equity"></parameter>
+    <parameter type="output" column="76" header="CHINA CONSTR BANK JHB total asset sales" value="CHINA CONSTR BANK JHB total asset sales"></parameter>
+    <parameter type="output" column="77" header="CHINA CONSTR BANK JHB shock on assets" value="CHINA CONSTR BANK JHB shock on assets"></parameter>
+    <parameter type="output" column="78" header="SASFIN total assets" value="SASFIN total assets"></parameter>
+    <parameter type="output" column="79" header="SASFIN total equity" value="SASFIN total equity"></parameter>
+    <parameter type="output" column="80" header="SASFIN total asset sales" value="SASFIN total asset sales"></parameter>
+    <parameter type="output" column="81" header="SASFIN shock on assets" value="SASFIN shock on assets"></parameter>
+    <parameter type="output" column="82" header="JPMORGAN total assets" value="JPMORGAN total assets"></parameter>
+    <parameter type="output" column="83" header="JPMORGAN total equity" value="JPMORGAN total equity"></parameter>
+    <parameter type="output" column="84" header="JPMORGAN total asset sales" value="JPMORGAN total asset sales"></parameter>
+    <parameter type="output" column="85" header="JPMORGAN shock on assets" value="JPMORGAN shock on assets"></parameter>
+    <parameter type="output" column="86" header="SA BANK OF ATHENS total assets" value="SA BANK OF ATHENS total assets"></parameter>
+    <parameter type="output" column="87" header="SA BANK OF ATHENS total equity" value="SA BANK OF ATHENS total equity"></parameter>
+    <parameter type="output" column="88" header="SA BANK OF ATHENS total asset sales" value="SA BANK OF ATHENS total asset sales"></parameter>
+    <parameter type="output" column="89" header="SA BANK OF ATHENS shock on assets" value="SA BANK OF ATHENS shock on assets"></parameter>
+    <parameter type="output" column="90" header="CAPITEC total assets" value="CAPITEC total assets"></parameter>
+    <parameter type="output" column="91" header="CAPITEC total equity" value="CAPITEC total equity"></parameter>
+    <parameter type="output" column="92" header="CAPITEC total asset sales" value="CAPITEC total asset sales"></parameter>
+    <parameter type="output" column="93" header="CAPITEC shock on assets" value="CAPITEC shock on assets"></parameter>
+    <parameter type="output" column="94" header="NEDBANK total assets" value="NEDBANK total assets"></parameter>
+    <parameter type="output" column="95" header="NEDBANK total equity" value="NEDBANK total equity"></parameter>
+    <parameter type="output" column="96" header="NEDBANK total asset sales" value="NEDBANK total asset sales"></parameter>
+    <parameter type="output" column="97" header="NEDBANK shock on assets" value="NEDBANK shock on assets"></parameter>
+    <parameter type="output" column="98" header="FNB total assets" value="FNB total assets"></parameter>
+    <parameter type="output" column="99" header="FNB total equity" value="FNB total equity"></parameter>
+    <parameter type="output" column="100" header="FNB total asset sales" value="FNB total asset sales"></parameter>
+    <parameter type="output" column="101" header="FNB shock on assets" value="FNB shock on assets"></parameter>
+    <parameter type="output" column="102" header="Bidvest total assets" value="Bidvest total assets"></parameter>
+    <parameter type="output" column="103" header="Bidvest total equity" value="Bidvest total equity"></parameter>
+    <parameter type="output" column="104" header="Bidvest total asset sales" value="Bidvest total asset sales"></parameter>
+    <parameter type="output" column="105" header="Bidvest shock on assets" value="Bidvest shock on assets"></parameter>
+    <parameter type="output" column="106" header="STANDARD CHARTERED total assets" value="STANDARD CHARTERED total assets"></parameter>
+    <parameter type="output" column="107" header="STANDARD CHARTERED total equity" value="STANDARD CHARTERED total equity"></parameter>
+    <parameter type="output" column="108" header="STANDARD CHARTERED total asset sales" value="STANDARD CHARTERED total asset sales"></parameter>
+    <parameter type="output" column="109" header="STANDARD CHARTERED shock on assets" value="STANDARD CHARTERED shock on assets"></parameter>
+    <parameter type="output" column="110" header="AFRICAN BANK total assets" value="AFRICAN BANK total assets"></parameter>
+    <parameter type="output" column="111" header="AFRICAN BANK total equity" value="AFRICAN BANK total equity"></parameter>
+    <parameter type="output" column="112" header="AFRICAN BANK total asset sales" value="AFRICAN BANK total asset sales"></parameter>
+    <parameter type="output" column="113" header="AFRICAN BANK shock on assets" value="AFRICAN BANK shock on assets"></parameter>
+    <parameter type="output" column="114" header="INVESTEC total assets" value="INVESTEC total assets"></parameter>
+    <parameter type="output" column="115" header="INVESTEC total equity" value="INVESTEC total equity"></parameter>
+    <parameter type="output" column="116" header="INVESTEC total asset sales" value="INVESTEC total asset sales"></parameter>
+    <parameter type="output" column="117" header="INVESTEC shock on assets" value="INVESTEC shock on assets"></parameter>
+    <parameter type='output' column='118' header='ASSETS SOLD ACROSS SYSTEM OF ALL CLASSES' value='global TAS'></parameter>
 
 </measurement>

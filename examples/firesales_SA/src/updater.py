@@ -93,6 +93,7 @@ class Updater(BaseModel):
 
                 agent.start_shock(environment)
                 agent.calc_total_asset_sales(environment, current_step)
+                print agent.shock_for_agent, agent.identifier
 
             # the code below is to calculate TAS across all banks
             # It returns a dictionary with asset class as keys and
@@ -101,6 +102,7 @@ class Updater(BaseModel):
 
             for agent in environment.agents:
                 agent.update_balance_sheet()
+                print agent.identifier
                 # agent.check_accounts()
 
                 # now we need to add up all the sales for one asset class
@@ -126,6 +128,8 @@ class Updater(BaseModel):
 
             for agent in environment.agents:
                 agent.start_shock(environment)
+                print agent.shock_for_agent, agent.identifier
+
                 agent.calc_total_asset_sales(environment, current_step)
                 # print agent.TAS, agent.identifier
 
@@ -136,6 +140,8 @@ class Updater(BaseModel):
 
             for agent in environment.agents:
                 agent.update_balance_sheet()
+                # agent.check_accounts()
+
                 # print agent.total_assets, agent.identifier
 
             # Now we need to sum up sales across classes to get a 'globas TAS'
@@ -148,7 +154,7 @@ class Updater(BaseModel):
             for i in self.asset_sales_across_banks_per_asset_class:
                 self.sum = self.sum + self.asset_sales_across_banks_per_asset_class[i]
 
-            print "Assets whiped out feedback effects:", self.sum, "in step:", (current_step+1)
+            # print "Assets whiped out feedback effects:", self.sum, "in step:", (current_step+1)
 
     def add_sales_across_banks(self, environment):
         for asset_class in environment.agents[0].state_variables:

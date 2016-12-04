@@ -209,7 +209,7 @@ class Agent(BaseAgent):
 
     def update_balance_sheet(self):
         self.parameters['debt'] = self.parameters['debt'] + self.TAS
-        self.parameters['equity'] = self.parameters['equity'] + self.shock_for_agent * self.total_assets
+        self.parameters['equity'] = self.parameters['equity'] + (self.shock_for_agent * self.total_assets)
 
         self.total_assets = self.parameters['debt'] + self.parameters['equity']
 
