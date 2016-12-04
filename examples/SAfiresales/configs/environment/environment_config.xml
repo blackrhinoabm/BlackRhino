@@ -1,0 +1,10 @@
+<environment identifier='firesales_test'>
+    <!-- simulation parameters -->
+    <parameter type='num_sweeps' value='10'></parameter>
+    <parameter type='num_simulations' value='1'></parameter>
+    <parameter type='num_agents' value='3'></parameter>
+    <parameter type='agent_directory' value='configs/agents/'></parameter>
+    <parameter type='shock_config' value='configs/shock/shock_config.xml'></parameter>
+    <parameter type='illiquidity' value='0.0000000000001'></parameter>
+    <parameter type='measurement_config' value='configs/measurements/firesales_output.xml'></parameter>
+</environment>

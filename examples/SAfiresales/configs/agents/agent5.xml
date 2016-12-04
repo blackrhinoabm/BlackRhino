@@ -1,0 +1,43 @@
+<agent identifier='FNB'>
+<parameter type='parameters' name='equity' value='75526054.37'></parameter>
+ <parameter type='state_variables' name='leverage' value='11.9745903500983'></parameter>
+ <parameter type='parameters' name='debt' value='904393561.84'></parameter>
+ <parameter type='state_variables' name='m_1' value='0.0270122756515849'></parameter>
+ <parameter type='state_variables' name='m_2' value='0.00813026153170715'></parameter>
+ <parameter type='state_variables' name='m_3' value='0.00190505948557503'></parameter>
+ <parameter type='state_variables' name='m_4' value='0.0412434170115786'></parameter>
+ <parameter type='state_variables' name='m_5' value='0.0474008478559713'></parameter>
+ <parameter type='state_variables' name='m_6' value='0.0448583148678213'></parameter>
+ <parameter type='state_variables' name='m_7' value='0'></parameter>
+ <parameter type='state_variables' name='m_8' value='0.0285912969451404'></parameter>
+ <parameter type='state_variables' name='m_9' value='0.0914817299044243'></parameter>
+ <parameter type='state_variables' name='m_10' value='0.00337384741079009'></parameter>
+ <parameter type='state_variables' name='m_11' value='0.00200606048439243'></parameter>
+ <parameter type='state_variables' name='m_12' value='0.026829589922026'></parameter>
+ <parameter type='state_variables' name='m_13' value='0.163224608499375'></parameter>
+ <parameter type='state_variables' name='m_14' value='0.00121245050136963'></parameter>
+ <parameter type='state_variables' name='m_15' value='0.0213186912109908'></parameter>
+ <parameter type='state_variables' name='m_16' value='0.0134471373383622'></parameter>
+ <parameter type='state_variables' name='m_17' value='0.0494825652807618'></parameter>
+ <parameter type='state_variables' name='m_18' value='0.00710664363143586'></parameter>
+ <parameter type='state_variables' name='m_19' value='0'></parameter>
+ <parameter type='state_variables' name='m_20' value='0.153730869670275'></parameter>
+ <parameter type='state_variables' name='m_21' value='0.0358952651599375'></parameter>
+ <parameter type='state_variables' name='m_22' value='0.0527563785373453'></parameter>
+ <parameter type='state_variables' name='m_23' value='0'></parameter>
+ <parameter type='state_variables' name='m_24' value='9.18609838083617E-05'></parameter>
+ <parameter type='state_variables' name='m_25' value='0.00086036141744316'></parameter>
+ <parameter type='state_variables' name='m_26' value='0.00296938213278613'></parameter>
+ <parameter type='state_variables' name='m_27' value='0.000788403290641614'></parameter>
+ <parameter type='state_variables' name='m_28' value='0.0326757725528423'></parameter>
+ <parameter type='state_variables' name='m_29' value='3.93695557890995E-07'></parameter>
+ <parameter type='state_variables' name='m_30' value='0.0153995476670385'></parameter>
+ <parameter type='state_variables' name='m_31' value='0.0701095144357992'></parameter>
+ <parameter type='state_variables' name='m_32' value='0.0110001340124923'></parameter>
+ <parameter type='state_variables' name='m_33' value='0'></parameter>
+ <parameter type='state_variables' name='m_34' value='0.0113736669777861'></parameter>
+ <parameter type='state_variables' name='m_35' value='0'></parameter>
+ <parameter type='state_variables' name='m_36' value='0'></parameter>
+ <parameter type='state_variables' name='m_37' value='0'></parameter>
+ <parameter type='state_variables' name='m_38' value='0.0337236519329396'></parameter>
+</agent>
