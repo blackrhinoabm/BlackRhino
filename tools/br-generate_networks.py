@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # [SublimeLinter pep8-max-line-length:300]
-# -*- coding: utf-8 -*-
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
@@ -18,29 +17,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+import sys
 
-# -------------------------------------------------------------------------
-# MAIN
-# -------------------------------------------------------------------------
+import networkx as nx
+
+sys.path.append('src/')
+
+
 if __name__ == '__main__':
-    import sys
-    sys.path.append('src/')
-    import networkx as nx
 
     if (len(sys.argv) != 5):
-        print "Usage: ./generate_networks.py numNodes [random/ba] networkParameter1 networkParameter2"
-        sys.exit()
+        sys.exit("Usage: ./generate_networks.py numNodes [random/ba]"
+                 "networkParameter1 networkParameter2")
+
+    n = int(sys.argv[1])
+    network = sys.argv[2]
+    p = float(sys.argv[3])
+    filename = "network-" + "-".join(network, n, p)
 
     # check which network type was given
-    if (sys.argv[2] == "random"):
-        # generate a random network
-        G = nx.DiGraph()
-        G = nx.gnp_random_graph(int(sys.argv[1]), float(sys.argv[3]),  directed=True)
-        fileName = "network-" + str(sys.argv[2]) + "-" + str(sys.argv[1]) + "-" + str(sys.argv[3])
-        nx.write_gexf(G,  fileName + ".gexf")
-    if (sys.argv[2] == "ba"):
-        # generate a random network
-        G = nx.DiGraph()
-        G = nx.barabasi_albert_graph(int(sys.argv[1]), int(sys.argv[3]))
-        fileName = "network-" + str(sys.argv[2]) + "-" + str(sys.argv[1]) + "-" + str(sys.argv[3])
-        nx.write_gexf(G,  fileName + ".gexf")
+    if (network == "random"):
+        G = nx.gnp_random_graph(n, p, directed=True)
+        nx.write_gexf(G, filename + ".gexf")
+    elif (network == "ba"):
+        G = nx.barabasi_albert_graph(n, p)
+        nx.write_gexf(G, filename + ".gexf")
+    else:
+        raise NameError("Unidentified network type given.")
