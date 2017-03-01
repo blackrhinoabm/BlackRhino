@@ -1,0 +1,5 @@
+<config identifier='workhorse_runner_config'>
+  <parameter type='static' name='model_config_file_name' value='configs\sample_config_file.xml'></parameter>
+  <parameter type='static' name='num_simulations' value='5'></parameter>
+  <parameter type='static' name='output_file_name' value='output_test_1.csv'></parameter>
+</config>
