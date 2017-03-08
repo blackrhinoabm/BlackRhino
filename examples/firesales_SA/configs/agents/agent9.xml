@@ -1,43 +1,28 @@
-<agent identifier='INVESTEC'>
-<parameter type='parameters' name='equity' value='24265229'></parameter>
- <parameter type='state_variables' name='leverage' value='14.5385225913178'></parameter>
- <parameter type='parameters' name='debt' value='352780580'></parameter>
- <parameter type='state_variables' name='m_1' value='0.0188402703139964'></parameter>
- <parameter type='state_variables' name='m_2' value='0.0149576970104569'></parameter>
- <parameter type='state_variables' name='m_3' value='0'></parameter>
- <parameter type='state_variables' name='m_4' value='0.060477839389124'></parameter>
- <parameter type='state_variables' name='m_5' value='0.08496631195831'></parameter>
- <parameter type='state_variables' name='m_6' value='0.0267730835497865'></parameter>
- <parameter type='state_variables' name='m_7' value='0'></parameter>
- <parameter type='state_variables' name='m_8' value='0.0017433770136754'></parameter>
- <parameter type='state_variables' name='m_9' value='0.00592043973139381'></parameter>
- <parameter type='state_variables' name='m_10' value='0.00161636592217703'></parameter>
- <parameter type='state_variables' name='m_11' value='0'></parameter>
- <parameter type='state_variables' name='m_12' value='0.152363432569736'></parameter>
- <parameter type='state_variables' name='m_13' value='0.142116794396636'></parameter>
- <parameter type='state_variables' name='m_14' value='0.000318287583362118'></parameter>
- <parameter type='state_variables' name='m_15' value='0.00331812465090615'></parameter>
- <parameter type='state_variables' name='m_16' value='0'></parameter>
- <parameter type='state_variables' name='m_17' value='0.0930916323056564'></parameter>
- <parameter type='state_variables' name='m_18' value='3.12428878834567E-06'></parameter>
- <parameter type='state_variables' name='m_19' value='0'></parameter>
- <parameter type='state_variables' name='m_20' value='0.112921649724945'></parameter>
- <parameter type='state_variables' name='m_21' value='0.00539031051587522'></parameter>
- <parameter type='state_variables' name='m_22' value='0.0452342169105812'></parameter>
- <parameter type='state_variables' name='m_23' value='0.00117248617303959'></parameter>
- <parameter type='state_variables' name='m_24' value='0'></parameter>
- <parameter type='state_variables' name='m_25' value='0.00152044123890293'></parameter>
- <parameter type='state_variables' name='m_26' value='0.00851965174067403'></parameter>
- <parameter type='state_variables' name='m_27' value='0'></parameter>
- <parameter type='state_variables' name='m_28' value='0.0671403136209356'></parameter>
- <parameter type='state_variables' name='m_29' value='0.00438618054292612'></parameter>
- <parameter type='state_variables' name='m_30' value='0.0343100483352141'></parameter>
- <parameter type='state_variables' name='m_31' value='0.0542469917534769'></parameter>
- <parameter type='state_variables' name='m_32' value='0'></parameter>
- <parameter type='state_variables' name='m_33' value='0'></parameter>
- <parameter type='state_variables' name='m_34' value='0.0522848163933056'></parameter>
- <parameter type='state_variables' name='m_35' value='0'></parameter>
- <parameter type='state_variables' name='m_36' value='0'></parameter>
- <parameter type='state_variables' name='m_37' value='0'></parameter>
- <parameter type='state_variables' name='m_38' value='0.00636611236611773'></parameter>
+<agent identifier="HSBC">
+<parameter type="parameters" name="equity" value="3919312000"></parameter>
+ <parameter type="state_variables" name="leverage" value="11.7077964193716"></parameter>
+ <parameter type="parameters" name="debt" value="45886507000"></parameter>
+ <parameter type="state_variables" name="m_1" value="0.0191513365135106" label="Cash and gold reserves "></parameter>
+ <parameter type="state_variables" name="m_2" value="0.0538288106455995" label="SA Interbank deposits, loans and advances "></parameter>
+ <parameter type="state_variables" name="m_3" value="0.0481871405427547" label="Rand Deposits with and loans to foreign banks"></parameter>
+ <parameter type="state_variables" name="m_4" value="0.0411458147089199" label="Loans granted under repo agreement"></parameter>
+ <parameter type="state_variables" name="m_5" value="0.226617857644305" label="Foreign currency loans and advances "></parameter>
+ <parameter type="state_variables" name="m_6" value="0" label="Redeemable preference shares"></parameter>
+ <parameter type="state_variables" name="m_7" value="0" label="corporate instalment credit "></parameter>
+ <parameter type="state_variables" name="m_8" value="0" label="household instalment credit "></parameter>
+ <parameter type="state_variables" name="m_9" value="0" label="corporate mortgage"></parameter>
+ <parameter type="state_variables" name="m_10" value="0" label="household mortgage"></parameter>
+ <parameter type="state_variables" name="m_11" value="0.101950276131389" label="Unsecured lending corporate"></parameter>
+ <parameter type="state_variables" name="m_12" value="0" label="Unsecured lending households"></parameter>
+ <parameter type="state_variables" name="m_13" value="0.0291670537532974" label="Other credit (credit card + leasing + Overdarft + factoring debt)"></parameter>
+ <parameter type="state_variables" name="m_14" value="0.0199186163367778" label="Central and provincial government bonds"></parameter>
+ <parameter type="state_variables" name="m_15" value="0" label="Other public-sector bonds"></parameter>
+ <parameter type="state_variables" name="m_16" value="0" label="Private sector bonds"></parameter>
+ <parameter type="state_variables" name="m_17" value="0" label="Equity holdings in subsidiaries and joint ventures"></parameter>
+ <parameter type="state_variables" name="m_18" value="0" label="Listed and unlisted equities"></parameter>
+ <parameter type="state_variables" name="m_19" value="0.0485579004332807" label="Securitisation/ asset-backed securities"></parameter>
+ <parameter type="state_variables" name="m_20" value="0" label="Derivative instruments"></parameter>
+ <parameter type="state_variables" name="m_21" value="0.36728274662043" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+ <parameter type="state_variables" name="m_22" value="0.0289592868656572" label="Other investments"></parameter>
+ <parameter type="state_variables" name="m_23" value="0.0152331598040784" label="Non financial assets"></parameter>
 </agent>

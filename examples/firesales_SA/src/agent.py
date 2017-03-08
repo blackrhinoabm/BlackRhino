@@ -63,6 +63,7 @@ class Agent(BaseAgent):
 
     total_assets = 0
 
+    #This calculates the initial shock for the bank, i.e. weight of asset class * shock vector
     shock_for_agent = 0
 
     temp = 0
@@ -223,8 +224,11 @@ class Agent(BaseAgent):
         self.shock_for_agent = 0
 
         for shock in environment.shocks:
+
             for k in set(self.state_variables) & set(shock.asset_returns):
+                
                 self.shock_for_agent +=  self.state_variables[k] * shock.asset_returns[k]
+
 
     def calc_total_asset_sales(self, environment, current_step):
 

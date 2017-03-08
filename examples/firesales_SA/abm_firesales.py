@@ -34,6 +34,8 @@ if __name__ == '__main__':
     from src.environment import Environment
     from src.runner import Runner
 
+    # make sure you pass in the name of the environment xml as args[1] here!
+
     args = ["configs/environment/", "environment_config", "log/"]
 
 #

@@ -91,22 +91,26 @@ class Updater(BaseModel):
 
             for agent in environment.agents:
 
+                
                 agent.start_shock(environment)
-                agent.calc_total_asset_sales(environment, current_step)
-                print agent.shock_for_agent, agent.identifier
 
-            # the code below is to calculate TAS across all banks
+
+                agent.calc_total_asset_sales(environment, current_step)
+                print agent.identifier, agent.TAS
+
+
+            # the code below is to calculate total asset sales across all banks
             # It returns a dictionary with asset class as keys and
             # total asset sales of this class as values(across the wholesystem)
             self.add_sales_across_banks(environment)
 
             for agent in environment.agents:
                 agent.update_balance_sheet()
-                print agent.identifier
+                # print agent.identifier
                 # agent.check_accounts()
 
                 # now we need to add up all the sales for one asset class
-                # ans assign it to a variable so we have one number for all
+                # and assign it to a variable so we have one number for all
                 # asset sales across the whole system for all asset classes
                 # I use the ABSA if clause to just use one agent (all agent
                 # have this dictionary}
@@ -114,7 +118,7 @@ class Updater(BaseModel):
             for i in self.asset_sales_across_banks_per_asset_class:
                 self.sum = self.sum + self.asset_sales_across_banks_per_asset_class[i]
 
-            print "Assets whiped out by shock:", self.sum, "in step:", (current_step+1)
+            print "Total assets whiped out by shock:", self.sum, "in step:", (current_step+1)
 
         else:
             print "Now begins step %s" % (current_step +1)
@@ -128,14 +132,13 @@ class Updater(BaseModel):
 
             for agent in environment.agents:
                 agent.start_shock(environment)
-                print agent.shock_for_agent, agent.identifier
 
                 agent.calc_total_asset_sales(environment, current_step)
-                # print agent.TAS, agent.identifier
+                # print ("Bank %s sold %s assets") % (agent.identifier, agent.TAS)
 
-            # this adds up the sales of m1, m2, m3 etc  across the banks
-            # but not across classes, so we get a dictionary with
-            # total sales of m1:value ,total sales of m2: value, etc.
+        #     # this adds up the sales of m1, m2, m3 etc  across the banks
+        #     # but not across classes, so we get a dictionary with
+        #     # total sales of m1:value ,total sales of m2: value, etc.
             self.add_sales_across_banks(environment)
 
             for agent in environment.agents:
@@ -144,8 +147,8 @@ class Updater(BaseModel):
 
                 # print agent.total_assets, agent.identifier
 
-            # Now we need to sum up sales across classes to get a 'globas TAS'
-            # so total sales of m1+m2+m3 etc. Before it was summed up "across
+            # Now we need to sum up sales across classes to get a 'globas TAS' (total asset sales)
+            # so total sales of m1+m2+m3 etc. Before, it was summed up "across
             #  banks per class",so total sales of asset class m1 of bank1 plus
             # total sales of m1 of bank2 plus total sales of m1 of bank 3 etc.
             # we set self sum 0 again to get the global TAS of this current step
@@ -154,7 +157,7 @@ class Updater(BaseModel):
             for i in self.asset_sales_across_banks_per_asset_class:
                 self.sum = self.sum + self.asset_sales_across_banks_per_asset_class[i]
 
-            # print "Assets whiped out feedback effects:", self.sum, "in step:", (current_step+1)
+            print "Assets whiped out by feedback effects:", self.sum, "in step:", (current_step+1)
 
     def add_sales_across_banks(self, environment):
         for asset_class in environment.agents[0].state_variables:

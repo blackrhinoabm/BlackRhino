@@ -1,43 +1,28 @@
-<agent identifier='BANK OF BARODA'>
-<parameter type='parameters' name='equity' value='246313'></parameter>
- <parameter type='state_variables' name='leverage' value='8.20992395854056'></parameter>
- <parameter type='parameters' name='debt' value='2022211'></parameter>
- <parameter type='state_variables' name='m_1' value='0.0191754638698995'></parameter>
- <parameter type='state_variables' name='m_2' value='0.170720256871869'></parameter>
- <parameter type='state_variables' name='m_3' value='0.0041132472039088'></parameter>
- <parameter type='state_variables' name='m_4' value='0'></parameter>
- <parameter type='state_variables' name='m_5' value='0.0421697103491081'></parameter>
- <parameter type='state_variables' name='m_6' value='0'></parameter>
- <parameter type='state_variables' name='m_7' value='0'></parameter>
- <parameter type='state_variables' name='m_8' value='0'></parameter>
- <parameter type='state_variables' name='m_9' value='0'></parameter>
- <parameter type='state_variables' name='m_10' value='0'></parameter>
- <parameter type='state_variables' name='m_11' value='0'></parameter>
- <parameter type='state_variables' name='m_12' value='0.0340230035035997'></parameter>
- <parameter type='state_variables' name='m_13' value='0'></parameter>
- <parameter type='state_variables' name='m_14' value='0'></parameter>
- <parameter type='state_variables' name='m_15' value='0'></parameter>
- <parameter type='state_variables' name='m_16' value='0'></parameter>
- <parameter type='state_variables' name='m_17' value='0.669845238578036'></parameter>
- <parameter type='state_variables' name='m_18' value='0'></parameter>
- <parameter type='state_variables' name='m_19' value='0'></parameter>
- <parameter type='state_variables' name='m_20' value='0'></parameter>
- <parameter type='state_variables' name='m_21' value='0'></parameter>
- <parameter type='state_variables' name='m_22' value='0'></parameter>
- <parameter type='state_variables' name='m_23' value='0'></parameter>
- <parameter type='state_variables' name='m_24' value='0'></parameter>
- <parameter type='state_variables' name='m_25' value='0'></parameter>
- <parameter type='state_variables' name='m_26' value='0'></parameter>
- <parameter type='state_variables' name='m_27' value='0'></parameter>
- <parameter type='state_variables' name='m_28' value='0'></parameter>
- <parameter type='state_variables' name='m_29' value='0'></parameter>
- <parameter type='state_variables' name='m_30' value='0'></parameter>
- <parameter type='state_variables' name='m_31' value='0'></parameter>
- <parameter type='state_variables' name='m_32' value='0'></parameter>
- <parameter type='state_variables' name='m_33' value='0'></parameter>
- <parameter type='state_variables' name='m_34' value='0.0352427393318299'></parameter>
- <parameter type='state_variables' name='m_35' value='0'></parameter>
- <parameter type='state_variables' name='m_36' value='0'></parameter>
- <parameter type='state_variables' name='m_37' value='0.0242263251347572'></parameter>
- <parameter type='state_variables' name='m_38' value='0.000484015156991924'></parameter>
+<agent identifier="JpM">
+<parameter type="parameters" name="equity" value="3246873000"></parameter>
+ <parameter type="state_variables" name="leverage" value="16.5663772497415"></parameter>
+ <parameter type="parameters" name="debt" value="53788923000"></parameter>
+ <parameter type="state_variables" name="m_1" value="0.00274390840446936" label="Cash and gold reserves "></parameter>
+ <parameter type="state_variables" name="m_2" value="7.10080385307501E-06" label="SA Interbank deposits, loans and advances "></parameter>
+ <parameter type="state_variables" name="m_3" value="0" label="Rand Deposits with and loans to foreign banks"></parameter>
+ <parameter type="state_variables" name="m_4" value="0.202246708365392" label="Loans granted under repo agreement"></parameter>
+ <parameter type="state_variables" name="m_5" value="0.00404863289713709" label="Foreign currency loans and advances "></parameter>
+ <parameter type="state_variables" name="m_6" value="0" label="Redeemable preference shares"></parameter>
+ <parameter type="state_variables" name="m_7" value="0" label="corporate instalment credit "></parameter>
+ <parameter type="state_variables" name="m_8" value="0" label="household instalment credit "></parameter>
+ <parameter type="state_variables" name="m_9" value="0" label="corporate mortgage"></parameter>
+ <parameter type="state_variables" name="m_10" value="0" label="household mortgage"></parameter>
+ <parameter type="state_variables" name="m_11" value="0.102200449696538" label="Unsecured lending corporate"></parameter>
+ <parameter type="state_variables" name="m_12" value="0" label="Unsecured lending households"></parameter>
+ <parameter type="state_variables" name="m_13" value="0.0204477202352011" label="Other credit (credit card + leasing + Overdarft + factoring debt)"></parameter>
+ <parameter type="state_variables" name="m_14" value="0.00723582432337755" label="Central and provincial government bonds"></parameter>
+ <parameter type="state_variables" name="m_15" value="0" label="Other public-sector bonds"></parameter>
+ <parameter type="state_variables" name="m_16" value="0" label="Private sector bonds"></parameter>
+ <parameter type="state_variables" name="m_17" value="0" label="Equity holdings in subsidiaries and joint ventures"></parameter>
+ <parameter type="state_variables" name="m_18" value="0" label="Listed and unlisted equities"></parameter>
+ <parameter type="state_variables" name="m_19" value="0.571701287380998" label="Securitisation/ asset-backed securities"></parameter>
+ <parameter type="state_variables" name="m_20" value="0" label="Derivative instruments"></parameter>
+ <parameter type="state_variables" name="m_21" value="0.0719334749005695" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+ <parameter type="state_variables" name="m_22" value="0" label="Other investments"></parameter>
+ <parameter type="state_variables" name="m_23" value="0.0174348929924638" label="Non financial assets"></parameter>
 </agent>
