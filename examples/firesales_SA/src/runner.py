@@ -100,7 +100,6 @@ class Runner(BaseRunner):
     # -------------------------------------------------------------------------
     def do_run(self, environment):
         # loop over all time steps and do the updating
-
         # For each update step
 
         measurement = Measurement(environment, self)
@@ -111,7 +110,7 @@ class Runner(BaseRunner):
                 self.current_step = i
 
                 self.updater.do_update(environment, i)
-                measurement.write_to_file()
+                measurement.write_all_to_file()
 
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
         print("Check the output file that was written as csv in the measurements folder\n***")

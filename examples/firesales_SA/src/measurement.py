@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from abm_template.src.basemeasurement import BaseMeasurement
-
+from src.updater import Updater
 # -------------------------------------------------------------------------
 #  class Measurement
 # -------------------------------------------------------------------------
@@ -35,9 +35,9 @@ class Measurement(BaseMeasurement):
     identifier = ""
 
     # this we need to tell python measurment is passing in objects
-    environment = type('', (), {})()
-
     runner = type('', (), {})()
+
+    environment = type('', (), {})()
 
     filename = ""
 
@@ -120,6 +120,26 @@ class Measurement(BaseMeasurement):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # 
+    # -------------------------------------------------------------------------
+    def write_all_to_file(self):
+        # We create an empty row
+        out_row = []
+        # loop over agents and add their properties to the out_row
+        for agent in self.environment.agents:
+            out_row.append(self.runner.current_step + 1)
+            out_row.append(agent.identifier)
+            out_row.append(agent.state_variables['total_asset_sales'])
+            out_row.append(agent.state_variables['total_assets'])
+            out_row.append(agent.parameters['equity'])
+            out_row.append(agent.systemicness)
+            out_row.append(agent.state_variables['shock_for_agent'])
+            out_row.append(self.runner.updater.AV)
+        # Finally we write the line to the output file
+        self.csv_writer.writerow(out_row)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # close_file(self, filename)
     # Closes the file so we don't have issues with the disk and the file
     # -------------------------------------------------------------------------
@@ -155,320 +175,31 @@ class Measurement(BaseMeasurement):
     def read_xml_config_file(self, config_file_name):
         super(Measurement, self).read_xml_config_file(config_file_name)
     # -------------------------------------------------------------------------
+
+
+    def wrapper(self, ident, agent):
+        if ident == "equity":
+            return agent.parameters['equity']
+        if ident == "total_asset_sales":
+            return agent.state_variables['total_asset_sales']
+        if ident == "shock_on_assets":
+            return agent.state_variables['shock_on_assets']
+        if ident == "systemicness":
+            return agent.systemicness
+
     # -------------------------------------------------------------------------
     # wrapper(self, id)
     # Wrapper for functions returning the desired values to be written
     # -------------------------------------------------------------------------
-
     def wrapper(self, ident):
         if ident == "current_step":
             return self.runner.current_step + 1
 
         if ident == "global TAS":
-            return self.runner.updater.sum
+            return self.runner.updater.system_TAS
 
-        if ident == "ABSA total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'ABSA':
-                    return agent.total_assets
+        if ident == "indirect equity losses":
+            return self.runner.updater.system_loss_equity_from_indirect_effects
 
-        if ident == "ABSA total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'ABSA':
-                    return agent.parameters['equity']
-
-        if ident == "ABSA total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'ABSA':
-                    return agent.TAS
-
-        if ident == "SBSA total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'ABSA':
-                    return agent.total_assets
-
-        if ident == "SBSA total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SBSA':
-                    return agent.parameters['equity']
-
-        if ident == "SBSA total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SBSA':
-                    return agent.total_assets
-
-        if ident == "SBSA total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SBSA':
-                    return agent.TAS
-
-        if ident == "CAPITEC total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CAPITEC':
-                    return agent.total_assets
-
-        if ident == "CAPITEC total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CAPITEC':
-                    return agent.parameters['equity']
-
-        if ident == "CAPITEC total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CAPITEC':
-                    return agent.TAS
-
-        if ident == "NEDBANK total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'NEDBANK':
-                    return agent.total_assets
-
-        if ident == "NEDBANK total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'NEDBANK':
-                    return agent.parameters['equity']
-
-        if ident == "NEDBANK total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'NEDBANK':
-                    return agent.TAS
-
-        if ident == "FNB total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'FNB':
-                    return agent.total_assets
-
-        if ident == "FNB total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'FNB':
-                    return agent.parameters['equity']
-
-        if ident == "FNB total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'FNB':
-                    return agent.TAS
-
-        if ident == "African Bank total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'African Bank':
-                    return agent.total_assets
-
-        if ident == "African Bank total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'African Bank':
-                    return agent.parameters['equity']
-
-        if ident == "African Bank total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'African Bank':
-                    return agent.TAS
-
-        if ident == "CHARTERED total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CHARTERED':
-                    return agent.total_assets
-
-        if ident == "CHARTERED total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CHARTERED':
-                    return agent.parameters['equity']
-
-        if ident == "CHARTERED total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CHARTERED':
-                    return agent.TAS
-
-        if ident == "INVESTEC total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'INVESTEC':
-                    return agent.total_assets
-
-        if ident == "INVESTEC total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'INVESTEC':
-                    return agent.parameters['equity']
-
-        if ident == "INVESTEC total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'INVESTEC':
-                    return agent.TAS
-
-        if ident == "CITYBANK total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CITYBANK':
-                    return agent.total_assets
-
-        if ident == "CITYBANK total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CITYBANK':
-                    return agent.parameters['equity']
-
-        if ident == "CITYBANK total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'CITYBANK':
-                    return agent.TAS
-
-        if ident == "DB total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'DB':
-                    return agent.total_assets
-
-        if ident == "DB total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'DB':
-                    return agent.parameters['equity']
-
-        if ident == "DB total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'DB':
-                    return agent.TAS
-
-        if ident == "grindrod total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'grindrod':
-                    return agent.total_assets
-
-        if ident == "grindrod total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'grindrod':
-                    return agent.parameters['equity']
-
-        if ident == "grindrod total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'grindrod':
-                    return agent.TAS
-
-        if ident == "JPMORGAN total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'JpM':
-                    return agent.total_assets
-
-        if ident == "JPMORGAN total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'JpM':
-                    return agent.parameters['equity']
-
-        if ident == "JPMORGAN total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'JpM':
-                    return agent.TAS
-
-        if ident == "BoC total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'BoC':
-                    return agent.total_assets
-
-        if ident == "BoC total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'BoC':
-                    return agent.parameters['equity']
-
-        if ident == "BoC total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'BoC':
-                    return agent.TAS
-
-        if ident == "HSBC total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'HSBC':
-                    return agent.total_assets
-
-        if ident == "HSBC total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'HSBC':
-                    return agent.parameters['equity']
-
-        if ident == "HSBC total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'HSBC':
-                    return agent.TAS
-
-        if ident == "SOCIETE total assets":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SOCIETE':
-                    return agent.total_assets
-
-        if ident == "SOCIETE total equity":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SOCIETE':
-                    return agent.parameters['equity']
-
-        if ident == "SOCIETE total asset sales":
-            for agent in self.environment.agents:
-                if agent.identifier == 'SOCIETE':
-                    return agent.TAS
-
-# columns for shocks
-        if ident =="SBSA shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "SBSA":
-                    return agent.shock_for_agent
-
-        if ident =="CITYBANK shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "CITYBANK":
-                    return agent.shock_for_agent
-
-        if ident =="DB shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "DB":
-                    return agent.shock_for_agent
-
-        if ident =="grindrod shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "grindrod":
-                    return agent.shock_for_agent
-
-        if ident =="BoC shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "BoC":
-                    return agent.shock_for_agent
-
-        if ident =="ABSA shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "ABSA":
-                    return agent.shock_for_agent
-
-        if ident =="SOCIETE shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "SOCIETE":
-                    return agent.shock_for_agent
-
-        if ident =="HSBC shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "HSBC":
-                    return agent.shock_for_agent
-
-        if ident =="JPMORGAN shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "JpM":
-                    return agent.shock_for_agent
-
-        if ident =="CAPITEC shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "CAPITEC":
-                    return agent.shock_for_agent
-
-        if ident =="NEDBANK shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "NEDBANK":
-                    return agent.shock_for_agent
-
-        if ident =="FNB shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "FNB":
-                    return agent.shock_for_agent
-
-        if ident =="CHARTERED shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "CHARTERED":
-                    return agent.shock_for_agent
-
-        if ident =="African bank shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "African Bank":
-                    return agent.shock_for_agent
-
-        if ident =="INVESTEC shock on assets":
-            for agent in self.environment.agents:
-                if agent.identifier == "INVESTEC":
-                    return agent.shock_for_agent
+        if ident == "AV":
+            return self.runner.updater.system_vulnerability

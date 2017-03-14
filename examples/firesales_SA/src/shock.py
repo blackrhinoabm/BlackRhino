@@ -35,8 +35,7 @@ class Shock():
     #
     #
     identifier = ""
-
-    asset_returns = {}
+    
     #
     #
     # METHODS

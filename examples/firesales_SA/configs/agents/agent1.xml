@@ -1,7 +1,7 @@
 <agent identifier="SBSA">
-<parameter type="parameters" name="equity" value="86200249000"></parameter>
+<parameter type="parameters" name="equity" value="86200249000.0"></parameter>
  <parameter type="state_variables" name="leverage" value="13.0780116888061"></parameter>
- <parameter type="parameters" name="debt" value="1127327864000"></parameter>
+ <parameter type="parameters" name="debt" value="1127327864000.0"></parameter>
  <parameter type="state_variables" name="m_1" value="0.0245212259042243" label="Cash and gold reserves "></parameter>
  <parameter type="state_variables" name="m_2" value="0.0107197211672673" label="SA Interbank deposits, loans and advances "></parameter>
  <parameter type="state_variables" name="m_3" value="0.00405856934605684" label="Rand Deposits with and loans to foreign banks"></parameter>

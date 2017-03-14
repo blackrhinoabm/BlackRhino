@@ -1,11 +1,11 @@
 <measurement identifier='firesales_output'>
     <parameter type='filename' value='measurements/Measurement_firesales.csv'></parameter>
     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
-        <parameter type="output" column="2" header="SBSA total assets" value="SBSA total assets"></parameter>
-    <parameter type="output" column="3" header="SBSA total equity" value="SBSA total equity"></parameter>
-    <parameter type="output" column="4" header="SBSA total asset sales" value="SBSA total asset sales"></parameter>
-    <parameter type="output" column="5" header="SBSA shock on assets" value="SBSA shock on assets"></parameter>
-    <parameter type="output" column="6" header="CITYBANK total assets" value="CITYBANK total assets"></parameter>
+        <parameter type="output" column="2" header="identifier" value="identifier"></parameter>
+    <parameter type="output" column="3" header="total asset sales" value="total asset sales"></parameter>
+    <parameter type="output" column="4" header="total asset" value="total asset"></parameter>
+    <parameter type="output" column="5" header="equity" value="equity"></parameter>
+    <parameter type="output" column="6" header="agent.systemicness" value="agent.systemicness"></parameter>
     <parameter type="output" column="7" header="CITYBANK total equity" value="CITYBANK total equity"></parameter>
     <parameter type="output" column="8" header="CITYBANK total asset sales" value="CITYBANK total asset sales"></parameter>
     <parameter type="output" column="9" header="CITYBANK shock on assets" value="CITYBANK shock on assets"></parameter>
@@ -51,21 +51,5 @@
     <parameter type="output" column="44" header="NEDBANK total asset sales" value="NEDBANK total asset sales"></parameter>
     <parameter type="output" column="45" header="NEDBANK shock on assets" value="NEDBANK shock on assets"></parameter>
 
-    <parameter type="output" column="46" header="FNB total assets" value="FNB total assets"></parameter>
-    <parameter type="output" column="47" header="FNB total equity" value="FNB total equity"></parameter>
-    <parameter type="output" column="48" header="FNB total asset sales" value="FNB total asset sales"></parameter>
-    <parameter type="output" column="49" header="FNB shock on assets" value="FNB shock on assets"></parameter>
-    <parameter type="output" column="50" header="CHARTERED total assets" value="CHARTERED total assets"></parameter>
-    <parameter type="output" column="51" header="CHARTERED total equity" value="CHARTERED total equity"></parameter>
-    <parameter type="output" column="52" header="CHARTERED total asset sales" value="CHARTERED total asset sales"></parameter>
-    <parameter type="output" column="53" header="CHARTERED shock on assets" value="CHARTERED shock on assets"></parameter>
-    <parameter type="output" column="54" header="African Bank total assets" value="African Bank total assets"></parameter>
-    <parameter type="output" column="55" header="African Bank total equity" value="African Bank total equity"></parameter>
-    <parameter type="output" column="56" header="African Bank total asset sales" value="African Bank total asset sales"></parameter>
-    <parameter type="output" column="57" header="African bank shock on assets" value="African bank shock on assets"></parameter>
-    <parameter type="output" column="58" header="INVESTEC total assets" value="INVESTEC total assets"></parameter>
-    <parameter type="output" column="59" header="INVESTEC total equity" value="INVESTEC total equity"></parameter>
-    <parameter type="output" column="60" header="INVESTEC total asset sales" value="INVESTEC total asset sales"></parameter>
-    <parameter type="output" column="61" header="INVESTEC shock on assets" value="INVESTEC shock on assets"></parameter>
-    <parameter type='output' column='62' header='ASSETS SOLD ACROSS SYSTEM OF ALL CLASSES' value='global TAS'></parameter>
+
 </measurement>

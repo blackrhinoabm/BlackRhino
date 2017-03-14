@@ -51,24 +51,19 @@ class Agent(BaseAgent):
     #
     # VARIABLES
     #
-    #
-
     identifier = ""  # identifier of the specific agent
-
     state_variables = {}
-
     parameters = {}
 
-    TAS = 0     # Total Asset Sales
-
-    total_assets = 0
-
-    #This calculates the initial shock for the bank, i.e. weight of asset class * shock vector
-    shock_for_agent = 0
+        # local state variables used in computation of asset sales        
 
     temp = 0
 
+    pre_shock_equity = 0
+
     sale_of_k_assets = {}
+
+    systemicness = 0
 
     ''' Accounts is not used in our example, but it's in the BaseAgent
     parent class'''
@@ -93,7 +88,7 @@ class Agent(BaseAgent):
 
 
     def __str__(self):
-        super(Agent, self).__str__()
+        return super(Agent, self).__str__()
 
         # ret_str = "  <agent identifier='" + self.identifier + "'>\n "
 
@@ -106,7 +101,7 @@ class Agent(BaseAgent):
         #     else:
         #         raise TypeError
         # ret_str = ret_str + "</agent>\n"
-        # return ret_str
+        #return ret_str
 
     def get_parameters(self):
         return self.parameters
@@ -162,13 +157,23 @@ class Agent(BaseAgent):
         self.identifier = ""  # identifier of the specific agent
         self.state_variables = {}
         self.parameters = {}
-        self.TAS = 0
 
-        self.total_assets = 0
+        # local state variables used in computation of asset sales        
+        self.state_variables['shock_for_agent'] = 0.0
+        self.state_variables['total_asset_sales'] = 0.0
+
+        self.state_variables["direct_losses"] = 0.0
+        self.state_variables["losses_from_system_deleveraging"] = 0.0
+
+        self.pre_shock_equity = 0
+        self.state_variables["total_assets"] = 0
+
+
         self.temp = 0
         self.sale_of_k_assets = {}
 
-        self.shock_for_agent = 0
+
+        self.systemicness = 0
 
 
 
@@ -199,44 +204,68 @@ class Agent(BaseAgent):
         except:
             logging.error("    ERROR: %s could not be parsed", agent_filename)
 
+
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
     def initialize_total_assets(self):
 
-        self.total_assets = self.parameters['debt'] + self.parameters['equity']
-        return self.total_assets
-        # self.parameters['total_assets'] = total_assets
+        self.pre_shock_equity = self.parameters['equity']
+        self.state_variables["total_assets"]  = self.parameters['debt'] + self.parameters['equity']
+        return self.state_variables['total_assets']
 
     def update_balance_sheet(self):
-        self.parameters['debt'] = self.parameters['debt'] + self.TAS
-        self.parameters['equity'] = self.parameters['equity'] + (self.shock_for_agent * self.total_assets)
 
-        self.total_assets = self.parameters['debt'] + self.parameters['equity']
+        self.parameters['debt'] = self.parameters['debt'] + self.state_variables['total_asset_sales']
+        self.parameters['equity'] = self.parameters['equity'] + (self.state_variables['shock_for_agent']  * self.state_variables['total_assets'])
+
+        self.state_variables['total_assets'] = self.parameters['debt'] + self.parameters['equity']
 
     def check_accounts(self):
-        if self.total_assets == self.parameters['equity'] + self.parameters['debt']:
+        if self.state_variables['total_assets'] == self.parameters['equity'] + self.parameters['debt']:
             print "yes, great - the accounting worked for %s" %self.identifier
         else:
             print 'no.. damn!'
 
-    def start_shock(self, environment):
-        self.shock_for_agent = 0
+    def initialize_shock(self, environment):
+        self.state_variables['shock_for_agent'] = 0.0
 
         for shock in environment.shocks:
+            for k in set(self.state_variables) & set(shock.asset_returns):        
+                self.state_variables['shock_for_agent'] +=  self.state_variables[k] * shock.asset_returns[k]
 
-            for k in set(self.state_variables) & set(shock.asset_returns):
-                
-                self.shock_for_agent +=  self.state_variables[k] * shock.asset_returns[k]
 
+    def calc_direct_losses(self):
+        # print self.shock_for_agent, self.total_assets, self.identifier
+        self.state_variables["direct_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
+
+    def calc_indirect_losses(self, pre_shock_system_equity, current_step):
+
+        if current_step>0:
+
+            self.state_variables["losses_from_system_deleveraging"] = (self.state_variables['shock_for_agent'] * self.state_variables['total_assets'] )
+            self.systemicness = self.state_variables["losses_from_system_deleveraging"] / pre_shock_system_equity
+
+            return self.systemicness
+
+            # print self.systemicness*100, self.identifier
 
     def calc_total_asset_sales(self, environment, current_step):
+        print "<foo>"
 
-            self.TAS = 0
+        for shock in environment.shocks:
+            self.state_variables['total_asset_sales'] = 0.0
 
-            for shock in environment.shocks:
+            local_sum = 0.0   # not elegant, but safe, just to keep track of summing
+            for k in self.state_variables.keys():
+                try:
+                    local_sum += self.state_variables[k] * shock.asset_returns[k]
+                except:
+                    pass
+            self.state_variables['total_asset_sales'] = local_sum*self.state_variables['total_assets']*self.state_variables['leverage']
 
-                for k in set(self.state_variables) & set(shock.asset_returns):
-                    self.TAS = self.TAS + self.state_variables[k] * shock.asset_returns[k]
-
-                self.TAS = self.total_assets * self.TAS * self.state_variables['leverage']
+#                for k in set(self.state_variables) & set(shock.asset_returns):
+                    #print self.state_variables['total_asset_sales'],  self.state_variables[k], shock.asset_returns[k]
+#                    self.state_variables['total_asset_sales'] = self.state_variables['total_asset_sales'] + self.state_variables[k] * shock.asset_returns[k]
+#                self.state_variables['total_asset_sales'] = self.state_variables['total_assets'] * self.state_variables['total_asset_sales'] * self.state_variables['leverage']
+        print "</foo>"
