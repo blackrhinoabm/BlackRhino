@@ -251,7 +251,6 @@ class Agent(BaseAgent):
             # print self.systemicness*100, self.identifier
 
     def calc_total_asset_sales(self, environment, current_step):
-        print "<foo>"
 
         for shock in environment.shocks:
             self.state_variables['total_asset_sales'] = 0.0
@@ -268,4 +267,3 @@ class Agent(BaseAgent):
                     #print self.state_variables['total_asset_sales'],  self.state_variables[k], shock.asset_returns[k]
 #                    self.state_variables['total_asset_sales'] = self.state_variables['total_asset_sales'] + self.state_variables[k] * shock.asset_returns[k]
 #                self.state_variables['total_asset_sales'] = self.state_variables['total_assets'] * self.state_variables['total_asset_sales'] * self.state_variables['leverage']
-        print "</foo>"

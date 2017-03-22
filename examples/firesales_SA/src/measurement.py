@@ -126,15 +126,21 @@ class Measurement(BaseMeasurement):
         # We create an empty row
         out_row = []
         # loop over agents and add their properties to the out_row
+
+        out_row.append(self.runner.updater.system_vulnerability)
+
         for agent in self.environment.agents:
             out_row.append(self.runner.current_step + 1)
             out_row.append(agent.identifier)
+            out_row.append(agent.state_variables['direct_losses'])
+            out_row.append(agent.state_variables['direct_losses'])
             out_row.append(agent.state_variables['total_asset_sales'])
+            out_row.append(agent.state_variables['leverage'])
             out_row.append(agent.state_variables['total_assets'])
             out_row.append(agent.parameters['equity'])
+            out_row.append(agent.parameters['debt'])
             out_row.append(agent.systemicness)
             out_row.append(agent.state_variables['shock_for_agent'])
-            out_row.append(self.runner.updater.AV)
         # Finally we write the line to the output file
         self.csv_writer.writerow(out_row)
     # -------------------------------------------------------------------------
