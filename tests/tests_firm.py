@@ -864,7 +864,7 @@ class TestsFirm(object):
         print(tranx)
         print(account)
 
-        firm.clear_accounts()
+        firm.clear_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -1087,7 +1087,7 @@ class TestsFirm(object):
         # TESTING
         #
 
-        environment.firms[0].clear_accounts()
+        environment.firms[0].clear_accounts(environment)
         print("Printing firm:\n")
         print(environment.firms[0])
         print("Reading transactions from the config file.\n")

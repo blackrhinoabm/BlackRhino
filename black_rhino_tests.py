@@ -44,6 +44,7 @@ if __name__ == '__main__':
     from tests.tests_household import TestsHousehold
     from tests.tests_market import TestsMarket
     from tests.tests_measurement import TestsMeasurement
+    from tests.tests_network import TestsNetwork
     from tests.tests_runner import TestsRunner
     from tests.tests_shock import TestsShock
     from tests.tests_transaction import TestsTransaction
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     test_household = TestsHousehold()
     test_market = TestsMarket()
     test_measurement = TestsMeasurement()
+    test_network = TestsNetwork()
     test_runner = TestsRunner()
     test_shock = TestsShock()
     test_transaction = TestsTransaction()
@@ -170,6 +172,8 @@ if __name__ == '__main__':
     # Tests for Transaction
     test_transaction.transaction__init(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__del(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_transaction.transaction__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_transaction.transaction__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__get_type_(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__set_type_(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__get_asset(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -186,7 +190,6 @@ if __name__ == '__main__':
     test_transaction.transaction__set_maturity(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__get_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__set_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
-    test_transaction.transaction__this_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__add_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__remove_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
     test_transaction.transaction__print_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -238,6 +241,24 @@ if __name__ == '__main__':
     test_measurement.measurement__write_to_file(["tests/environments/", "test_all_methods", "tests/log/"])
     test_measurement.measurement__close_file(["tests/environments/", "test_all_methods", "tests/log/"])
     test_measurement.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
+
+    # Tests for Network
+    test_network.network__init(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__get_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__set_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__initialize_networks(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__str(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__write_network_of_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__write_list_of_edges(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_type(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_asset(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_amount(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_interest(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_maturity(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__subnetwork_by_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
+    test_network.network__update_network(["tests/environments/", "test_all_methods", "tests/log/"])
 
     # Tests for Runner << TINA TO WRITE
     test_runner.runner__init__(["tests/environments/", "test_all_methods", "tests/log/"])

@@ -300,11 +300,16 @@ DESCRIPTION OF TESTS
     test_transaction.transaction__del(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can delete the transaction, prints whether it exists, deletes it, and
         then prints whether it exists again.
+    test_transaction.transaction__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the identifier of the transaction and prints it.
+    test_transaction.transaction__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get and set the identifier of the transaction and prints it,
+        then changes it (new_type) and prints it again.
     test_transaction.transaction__get_type_(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can get the type of the transaction and prints it (test_type).
     test_transaction.transaction__set_type_(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can get and set the type of the transaction and prints it (test_type),
-        then changes it (new_type) and prints it again.
+        then changes it (abc) and prints it again.
     test_transaction.transaction__get_asset(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can get the asset of the transaction and prints it (test_asset).
     test_transaction.transaction__set_asset(["tests/environments/", "test_all_methods", "tests/log/"])
@@ -340,9 +345,6 @@ DESCRIPTION OF TESTS
     test_transaction.transaction__set_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can get and set the time_of_default of the transaction and prints it (1),
         then changes it (2) and prints it again.
-    test_transaction.transaction__this_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
-        Tests whether we can add values to the transaction all at once, and then prints the
-        transaction, the attributes should be (type, asset, from, to, 1, 2, 3, 4) respectively.
     test_transaction.transaction__add_transaction(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can add a transaction to the books of agents automatically. Creates a
         transaction with attributes (type, asset, test_household, test_firm, 1, 2, 3, 4) and adds
@@ -497,6 +499,62 @@ DESCRIPTION OF TESTS
     test_measurement.measurement__read_xml_config_file(["tests/environments/", "test_all_methods", "tests/log/"])
         Tests whether we can read the xml config file for the measurement saved in /tests/
         and writes the identifier, so it can be checked against the id in the config file
+
+    # Tests for Network
+    test_network.network__init(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can initialise the network, and prints 'test' as its ID
+    test_network.network__get_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the identifier, and prints 'test' as it is the identifier set
+    test_network.network__set_identifier(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can set the identifier, prints 'test' as identifier, sets it to
+        'test2', and prints the identifier after the change
+    test_network.network__get_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can get the transactions (graph), and prints info about the graph, we add
+        a transaction and print it again to see the change
+    test_network.network__set_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can set the transactions (graph), print the info about the graph, set it to
+        an empty MultiDiGraph, and print the info again after the change
+    test_network.network__initialize_networks(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can initialize the network(s), we start with an empty graph, print the info
+        about the graph, initialize which should add all the agents in the simulation as nodes,
+        and print the info again which should show the correct number of nodes
+    test_network.network__str(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can print the network, and print the nodes and edges
+    test_network.network__write_network_of_transactions(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can write a file with the network, and write it to the disk
+        as transactions-tests_for_all_methods-2.graphml
+    test_network.network__write_list_of_edges(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can write a file with a list of edges, and write it to the disk
+        as transactions-tests_for_all_methods-2.list
+    test_network.network__subnetwork_by_type(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on type, prints information about the
+        full network and then the subnetwork (should have 6 nodes and 3 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__subnetwork_by_asset(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on asset, prints information about the
+        full network and then the subnetwork (should have 9 nodes and 9 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__subnetwork_by_amount(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on amount, prints information about the
+        full network and then the subnetwork (should have 9 nodes and 9 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__subnetwork_by_interest(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on interest, prints information about the
+        full network and then the subnetwork (should have 9 nodes and 9 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__subnetwork_by_maturity(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on maturity, prints information about the
+        full network and then the subnetwork (should have 9 nodes and 9 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__subnetwork_by_time_of_default(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can create a subnetwork based on time of default, prints information about the
+        full network and then the subnetwork (should have 9 nodes and 9 edges, as opposed to 10 and 9)
+        in the original network
+    test_network.network__update_network(["tests/environments/", "test_all_methods", "tests/log/"])
+        Tests whether we can update the network attributes based on current transaction attributes,
+        first we print the original network, change all the amounts by hand to 700, print the network
+        again, seeing no changes, then update the network and print it again, this time seeing the
+        update amounts
 
     # Tests for Runner # TODO: Tina
 

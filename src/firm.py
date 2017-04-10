@@ -197,8 +197,7 @@ class Firm(BaseAgent):
     def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
-        transaction.add_transaction(environment)
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default, environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -206,8 +205,8 @@ class Firm(BaseAgent):
     # removes all transactions from firm's accounts
     # only for testing, the one in transaction should be used in production
     # -------------------------------------------------------------------------
-    def clear_accounts(self):
-        super(Firm, self).clear_accounts()
+    def clear_accounts(self, environment):
+        super(Firm, self).clear_accounts(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

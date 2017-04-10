@@ -4,7 +4,7 @@ import os
 from nose.tools import *
 
 import networkx as nx
-from networkx.utils.decorators import open_file,require,not_implemented_for
+from networkx.utils.decorators import open_file,not_implemented_for
 
 def test_not_implemented_decorator():
     @not_implemented_for('directed')
@@ -27,18 +27,6 @@ def test_not_implemented_decorator_raise():
     test1(nx.Graph())
 
 
-def test_require_decorator1():
-    @require('os','sys')
-    def test1():
-        import os
-        import sys
-    test1()
-
-def test_require_decorator2():
-    @require('blahhh')
-    def test2():
-        import blahhh
-    assert_raises(nx.NetworkXError, test2)
 
 class TestOpenFileDecorator(object):
     def setUp(self):
@@ -66,48 +54,27 @@ class TestOpenFileDecorator(object):
     @open_file(2, 'wb')
     def writer_arg2default(self, x, path=None):
         if path is None:
-            fh = tempfile.NamedTemporaryFile('wb+', delete=False)
-            close_fh = True
+            with tempfile.NamedTemporaryFile('wb+') as fh:
+                self.write(fh)
         else:
-            fh = path
-            close_fh = False
-
-        try:
-            self.write(fh)
-        finally:
-            if close_fh:
-                fh.close()
+            self.write(path)
 
     @open_file(4, 'wb')
     def writer_arg4default(self, x, y, other='hello', path=None, **kwargs):
         if path is None:
-            fh = tempfile.NamedTemporaryFile('wb+', delete=False)
-            close_fh = True
+            with tempfile.NamedTemporaryFile('wb+') as fh:
+                self.write(fh)
         else:
-            fh = path
-            close_fh = False
-
-        try:
-            self.write(fh)
-        finally:
-            if close_fh:
-                fh.close()
+            self.write(path)
 
     @open_file('path', 'wb')
     def writer_kwarg(self, **kwargs):
         path = kwargs.get('path', None)
         if path is None:
-            fh = tempfile.NamedTemporaryFile('wb+', delete=False)
-            close_fh = True
+            with tempfile.NamedTemporaryFile('wb+') as fh:
+                self.write(fh)
         else:
-            fh = path
-            close_fh = False
-
-        try:
-            self.write(fh)
-        finally:
-            if close_fh:
-                fh.close()
+            self.write(path)
 
     def test_writer_arg0_str(self):
         self.writer_arg0(self.name)
@@ -158,3 +125,4 @@ class TestOpenFileDecorator(object):
 
     def tearDown(self):
         self.fobj.close()
+        os.unlink(self.name)

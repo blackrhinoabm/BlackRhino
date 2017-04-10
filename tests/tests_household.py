@@ -863,7 +863,7 @@ class TestsHousehold(object):
         print(tranx)
         print(account)
 
-        household.clear_accounts()
+        household.clear_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -1086,7 +1086,7 @@ class TestsHousehold(object):
         # TESTING
         #
 
-        environment.households[0].clear_accounts()
+        environment.households[0].clear_accounts(environment)
         print("Printing household:\n")
         print(environment.households[0])
         print("Reading transactions from the config file.\n")

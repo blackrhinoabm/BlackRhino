@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Floyd-Warshall algorithm for shortest paths.
 """
-#    Copyright (C) 2004-2012 by
+#    Copyright (C) 2004-2016 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -46,12 +46,14 @@ def floyd_warshall_numpy(G, nodelist=None, weight='weight'):
     except ImportError:
         raise ImportError(\
           "to_numpy_matrix() requires numpy: http://scipy.org/ ")
+
+    # To handle cases when an edge has weight=0, we must make sure that
+    # nonedges are not given the value 0 as well.
     A = nx.to_numpy_matrix(G, nodelist=nodelist, multigraph_weight=min,
-                           weight=weight)
+                              weight=weight, nonedge=np.inf)
     n,m = A.shape
     I = np.identity(n)
-    A[A==0] = np.inf # set zero entries to inf
-    A[I==1] = 0 # except diagonal which should be zero
+    A[I==1] = 0 # diagonal elements should be zero
     for i in range(n):
         A = np.minimum(A, A[i,:] + A[:,i])
     return A

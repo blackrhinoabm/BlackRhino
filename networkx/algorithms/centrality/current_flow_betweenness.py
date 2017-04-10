@@ -74,8 +74,8 @@ def approximate_current_flow_betweenness_centrality(G, normalized=True,
 
     References
     ----------
-    .. [1] Centrality Measures Based on Current Flow.
-       Ulrik Brandes and Daniel Fleischer,
+    .. [1] Ulrik Brandes and Daniel Fleischer:
+       Centrality Measures Based on Current Flow.
        Proc. 22nd Symp. Theoretical Aspects of Computer Science (STACS '05).
        LNCS 3404, pp. 533-544. Springer-Verlag, 2005.
        http://www.inf.uni-konstanz.de/algo/publications/bf-cmbcf-05.pdf
@@ -190,7 +190,7 @@ def current_flow_betweenness_centrality(G, normalized=True, weight='weight',
     sparse methods you can achieve `O(nm{\sqrt k})` where `k` is the
     Laplacian matrix condition number.
 
-    The space required is `O(nw) where `w` is the width of the sparse
+    The space required is `O(nw)` where `w` is the width of the sparse
     Laplacian matrix.  Worse case is `w=n` for `O(n^2)`.
 
     If the edges have a 'weight' attribute they will be used as
@@ -239,8 +239,8 @@ def current_flow_betweenness_centrality(G, normalized=True, weight='weight',
         nb = (n-1.0)*(n-2.0) # normalization factor
     else:
         nb = 2.0
-    for i,v in enumerate(H): # map integers to nodes
-        betweenness[v] = float((betweenness[v]-i)*2.0/nb)
+    for v in H:
+        betweenness[v] = float((betweenness[v]-v)*2.0/nb)
     return dict((ordering[k],v) for k,v in betweenness.items())
 
 
@@ -282,6 +282,13 @@ def edge_current_flow_betweenness_centrality(G, normalized=True,
     -------
     nodes : dictionary
        Dictionary of edge tuples with betweenness centrality as the value.
+
+    Raises
+    ------
+    NetworkXError
+        The algorithm does not support DiGraphs.
+        If the input graph is an instance of DiGraph class, NetworkXError
+        is raised.
 
     See Also
     --------
@@ -335,7 +342,8 @@ def edge_current_flow_betweenness_centrality(G, normalized=True,
     # make a copy with integer labels according to rcm ordering
     # this could be done without a copy if we really wanted to
     H = nx.relabel_nodes(G,dict(zip(ordering,range(n))))
-    betweenness=(dict.fromkeys(H.edges(),0.0))
+    edges = (tuple(sorted((u,v))) for u,v in H.edges())
+    betweenness= dict.fromkeys(edges,0.0)
     if normalized:
         nb=(n-1.0)*(n-2.0) # normalization factor
     else:

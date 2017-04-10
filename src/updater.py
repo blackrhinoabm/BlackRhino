@@ -124,7 +124,7 @@ class Updater(BaseModel):
                         # For the specific asset
                         if tranx.asset == asset_key:
                             # And amend its value by the current returns
-                            tranx.amount = tranx.amount * (1 + environment.assets[asset_key][2])
+                            tranx.set_amount(tranx.amount * (1 + environment.assets[asset_key][2]), environment)
         # Then, banks give their revenue as dividends to households
         # which own the banks in the model
         # for now we have them given out through ownership weights
@@ -389,7 +389,7 @@ class Updater(BaseModel):
                             to_delete.append(tranx)
                 # Then we delete all market transactions
                 for tranx in to_delete:
-                    tranx.remove_transaction()
+                    tranx.remove_transaction(environment)
                 # And add the netted transaction to the firm's and bank's books
                 if balance > 0.0:
                     # If the balance is positive it's a deposit
@@ -425,7 +425,7 @@ class Updater(BaseModel):
                             to_delete.append(tranx)
                 # Then we delete all market transactions
                 for tranx in to_delete:
-                    tranx.remove_transaction()
+                    tranx.remove_transaction(environment)
                 # And add the netted transaction to the household's and bank's books
                 if balance > 0.0:
                     # If the balance is positive it's a deposit
@@ -466,7 +466,7 @@ class Updater(BaseModel):
             # go through the things to delete
             # and remove them from the books of agents
             for tranx in to_delete:
-                tranx.remove_transaction()
+                tranx.remove_transaction(environment)
 
         # Then, remove labour, goods from households
         for household in environment.households:
@@ -487,7 +487,7 @@ class Updater(BaseModel):
             # go through the things to delete
             # and remove them from the books of agents
             for tranx in to_delete:
-                tranx.remove_transaction()
+                tranx.remove_transaction(environment)
 
         # If necessary, another line for banks will be added here
 
@@ -533,7 +533,7 @@ class Updater(BaseModel):
                         # TODO: we may want the sellout to be proportional or at least
                         # going through books at random, though in the current model it shouldn't matter
                         to_remove = min(-supply, tranx.amount)
-                        tranx.amount = tranx.amount - to_remove
+                        tranx.set_amount(tranx.amount - to_remove, environment)
                         supply = supply + to_remove
 
         # First, we create the list that will be used for rationing
@@ -634,7 +634,7 @@ class Updater(BaseModel):
                                                 balance, 0,  0, -1)
         # And at the end, we remove all the transactions that we marked before
         for tranx in to_delete:
-            tranx.remove_transaction()
+            tranx.remove_transaction(environment)
 
         logging.info("  capitalised on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
@@ -669,7 +669,7 @@ class Updater(BaseModel):
             else:
                 for tranx in bank.accounts:
                     if tranx.type_ == "cb_loans":
-                        tranx.amount = investment_volume
+                        tranx.set_amount(investment_volume, environment)
 
             # Then we add or remove investments
             # We do it for every investment class, for now we have 1/n portfolio
@@ -693,7 +693,7 @@ class Updater(BaseModel):
                     for tranx in bank.accounts:
                         if tranx.type_ == "investment":
                             if tranx.asset == asset_key:
-                                tranx.amount = one_investment_volume
+                                tranx.set_amount(one_investment_volume, environment)
                 # If there are multiple investments in one asset we raise an error
                 else:
                     raise LookupError("More than one transaction of the same asset.")

@@ -931,7 +931,7 @@ class TestsBank(object):
             print(firm)
         for household in environment.households:
             print(household)
-        bank.clear_accounts()
+        bank.clear_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -985,16 +985,19 @@ class TestsBank(object):
         # generate a household
         household = Household()
         household.identifier = "test_household"
+        environment.network.transactions.add_node(household.identifier)
         environment.households.append(household)
 
         # generate a firm
         firm = Firm()
         firm.identifier = "test_firm"
+        environment.network.transactions.add_node(firm.identifier)
         environment.firms.append(firm)
 
         # generate the bank
         bank = Bank()
         environment.banks.append(bank)
+        environment.network.transactions.add_node(bank.identifier)
         helper = Helper()
         helper.initialize_standard_bank(bank, environment)
 
@@ -1012,7 +1015,7 @@ class TestsBank(object):
         print(tranx)
         print(account)
 
-        bank.add_transaction("deposits", "", "test_household",
+        bank.add_transaction("deposits", "", environment.get_agent_by_id("test_household"),
                              bank.identifier, 0.0,  0.09,  0, -1, environment)
         # environment.households[0:1][0] is only for testing purposes DO NOT USE IN PRODUCTION
         # what it does is is takes the first household in environment, but if there are no
@@ -1153,7 +1156,7 @@ class TestsBank(object):
         # TESTING
         #
 
-        environment.banks[0].clear_accounts()
+        environment.banks[0].clear_accounts(environment)
         print("Printing bank: \n")
         print(environment.banks[0])
         print("Reading transactions from the config file.\n")

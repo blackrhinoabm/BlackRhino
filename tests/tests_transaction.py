@@ -144,6 +144,94 @@ class TestsTransaction(object):
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
+    # transaction__get_identifier
+    # -------------------------------------------------------------------------
+
+    def transaction__get_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.get_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__get_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.type_ = "test_type"
+        print("Identifier: ")
+        print(transaction.get_identifier())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # transaction__set_identifier
+    # -------------------------------------------------------------------------
+
+    def transaction__set_identifier(self, args):
+        import os
+        from src.bank import Bank
+        from src.household import Household
+        from src.firm import Firm
+        from src.environment import Environment
+        from src.transaction import Transaction
+
+        text = "This test checks transaction.set_identifier \n"
+        self.print_info(text)
+        #
+        # INITIALIZATION
+        #
+        environment_directory = str(args[0])
+        identifier = str(args[1])
+        log_directory = str(args[2])
+
+        # Configure logging parameters so we get output while the program runs
+        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                            filename=log_directory + identifier + ".log", level=logging.INFO)
+        logging.info('START logging for test transaction__set_identifier in run: %s',
+                     environment_directory + identifier + ".xml")
+
+        # Construct household filename
+        environment = Environment(environment_directory,  identifier)
+
+        #
+        # TESTING
+        #
+
+        print("Creating a transaction")
+        transaction = Transaction()
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        print("Identifier: ")
+        print(transaction.get_identifier())
+        print("Setting identifier")
+        transaction.set_identifier("abc", environment)
+        print("Identifier: ")
+        print(transaction.get_identifier())
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
     # transaction__get_type_
     # -------------------------------------------------------------------------
 
@@ -221,11 +309,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.type_ = "test_type"
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_type_("test_type", environment)
         print("Type: ")
         print(transaction.get_type_())
         print("Setting type")
-        transaction.set_type_("new_type")
+        transaction.set_type_("new_type", environment)
         print("Type: ")
         print(transaction.get_type_())
 
@@ -309,11 +398,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.asset = "test_asset"
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_asset("test_asset", environment)
         print("Asset: ")
         print(transaction.get_asset())
         print("Setting asset")
-        transaction.set_asset("new_asset")
+        transaction.set_asset("new_asset", environment)
         print("Asset: ")
         print(transaction.get_asset())
 
@@ -397,11 +487,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.from_ = "test_from"
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_from_(environment.get_agent_by_id("bank_test_config_id_two"), environment)
         print("From: ")
         print(transaction.get_from_())
         print("Setting from")
-        transaction.set_from_("new_from")
+        transaction.set_from_(environment.get_agent_by_id("bank_test_config_id_three"), environment)
         print("From: ")
         print(transaction.get_from_())
 
@@ -485,11 +576,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.to = "test_to"
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_to(environment.get_agent_by_id("bank_test_config_id_two"), environment)
         print("To: ")
         print(transaction.get_to())
         print("Setting to")
-        transaction.set_to("new_to")
+        transaction.set_to(environment.get_agent_by_id("bank_test_config_id"), environment)
         print("To: ")
         print(transaction.get_to())
 
@@ -573,11 +665,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.amount = 15.0
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_amount(15.0, environment)
         print("Amount: ")
         print(transaction.get_amount())
         print("Setting amount")
-        transaction.set_amount(25.0)
+        transaction.set_amount(25.0, environment)
         print("Amount: ")
         print(transaction.get_amount())
 
@@ -661,11 +754,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.interest = 0.01
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_interest(0.01, environment)
         print("Interest: ")
         print(transaction.get_interest())
         print("Setting interest")
-        transaction.set_interest(0.02)
+        transaction.set_interest(0.02, environment)
         print("Interest: ")
         print(transaction.get_interest())
 
@@ -749,11 +843,12 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.maturity = 1
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_maturity(1, environment)
         print("Maturity: ")
         print(transaction.get_maturity())
         print("Setting maturity")
-        transaction.set_maturity(2)
+        transaction.set_maturity(2, environment)
         print("Maturity: ")
         print(transaction.get_maturity())
 
@@ -837,56 +932,14 @@ class TestsTransaction(object):
 
         print("Creating a transaction")
         transaction = Transaction()
-        transaction.time_of_default = 1
+        transaction.add_transaction("type", "asset", "bank_test_config_id", "bank_test_config_id_two", 1,  2,  3, 4, environment)
+        transaction.set_time_of_default(1, environment)
         print("Time of default: ")
         print(transaction.get_time_of_default())
         print("Setting time of default")
-        transaction.set_time_of_default(2)
+        transaction.set_time_of_default(2, environment)
         print("Time of default: ")
         print(transaction.get_time_of_default())
-
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # transaction__this_transaction
-    # -------------------------------------------------------------------------
-
-    def transaction__this_transaction(self, args):
-        import os
-        from src.bank import Bank
-        from src.household import Household
-        from src.firm import Firm
-        from src.environment import Environment
-        from src.transaction import Transaction
-
-        text = "This test checks transaction.this_transaction \n"
-        self.print_info(text)
-        #
-        # INITIALIZATION
-        #
-        environment_directory = str(args[0])
-        identifier = str(args[1])
-        log_directory = str(args[2])
-
-        # Configure logging parameters so we get output while the program runs
-        logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                            filename=log_directory + identifier + ".log", level=logging.INFO)
-        logging.info('START logging for test transaction__this_transaction in run: %s',
-                     environment_directory + identifier + ".xml")
-
-        # Construct household filename
-        environment = Environment(environment_directory,  identifier)
-
-        #
-        # TESTING
-        #
-
-        print("Creating a transaction")
-        transaction = Transaction()
-        print("Assigning values")
-        transaction.this_transaction("type", "asset", "from", "to", 1,  2,  3, 4)
-        print("The transaction:")
-        print(transaction)
 
     # -------------------------------------------------------------------------
 
@@ -942,9 +995,8 @@ class TestsTransaction(object):
         print("Creating a transaction")
         transaction = Transaction()
         print("Assigning values")
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
         print("Adding the transaction to the books")
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4, environment)
         print("The transaction:")
         print(transaction)
         print("The firm:")
@@ -1006,9 +1058,8 @@ class TestsTransaction(object):
         print("Creating a transaction")
         transaction = Transaction()
         print("Assigning values")
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
         print("Adding the transaction to the books")
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4, environment)
         print("The transaction:")
         print(transaction)
         print("The firm:")
@@ -1016,7 +1067,7 @@ class TestsTransaction(object):
         print("The household:")
         print(environment.get_agent_by_id("test_household"))
         print("Removing the transaction")
-        transaction.remove_transaction()
+        transaction.remove_transaction(environment)
         print("The transaction:")
         print(transaction)
         print("The firm:")
@@ -1079,9 +1130,8 @@ class TestsTransaction(object):
         print("Creating a transaction")
         transaction = Transaction()
         print("Assigning values")
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
         print("Adding the transaction to the books")
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4, environment)
         print("Printing transaction:")
         transaction.print_transaction()
 
@@ -1139,9 +1189,8 @@ class TestsTransaction(object):
         print("Creating a transaction")
         transaction = Transaction()
         print("Assigning values")
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
         print("Adding the transaction to the books")
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4, environment)
         print("Printing transaction:")
         print(transaction.__str__())
 
@@ -1199,9 +1248,8 @@ class TestsTransaction(object):
         print("Creating a transaction")
         transaction = Transaction()
         print("Assigning values")
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4)
         print("Adding the transaction to the books")
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 1,  2,  3, 4, environment)
         print("Printing transaction:")
         print(transaction.write_transaction())
 
@@ -1261,7 +1309,7 @@ class TestsTransaction(object):
             print(bank)
         for household in environment.households:
             print(household)
-        environment.get_agent_by_id("bank_test_config_id").clear_accounts()
+        environment.get_agent_by_id("bank_test_config_id").clear_accounts(environment)
         print("After clearing one bank's accounts")
         for bank in environment.banks:
             print(bank)
@@ -1321,8 +1369,7 @@ class TestsTransaction(object):
 
         print("Before purging the accounts")
         transaction = Transaction()
-        transaction.this_transaction("type", "asset", "test_household", "test_firm", 0,  2,  3, 4)
-        transaction.add_transaction(environment)
+        transaction.add_transaction("type", "asset", "test_household", "test_firm", 0,  2,  3, 4, environment)
         print(environment.get_agent_by_id("test_household"))
         print(environment.get_agent_by_id("test_firm"))
         print("After clearing one bank's accounts")

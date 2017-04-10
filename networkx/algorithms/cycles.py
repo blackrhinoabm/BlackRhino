@@ -9,11 +9,17 @@ Cycle finding algorithms
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
-import networkx as nx
-from networkx.utils import *
+
 from collections import defaultdict
 
-__all__ = ['cycle_basis','simple_cycles','recursive_simple_cycles']
+import networkx as nx
+from networkx.utils import *
+from networkx.algorithms.traversal.edgedfs import helper_funcs, edge_dfs
+
+__all__ = [
+    'cycle_basis','simple_cycles','recursive_simple_cycles', 'find_cycle'
+]
+
 __author__ = "\n".join(['Jon Olav Vik <jonovik@gmail.com>',
                         'Dan Schult <dschult@colgate.edu>',
                         'Aric Hagberg <hagberg@lanl.gov>'])
@@ -44,8 +50,8 @@ def cycle_basis(G,root=None):
     Examples
     --------
     >>> G=nx.Graph()
-    >>> G.add_cycle([0,1,2,3])
-    >>> G.add_cycle([0,3,4,5])
+    >>> nx.add_cycle(G, [0, 1, 2, 3])
+    >>> nx.add_cycle(G, [0, 3, 4, 5])
     >>> print(nx.cycle_basis(G,0))
     [[3, 4, 5, 0], [1, 2, 3, 0]]
 
@@ -99,10 +105,9 @@ def cycle_basis(G,root=None):
 def simple_cycles(G):
     """Find simple cycles (elementary circuits) of a directed graph.
 
-    An simple cycle, or elementary circuit, is a closed path where no
-    node appears twice, except that the first and last node are the same.
-    Two elementary circuits are distinct if they are not cyclic permutations
-    of each other.
+    A `simple cycle`, or `elementary circuit`, is a closed path where
+    no node appears twice. Two elementary circuits are distinct if they
+    are not cyclic permutations of each other.
 
     This is a nonrecursive, iterator/generator version of Johnson's
     algorithm [1]_.  There may be better algorithms for some cases [2]_ [3]_.
@@ -115,39 +120,39 @@ def simple_cycles(G):
     Returns
     -------
     cycle_generator: generator
-       A generator that produces elementary cycles of the graph.  Each cycle is
-       a list of nodes with the first and last nodes being the same.
+       A generator that produces elementary cycles of the graph.
+       Each cycle is represented by a list of nodes along the cycle.
 
     Examples
     --------
     >>> G = nx.DiGraph([(0, 0), (0, 1), (0, 2), (1, 2), (2, 0), (2, 1), (2, 2)])
-    >>> list(nx.simple_cycles(G))
-    [[2], [2, 1], [2, 0], [2, 0, 1], [0]]
+    >>> len(list(nx.simple_cycles(G)))
+    5
+
+    To filter the cycles so that they don't include certain nodes or edges,
+    copy your graph and eliminate those nodes or edges before calling
+
+    >>> copyG = G.copy()
+    >>> copyG.remove_nodes_from([1])
+    >>> copyG.remove_edges_from([(0, 1)])
+    >>> len(list(nx.simple_cycles(copyG)))
+    3
+
 
     Notes
     -----
     The implementation follows pp. 79-80 in [1]_.
 
-    The time complexity is O((n+e)(c+1)) for n nodes, e edges and c
+    The time complexity is `O((n+e)(c+1))` for `n` nodes, `e` edges and `c`
     elementary circuits.
-
-    To filter the cycles so that they don't include certain nodes or edges,
-    copy your graph and eliminate those nodes or edges before calling.
-    >>> copyG = G.copy()
-    >>> copyG.remove_nodes_from([1])
-    >>> copyG.remove_edges_from([(0,1)])
-    >>> list(nx.simple_cycles(copyG))
-    [[2], [2, 0], [0]]
 
     References
     ----------
     .. [1] Finding all the elementary circuits of a directed graph.
        D. B. Johnson, SIAM Journal on Computing 4, no. 1, 77-84, 1975.
        http://dx.doi.org/10.1137/0204007
-
     .. [2] Enumerating the cycles of a digraph: a new preprocessing strategy.
        G. Loizou and P. Thanish, Information Sciences, v. 27, 163-182, 1982.
-
     .. [3] A search strategy for the elementary cycles of a directed graph.
        J.L. Szwarcfiter and P.E. Lauer, BIT NUMERICAL MATHEMATICS,
        v. 16, no. 2, 192-204, 1976.
@@ -168,8 +173,10 @@ def simple_cycles(G):
     # Johnson's algorithm requires some ordering of the nodes.
     # We assign the arbitrary ordering given by the strongly connected comps
     # There is no need to track the ordering as each node removed as processed.
-    subG=G.copy()   # save the actual graph so we can mutate it here
-    sccs = nx.strongly_connected_components(subG)
+    subG = type(G)(G.edges()) # save the actual graph so we can mutate it here
+                              # We only take the edges because we do not want to
+                              # copy edge and node attributes here.
+    sccs = list(nx.strongly_connected_components(subG))
     while sccs:
         scc=sccs.pop()
         # order of scc determines ordering of nodes
@@ -194,6 +201,7 @@ def simple_cycles(G):
                 elif nextnode not in blocked:
                     path.append(nextnode)
                     stack.append( (nextnode,list(subG[nextnode])) )
+                    closed.discard(nextnode)
                     blocked.add(nextnode)
                     continue
             # done with nextnode... look for more neighbors
@@ -201,7 +209,7 @@ def simple_cycles(G):
                 if thisnode in closed:
                     _unblock(thisnode,blocked,B)
                 else:
-                    for nbr in G[thisnode]:
+                    for nbr in subG[thisnode]:
                         if thisnode not in B[nbr]:
                             B[nbr].add(thisnode)
                 stack.pop()
@@ -210,20 +218,19 @@ def simple_cycles(G):
         # done processing this node
         subG.remove_node(startnode)
         H=subG.subgraph(scc)  # make smaller to avoid work in SCC routine
-        sccs.extend(nx.strongly_connected_components(H))
+        sccs.extend(list(nx.strongly_connected_components(H)))
 
 
 @not_implemented_for('undirected')
 def recursive_simple_cycles(G):
     """Find simple cycles (elementary circuits) of a directed graph.
 
-    A simple cycle, or elementary circuit, is a closed path where no
-    node appears twice, except that the first and last node are the same.
-    Two elementary circuits are distinct if they are not cyclic permutations
-    of each other.
+    A `simple cycle`, or `elementary circuit`, is a closed path where
+    no node appears twice. Two elementary circuits are distinct if they
+    are not cyclic permutations of each other.
 
     This version uses a recursive algorithm to build a list of cycles.
-    You should probably use the iterator version caled simple_cycles().
+    You should probably use the iterator version called simple_cycles().
     Warning: This recursive version uses lots of RAM!
 
     Parameters
@@ -233,10 +240,11 @@ def recursive_simple_cycles(G):
 
     Returns
     -------
-    A list of circuits, where each circuit is a list of nodes, with the first
-    and last node being the same.
+    A list of cycles, where each cycle is represented by a list of nodes
+    along the cycle.
 
     Example:
+
     >>> G = nx.DiGraph([(0, 0), (0, 1), (0, 2), (1, 2), (2, 0), (2, 1), (2, 2)])
     >>> nx.recursive_simple_cycles(G)
     [[0], [0, 1, 2], [0, 2], [1, 2], [2]]
@@ -249,7 +257,7 @@ def recursive_simple_cycles(G):
     -----
     The implementation follows pp. 79-80 in [1]_.
 
-    The time complexity is O((n+e)(c+1)) for n nodes, e edges and c
+    The time complexity is `O((n+e)(c+1))` for `n` nodes, `e` edges and `c`
     elementary circuits.
 
     References
@@ -315,3 +323,150 @@ def recursive_simple_cycles(G):
                 B[node][:] = []
             dummy=circuit(startnode, startnode, component)
     return result
+
+def find_cycle(G, source=None, orientation='original'):
+    """
+    Returns the edges of a cycle found via a directed, depth-first traversal.
+
+    Parameters
+    ----------
+    G : graph
+        A directed/undirected graph/multigraph.
+
+    source : node, list of nodes
+        The node from which the traversal begins. If None, then a source
+        is chosen arbitrarily and repeatedly until all edges from each node in
+        the graph are searched.
+
+    orientation : 'original' | 'reverse' | 'ignore'
+        For directed graphs and directed multigraphs, edge traversals need not
+        respect the original orientation of the edges. When set to 'reverse',
+        then every edge will be traversed in the reverse direction. When set to
+        'ignore', then each directed edge is treated as a single undirected
+        edge that can be traversed in either direction. For undirected graphs
+        and undirected multigraphs, this parameter is meaningless and is not
+        consulted by the algorithm.
+
+    Returns
+    -------
+    edges : directed edges
+        A list of directed edges indicating the path taken for the loop. If
+        no cycle is found, then an exception is raised. For graphs, an
+        edge is of the form `(u, v)` where `u` and `v` are the tail and head
+        of the edge as determined by the traversal. For multigraphs, an edge is
+        of the form `(u, v, key)`, where `key` is the key of the edge. When the
+        graph is directed, then `u` and `v` are always in the order of the
+        actual directed edge. If orientation is 'ignore', then an edge takes
+        the form `(u, v, key, direction)` where direction indicates if the edge
+        was followed in the forward (tail to head) or reverse (head to tail)
+        direction. When the direction is forward, the value of `direction`
+        is 'forward'. When the direction is reverse, the value of `direction`
+        is 'reverse'.
+
+    Raises
+    ------
+    NetworkXNoCycle
+        If no cycle was found.
+
+    Examples
+    --------
+    In this example, we construct a DAG and find, in the first call, that there
+    are no directed cycles, and so an exception is raised. In the second call,
+    we ignore edge orientations and find that there is an undirected cycle.
+    Note that the second call finds a directed cycle while effectively
+    traversing an undirected graph, and so, we found an "undirected cycle".
+    This means that this DAG structure does not form a directed tree (which
+    is also known as a polytree).
+
+    >>> import networkx as nx
+    >>> G = nx.DiGraph([(0,1), (0,2), (1,2)])
+    >>> try:
+    ...    find_cycle(G, orientation='original')
+    ... except:
+    ...    pass
+    ...
+    >>> list(find_cycle(G, orientation='ignore'))
+    [(0, 1, 'forward'), (1, 2, 'forward'), (0, 2, 'reverse')]
+
+    """
+    out_edge, key, tailhead = helper_funcs(G, orientation)
+
+    def prune(edges, active_nodes):
+        # This edge results from backtracking.
+        # Pop until we get a node whose head equals the current tail.
+        # So for example, we might have:
+        #  [(0,1), (1,2), (2,3)], (1,4)
+        # which must become:
+        #  [(0,1)], (1,4)
+        while True:
+            try:
+                popped_edge = edges.pop()
+            except IndexError:
+                edges = []
+                active_nodes = {tail}
+                break
+            else:
+                popped_head = tailhead(popped_edge)[1]
+                active_nodes.remove(popped_head)
+
+            if edges:
+                previous_head = tailhead(edges[-1])[1]
+                if tail == previous_head:
+                    break
+            else:
+                previous_head = None
+        return edges, active_nodes, previous_head
+
+    explored = set()
+    cycle = []
+    final_node = None
+    for start_node in G.nbunch_iter(source):
+        if start_node in explored:
+            # No loop is possible.
+            continue
+
+        edges = []
+        # All nodes seen in this iteration of edge_dfs
+        seen = {start_node}
+        # Nodes in active path.
+        active_nodes = {start_node}
+        previous_head = None
+
+        for edge in edge_dfs(G, start_node, orientation):
+            # Determine if this edge is a continuation of the active path.
+            tail, head = tailhead(edge)
+            if previous_head is not None and tail != previous_head:
+                edges, active_nodes, previous_head = prune(edges, active_nodes)
+            edges.append(edge)
+
+            if head in active_nodes:
+                # We have a loop!
+                cycle.extend(edges)
+                final_node = head
+                break
+            else:
+                previous_head = head
+                seen.add(head)
+                active_nodes.add(head)
+                if head in explored:
+                    edges, active_nodes, previous_head = prune(edges, active_nodes)
+
+        if cycle:
+            break
+        else:
+            explored.update(seen)
+
+    else:
+        assert(len(cycle) == 0)
+        raise nx.exception.NetworkXNoCycle('No cycle found.')
+
+    # We now have a list of edges which ends on a cycle.
+    # So we need to remove from the beginning edges that are not relevant.
+
+    for i, edge in enumerate(cycle):
+        tail, head = tailhead(edge)
+        if tail == final_node:
+            break
+
+    return cycle[i:]
+

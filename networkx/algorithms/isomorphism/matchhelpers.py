@@ -20,11 +20,15 @@ __all__ = ['categorical_node_match',
 def copyfunc(f, name=None):
     """Returns a deepcopy of a function."""
     try:
-        return types.FunctionType(f.func_code, f.func_globals, name or f.name,
-                                  f.func_defaults, f.func_closure)
+        # Python <3
+        return types.FunctionType(f.func_code, f.func_globals,
+                                  name or f.__name__, f.func_defaults,
+                                  f.func_closure)
     except AttributeError:
-        return types.FunctionType(f.__code__, f.__globals__, name or f.name,
-                                  f.__defaults__, f.__closure__)
+        # Python >=3
+        return types.FunctionType(f.__code__, f.__globals__,
+                                  name or f.__name__, f.__defaults__,
+                                  f.__closure__)
 
 def allclose(x, y, rtol=1.0000000000000001e-05, atol=1e-08):
     """Returns True if x and y are sufficiently close, elementwise.
@@ -94,13 +98,19 @@ def categorical_node_match(attr, default):
             return data1.get(attr, default) == data2.get(attr, default)
     else:
         attrs = list(zip(attr, default)) # Python 3
+
         def match(data1, data2):
-            values1 = set([data1.get(attr, d) for attr, d in attrs])
-            values2 = set([data2.get(attr, d) for attr, d in attrs])
-            return values1 == values2
+            return all(data1.get(attr, d) == data2.get(attr, d) for attr, d in attrs)
     return match
 
-categorical_edge_match = copyfunc(categorical_node_match, 'categorical_edge_match')
+try:
+    categorical_edge_match = copyfunc(categorical_node_match, 'categorical_edge_match')
+except NotImplementedError:
+    # IronPython lacks support for types.FunctionType.
+    # https://github.com/networkx/networkx/issues/949
+    # https://github.com/networkx/networkx/issues/1127
+    def categorical_edge_match(*args, **kwargs):
+        return categorical_node_match(*args, **kwargs)
 
 def categorical_multiedge_match(attr, default):
     if nx.utils.is_string_like(attr):
@@ -177,7 +187,14 @@ def numerical_node_match(attr, default, rtol=1.0000000000000001e-05, atol=1e-08)
             return allclose(values1, values2, rtol=rtol, atol=atol)
     return match
 
-numerical_edge_match = copyfunc(numerical_node_match, 'numerical_edge_match')
+try:
+    numerical_edge_match = copyfunc(numerical_node_match, 'numerical_edge_match')
+except NotImplementedError:
+    # IronPython lacks support for types.FunctionType.
+    # https://github.com/networkx/networkx/issues/949
+    # https://github.com/networkx/networkx/issues/1127
+    def numerical_edge_match(*args, **kwargs):
+        return numerical_node_match(*args, **kwargs)
 
 def numerical_multiedge_match(attr, default, rtol=1.0000000000000001e-05, atol=1e-08):
     if nx.utils.is_string_like(attr):
@@ -262,7 +279,14 @@ def generic_node_match(attr, default, op):
                 return True
     return match
 
-generic_edge_match = copyfunc(generic_node_match, 'generic_edge_match')
+try:
+    generic_edge_match = copyfunc(generic_node_match, 'generic_edge_match')
+except NotImplementedError:
+    # IronPython lacks support for types.FunctionType.
+    # https://github.com/networkx/networkx/issues/949
+    # https://github.com/networkx/networkx/issues/1127
+    def generic_edge_match(*args, **kwargs):
+        return generic_node_match(*args, **kwargs)
 
 def generic_multiedge_match(attr, default, op):
     """Returns a comparison function for a generic attribute.
@@ -307,37 +331,30 @@ def generic_multiedge_match(attr, default, op):
     # This is slow, but generic.
     # We must test every possible isomorphism between the edges.
     if nx.utils.is_string_like(attr):
-        def match(datasets1, datasets2):
-            values1 = [data.get(attr, default) for data in datasets1.values()]
-            values2 = [data.get(attr, default) for data in datasets2.values()]
-            for vals2 in permutations(values2):
-                for xi, yi in zip(values1, vals2):
-                    if not op(xi, yi):
-                        # This is not an isomorphism, go to next permutation.
-                        break
-                else:
-                    # Then we found an isomorphism.
-                    return True
+        attr = [attr]
+        default = [default]
+        op = [op]
+    attrs = list(zip(attr, default)) # Python 3
+    def match(datasets1, datasets2):
+        values1 = []
+        for data1 in datasets1.values():
+            x = tuple( data1.get(attr, d) for attr, d in attrs )
+            values1.append(x)
+        values2 = []
+        for data2 in datasets2.values():
+            x = tuple( data2.get(attr, d) for attr, d in attrs )
+            values2.append(x)
+        for vals2 in permutations(values2):
+            for xi, yi in zip(values1, vals2):
+                if not all(map(lambda x,y,z: z(x,y), xi, yi, op)):
+                    # This is not an isomorphism, go to next permutation.
+                    break
             else:
-                # Then there are no isomorphisms between the multiedges.
-                return False
-    else:
-        attrs = list(zip(attr, default)) # Python 3
-        def match(datasets1, datasets2):
-            values1 = []
-            for data1 in datasets1.values():
-                x = tuple( data1.get(attr, d) for attr, d in attrs )
-                values1.append(x)
-            values2 = []
-            for data2 in datasets2.values():
-                x = tuple( data2.get(attr, d) for attr, d in attrs )
-                values2.append(x)
-            for vals2 in permutations(values2):
-                for xi, yi, operator in zip(values1, vals2, op):
-                    if not operator(xi, yi):
-                        return False
-            else:
+                # Then we found an isomorphism.
                 return True
+        else:
+            # Then there are no isomorphisms between the multiedges.
+            return False
     return match
 
 # Docstrings for numerical functions.

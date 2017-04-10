@@ -27,35 +27,49 @@ def relabel_nodes(G, mapping, copy=True):
 
     Examples
     --------
-    >>> G=nx.path_graph(3)  # nodes 0-1-2
-    >>> mapping={0:'a',1:'b',2:'c'}
-    >>> H=nx.relabel_nodes(G,mapping)
-    >>> print(sorted(H.nodes()))
-    ['a', 'b', 'c']
+    To create a new graph with nodes relabeled according to a given
+    dictionary::
 
-    >>> G=nx.path_graph(26) # nodes 0..25
-    >>> mapping=dict(zip(G.nodes(),"abcdefghijklmnopqrstuvwxyz"))
-    >>> H=nx.relabel_nodes(G,mapping) # nodes a..z
-    >>> mapping=dict(zip(G.nodes(),range(1,27)))
-    >>> G1=nx.relabel_nodes(G,mapping) # nodes 1..26
+        >>> G = nx.path_graph(3)
+        >>> sorted(G)
+        [0, 1, 2]
+        >>> mapping = {0: 'a', 1: 'b', 2: 'c'}
+        >>> H = nx.relabel_nodes(G, mapping)
+        >>> sorted(H)
+        ['a', 'b', 'c']
 
-    Partial in-place mapping:
+    Nodes can be relabeled with any hashable object, including numbers
+    and strings::
 
-    >>> G=nx.path_graph(3)  # nodes 0-1-2
-    >>> mapping={0:'a',1:'b'} # 0->'a' and 1->'b'
-    >>> G=nx.relabel_nodes(G,mapping, copy=False)
+        >>> import string
+        >>> G = nx.path_graph(26)  # nodes are integers 0 through 25
+        >>> sorted(G)[:3]
+        [0, 1, 2]
+        >>> mapping = dict(zip(G, string.ascii_lowercase))
+        >>> G = nx.relabel_nodes(G, mapping) # nodes are characters a through z
+        >>> sorted(G)[:3]
+        ['a', 'b', 'c']
+        >>> mapping = dict(zip(G, range(1, 27)))
+        >>> G = nx.relabel_nodes(G, mapping)  # nodes are integers 1 through 26
+        >>> sorted(G)[:3]
+        [1, 2, 3]
 
-    print(G.nodes())
-    [2, 'b', 'a']
+    To perform a partial in-place relabeling, provide a dictionary
+    mapping only a subset of the nodes, and set the `copy` keyword
+    argument to False::
 
-    Mapping as function:
+        >>> G = nx.path_graph(3)  # nodes 0-1-2
+        >>> mapping = {0: 'a', 1: 'b'} # 0->'a' and 1->'b'
+        >>> G = nx.relabel_nodes(G, mapping, copy=False)
+        >>> sorted(G, key=str)
+        [2, 'a', 'b']
 
-    >>> G=nx.path_graph(3)
-    >>> def mapping(x):
-    ...    return x**2
-    >>> H=nx.relabel_nodes(G,mapping)
-    >>> print(H.nodes())
-    [0, 1, 4]
+    A mapping can also be given as a function::
+
+        >>> G = nx.path_graph(3)
+        >>> H = nx.relabel_nodes(G, lambda x: x ** 2)
+        >>> list(H)
+        [0, 1, 4]
 
     Notes
     -----
@@ -72,76 +86,78 @@ def relabel_nodes(G, mapping, copy=True):
     # you can pass a function f(old_label)->new_label
     # but we'll just make a dictionary here regardless
     if not hasattr(mapping,"__getitem__"):
-        m = dict((n,mapping(n)) for n in G)
+        m = dict((n, mapping(n)) for n in G)
     else:
-        m=mapping
+        m = mapping
     if copy:
-        return _relabel_copy(G,m)
+        return _relabel_copy(G, m)
     else:
-        return _relabel_inplace(G,m)
+        return _relabel_inplace(G, m)
 
 
 def _relabel_inplace(G, mapping):
-    old_labels=set(mapping.keys())
-    new_labels=set(mapping.values())
+    old_labels = set(mapping.keys())
+    new_labels = set(mapping.values())
     if len(old_labels & new_labels) > 0:
         # labels sets overlap
         # can we topological sort and still do the relabeling?
-        D=nx.DiGraph(list(mapping.items()))
+        D = nx.DiGraph(list(mapping.items()))
         D.remove_edges_from(D.selfloop_edges())
         try:
-            nodes=nx.topological_sort(D)
+            nodes = reversed(list(nx.topological_sort(D)))
         except nx.NetworkXUnfeasible:
             raise nx.NetworkXUnfeasible('The node label sets are overlapping '
                                         'and no ordering can resolve the '
                                         'mapping. Use copy=True.')
-        nodes.reverse()  # reverse topological order
     else:
         # non-overlapping label sets
-        nodes=old_labels
+        nodes = old_labels
 
     multigraph = G.is_multigraph()
     directed = G.is_directed()
 
     for old in nodes:
         try:
-            new=mapping[old]
+            new = mapping[old]
         except KeyError:
             continue
+        if new == old:
+            continue
         try:
-            G.add_node(new,attr_dict=G.node[old])
+            G.add_node(new, **G.node[old])
         except KeyError:
             raise KeyError("Node %s is not in the graph"%old)
         if multigraph:
-            new_edges=[(new,old == target and new or target,key,data)
-                       for (_,target,key,data)
-                       in G.edges(old,data=True,keys=True)]
+            new_edges = [(new, new if old == target else target, key, data)
+                         for (_,target,key,data)
+                         in G.edges(old, data=True, keys=True)]
             if directed:
-                new_edges+=[(old == source and new or source,new,key,data)
-                            for (source,_,key,data)
-                            in G.in_edges(old,data=True,keys=True)]
+                new_edges += [(new if old == source else source, new, key, data)
+                              for (source, _, key,data)
+                              in G.in_edges(old, data=True, keys=True)]
         else:
-            new_edges=[(new,old == target and new or target,data)
-                       for (_,target,data) in G.edges(old,data=True)]
+            new_edges = [(new, new if old == target else target, data)
+                         for (_,target,data) in G.edges(old, data=True)]
             if directed:
-                new_edges+=[(old == source and new or source,new,data)
-                            for (source,_,data) in G.in_edges(old,data=True)]
+                new_edges += [(new if old == source else source,new,data)
+                              for (source,_,data) in G.in_edges(old, data=True)]
         G.remove_node(old)
         G.add_edges_from(new_edges)
     return G
 
 def _relabel_copy(G, mapping):
-    H=G.__class__()
-    H.name="(%s)" % G.name
+    H = G.__class__()
+    if G.name:
+        H.name = "(%s)" % G.name
     if G.is_multigraph():
-        H.add_edges_from( (mapping.get(n1,n1),mapping.get(n2,n2),k,d.copy())
-                          for (n1,n2,k,d) in G.edges_iter(keys=True,data=True))
+        H.add_edges_from( (mapping.get(n1, n1),mapping.get(n2, n2),k,d.copy())
+                          for (n1,n2,k,d) in G.edges(keys=True, data=True))
     else:
-        H.add_edges_from( (mapping.get(n1,n1),mapping.get(n2,n2),d.copy())
-                          for (n1,n2,d) in G.edges_iter(data=True))
+        H.add_edges_from( (mapping.get(n1, n1),mapping.get(n2, n2),d.copy())
+                          for (n1, n2, d) in G.edges(data=True))
 
-    H.add_nodes_from(mapping.get(n,n) for n in G)
-    H.node.update(dict((mapping.get(n,n),d.copy()) for n,d in G.node.items()))
+    H.add_nodes_from(mapping.get(n, n) for n in G)
+    H.node.update(dict((mapping.get(n, n), d.copy()) for n,d in G.node.items()))
     H.graph.update(G.graph.copy())
 
     return H
@@ -149,7 +165,8 @@ def _relabel_copy(G, mapping):
 
 def convert_node_labels_to_integers(G, first_label=0, ordering="default",
                                     label_attribute=None):
-    """Return a copy of the graph G with the nodes relabeled with integers.
+    """Return a copy of the graph G with the nodes relabeled using
+    consecutive integers.
 
     Parameters
     ----------
@@ -157,8 +174,8 @@ def convert_node_labels_to_integers(G, first_label=0, ordering="default",
        A NetworkX graph
 
     first_label : int, optional (default=0)
-       An integer specifying the offset in numbering nodes.
-       The n new integer labels are numbered first_label, ..., n-1+first_label.
+       An integer specifying the starting offset in numbering nodes.
+       The new integer labels are numbered first_label, ..., n-1+first_label.
 
     ordering : string
        "default" : inherit node ordering from G.nodes()
@@ -180,24 +197,23 @@ def convert_node_labels_to_integers(G, first_label=0, ordering="default",
     """
     N = G.number_of_nodes()+first_label
     if ordering == "default":
-        mapping = dict(zip(G.nodes(),range(first_label,N)))
+        mapping = dict(zip(G.nodes(), range(first_label, N)))
     elif ordering == "sorted":
-        nlist = G.nodes()
-        nlist.sort()
-        mapping=dict(zip(nlist,range(first_label,N)))
+        nlist = sorted(G.nodes())
+        mapping = dict(zip(nlist, range(first_label, N)))
     elif ordering == "increasing degree":
-        dv_pairs=[(d,n) for (n,d) in G.degree_iter()]
+        dv_pairs = [(d,n) for (n,d) in G.degree()]
         dv_pairs.sort() # in-place sort from lowest to highest degree
-        mapping = dict(zip([n for d,n in dv_pairs],range(first_label,N)))
+        mapping = dict(zip([n for d,n in dv_pairs], range(first_label, N)))
     elif ordering == "decreasing degree":
-        dv_pairs = [(d,n) for (n,d) in G.degree_iter()]
+        dv_pairs = [(d,n) for (n,d) in G.degree()]
         dv_pairs.sort() # in-place sort from lowest to highest degree
         dv_pairs.reverse()
-        mapping = dict(zip([n for d,n in dv_pairs],range(first_label,N)))
+        mapping = dict(zip([n for d,n in dv_pairs], range(first_label, N)))
     else:
         raise nx.NetworkXError('Unknown node ordering: %s'%ordering)
-    H = relabel_nodes(G,mapping)
-    H.name="("+G.name+")_with_int_labels"
+    H = relabel_nodes(G, mapping)
+    H.name = "("+G.name+")_with_int_labels"
     # create node attribute with the old label
     if label_attribute is not None:
         nx.set_node_attributes(H, label_attribute,

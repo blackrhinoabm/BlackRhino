@@ -1024,7 +1024,7 @@ class TestsEnvironment(object):
         #
 
         print("Clearing accounts of the bank:")
-        environment.banks[0].clear_accounts()  # let's use the first bank
+        environment.banks[0].clear_accounts(environment)  # let's use the first bank
         print(environment.banks[0])
         print("Reading transactions: ")
         environment.read_transactions_for_banks(environment.bank_directory)
@@ -1066,7 +1066,7 @@ class TestsEnvironment(object):
         #
 
         print("Clearing accounts of the firm:")
-        environment.firms[0].clear_accounts()  # let's use the first bank
+        environment.firms[0].clear_accounts(environment)  # let's use the first bank
         print(environment.firms[0])
         print("Reading transactions: ")
         environment.read_transactions_for_firms(environment.firm_directory)
@@ -1108,7 +1108,7 @@ class TestsEnvironment(object):
         #
 
         print("Clearing accounts of the household:")
-        environment.households[0].clear_accounts()  # let's use the first bank
+        environment.households[0].clear_accounts(environment)  # let's use the first bank
         print(environment.households[0])
         print("Reading transactions: ")
         environment.read_transactions_for_banks(environment.bank_directory)  # deposits are saved in bank config files only
@@ -1151,7 +1151,7 @@ class TestsEnvironment(object):
         #
 
         print("Clearing accounts of the central_bank:")
-        environment.central_bank[0].clear_accounts()  # let's use the first bank
+        environment.central_bank[0].clear_accounts(environment)  # let's use the first bank
         print(environment.central_bank[0])
         print("Reading transactions: ")
         environment.read_transactions_for_central_bank(environment.central_bank_directory)  # deposits are saved in bank config files only

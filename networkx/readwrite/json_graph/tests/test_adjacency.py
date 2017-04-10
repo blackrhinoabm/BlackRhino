@@ -1,5 +1,5 @@
 import json
-from nose.tools import assert_equal, assert_raises, assert_not_equal,assert_true
+from nose.tools import assert_equal, assert_raises, assert_not_equal, assert_true, raises
 import networkx as nx
 from networkx.readwrite.json_graph import *
 
@@ -31,14 +31,14 @@ class TestAdjacency:
 
     def test_digraph(self):
         G = nx.DiGraph()
-        G.add_path([1,2,3])
+        nx.add_path(G, [1, 2, 3])
         H = adjacency_graph(adjacency_data(G))
         assert_true(H.is_directed())
         nx.is_isomorphic(G,H)
 
     def test_multidigraph(self):
         G = nx.MultiDiGraph()
-        G.add_path([1,2,3])
+        nx.add_path(G, [1, 2, 3])
         H = adjacency_graph(adjacency_data(G))
         assert_true(H.is_directed())
         assert_true(H.is_multigraph())
@@ -50,3 +50,9 @@ class TestAdjacency:
         H = adjacency_graph(adjacency_data(G))
         nx.is_isomorphic(G,H)
         assert_equal(H[1][2]['second']['color'],'blue')
+
+    @raises(nx.NetworkXError)
+    def test_exception(self):
+        G = nx.MultiDiGraph()
+        attrs = dict(id='node', key='node')
+        adjacency_data(G, attrs)

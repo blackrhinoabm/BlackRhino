@@ -998,7 +998,7 @@ class TestsCentralBank(object):
         print(tranx)
         print(account)
 
-        cb.clear_accounts()
+        cb.clear_accounts(environment)
 
         account = 0.0
         tranx = 0
@@ -1176,7 +1176,7 @@ class TestsCentralBank(object):
         # TESTING
         #
 
-        environment.central_bank[0].clear_accounts()
+        environment.central_bank[0].clear_accounts(environment)
         print("Printing central bank: \n")
         print(environment.central_bank[0])
         print("Reading transactions from the config file.\n")

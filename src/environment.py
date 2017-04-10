@@ -23,6 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import logging
 import os
 from abm_template.src.baseconfig import BaseConfig
+from src.network import Network
+import networkx as nx
 
 
 # -------------------------------------------------------------------------
@@ -46,6 +48,8 @@ class Environment(BaseConfig):
 
     assets = {}  # dictionary of assets: "name": ["expected return", "return volatility", "current returns"]
     shocks = []  # list of shocks: [sweep_from, sweep_to, kind_of_shock]
+
+    network = Network("")  # network of transaction
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
@@ -333,6 +337,10 @@ class Environment(BaseConfig):
         # add agents to the list of all agents
         self.agents = [self.banks, self.firms, self.households, self.central_bank]
 
+        # initialize the network
+        self.network.identifier = self.identifier
+        self.network.initialize_networks(self)
+
         # then, initialize transactions from the config files for banks
         if (self.bank_directory != ""):
             if (self.bank_directory != "none"):  # none is used for tests only
@@ -364,6 +372,7 @@ class Environment(BaseConfig):
                 logging.info("  central bank's transactions read from directory: %s",  self.central_bank_directory)
         else:
             logging.error("ERROR: no central_bank_directory given in %s\n",  environment_filename)
+
 
     # -------------------------------------------------------------------------
 
@@ -595,8 +604,7 @@ class Environment(BaseConfig):
     def new_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default)
-        transaction.add_transaction(self)
+        transaction.add_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default, self)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
