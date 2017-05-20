@@ -88,20 +88,22 @@ class Agent(BaseAgent):
 
 
     def __str__(self):
-        return super(Agent, self).__str__()
+        # return super(Agent, self).__str__()
 
-        # ret_str = "  <agent identifier='" + self.identifier + "'>\n "
+        ret_str = "  <agent identifier='" + self.identifier + "'>\n "
 
-        # ret_str = ret_str + " <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
+        for entry in self.parameters:
+            value = self.parameters[entry]
+            ret_str = ret_str + " <parameter type='parameters' name=" + entry + "' value='" + str(value) + "'></parameter>\n"
 
-        # for each_agent in self.transition_probabilities:
-        #     weight = self.transition_probabilities[each_agent]
-        #     if isinstance(weight, int) or isinstance(weight, float) or isinstance(weight, str):
-        #         ret_str = ret_str + "    <parameter type='transition' + 'name='" + each_agent + "' value='" + str(weight) + "'></parameter>\n"
-        #     else:
-        #         raise TypeError
-        # ret_str = ret_str + "</agent>\n"
-        #return ret_str
+        for entry in self.state_variables:
+            value = self.state_variables[entry]
+            if isinstance(value, int) or isinstance(value, float) or isinstance(value, str):
+                ret_str = ret_str + "    <parameter type='state_variables' name='" + entry + "' value='" + str(value) + "'></parameter>\n"
+            else:
+                raise TypeError
+        ret_str = ret_str + "</agent>\n"
+        return ret_str
 
     def get_parameters(self):
         return self.parameters

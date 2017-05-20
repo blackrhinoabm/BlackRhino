@@ -8,11 +8,14 @@ if __name__ == '__main__':
     import pdb  # python debugger, for debugging purposes only
 
     import sys
+
+
+    from inspect import getsourcefile
     from os import path
-    sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+    sys.path.append( path.dirname( path.dirname( path.abspath(getsourcefile(lambda:0)) ) ) )
     
     from src.environment import Environment
-    from tests.TestAgent import TestAgent
+    from TestAgent import TestAgent
 
 
     test_agent_object = TestAgent()  

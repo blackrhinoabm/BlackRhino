@@ -25,10 +25,6 @@ class TestAgent():
     	from src.environment import Environment 
         from src.agent import Agent	
 
-        text = 'Calling test_agent_object.get_parameters_from_file(["configs/environment/", "test_firesales"]) to check whether the parameters for the agents are read correctly'
-
-        self.print_info(text)
-
         #
         # Initialize Environment and give arguments
         #
@@ -47,7 +43,7 @@ class TestAgent():
 
         for file in listings:
 
-            if 'agent1.xml' in file:
+            if 'agent5.xml' in file:
             # #
             # # TESTING
             # #
