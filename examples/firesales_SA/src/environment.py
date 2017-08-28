@@ -217,10 +217,10 @@ class Environment(BaseConfig):
         shock.read_xml_config_file(shock_config)
         self.shocks.append(shock)
 
-
-        # you can use this code below to see if the function of reading the shock worked
-        # for key in shock.asset_returns:
-        #     print key, shock.asset_returns[key]
-        # or
-        # print shock.asset_returns.items()
+       # you can use this code below to see if the function of reading the shock worked
+        for key in shock.asset_returns:
+            if shock.asset_returns[key]!= 0.0:
+                print "0. ***ENV.PY*** When shock is initialised:  The asset class", key, "is shocked by", shock.asset_returns[key] * 100, "%" 
+        
+            #print shock.asset_returns.items()
 

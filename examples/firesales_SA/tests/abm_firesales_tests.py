@@ -20,6 +20,9 @@ if __name__ == '__main__':
 
     test_agent_object = TestAgent()  
     
-    test_agent_object.print_info("This tests methods for agent class")
+    #test_agent_object.print_info("This tests methods for agent class")
 
     test_agent_object.get_parameters_from_file(["configs/environment/", "test_firesales"])
+
+
+

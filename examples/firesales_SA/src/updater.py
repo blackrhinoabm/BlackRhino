@@ -109,10 +109,19 @@ class Updater(BaseModel):
         These are our indirect spillover price-mediated contagion
         effects"""
 
+
         if current_step < 1:
+
+            print "1.**** UPDATER.PY*** FIRST ROUND EFFECTS:"
+            
             self.do_firstround_effects(environment, current_step)
 
+
         else:
+
+
+            print "2.**** UPDATER.PY*** SECOND ROUND EFFECTS:"
+
             self.do_secondround_effects(environment, current_step)
 
 
@@ -125,11 +134,14 @@ class Updater(BaseModel):
             initialize total assets per agent by 
             adding debt and equity"""
 
-            self.system_equity += agent.parameters['equity']
+            self.system_equity += agent.state_variables['equity']
             self.system_assets += agent.state_variables['total_assets']
 
             agent.initialize_total_assets
 
+            "CHECK by printing:"
+            if agent.identifier == "SBSA":
+                print "**UPDATER.PY***TOTAL ASSETS OF ", agent.identifier, "are:", agent.state_variables['total_assets']
 
             """Now we intiliaze the shock, which 
             gets configured in the shock config file, 
@@ -139,34 +151,42 @@ class Updater(BaseModel):
 
         for agent in environment.agents:
             agent.initialize_shock(environment)
+
+            "CHECK by printing:"
+            "Use identifier to pick out one agent."
+            "Alternatively, use environment.agents[0]"
+            "to only pick one"
+
+            if agent.identifier == "SBSA":
+                print "***AGENT.PY*** Shock for ", agent.identifier, "on its total asset is:", agent.state_variables['shock_for_agent'] *100, "%"
+
             agent.calc_total_asset_sales(environment, current_step)
 
             """Just printing first round effects to screen"""
-
-            print("TOTAL ASSET SALES BY: "), agent.identifier, agent.state_variables['total_asset_sales']
+            #print("TOTAL ASSET SALES BY: "), agent.identifier, agent.state_variables['total_asset_sales']
             agent.calc_direct_losses()
-            print ("Direct losses: "), agent.state_variables["direct_losses"], agent.identifier
-            # print agent.identifier, "total asset sales", agent.state_variables['total_asset_sales'], current_step
+            #print ("Direct losses: "), agent.state_variables["direct_losses"], agent.identifier
+            #print agent.identifier, "total asset sales", agent.state_variables['total_asset_sales'], current_step
 
-
-
-            """The next step is very important.
-            We loop over the m asset classes in
-            our dictionary environment.agents[0].state_variables
-            The methods returns a dictionary with
-             asset class as keys and
-            total asset sales of this class as values
-            (across the wholesystem)"""
+            "The next method call is very important."
+            "We loop over the m asset classes in"
+            "our dictionary environment.agents[0].state_variables"
+            "The methods returns a dictionary with"
+            "asset class as keys and"
+            "total asset sales of this class as values"
+            "(across the whole system)"
         self.add_sales_across_banks(environment)
 
+        "This is the cross-check that all sales per asset class sum up to the total loss of assets for the system"
         for i in self.asset_sales_across_banks_per_asset_class:
             self.system_TAS = self.system_TAS + self.asset_sales_across_banks_per_asset_class[i]
 
+
         for agent in environment.agents:
             self.system_loss_equity_from_direct_effects += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'])
-            self.system_loss_assets += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'] * agent.state_variables['leverage']) 
+            self.system_loss_assets += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'] * agent.parameters['leverage']) 
 
-            # print "Total assets whiped out by shock:", self.system_TAS, "in step:", (current_step+1)
+        print "***Updater.py*** In Step:", (current_step+1) , "Total assets whiped out by shock:", self.system_TAS
 
 
     def do_secondround_effects(self, environment, current_step): 
@@ -180,6 +200,9 @@ class Updater(BaseModel):
         for agent in environment.agents:
             agent.update_balance_sheet()
 
+            "Uncomment for checking updated balance sheets:"
+            print "***UPDATER.PY*** Check balance sheets after step", current_step, agent.state_variables['total_assets'], "total assets for", agent.identifier
+
         print "Now begins step %s" % (current_step +1)
 
             # This is to update the shock vector
@@ -190,12 +213,15 @@ class Updater(BaseModel):
             for shock in environment.shocks:
                 shock.asset_returns[m] = price_shock
 
+            'JUST CHECKING, uncomment for printing the updated shock vector with new price effects for all m:'
+                # print shock.asset_returns[m], m
+            # if m=="m_22":    
+            #         print"***UPDATER.PY*** For asset class", m, "the updated price shock is", shock.asset_returns[m] * 100, "%"
+
         for agent in environment.agents:
-            # print "m:", m, shock.asset_returns, agent.identifier
             agent.initialize_shock(environment)
 
             agent.calc_total_asset_sales(environment, current_step)
-            print agent.identifier, "total asset sales",  agent.state_variables['total_asset_sales'], current_step
 
             agent.calc_indirect_losses(self.system_equity, current_step)
         #     # this adds up the sales of m1, m2, m3 etc  across the banks
@@ -204,7 +230,7 @@ class Updater(BaseModel):
             
         for agent in environment.agents:
             self.system_loss_equity_from_indirect_effects += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'])
-            self.system_loss_assets_from_indirect_effects += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'] * agent.state_variables['leverage'])
+            self.system_loss_assets_from_indirect_effects += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'] * agent.parameters['leverage'])
 
 
         self.calc_system_vulnerability(environment)
@@ -219,38 +245,55 @@ class Updater(BaseModel):
         for i in self.asset_sales_across_banks_per_asset_class:
             self.system_TAS = self.system_TAS + self.asset_sales_across_banks_per_asset_class[i]
 
-        print "Assets whiped out by feedback effects:", self.system_TAS, "in step:", (current_step+1)
+        print "***UPDATER.PY Assets whiped out by feedback effects:", self.system_TAS, "in step:", (current_step+1)
 
 
     def add_sales_across_banks(self, environment):
 
-        """This method is crucial because
-        it summing up the sales per asset class
-        across banks. We need the volume of
-        sales to compute the second
-        round price effect on our assets.
-        Because we have severeal
-        keyes in state_variables, we need to
-        exclude the values for the keyes we
-        have to exclude, i.e. teh values for leverage,
-        losses from system_deleveraging,
-        direct losses, shock_for agent etc.
-        To do: nest asset class keyes in a dictionary
-        inside state_variable so there is no confusion"""
+        "This method is crucial because"
+        "it is summing up the sales per asset class"
+        "across banks. We need the volume of"
+        "sales to compute the second"
+        "round price effect on our assets."
+        "Because we have severeal"
+        "keyes in agents.parameters, we need to"
+        "exclude the values for the keyes we"
+        "have to exclude, i.e. the values for leverage"
+        "This is horribl code, but for time reasons I do it like this." 
+        "To do:  nest asset class keyes in a dictionary"
+        "inside paramters so there is no confusion"
+        "pick out one agent:"
 
-        for asset_class in environment.agents[0].state_variables:
+        for key in environment.agents[0].parameters:
 
-
-            if asset_class != 'leverage' and asset_class != 'losses_from_system_deleveraging' and asset_class != 'direct_losses' and asset_class != 'shock_for_agent' and asset_class != 'total_assets' and asset_class != 'total_asset_sales':
-
-                self.asset_sales_across_banks_per_asset_class[asset_class] = 0.0
+            if key != 'leverage':
+                self.asset_sales_across_banks_per_asset_class[key] = 0.0
 
                 for agent in environment.agents:
-                    # print asset_class, agent.state_variables[asset_class], agent.identifier, agent.state_variables['total_asset_sales']
+                    self.asset_sales_across_banks_per_asset_class[key] += agent.parameters[key] * agent.state_variables['total_asset_sales']
+                    
+                    "Uncomment for CHECK: This is the sale per asset class per bank (cumulative):"
+                    # print self.asset_sales_across_banks_per_asset_class[key], "for asset class", key,  "after adding", agent.identifier
+                    
+            "Uncomment for CHECK: This is the sale per asset class (cumulative):"
+            # if key == 'm_22':
+            #     print "***Updater.py***", key, "sales across the system are:", self.asset_sales_across_banks_per_asset_class
 
-                    self.asset_sales_across_banks_per_asset_class[asset_class] += agent.state_variables[asset_class] * agent.state_variables['total_asset_sales']
-                    # if agent.identifier == "SBSA":
-                    # print asset_class, self.asset_sales_across_banks_per_asset_class[asset_class], agent.identifier
+
+
+        # for asset_class in environment.agents[0].state_variables:
+
+        #     if asset_class != 'leverage' and asset_class != 'losses_from_system_deleveraging' and asset_class != 'direct_losses' and asset_class != 'shock_for_agent' and asset_class != 'total_assets' and asset_class != 'total_asset_sales' and :
+
+        #         self.asset_sales_across_banks_per_asset_class[asset_class] = 0.0
+
+        #         for agent in environment.agents:
+        #             # print asset_class, agent.state_variables[asset_class], agent.identifier, agent.state_variables['total_asset_sales']
+
+        #             self.asset_sales_across_banks_per_asset_class[asset_class] += agent.state_variables[asset_class] * agent.state_variables['total_asset_sales']
+                    
+        #             if agent.identifier == "SBSA":
+        #                 print asset_class, self.asset_sales_across_banks_per_asset_class[asset_class], agent.identifier                    
 
     def calc_system_vulnerability(self, environment):
 

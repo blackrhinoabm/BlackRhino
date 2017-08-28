@@ -64,7 +64,8 @@ class TestAgent():
                 print agent
 
 
-
+    # for one agent, intialize total assets
+    # def initialize_total_assets(self, args):
 
 
 

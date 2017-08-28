@@ -64,7 +64,7 @@ class Runner(BaseRunner):
         self.updater = Updater(environment)
 
         self.num_sweeps = int(environment.static_parameters['num_sweeps'])
-        # self.m = int(environment.static_parameters['m'])
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -102,18 +102,21 @@ class Runner(BaseRunner):
         # loop over all time steps and do the updating
         # For each update step
 
-        measurement = Measurement(environment, self)
-        measurement.open_file()
+        #measurement = Measurement(environment, self)
+        #measurement.open_file()
 
         for i in range(self.num_sweeps):
 
                 self.current_step = i
 
                 self.updater.do_update(environment, i)
-                measurement.write_all_to_file()
+
+                #measurement.write_all_to_file()
 
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
+        print("***\nThis run had the illiquidity coefficient %s " ) % (environment.static_parameters['illiquidity'])
+
         print("Check the output file that was written as csv in the measurements folder\n***")
 
-        measurement.close_file()
+        #measurement.close_file()
     # ------------------------------------------------------------------------
