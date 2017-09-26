@@ -1,0 +1,7 @@
+<agent identifier="PF">
+<parameter type="stock_variables" name="cash" value="10"></parameter>
+<parameter type="stock_variables" name="GB" value="10"></parameter>
+<parameter type="stock_variables" name="CB" value="10"></parameter>
+<parameter type="stock_variables" name="repo" value="30"></parameter>
+<parameter type="stock_variables" name="equity" value="20"></parameter>
+</agent>

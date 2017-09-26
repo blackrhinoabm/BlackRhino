@@ -1,0 +1,5 @@
+<agent identifier="MMF">
+<parameter type="stock_variables" name="reverse_repo" value="20"></parameter>
+ <parameter type="stock_variables" name="cash" value="10"></parameter>
+ <parameter type="stock_variables" name="invshares" value="30"></parameter>
+</agent>
