@@ -1,15 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -W ignore::DeprecationWarning
 # [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 
 class Agent():
-    #
-    #
-    # CODE
-    #
-    #
-
 
     # -------------------------------------------------------------------------
     # __init__
@@ -56,8 +50,6 @@ class Agent():
                     raise TypeError
             ret_str = ret_str + "</agent>\n"
             return ret_str
-    # ------------------------------------------------------------------------
-
     # -------------------------------------------------------------------------
     # get_parameters_from_file
     # reads the specified config file given the environment
@@ -89,48 +81,38 @@ class Agent():
                 # add them to stock_variables list
                 self.parameters[name] = float(value)
     # ------------------------------------------------------------------------
-
     def initialize_assets(self, updater, current_step):
 
         "****************Hedge Fund*******************"
         if any(c in self.identifier for c in ("HF", "Hedge", "Hedgefund", "Hedge Fund")):
 
-
             self.GB = self.GB * updater.pGB
-            self.Repo = self.GB * updater.pGB*(1 - updater.exogenous_parameters['haircut'])
-            self.CB = self.CB + self.Repo/ updater.pCB
+            self.Repo = self.GB * updater.pGB*(1 - updater.haircut)
+            self.CB = self.CB + self.Repo/updater.pCB
             self.stock_variables['total_assets'] = self.stock_variables['Cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
             self.invshares=self.total_assets - self.Fin_loans - self.Repo
 
         "****************MMF*******************"
         if any(c in self.identifier for c in ("MMF", "Money Market", "Money Market fund")):
             self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['reverse_repo']
+            print self.identifier, current_step, self.stock_variables
 
         "****************DB Pension Fund*******************"
         if any(c in self.identifier for c in ("Pension Fund", "PF", "DB Pension")):
-            self.Repo = self.GB * updater.pGB*(1 - updater.exogenous_parameters['haircut'])
-            self.GB = self.GB * updater.pGB + self.Repo/updater.pGB
+            self.repo = self.GB * updater.pGB*(1 - updater.rates['haircut'])
+            self.GB = self.GB * updater.pGB + self.repo/updater.pGB
+            self.CB = self.CB * updater.pCB
             self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
-            self.equity=self.total_assets  - self.Repo
-    # ------------------------------------------------------------------------
-    # PROFIT FUNCTIONS
-    # ------------------------------------------------------------------------
+            print self.identifier, current_step, self.stock_variables
 
-    def profit_hf(self, environment):
-        self.net_income = self.stock_variables['GB']* environment.i_GB\
-                    + self.stock_variables['CB']* environment.i_CB\
-                    - self.stock_variables['Fin_loans']*environment.i_L\
-                    - self.Repo * environment.i_R
-        return self.net_income
 
-    def profit_mmf(self, environment):
-            self.net_income = self.reverse_repo * environment.i_R
-            return self.net_income
+        "****************Investment Fund*******************"
+        if any(c in self.identifier for c in ("Investment Fund", "IF")):
+            self.GB = self.GB * updater.pGB
+            self.CB = self.CB * updater.pCB 
+            self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
 
-    def profit_mmf(self, environment):
-            self.net_income = self.reverse_repo * environment.i_R
-            return self.net_income
-
+        # print self.total_assets, self.identifier
     # check_consistency
     # checks whether the assets and liabilities have the same total value
     # -------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 import os
 import numpy as np
 from xml.etree import ElementTree
-from abm_template.src.baseconfig import BaseConfig
 
 # -------------------------------------------------------------------------
 #
@@ -43,41 +42,16 @@ class Environment():
         self.read_xml_config_file(environment_filename)
         # then read in all the agents
         self.initialize_agents_from_files(self.static_parameters['agent_directory'])
-        self.initialize_prices()
-        self.initialize_interest_rates()
+
 
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
-
-    def initialize_prices(self):
-        pGB = self.exogenous_parameters['price_GB']
-        pCB = self.exogenous_parameters['price_CB']
-    	nkeys = ['pGB', 'pCB']
-
-    	for i in (nkeys):
-    	    if str(i)== 'pGB':
-    	    	self.exogenous_parameters[str(i)] = pGB
-    	    else:
-    	    	self.exogenous_parameters[str(i)] =  pCB
-    	return self.exogenous_parameters
-    # -------------------------------------------------------------------------
-    def initialize_interest_rates(self):
-        self.i_R = self.exogenous_parameters['interest_repo']
-        self.i_Q = self.exogenous_parameters['interest_finloans']
-        self.i_L = self.exogenous_parameters['interest_loans']
-        self.i_D = self.exogenous_parameters['interest_deposits']
-        self.i_GB = self.exogenous_parameters['interest_GB']
-        self.i_CB = self.exogenous_parameters['interest_CB']
-
-    	return self.exogenous_parameters
-
 
     # read_xml_config_file(self, config_file_name)
     # reads an xml file with config and sets identifier and parameters
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
-
     def read_xml_config_file(self, env_filename):
 
         xmlText = open(env_filename).read()
@@ -114,7 +88,6 @@ class Environment():
                 agent_filename = agent_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.agents.append(agent)
-
 
     # -------------------------------------------------------------------------
 
