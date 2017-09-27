@@ -1,0 +1,8 @@
+<ic identifier="IC">
+<parameter type="stock_variables" name="Cash" value="10"></parameter>
+<parameter type="stock_variables" name="GB" value="80"></parameter>
+<parameter type="stock_variables" name="CB" value="50"></parameter>
+<parameter type="stock_variables" name="Equity" value="20"></parameter>
+<parameter type="stock_variables" name="HHIO" value="120"></parameter>
+<parameter type="stock_variables" name="does_repo" value="no"></parameter>
+</ic>

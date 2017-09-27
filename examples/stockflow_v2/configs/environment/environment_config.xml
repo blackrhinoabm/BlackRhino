@@ -2,13 +2,7 @@
 <!-- simulation parameters -->
   <parameter type='static' name='num_sweeps' value='1'></parameter>
   <parameter type='static' name='num_simulations' value='1'></parameter>
-  <parameter type='static' name='cbank_directory' value='configs/agents/cbank/'></parameter>
-  <parameter type='static' name='dealer_directory' value='configs/agents/dealer/'></parameter>
-  <parameter type='static' name='hf_directory' value='configs/agents/hf/'></parameter>
-  <parameter type='static' name='pf_directory' value='configs/agents/pf/'></parameter>
-  <parameter type='static' name='ic_directory' value='configs/agents/ic/'></parameter>
-  <parameter type='static' name='mmf_directory' value='configs/agents/mmf/'></parameter>
-  <parameter type='static' name='if_directory' value='configs/agents/mmf/'></parameter>
+  <parameter type='static' name='agent_directory' value='configs/agents/'></parameter>
   <parameter type='exogenous' name='price_GB' value="1.0"></parameter>
     <parameter type='exogenous' name='price_CB' value="1.0"></parameter>
     <parameter type='exogenous' name='haircut' value="0.05"></parameter>

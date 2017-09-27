@@ -8,6 +8,7 @@
 # -------------------------------------------------------------------------
 
 import numpy as np
+import warnings
 
 class Updater():
     #
@@ -40,26 +41,23 @@ class Updater():
     # -------------------------------------------------------------------------
     def do_update_benchmark(self, environment, current_step, scenario):
 
+        """The Update Step is broken down into two steps; i.e.
+        first round effects and second round feedback effects.
+        """
         if current_step < 1:
             self.add_rates(environment)
             self.initialize_prices(environment, current_step)
-
             print "***In t=:", current_step , " This is the price matrix***\n", self.prices, "\n",
 
-            print "1.**** UPDATER.PY*** FIRST INITIALIZE ASSETS"
+            print "1.**** UPDATER.PY*** FIRST ROUND EFFECTS:INITIALIZE ASSETS"
+            for agent in environment.agents:
+                agent.initialize_assets(self, current_step)
 
-            for cbank in environment.cbanks:
-                cbank.initialize_assets(self, current_step)
-
-            for hf in environment.hedgefunds:
-                hf.initialize_assets(self, current_step)
-
-            # self.profit_all_agents(environment, current_step)
+            self.profit_all_agents(environment, current_step)
 
         else:
 
             self.update_prices(environment, current_step, scenario)
-
             print "***In t=0:", current_step , " This is the price matrix***\n", self.prices, "\n",
 
             # self.system_equity += agent.state_variables['equity']
@@ -85,10 +83,11 @@ class Updater():
                 "*check Repo*"
                 agent.net_income = agent.stock_variables['GB']* self.i_GB\
                             + agent.stock_variables['CB']* self.i_CB\
-                            - agent.repo * self.i_R\
+                            - agent.stock_variables['Fin_loans']*self.i_L\
+                            - agent.Repo * self.i_R\
                             + self.delta_pGB * agent.stock_variables['GB']\
                             + self.delta_pCB * agent.stock_variables['CB']
-# (float(self.prices[t+1,1])
+# (float(self.prices[t+1,1]) -
 
                 print "******* The", agent.identifier, " has profit in t=", current_step+1, "of", agent.net_income
                 return agent.net_income
@@ -106,6 +105,7 @@ class Updater():
 
         for agent in environment.agents:
             if any(c in agent.identifier for c in ("Pension Fund", "PF", "Pension Fund")):
+                print agent.stock_variables
                 agent.net_income =  agent.GB * self.i_GB\
                                     + agent.CB * self.i_CB\
                                     - agent.repo * self.i_R\
