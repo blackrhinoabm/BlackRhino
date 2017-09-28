@@ -1,5 +1,5 @@
-<measurement identifier='firesales_output'>
-    <parameter type='filename' value='measurements/Measurement_firesales.csv'></parameter>
+<measurement identifier='test'>
+    <parameter type='filename' value='measurements/Measurement_toytest.csv'></parameter>
     <parameter type='output' column='1' header='Step' value='current_step'></parameter>
         <parameter type="output" column="2" header="identifier" value="identifier"></parameter>
     <parameter type="output" column="3" header="total asset sales" value="total asset sales"></parameter>
@@ -35,7 +35,7 @@
     <parameter type="output" column="31" header="HSBC total equity" value="HSBC total equity"></parameter>
     <parameter type="output" column="32" header="HSBC total asset sales" value="HSBC total asset sales"></parameter>
     <parameter type="output" column="33" header="HSBC shock on assets" value="HSBC shock on assets"></parameter>
-    
+
     <parameter type="output" column="34" header="JPMORGAN total assets" value="JPMORGAN total assets"></parameter>
     <parameter type="output" column="35" header="JPMORGAN total equity" value="JPMORGAN total equity"></parameter>
     <parameter type="output" column="36" header="JPMORGAN total asset sales" value="JPMORGAN total asset sales"></parameter>

@@ -24,7 +24,7 @@ class Updater():
         self.environment = environment
         self.runner = runner
 
-
+        self.results_df = 0
         self.prices = np.array([])
         self.rates={}
 
@@ -46,89 +46,110 @@ class Updater():
 
             print "***In t=:", current_step , " This is the price matrix***\n", self.prices, "\n",
 
-            print "1.**** UPDATER.PY*** FIRST INITIALIZE ASSETS"
+            self.initialize_assets_all_agents(current_step, environment)
 
-            for cbank in environment.cbanks:
-                cbank.initialize_assets(self, current_step)
+            self.profit_all_agents(environment, current_step)
 
-            for hf in environment.hedgefunds:
-                hf.initialize_assets(self, current_step)
-
-            # self.profit_all_agents(environment, current_step)
 
         else:
 
-            self.update_prices(environment, current_step, scenario)
+            self.update_all_agents_balance_sheets(environment, current_step, scenario)
 
-            print "***In t=0:", current_step , " This is the price matrix***\n", self.prices, "\n",
+            for pf in environment.pensionfunds:
+                print pf.results_df
+            # self.update_prices(environment, current_step, scenario)
+            #
+            # print "***In t=0:", current_step , " This is the price matrix***\n", self.prices, "\n",
 
             # self.system_equity += agent.state_variables['equity']
             # self.system_assets += agent.state_variables['total_assets']
+
+    def initialize_assets_all_agents(self, current_step, environment):
+        print "1.**** UPDATER.PY*** FIRST INITIALIZE ASSETS"
+
+        for cbank in environment.cbanks:
+            cbank.initialize_assets(self, current_step)
+
+        for hf in environment.hedgefunds:
+            hf.initialize_assets(self, current_step)
+
+        for invfund in environment.investmentfunds:
+            invfund.initialize_assets(self, current_step)
+
+        for pf in environment.pensionfunds:
+            pf.initialize_assets(self, current_step)
+
+        for ic in environment.insurancecompanies:
+            ic.initialize_assets(self, current_step)
+
+        for dealer in environment.dealers:
+            dealer.initialize_assets(self, current_step, environment)
+            # dealer.print_balance_sheet()
+            # dealer.check_consistency(current_step)
+
+        for mmf in environment.mmf:
+            mmf.initialize_assets(self, current_step, environment)
+
 #####################
     #----------------------------------------------------------------
     # PROFIT FUNCTIONS
     # ------------------------------------------------------------------------
 #######################
-    def profit_all_agents(self,environment, current_step):
-        self.profit_hf(environment, current_step)
-        self.profit_mmf(environment, current_step)
-        self.profit_pf(environment, current_step)
-        # self.profit_if(environment, current_step)
-        # self.profit_ic(environment, current_step)
-        # self.profit_bd(environment, current_step)
+
+    def profit_all_agents(self, environment, current_step):
+        print "2.**** UPDATER.PY*** Now calculate profit and loss"
+
+        for hf in environment.hedgefunds:
+            hf.profit(self, environment, current_step)
+
+        for pf in environment.pensionfunds:
+            pf.profit(self, environment, current_step)
+
+        for ic in environment.insurancecompanies:
+            ic.profit(self, environment, current_step)
+
+        for invfund in environment.investmentfunds:
+            invfund.profit(self, environment, current_step)
+
+        for cbank in environment.cbanks:
+            cbank.profit(self, environment, current_step)
+
+        for dealer in environment.dealers:
+            dealer.profit(self, environment, current_step)
+
+        for mmf in environment.mmf:
+            mmf.profit(self, environment, current_step)
+
+#######################
+    def update_all_agents_balance_sheets(self, environment, current_step, scenario):
+
+        for hf in environment.hedgefunds:
+            hf.update_balance_sheets(self, environment, current_step, scenario)
+            hf.update_results_to_dataframe(current_step)
+
+        for pf in environment.pensionfunds:
+            pf.update_balance_sheets(self, environment, current_step, scenario)
+            # pf.check_consistency(current_step)
+
+        for ic in environment.insurancecompanies:
+            ic.update_balance_sheets(self, environment, current_step, scenario)
+            # ic.check_consistency(current_step)
+
+        for invfund in environment.investmentfunds:
+            invfund.update_balance_sheets(self, environment, current_step, scenario)
+            # invfund.check_consistency(current_step)
+
+        for cbank in environment.cbanks:
+            cbank.update_balance_sheets(self, environment, current_step, scenario)
+            # cbank.check_consistency(current_step)
+
+        for dealer in environment.dealers:
+            dealer.update_balance_sheets(self, environment, current_step, scenario)
+            dealer.update_results_to_dataframe(current_step)
 
 
-    def profit_hf(self, environment, current_step):
-        for agent in environment.agents:
-            if any(c in agent.identifier for c in ("HF", "Hedge Fund", "Hedge Fund")):
-
-                "*check Repo*"
-                agent.net_income = agent.stock_variables['GB']* self.i_GB\
-                            + agent.stock_variables['CB']* self.i_CB\
-                            - agent.repo * self.i_R\
-                            + self.delta_pGB * agent.stock_variables['GB']\
-                            + self.delta_pCB * agent.stock_variables['CB']
-# (float(self.prices[t+1,1])
-
-                print "******* The", agent.identifier, " has profit in t=", current_step+1, "of", agent.net_income
-                return agent.net_income
-
-    def profit_mmf(self, environment, current_step):
-        for agent in environment.agents:
-
-            if any(c in agent.identifier for c in ("Money Market", "MMF", "Money Market Fund")):
-
-                agent.net_income = agent.reverse_repo * self.i_R
-                print "******* The", agent.identifier, " has profit in t=", current_step+1, "of", agent.net_income
-                return agent.net_income
-
-    def profit_pf(self, environment, current_step):
-
-        for agent in environment.agents:
-            if any(c in agent.identifier for c in ("Pension Fund", "PF", "Pension Fund")):
-                agent.net_income =  agent.GB * self.i_GB\
-                                    + agent.CB * self.i_CB\
-                                    - agent.repo * self.i_R\
-                                    # - agent.stock_variables['HHPO'] * self.i_R\
-                #             - agent.stock_variables['HHPO'] * self.i_R\
-                            # + self.delta_pGB * agent.stock_variables['GB']\
-                            # + self.delta_pCB * agent.stock_variables['CB']
-                print "******* The", agent.identifier, " has profit in t=", current_step+1, "of", agent.net_income
-                return agent.net_income
-
-    # def profit_if(self, environment, current_step):
-    #
-    #     for agent in environment.agents:
-    #         if any(c in agent.identifier for c in ("Investment Fund", "IF", "Investment Fund")):
-    #
-    #             agent.net_income = agent.stock_variables['GB']* self.i_GB\
-    #                         + agent.stock_variables['CB']* self.i_CB\
-    #                         - agent.Repo * self.i_R\
-    #                         - agent.HHPO * self.i_R\
-    #                         + self.delta_pGB * agent.stock_variables['GB']\
-    #                         + self.delta_pCB * agent.stock_variables['CB']
-    #             print "******* The", agent.identifier, " has profit in t=", current_step+1, "of", agent.net_income
-    #             return agent.net_income
+        for mmf in environment.mmf:
+            mmf.update_balance_sheets(self, environment, current_step, scenario)
 
     def initialize_prices(self, environment, current_step):
         import numpy as np

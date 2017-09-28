@@ -51,11 +51,11 @@ class Environment():
 
         # then read in all the agents
         self.initialize_cbanks_from_files(self.static_parameters['cbank_directory'])
-        # self.initialize_dealers_from_files(self.static_parameters['dealer_directory'])
-        # self.initialize_pf_from_files(self.static_parameters['pf_directory'])
-        # self.initialize_ic_from_files(self.static_parameters['ic_directory'])
-        # self.initialize_mmf_from_files(self.static_parameters['mmf_directory'])
-        # self.initialize_if_from_files(self.static_parameters['if_directory'])
+        self.initialize_dealers_from_files(self.static_parameters['dealer_directory'])
+        self.initialize_pf_from_files(self.static_parameters['pf_directory'])
+        self.initialize_ic_from_files(self.static_parameters['ic_directory'])
+        self.initialize_mmf_from_files(self.static_parameters['mmf_directory'])
+        self.initialize_if_from_files(self.static_parameters['if_directory'])
         self.initialize_hf_from_files(self.static_parameters['hf_directory'])
 
 
@@ -64,7 +64,6 @@ class Environment():
         self.mmf, self.pensionfunds, self.insurancecompanies, self.hedgefunds]
 
 
-        print self.cbanks[0]
 
 
 

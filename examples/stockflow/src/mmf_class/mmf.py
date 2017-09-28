@@ -10,15 +10,19 @@ class MMF():
     # -------------------------------------------------------------------------
     def __init__(self):
 
+        self.results_df = 0
+        self.identifier = ""  # identifier
+        self.parameters = {}  # parameters
+        self.stock_variables = {}  # stock variables
+        self.stock_variables['net_income'] = 0.0
 
-        self.identifier = ""  # identifier of the specific bank
-        self.parameters = {}  # parameters of the specific bank
-        self.stock_variables = {}  # stock variables of the
-        self.net_income = 0.0
+        self.parameters['Cash_share'] = 0
+        self.parameters['GB_share'] = 0
+        self.parameters['CB_share'] = 0
 
-        self.parameters["institution_specific_interest_rate"] = 0.0  # interest rate on loans
-        self.parameters["dividends"] = 0.0  # interest rate on deposits
-        self.parameters["active"] = 0  # this is a control parameter checking whether HF is active
+        self.parameters["institution_specific_interest_rate"] = 0.0  # interest rate
+        self.parameters["dividends"] = 0.0  
+        self.parameters["active"] = 0  # this is a control parameter
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -85,74 +89,77 @@ class MMF():
                 # add them to stock_variables list
                 self.parameters[name] = float(value)
     # ------------------------------------------------------------------------
-    def initialize_assets(self, updater, current_step):
+    def initialize_assets(self, updater, current_step, environment):
 
-        "****************Hedge Fund*******************"
-        if any(c in self.identifier for c in ("HF", "Hedge", "Hedgefund", "Hedge Fund")):
+        for dealer in environment.dealers:
+            self.Reverse_repo = dealer.Repo
 
-            self.GB = self.GB * updater.pGB
-            self.repo = self.GB * updater.pGB*(1 - updater.haircut)
-            self.CB = self.CB + self.repo/updater.pCB
-            self.stock_variables['total_assets'] = self.stock_variables['Cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
-            self.invshares=self.total_assets - self.repo
+            "****************MMF******************"
+        self.Invshares =  self.Cash + self.Reverse_repo
+        self.stock_variables['Total_assets'] = self.Cash + self.Reverse_repo
+        self.Total_liabilities = self.Cash + self.Reverse_repo
 
-        "****************MMF*******************"
-        if any(c in self.identifier for c in ("MMF", "Money Market", "Money Market fund")):
-            self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['reverse_repo']
-            print self.identifier, current_step, self.stock_variables
+    def profit(self, updater, environment, current_step):
+        self.net_income = self.Reverse_repo * updater.i_R
 
-        "****************DB Pension Fund*******************"
-        if any(c in self.identifier for c in ("Pension Fund", "PF", "DB Pension")):
-            self.repo = self.GB * updater.pGB*(1 - updater.rates['haircut'])
-            self.GB = self.GB * updater.pGB + self.repo/updater.pGB
-            self.CB = self.CB * updater.pCB
-            self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
-            print self.identifier, current_step, self.stock_variables
+        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.net_income
+        return self.net_income
 
-
-        "****************Investment Fund*******************"
-        if any(c in self.identifier for c in ("Investment Fund", "IF")):
-            self.GB = self.GB * updater.pGB
-            self.CB = self.CB * updater.pCB
-            self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
-            self.invshares=self.total_assets
-
-
-        "****************Insurance Company*******************"
-        if any(c in self.identifier for c in ("Insurance", "IC")):
-            self.GB = self.GB * updater.pGB
-            self.CB = self.CB * updater.pCB
-            self.stock_variables['total_assets'] = self.stock_variables['cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
-
-
-        "****************Dealer*******************"
-        if any(c in self.identifier for c in ("dealer", "bank dealer", "BD")):
-            self.GB = self.GB * updater.pGB
-            self.CB = self.CB * updater.pCB
-        # print self.total_assets, self.identifier
     # check_consistency
     # checks whether the assets and liabilities have the same total value
     # -------------------------------------------------------------------------
-    def check_consistency(self):
-        pass
+    def check_consistency(self, current_step):
+
+        print self.identifier, "total assets:", self.Total_assets
+        print self.identifier, "total liabilities:", self.Total_liabilities
+
+        if self.Total_assets == self.Total_liabilities:
+            print "balance sheet identity for", self.identifier, "in t=", current_step, "holds."
+        else:
+            print("ooups, balance sheet identity for %s does not hold" % self.identifier)
+    # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
 
-    # __getattr__
-    # if the attribute isn't found by Python we tell Python
-    # to look for it first in parameters and then in stock variables
-    # which allows for directly fetching parameters from the Agent class
-    # def __getattr__(self, attr):
-    #     if (attr in self.parameters) and (attr in self.stock_variables):
-    #         raise AttributeError('The same name exists in both parameters and stock variables.')
-    #     else:
-    #         try:
-    #             return self.parameters[attr]
-    #         except:
-    #             try:
-    #                 return self.stock_variables[attr]
-    #             except:
-    #                 raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
-    # a standard method for retrieving items from dictionaries as class attributes
+    def print_balance_sheet(self):
+        print "***********"
+        print  self.identifier,
+        print "Assets:" , "\n"
+        print "Cash:", self.Cash, "\n"
+        print "Reverse_repo:", self.Reverse_repo  , " \n"
+
+        print  "Total:", self.Total_assets , "\n"
+        print "Liabilities:" , "\n"
+
+        print "Invshares:", self.Invshares, " \n"
+
+    def update_balance_sheets(self, updater, environment, current_step, scenario):
+
+        if current_step > 0 and scenario=='benchmark':
+
+            self.Total_assets = self.Total_assets + self.net_income
+
+            self.Cash = self.Total_assets - self.Reverse_repo
+            self.Invshares = self.Total_assets
+            self.Total_liabilities = self.Invshares
+            return self.Total_assets, self.Cash, self.Invshares
+
+    # def __getattr__(self):
+    #     if the attribute isn't found by Python we tell Python
+    #     to look for it first in parameters and then in stock variables
+    #     which allows for directly fetching parameters from the Agent class
+
+    def __getattr__(self, attr):
+        if (attr in self.parameters) and (attr in self.stock_variables):
+            raise AttributeError('The same name exists in both parameters and stock variables.')
+        else:
+            try:
+                return self.parameters[attr]
+            except:
+                try:
+                    return self.stock_variables[attr]
+                except:
+                    raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
+        # a standard method for retrieving items from dictionaries as class attributes
 
     # -------------------------------------------------------------------------
 

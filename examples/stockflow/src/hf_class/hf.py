@@ -11,14 +11,20 @@ class HF():
     def __init__(self):
 
 
-        self.identifier = ""  # identifier of the specific bank
-        self.parameters = {}  # parameters of the specific bank
+        self.identifier = ""
+        self.parameters = {} 
+        self.results_df = 0
         self.stock_variables = {}  # stock variables of the
-        self.net_income = 0.0
+        self.stock_variables['net_income'] = 0.0
 
-        self.parameters["institution_specific_interest_rate"] = 0.0  # interest rate on loans
-        self.parameters["dividends"] = 0.0  # interest rate on deposits
-        self.parameters["active"] = 0  # this is a control parameter checking whether HF is active
+        self.parameters['Cash_share'] = 0
+        self.parameters['GB_share'] = 0
+        self.parameters['CB_share'] = 0
+
+
+        self.parameters["institution_specific_interest_rate"] = 0.0
+        self.parameters["dividends"] = 0.0
+        self.parameters["active"] = 0  # this is a control parameter
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -51,6 +57,7 @@ class HF():
 
         return ret_str
 
+    ###############
     # get_parameters_from_file
     # reads the specified config file given the environment
     # and sets parameters to the ones found in the config file
@@ -87,18 +94,19 @@ class HF():
     # ------------------------------------------------------------------------
     def initialize_assets(self, updater, current_step):
 
-        if self.does_repo == 'yes':
+        self.stock_variables['GB'] = self.GB * updater.pGB
+        self.stock_variables['Repo'] = self.GB * updater.pGB*(1 - updater.haircut)
+        self.stock_variables['CB'] = self.CB + self.Repo/updater.pCB
 
-            self.GB = self.GB * updater.pGB
-            self.Repo = self.GB * updater.pGB*(1 - updater.haircut)
-            self.CB = self.CB + self.Repo/updater.pCB
+        self.stock_variables['Total_assets'] = self.Cash + self.GB + self.CB
+        self.stock_variables['Invshares'] = self.stock_variables['Total_assets'] - self.stock_variables['Repo']
+        self.stock_variables['Total_liabilities'] = self.Repo + self.Invshares
 
-            self.stock_variables['Total_assets'] = self.Cash + self.GB + self.CB
-            self.Invshares = self.Total_assets - self.Repo
+        self.parameters['Cash_share'] = self.Cash/self.stock_variables['Total_assets']
+        self.parameters['GB_share'] = self.GB/self.stock_variables['Total_assets']
+        self.parameters['CB_share'] = self.CB/self.stock_variables['Total_assets']
 
-
-        else:
-            pass
+        self.append_results_to_dataframe(current_step)
 
         "uncomment the next code snippet if you want to check balance sheet identity"
 #        self.check_consistency()
@@ -108,16 +116,25 @@ class HF():
     # check_consistency
     # checks whether the assets and liabilities have the same total value
     # -------------------------------------------------------------------------
-    def check_consistency(self):
+    def check_consistency(self, current_step):
 
         print self.identifier, "total assets:", self.Total_assets
         print self.identifier, "total liabilities:", self.Total_liabilities
 
         if self.Total_assets == self.Total_liabilities:
-            print "balance sheet identity for %s holds" % self.identifier
+            print "balance sheet identity for", self.identifier, "in t=", current_step, "holds."
         else:
-            print "ooups, balance sheet identity for %s does not hold" % self.identifier
+            print("ooups, balance sheet identity for %s does not hold" % self.identifier)
     # -------------------------------------------------------------------------
+
+    def profit(self, updater, environment, current_step):
+        self.stock_variables['net_income'] = self.stock_variables['GB']* updater.i_GB\
+                          + self.stock_variables['CB']* updater.i_CB\
+                          - self.stock_variables['Repo'] * updater.i_R\
+                          + updater.delta_pGB * self.stock_variables['GB']\
+                          + updater.delta_pCB * self.stock_variables['CB']
+        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.net_income
+        return self.stock_variables['net_income']
 
     def print_balance_sheet(self):
         print "***********"
@@ -130,6 +147,69 @@ class HF():
         print "Liabilities:" , "\n"
         print "Repo", self.Repo, " \n"
         print "Investment shares:", self.Invshares, " \n"
+
+########################################
+    def update_balance_sheets(self, updater, environment, current_step, scenario):
+
+        if current_step > 0 and scenario=='benchmark':
+
+            self.stock_variables['Total_assets'] = self.stock_variables['Total_assets'] + self.stock_variables['net_income']
+
+
+            self.stock_variables['Cash'] = self.parameters['Cash_share'] * self.stock_variables['Total_assets']
+            self.stock_variables['GB'] = (self.parameters['GB_share']*self.stock_variables['Total_assets'])/updater.pGB
+            self.stock_variables['CB'] = (self.parameters['CB_share']*self.stock_variables['Total_assets'])/updater.pCB
+
+            self.stock_variables['Invshares'] = self.stock_variables['Total_assets'] - self.stock_variables['Repo']
+            self.stock_variables['Total_liabilities'] = self.stock_variables['Invshares'] + self.stock_variables['Repo']
+
+            self.update_results_to_dataframe(current_step)
+
+
+
+########################################
+
+
+    def append_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        results_stock_variables = []
+        results_stock_varnames =[]
+
+        for i in self.stock_variables:
+            if i != "does_repo":
+                results_stock_varnames.append(i + " " + self.identifier)
+                results_stock_variables.append(self.stock_variables[i])
+
+        df = pd.DataFrame(columns=results_stock_varnames)
+        df = df.append(pd.Series(results_stock_variables, index=results_stock_varnames), ignore_index=True)
+
+        df2 = pd.DataFrame({'current_step':[current_step]})
+
+        self.results_df = pd.concat([df, df2], axis=1)
+        return self.results_df
+
+    def update_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        if current_step >0:
+            temp = []
+            timer = []
+            results_stock_variables = []
+
+            for i in self.stock_variables:
+                if i != "does_repo":
+                    temp.append(self.stock_variables[i])
+                    timer = current_step
+            temp.append(timer)
+
+            x = list(self.results_df.columns.values)
+
+            dftemp = pd.DataFrame([temp], columns=x)
+
+
+            self.results_df = pd.concat([self.results_df, dftemp])
+
 
     # __getattr__
     # if the attribute isn't found by Python we tell Python

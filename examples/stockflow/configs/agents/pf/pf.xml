@@ -1,8 +1,8 @@
 <agent identifier="PF">
-<parameter type="stock_variables" name="cash" value="10"></parameter>
+<parameter type="stock_variables" name="Cash" value="10"></parameter>
 <parameter type="stock_variables" name="GB" value="10"></parameter>
-<parameter type="stock_variables" name="CB" value="10"></parameter>
-<parameter type="stock_variables" name="repo" value="30"></parameter>
-<parameter type="stock_variables" name="equity" value="0"></parameter>
-<parameter type="stock_variables" name="HHPO" value="100"></parameter>
+<parameter type="stock_variables" name="CB" value="50"></parameter>
+<parameter type="stock_variables" name="does_repo" value="yes"></parameter>
+<parameter type="stock_variables" name="Equity" value="0"></parameter>
+<parameter type="parameters" name="Annuity" value="0"></parameter>
 </agent>
