@@ -1,6 +1,6 @@
 <environment identifier='toy_test'>
 <!-- simulation parameters -->
-  <parameter type='static' name='num_sweeps' value='2'></parameter>
+  <parameter type='static' name='num_sweeps' value='10'></parameter>
   <parameter type='static' name='num_simulations' value='1'></parameter>
   <parameter type='static' name='cbank_directory' value='configs/agents/cbank/'></parameter>
   <parameter type='static' name='dealer_directory' value='configs/agents/dealer/'></parameter>
@@ -21,5 +21,4 @@
       <parameter type='exogenous' name='GB_shock' value="-0.1"></parameter>
       <parameter type='exogenous' name='CB_shock' value="-0.1"></parameter>
       <parameter type='exogenous' name='Redemption' value="-0.1"></parameter>
-      <parameter type='static' name='measurement_config' value='configs/measurements/test.xml'></parameter>
 </environment>

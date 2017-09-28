@@ -11,9 +11,9 @@ class IC():
     def __init__(self):
 
         self.results_df = 0
-        self.identifier = ""  # identifier 
-        self.parameters = {}  # parameters 
-        self.stock_variables = {}  # stock variables 
+        self.identifier = ""  # identifier
+        self.parameters = {}  # parameters
+        self.stock_variables = {}  # stock variables
         self.stock_variables['net_income'] = 0.0
         self.stock_variables['PAD'] = 0.0
 
@@ -92,25 +92,20 @@ class IC():
     # ------------------------------------------------------------------------
     def initialize_assets(self, updater, current_step):
 
-        if self.does_repo == 'no':
+        self.stock_variables['GB'] = self.stock_variables['GB'] * updater.pGB
+        self.stock_variables['CB'] = self.stock_variables['CB'] * updater.pCB
 
-            self.GB = self.GB * updater.pGB
-            self.CB = self.CB * updater.pCB
+        self.stock_variables['Total_assets'] = self.stock_variables['Cash'] + self.stock_variables['GB'] + self.stock_variables['CB']
 
-            self.stock_variables['Total_assets'] = self.Cash + self.GB + self.CB
+        self.stock_variables['Equity'] = self.stock_variables['Total_assets'] - self.stock_variables['HHIO']
+        self.stock_variables['Total_liabilities'] =  self.stock_variables['Equity'] + self.stock_variables['HHIO']
 
-            self.Equity = self.Total_assets - self.HHIO
-            self.Total_liabilities =  self.Equity + self.HHIO
-
-        else:
-            pass
-
-        self.Cash_share = self.Cash/self.Total_assets
-        self.GB_share = self.GB/self.Total_assets
-        self.CB_share = 1 - self.GB_share - self.Cash_share
+        self.parameters['Cash_share'] = self.stock_variables['Cash']/self.stock_variables['Total_assets']
+        self.parameters['GB_share'] = self.stock_variables['GB']/self.stock_variables['Total_assets']
+        self.parameters['CB_share'] = 1 - self.parameters['GB_share'] - self.parameters['Cash_share']
 
 
-
+        self.append_results_to_dataframe(current_step)
 
     # -------------------------------------------------------------------------
     # check_consistency
@@ -118,10 +113,10 @@ class IC():
     # -------------------------------------------------------------------------
     def check_consistency(self, current_step):
 
-        print self.identifier, "total assets:", self.Total_assets
-        print self.identifier, "total liabilities:", self.Total_liabilities
+        print self.identifier, "total assets:", self.stock_variables['Total_assets']
+        print self.identifier, "total liabilities:", self.stock_variables['Total_liabilities']
 
-        if self.Total_assets == self.Total_liabilities:
+        if self.stock_variables['Total_assets'] == self.stock_variables['Total_liabilities']:
             print "balance sheet identity for", self.identifier, "in t=", current_step, "holds."
         else:
             print("ooups, balance sheet identity for %s does not hold" % self.identifier)
@@ -131,26 +126,26 @@ class IC():
         print "***********"
         print  self.identifier,
         print "Assets:" , "\n"
-        print "Cash:", self.Cash, "\n"
-        print "GB:", self.GB  , " \n"
-        print "CB:", self.CB, " \n"
-        print  "Total:", self.Total_assets , "\n"
+        print "Cash:", self.stock_variables['Cash'], "\n"
+        print "GB:", self.stock_variables['GB']  , " \n"
+        print "CB:", self.stock_variables['CB'], " \n"
+        print  "Total:", self.stock_variables['Total_assets'] , "\n"
         print "Liabilities:" , "\n"
-        print "HHPIO", self.HHIO, " \n"
-        print "Equity:", self.Equity, " \n"
+        print "HHPIO", self.stock_variables['HHIO'], " \n"
+        print "Equity:", self.stock_variables['Equity'], " \n"
 
     # -------------------------------------------------------------------------
 
     def profit(self, updater, environment, current_step):
-        self.net_income = self.stock_variables['GB']* updater.i_GB\
+        self.stock_variables['net_income'] = self.stock_variables['GB']* updater.i_GB\
                           + self.stock_variables['CB']* updater.i_CB\
                           + updater.delta_pGB * self.stock_variables['GB']\
                           + updater.delta_pCB * self.stock_variables['CB']
-        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.net_income
+        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.stock_variables['net_income']
 
-        self.PAD = self.net_income - self.dividends
+        self.PAD = self.stock_variables['net_income'] - self.dividends
 
-        return self.net_income, self.PAD
+        return self.stock_variables['net_income'], self.PAD
 
 
 
@@ -158,18 +153,58 @@ class IC():
 
         if current_step > 0 and scenario=='benchmark':
 
-            self.Total_assets = self.Total_assets + self.PAD
+            self.stock_variables['Total_assets'] = self.stock_variables['Total_assets'] + self.PAD
 
-            self.Cash = self.Cash_share * self.Total_assets
-            self.GB = (self.GB_share*self.Total_assets)/updater.pGB
-            self.CB = (self.CB_share*self.Total_assets)/updater.pCB
+            self.stock_variables['Cash'] = self.parameters['Cash_share'] * self.stock_variables['Total_assets']
+            self.stock_variables['GB'] = (self.parameters['GB_share']*self.stock_variables['Total_assets'])/updater.pGB
+            self.stock_variables['CB'] = (self.parameters['CB_share']*self.stock_variables['Total_assets'])/updater.pCB
 
-            self.HHIO = self.HHIO*(1 + updater.i_GB)
-            self.Equity = self.Total_assets - self.HHIO
+            self.stock_variables['HHIO'] = self.stock_variables['HHIO']*(1 + updater.i_GB)
+            self.stock_variables['Equity'] = self.stock_variables['Total_assets'] - self.stock_variables['HHIO']
 
-            self.Total_liabilities = self.Equity + self.HHIO
-            return self.Total_assets, self.Cash, self.GB, self.CB, self.Equity
+            self.stock_variables['Total_liabilities'] = self.stock_variables['Equity'] + self.stock_variables['HHIO']
 
+            self.update_results_to_dataframe(current_step)
+
+    def append_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        results_stock_variables = []
+        results_stock_varnames =[]
+
+        for i in self.stock_variables:
+            if i != "does_repo":
+                results_stock_varnames.append(i + " " + self.identifier)
+                results_stock_variables.append(self.stock_variables[i])
+
+        df = pd.DataFrame(columns=results_stock_varnames)
+        df = df.append(pd.Series(results_stock_variables, index=results_stock_varnames), ignore_index=True)
+
+        df2 = pd.DataFrame({'current_step':[current_step]})
+
+        self.results_df = pd.concat([df, df2], axis=1)
+        return self.results_df
+
+    def update_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        if current_step >0:
+            temp = []
+            timer = []
+            results_stock_variables = []
+
+            for i in self.stock_variables:
+                if i != "does_repo":
+                    temp.append(self.stock_variables[i])
+                    timer = current_step
+            temp.append(timer)
+
+            x = list(self.results_df.columns.values)
+
+            dftemp = pd.DataFrame([temp], columns=x)
+
+
+            self.results_df = pd.concat([self.results_df, dftemp])
 
     # __getattr__
     # if the attribute isn't found by Python we tell Python

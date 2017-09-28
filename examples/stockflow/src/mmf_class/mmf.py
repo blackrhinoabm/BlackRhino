@@ -21,7 +21,7 @@ class MMF():
         self.parameters['CB_share'] = 0
 
         self.parameters["institution_specific_interest_rate"] = 0.0  # interest rate
-        self.parameters["dividends"] = 0.0  
+        self.parameters["dividends"] = 0.0
         self.parameters["active"] = 0  # this is a control parameter
     # -------------------------------------------------------------------------
 
@@ -92,28 +92,31 @@ class MMF():
     def initialize_assets(self, updater, current_step, environment):
 
         for dealer in environment.dealers:
-            self.Reverse_repo = dealer.Repo
+            self.stock_variables['Reverse_repo'] = dealer.stock_variables['Repo']
 
             "****************MMF******************"
-        self.Invshares =  self.Cash + self.Reverse_repo
-        self.stock_variables['Total_assets'] = self.Cash + self.Reverse_repo
-        self.Total_liabilities = self.Cash + self.Reverse_repo
+        self.stock_variables['Invshares'] =  self.stock_variables['Cash'] + self.stock_variables['Reverse_repo']
+        self.stock_variables['Total_assets'] = self.stock_variables['Cash'] + self.stock_variables['Reverse_repo']
+        self.stock_variables['Total_liabilities'] = self.stock_variables['Cash'] + self.stock_variables['Reverse_repo']
+
+        self.append_results_to_dataframe(current_step)
+
 
     def profit(self, updater, environment, current_step):
-        self.net_income = self.Reverse_repo * updater.i_R
+        self.stock_variables['net_income'] = self.stock_variables['Reverse_repo'] * updater.i_R
 
-        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.net_income
-        return self.net_income
+        print "******* The", self.identifier, " has profit in t=", current_step, "of", self.stock_variables['net_income']
+        return self.stock_variables['net_income']
 
     # check_consistency
     # checks whether the assets and liabilities have the same total value
     # -------------------------------------------------------------------------
     def check_consistency(self, current_step):
 
-        print self.identifier, "total assets:", self.Total_assets
-        print self.identifier, "total liabilities:", self.Total_liabilities
+        print self.identifier, "total assets:", self.stock_variables['Total_assets']
+        print self.identifier, "total liabilities:", self.stock_variables['Total_liabilities']
 
-        if self.Total_assets == self.Total_liabilities:
+        if self.stock_variables['Total_assets'] == self.stock_variables['Total_liabilities']:
             print "balance sheet identity for", self.identifier, "in t=", current_step, "holds."
         else:
             print("ooups, balance sheet identity for %s does not hold" % self.identifier)
@@ -125,23 +128,67 @@ class MMF():
         print  self.identifier,
         print "Assets:" , "\n"
         print "Cash:", self.Cash, "\n"
-        print "Reverse_repo:", self.Reverse_repo  , " \n"
+        print "Reverse_repo:", self.stock_variables['Reverse_repo']  , " \n"
 
-        print  "Total:", self.Total_assets , "\n"
+        print  "Total:", self.stock_variables['Total_assets'] , "\n"
         print "Liabilities:" , "\n"
 
-        print "Invshares:", self.Invshares, " \n"
+        print "Invshares:", self.stock_variables['Invshares'], " \n"
 
     def update_balance_sheets(self, updater, environment, current_step, scenario):
 
         if current_step > 0 and scenario=='benchmark':
 
-            self.Total_assets = self.Total_assets + self.net_income
+            self.stock_variables['Total_assets'] = self.stock_variables['Total_assets'] + self.stock_variables['net_income']
 
-            self.Cash = self.Total_assets - self.Reverse_repo
-            self.Invshares = self.Total_assets
-            self.Total_liabilities = self.Invshares
-            return self.Total_assets, self.Cash, self.Invshares
+            self.stock_variables['Cash'] = self.stock_variables['Total_assets'] - self.stock_variables['Reverse_repo']
+            self.stock_variables['Invshares'] = self.stock_variables['Total_assets']
+            self.stock_variables['Total_liabilities'] = self.stock_variables['Invshares']
+
+
+            self.update_results_to_dataframe(current_step)
+
+
+    def append_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        results_stock_variables = []
+        results_stock_varnames =[]
+
+        for i in self.stock_variables:
+            if i != "does_repo":
+                results_stock_varnames.append(i + " " + self.identifier)
+                results_stock_variables.append(self.stock_variables[i])
+
+        df = pd.DataFrame(columns=results_stock_varnames)
+        df = df.append(pd.Series(results_stock_variables, index=results_stock_varnames), ignore_index=True)
+
+        df2 = pd.DataFrame({'current_step':[current_step]})
+
+        self.results_df = pd.concat([df, df2], axis=1)
+        return self.results_df
+
+    def update_results_to_dataframe(self, current_step):
+        import pandas as pd
+
+        if current_step >0:
+            temp = []
+            timer = []
+            results_stock_variables = []
+
+            for i in self.stock_variables:
+                if i != "does_repo":
+                    temp.append(self.stock_variables[i])
+                    timer = current_step
+            temp.append(timer)
+
+            x = list(self.results_df.columns.values)
+
+            dftemp = pd.DataFrame([temp], columns=x)
+
+
+            self.results_df = pd.concat([self.results_df, dftemp])
+
 
     # def __getattr__(self):
     #     if the attribute isn't found by Python we tell Python

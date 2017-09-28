@@ -39,6 +39,7 @@ class Updater():
     # do_update
     # -------------------------------------------------------------------------
     def do_update_benchmark(self, environment, current_step, scenario):
+        import pandas as pd
 
         if current_step < 1:
             self.add_rates(environment)
@@ -50,19 +51,21 @@ class Updater():
 
             self.profit_all_agents(environment, current_step)
 
-
         else:
 
             self.update_all_agents_balance_sheets(environment, current_step, scenario)
 
-            for pf in environment.pensionfunds:
-                print pf.results_df
-            # self.update_prices(environment, current_step, scenario)
-            #
-            # print "***In t=0:", current_step , " This is the price matrix***\n", self.prices, "\n",
-
-            # self.system_equity += agent.state_variables['equity']
-            # self.system_assets += agent.state_variables['total_assets']
+    def write_to_csv(self, environment, current_step, scenario):
+        import pandas as pd
+        for invfund in environment.investmentfunds:
+            for cbank in environment.cbanks:
+                for mmf in environment.mmf:
+                    for dealer in environment.dealers:
+                        for hf in environment.hedgefunds:
+                            for ic in environment.insurancecompanies:
+                                for pf in environment.pensionfunds:
+                                    pd.concat([mmf.results_df, hf.results_df, cbank.results_df, ic.results_df,  pf.results_df, dealer.results_df],axis=1).to_csv('results.csv')
+                                    pd.concat([hf.results_df],axis=1).to_csv('hf.csv')
 
     def initialize_assets_all_agents(self, current_step, environment):
         print "1.**** UPDATER.PY*** FIRST INITIALIZE ASSETS"
@@ -72,6 +75,7 @@ class Updater():
 
         for hf in environment.hedgefunds:
             hf.initialize_assets(self, current_step)
+            hf.print_balance_sheet()
 
         for invfund in environment.investmentfunds:
             invfund.initialize_assets(self, current_step)
@@ -125,7 +129,6 @@ class Updater():
 
         for hf in environment.hedgefunds:
             hf.update_balance_sheets(self, environment, current_step, scenario)
-            hf.update_results_to_dataframe(current_step)
 
         for pf in environment.pensionfunds:
             pf.update_balance_sheets(self, environment, current_step, scenario)
