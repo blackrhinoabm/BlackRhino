@@ -1,0 +1,43 @@
+<agent identifier='BANK OF TAIWAN SA BRANCH'>
+<parameter type='parameters' name='equity' value='302299'></parameter>
+ <parameter type='state_variables' name='leverage' value='4.26553842387835'></parameter>
+ <parameter type='parameters' name='debt' value='1289468'></parameter>
+ <parameter type='state_variables' name='m_1' value='0.0242793072101633'></parameter>
+ <parameter type='state_variables' name='m_2' value='0.00244194030910303'></parameter>
+ <parameter type='state_variables' name='m_3' value='0'></parameter>
+ <parameter type='state_variables' name='m_4' value='0'></parameter>
+ <parameter type='state_variables' name='m_5' value='0.189366911111991'></parameter>
+ <parameter type='state_variables' name='m_6' value='0'></parameter>
+ <parameter type='state_variables' name='m_7' value='0'></parameter>
+ <parameter type='state_variables' name='m_8' value='0'></parameter>
+ <parameter type='state_variables' name='m_9' value='0'></parameter>
+ <parameter type='state_variables' name='m_10' value='0'></parameter>
+ <parameter type='state_variables' name='m_11' value='0'></parameter>
+ <parameter type='state_variables' name='m_12' value='0.17794312861116'></parameter>
+ <parameter type='state_variables' name='m_13' value='0.223882012882539'></parameter>
+ <parameter type='state_variables' name='m_14' value='0'></parameter>
+ <parameter type='state_variables' name='m_15' value='0'></parameter>
+ <parameter type='state_variables' name='m_16' value='0'></parameter>
+ <parameter type='state_variables' name='m_17' value='0'></parameter>
+ <parameter type='state_variables' name='m_18' value='0'></parameter>
+ <parameter type='state_variables' name='m_19' value='0'></parameter>
+ <parameter type='state_variables' name='m_20' value='0.312602284128268'></parameter>
+ <parameter type='state_variables' name='m_21' value='0.0100963269121674'></parameter>
+ <parameter type='state_variables' name='m_22' value='0.0504992250750267'></parameter>
+ <parameter type='state_variables' name='m_23' value='0'></parameter>
+ <parameter type='state_variables' name='m_24' value='0'></parameter>
+ <parameter type='state_variables' name='m_25' value='0'></parameter>
+ <parameter type='state_variables' name='m_26' value='0'></parameter>
+ <parameter type='state_variables' name='m_27' value='0'></parameter>
+ <parameter type='state_variables' name='m_28' value='0'></parameter>
+ <parameter type='state_variables' name='m_29' value='0'></parameter>
+ <parameter type='state_variables' name='m_30' value='0'></parameter>
+ <parameter type='state_variables' name='m_31' value='0.000574204641759755'></parameter>
+ <parameter type='state_variables' name='m_32' value='0'></parameter>
+ <parameter type='state_variables' name='m_33' value='0'></parameter>
+ <parameter type='state_variables' name='m_34' value='0'></parameter>
+ <parameter type='state_variables' name='m_35' value='0'></parameter>
+ <parameter type='state_variables' name='m_36' value='0'></parameter>
+ <parameter type='state_variables' name='m_37' value='0'></parameter>
+ <parameter type='state_variables' name='m_38' value='0.00831465911782314'></parameter>
+</agent>

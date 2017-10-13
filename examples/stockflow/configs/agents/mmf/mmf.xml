@@ -1,4 +1,0 @@
-<agent identifier="MMF">
- <parameter type="stock_variables" name="Cash" value="10"></parameter>
- <parameter type="stock_variables" name="does_repo" value="no"></parameter>
-</agent>

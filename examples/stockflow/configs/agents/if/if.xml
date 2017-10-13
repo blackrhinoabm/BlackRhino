@@ -1,7 +1,0 @@
-<agent identifier="IF">
-<parameter type="stock_variables" name="Cash" value="10"></parameter>
-<parameter type="stock_variables" name="GB" value="45"></parameter>
-<parameter type="stock_variables" name="CB" value="45"></parameter>
-<parameter type="stock_variables" name="Invshares" value="100"></parameter>
-<parameter type="stock_variables" name="does_repo" value="no"></parameter>
-</agent>

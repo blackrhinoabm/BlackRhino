@@ -31,48 +31,46 @@ on Complexity through the grant RESINEE.
 # -------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    import sys
-    import logging
-
     from src.environment import Environment
     from src.runner import Runner
+    import logging
 
-    args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
-    # args = sys.argv
+# We pass in the name of the environment xml as args[1] here:
 
-    if len(args) != 4:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/"
-        sys.exit()
-
+    args = ["configs/environment/", "firesales_plus_inventory_model", "log/"]
 
 #
 # INITIALIZATION
 #
-    environment_directory = str(args[1])
-    identifier = str(args[2])
-    log_directory = str(args[3])
+    environment_directory = str(args[0])
+    identifier = str(args[1])
+    log_directory = str(args[2])
 
-    print (logging.Logger.manager.loggerDict.keys())
-    # Configure logging parameters so we get output while the program runs
+
+####### Logging Configuration!!!
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         filename=log_directory + identifier + ".log", level=logging.INFO)
-    logging.info('START logging for run: %s',  environment_directory + identifier + ".xml")
+    logging.info('The program starts! Logging enabled.')
+############
 
-    environment = Environment(environment_directory,  identifier)
+
+    environment = Environment(environment_directory, identifier)
     runner = Runner(environment)
 
 #
 # UPDATE STEP
 #
-    for i in range(int(environment.num_simulations)):
+    for i in range(int(environment.static_parameters['num_simulations'])):
+
         logging.info('  STARTED with run %s',  str(i))
-        environment.initialize(environment_directory,  identifier)
+
+        
+        environment.initialize(environment_directory, identifier)
         runner.initialize(environment)
         # do the run
         runner.do_run(environment)
-        logging.info('  DONE')
 
-#
-# MEASUREMENT AND LOGGING
-#
+        logging.info(' Program DONE - firesales happend!')
+
+    logging.info('FINISHED logging for run: %s \n', environment_directory + identifier + ".xml")
 

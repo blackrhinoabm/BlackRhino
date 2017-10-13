@@ -1,0 +1,28 @@
+<agent identifier="African Bank">
+<parameter type="parameters" name="equity" value="7466274000"></parameter>
+ <parameter type="state_variables" name="leverage" value="6.75290472865046"></parameter>
+ <parameter type="parameters" name="debt" value="50419037000"></parameter>
+ <parameter type="state_variables" name="m_1" value="0.0221378615379643" label="Cash and gold reserves "></parameter>
+ <parameter type="state_variables" name="m_2" value="0.0345534292801847" label="SA Interbank deposits, loans and advances "></parameter>
+ <parameter type="state_variables" name="m_3" value="0" label="Rand Deposits with and loans to foreign banks"></parameter>
+ <parameter type="state_variables" name="m_4" value="0" label="Loans granted under repo agreement"></parameter>
+ <parameter type="state_variables" name="m_5" value="0" label="Foreign currency loans and advances "></parameter>
+ <parameter type="state_variables" name="m_6" value="0" label="Redeemable preference shares"></parameter>
+ <parameter type="state_variables" name="m_7" value="0" label="corporate instalment credit "></parameter>
+ <parameter type="state_variables" name="m_8" value="3.47238352057917E-05" label="household instalment credit "></parameter>
+ <parameter type="state_variables" name="m_9" value="0" label="corporate mortgage"></parameter>
+ <parameter type="state_variables" name="m_10" value="0" label="household mortgage"></parameter>
+ <parameter type="state_variables" name="m_11" value="0.0327490336883566" label="Unsecured lending corporate"></parameter>
+ <parameter type="state_variables" name="m_12" value="0.575654694158938" label="Unsecured lending households"></parameter>
+ <parameter type="state_variables" name="m_13" value="0.159561758249861" label="Other credit (credit card + leasing + Overdarft + factoring debt)"></parameter>
+ <parameter type="state_variables" name="m_14" value="0.00724102527496138" label="Central and provincial government bonds"></parameter>
+ <parameter type="state_variables" name="m_15" value="0.0263867460261205" label="Other public-sector bonds"></parameter>
+ <parameter type="state_variables" name="m_16" value="0" label="Private sector bonds"></parameter>
+ <parameter type="state_variables" name="m_17" value="0" label="Equity holdings in subsidiaries and joint ventures"></parameter>
+ <parameter type="state_variables" name="m_18" value="0" label="Listed and unlisted equities"></parameter>
+ <parameter type="state_variables" name="m_19" value="0.0654237998306686" label="Securitisation/ asset-backed securities"></parameter>
+ <parameter type="state_variables" name="m_20" value="0" label="Derivative instruments"></parameter>
+ <parameter type="state_variables" name="m_21" value="0.0073351942429747" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+ <parameter type="state_variables" name="m_22" value="0" label="Other investments"></parameter>
+ <parameter type="state_variables" name="m_23" value="0.0689217338747647" label="Non financial assets"></parameter>
+</agent>
