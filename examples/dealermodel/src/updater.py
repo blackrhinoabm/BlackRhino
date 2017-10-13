@@ -85,7 +85,6 @@ class Updater(BaseModel):
         self.system_loss_equity_from_indirect_effects = 0
         self.system_loss_assets_from_indirect_effects = 0
         self.system_loss_assets = 0
-        self.system_equity = 0
         self.system_assets = 0
 
         self.system_vulnerability = 0
@@ -94,8 +93,7 @@ class Updater(BaseModel):
 
         "This is all stuff needed to write output"
         self.d = {}
-        self.resultlist = []
- 
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -109,7 +107,7 @@ class Updater(BaseModel):
                 agent.initialize_total_assets()
                 agent.add_parameters_dealer(self)
                 
-                self.system_equity += agent.state_variables['equity']
+                environment.variable_parameters['system_equity']  += agent.state_variables['equity']
                 self.system_assets += agent.state_variables['total_assets']
 
             print "1.**** UPDATER.PY*** FIRST ROUND EFFECTS:"     
@@ -119,8 +117,6 @@ class Updater(BaseModel):
                 agent.append_results_to_dataframe(current_step)
             
             self.plug_agents_and_system_results_together(environment, current_step)
-
-            # self.write_to_csv(current_step, environment)
 
 
         else:
@@ -133,6 +129,7 @@ class Updater(BaseModel):
             for agent in environment.agents:
                 agent.update_results_to_dataframe(current_step)
                 logging.info("Updated results of %s within agent class", agent.identifier)
+                print agent
 
             self.plug_agents_and_system_results_together(environment, current_step)
 
@@ -155,10 +152,9 @@ class Updater(BaseModel):
         for agent in environment.agents:
             agent.initialize_shock(environment)
 
-            "CHECK by printing:"
-            "Use identifier to pick out one agent."
-            "Alternatively, use environment.agents[0]"
-            "to only pick one"
+            "CHECK:\
+            Use identifier to pick out one agent\
+            Alternatively, use environment.agents[0]"
 
             if agent.identifier == "SBSA":
                 print "***AGENT.PY*** Shock for ", agent.identifier, "on its total asset is:", agent.state_variables['shock_for_agent'] *100, "%"
@@ -227,7 +223,7 @@ class Updater(BaseModel):
 
             agent.calc_total_asset_sales(environment, current_step)
 
-            agent.calc_indirect_losses(self.system_equity, current_step)
+            agent.calc_indirect_losses(environment.variable_parameters['system_equity'] , current_step)
         #     # this adds up the sales of m1, m2, m3 etc  across the banks
         #     # but not across classes, so we get a dictionary with
         #     # total sales of m1:value ,total sales of m2: value, etc.
@@ -293,7 +289,7 @@ class Updater(BaseModel):
         for agent in environment.agents:
             temp += agent.state_variables['losses_from_system_deleveraging']
 
-        self.system_vulnerability = (temp/self.system_equity)
+        self.system_vulnerability = (temp/environment.variable_parameters['system_equity'] )
         # print "Aggregate system_vulnerability is:", self.system_vulnerability * 100, "percent"
 
     def print_effect_to_screen(self, current_step, environment):
@@ -301,7 +297,7 @@ class Updater(BaseModel):
         print "Assets whiped out by shock:", self.assets_relative,\
                 "percent in step %s for %s banks" % (current_step, environment.num_agents)
 
-        self.equity_relative = (self.system_loss_equity_from_direct_effects /self.system_equity)*100
+        self.equity_relative = (self.system_loss_equity_from_direct_effects /environment.variable_parameters['system_equity'] )*100
         print "Equity whiped out by shock:", self.equity_relative, "percent in step %s for %s banks" % (current_step, environment.num_agents)
 
     # -----------------------------------------------------------------------
@@ -313,22 +309,26 @@ class Updater(BaseModel):
 
     def plug_agents_and_system_results_together(self, environment, current_step):
         import pandas as pd
-        xlist = []
-        ilist = []
-
+        
+        "This is for the agent stuff. We make an xlist with\
+         names which later become the keys in the dictionary\
+         There are as many key, value pairs as agents\
+         self.d = {df_1 : SBSA_results, df_2: Absa_results}\
+         "
+        xlist = []  
         for i in range(len(environment.agents)):
             x = "df_" + str(i) 
             xlist.append(x)
              
         self.d = dict((el,0) for el in xlist)
 
+        "Adding all agent results"
         for key in self.d:
             for agent in environment.agents:
                 if agent.identifier in self.d.values():
                     pass
                 else:
                     self.d.update({key:agent.identifier})
-
 
         for key in self.d:
             for agent in environment.agents:
@@ -339,21 +339,43 @@ class Updater(BaseModel):
                     logging.info(" We are in the updater and adding results per agents (i.e. result dataframe)\
                                  so dictionary self.d. We just added the results of %s !",  agent.identifier)
 
+        "Now the same procedure as every year..\
+        the rest of the variables of interest."
+
+        plist = []  
+        for i in range(len(environment.variable_parameters)):
+            p = "df_" + str(i) 
+            plist.append(p) 
+             
+
     def write_list_of_results(self, current_step, environment):
-        self.resultlist = []
+        import numpy as np
+        resultlist = []
+        result_columns = []
         for k, v in self.d.iteritems():
-            self.resultlist.append(self.d[k])
-            return self.resultlist
-        
-    def write_all_to_csv(self):
-        pd.concat(self.resultlist,axis=1).to_csv('results_all.csv')
+            resultlist.append(self.d[k])
 
+        "To get column names, we need to work around a bit\
+        The next code takes all the different agents' header names\
+        and puts them in a list called x"
+        for i in range(len(resultlist)):
+            result_columns.append(resultlist[i].columns.values)
+            x = np.array([[result_columns[i-1]],[result_columns[i]]]).tolist()
 
+        "However, x has a number of agents of sublists. We need to merge\
+        them and put them all together in one list called total,\
+        which we use to give our csv column names\
+        This neat little code here does that (python can be really cool)"
+        total = []
+        for i in range(len(x)):
+            for k in x[i]:
+                total += k        
+        "Finally we have a result dataframe we can write to csv!!"
+        df_stacked = pd.concat([r for r in resultlist], axis=1,  ignore_index=True)
+        df_stacked.columns = total
+        df_stacked.to_csv("results_all.csv")        
 
-
-
-
-        #  OLD CODE THROUGH WHICH I SUFFERED A GREAT DEAL
+        #  OLD CODE THROUGH WHICH I SUFFERED A GREAT DEAL - here for memorial
         #for asset_class in environment.agents[0].state_variables:
 
         #     if asset_class != 'leverage' and asset_class != 'losses_from_system_deleveraging' and asset_class != 'direct_losses' and asset_class != 'shock_for_agent' and asset_class != 'total_assets' and asset_class != 'total_asset_sales' and :

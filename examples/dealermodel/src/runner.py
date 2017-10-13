@@ -111,8 +111,6 @@ class Runner(BaseRunner):
 
                 self.updater.do_update(environment, i)
                 self.updater.write_list_of_results(environment, self.current_step)
-                self.updater.write_all_to_csv()
-
 
 
                 #measurement.write_all_to_file()
@@ -120,7 +118,7 @@ class Runner(BaseRunner):
         print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
         print("***\nThis run had the illiquidity coefficient %s " ) % (environment.static_parameters['illiquidity'])
 
-        print("Check the output file that was written as csv in the measurements folder\n***")
+        print("Check the output file that was written as result_all.csv in the main folder\n***")
 
         #measurement.close_file()
     # ------------------------------------------------------------------------
