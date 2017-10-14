@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 # This script contains the Agent class which is later called in the Environment
-# script. 
+# script.
 
 import logging
 
@@ -141,7 +141,7 @@ class Agent(BaseAgent):
         self.state_variables = {}
         self.parameters = {}
 
-        # local state variables used in computation of asset sales        
+        # local state variables used in computation of asset sales
         self.state_variables['shock_for_agent'] = 0.0
         self.state_variables['total_asset_sales'] = 0.0
 
@@ -156,7 +156,7 @@ class Agent(BaseAgent):
         self.sale_of_k_assets = {}
 
 
-        self.systemicness = 0 
+        self.state_variables['systemicness']= 0
         self.results_df = 0
 
 
@@ -217,10 +217,10 @@ class Agent(BaseAgent):
         self.state_variables['shock_for_agent'] = 0.0
 
         for shock in environment.shocks:
-            for k in set(self.parameters) & set(shock.asset_returns):   
+            for k in set(self.parameters) & set(shock.asset_returns):
 
                 self.state_variables['shock_for_agent'] +=  self.parameters[k] * shock.asset_returns[k]
-                
+
                 'Uncomment this code to print which asset class and which shock'
                 # if self.identifier == "SBSA":
                 #         if shock.asset_returns[k]!= 0.0:
@@ -228,14 +228,14 @@ class Agent(BaseAgent):
 
         #quick accounting test for step1: I print to screen the asset class that is being shocked
         #Like this I can verify the configuration (no time to write testing file)
-        #if self.identifier == "SBSA":  
-            #print "ACCOUNTING FOR ONE BANK"   
+        #if self.identifier == "SBSA":
+            #print "ACCOUNTING FOR ONE BANK"
             #print "The shock for ", self.identifier, "TOTAL ASSET is:", self.state_variables['shock_for_agent'], "so", self.state_variables['shock_for_agent'] * 100 , "per cent"
 
     #Calculate direct losses (shock proportional to asset share times total assets)
     def calc_direct_losses(self):
         # print self.shock_for_agent, self.total_assets, self.identifier
-        
+
         self.state_variables["direct_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
 
         if self.identifier == "SBSA":
@@ -248,7 +248,7 @@ class Agent(BaseAgent):
         if current_step>0:
 
             self.state_variables["losses_from_system_deleveraging"] = (self.state_variables['shock_for_agent'] * self.state_variables['total_assets'] )
-            self.systemicness = self.state_variables["losses_from_system_deleveraging"] / pre_shock_system_equity
+            self.state_variables['systemicness']= self.state_variables["losses_from_system_deleveraging"] / pre_shock_system_equity
 
             return self.systemicness
             # print self.systemicness*100, self.identifier
@@ -283,7 +283,7 @@ class Agent(BaseAgent):
         if any(c in self.identifier for c in ("SBSA", "ABSA", "NEDBANK", "DB", "JpM", "HSBC", "FNB", "CITYBANK", "INVESTEC")):
             self.parameters['dealer']= 1.0
             for k in self.parameters:
-                if k == 'm_14': 
+                if k == 'm_14':
                     self.state_variables['inventory_risky_asset']  =  self.parameters[k] * self.state_variables['total_assets']
                     self.state_variables['inventory_risky_asset_quantity'] = self.state_variables['inventory_risky_asset'] / updater.prices['risky_asset']
                     return self.state_variables['inventory_risky_asset']
@@ -298,7 +298,7 @@ class Agent(BaseAgent):
 
         results_parameters = []
         results_parnames =[]
-        temp =0 
+        temp =0
 
         for i in self.state_variables:
             results_state_varnames.append(i + " " + self.identifier)
@@ -312,12 +312,21 @@ class Agent(BaseAgent):
             results_parameters.append(self.parameters[i])
 
         "We do the same for parameters"
-        df3 = pd.DataFrame(columns=results_parnames) 
+        df3 = pd.DataFrame(columns=results_parnames)
         df3 = df3.append(pd.Series(results_parameters, index=results_parnames), ignore_index=True)
-        
+
         df2 = pd.DataFrame({'current_step':[current_step]})
 
-        self.results_df = pd.concat([df2, df1, df3], axis=1)        
+        self.results_df = pd.concat([df2, df1], axis=1)
+        logging.info('Agent.py; function: Appended agents state_variables results to %s dataframe' %self.identifier )
+
+        "To add parameters uncomment and use instead of line\
+        above. But DON't forget to change method\
+        def update_results_to_dataframe below\
+        and uncomment "
+        # self.results_df = pd.concat([df2, df1, df3], axis=1)
+        # logging.info('Agent.py; function: Appended agents parameter and state_variables results to %s dataframe' %self.identifier )
+
 
         return self.results_df
 
@@ -335,9 +344,12 @@ class Agent(BaseAgent):
 
             for state_variable in self.state_variables:
                 temp.append(self.state_variables[state_variable])
-            
-            for p in self.parameters:
-                temp.append(self.parameters[p])
+
+            "To add parameters uncomment, but also change method\
+            def  append_results_to_dataframe in above!!\
+            uncomment "
+            # for p in self.parameters:
+            #     temp.append(self.parameters[p])
 
             x = list(self.results_df.columns.values)
 

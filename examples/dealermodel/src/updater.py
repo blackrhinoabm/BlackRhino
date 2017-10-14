@@ -196,7 +196,7 @@ class Updater(BaseModel):
             environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
             environment.variable_parameters['system_equity'] += agent.state_variables['equity']
             environment.variable_parameters['system_debt'] += agent.state_variables['debt']
-            environment.variable_parameters['system_direct_losses'] += agent.state_variables['direct_losses'] 
+            environment.variable_parameters['system_direct_losses'] += agent.state_variables['direct_losses']
             print agent.identifier, environment.variable_parameters['system_direct_losses']
             agent.update_results_to_dataframe(current_step)
 

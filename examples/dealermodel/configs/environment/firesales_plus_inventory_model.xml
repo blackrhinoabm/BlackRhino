@@ -1,6 +1,6 @@
 <environment identifier='firesales_plus_inventory_model'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='2'></parameter>
+    <parameter type='num_sweeps' value='10'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value='2'></parameter>
     <parameter type='agent_directory' value='configs/agents/'></parameter>
