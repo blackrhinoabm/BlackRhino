@@ -103,6 +103,8 @@ class Updater(BaseModel):
                 environment.variable_parameters['system_equity']  += agent.state_variables['equity']
                 environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
                 environment.variable_parameters['system_debt'] += agent.state_variables['debt']
+                environment.variable_parameters['system_direct_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
+
 
                 agent.append_results_to_dataframe(current_step)
             self.plug_agents_and_system_results_together(environment, current_step)
@@ -194,10 +196,12 @@ class Updater(BaseModel):
             environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
             environment.variable_parameters['system_equity'] += agent.state_variables['equity']
             environment.variable_parameters['system_debt'] += agent.state_variables['debt']
-            # environment.variable_parameters['system_loss_assets_from_indirect_effects'] += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'] * agent.parameters['leverage'])
-            # environment.variable_parameters['system_loss_equity_from_indirect_effects'] += (agent.state_variables['shock_for_agent'] * agent.state_variables['total_assets'])
+            environment.variable_parameters['system_direct_losses'] += agent.state_variables['direct_losses'] 
+            print agent.identifier, environment.variable_parameters['system_direct_losses']
             agent.update_results_to_dataframe(current_step)
+
         self.plug_agents_and_system_results_together(environment, current_step)
+        print environment.variable_parameters['system_direct_losses'], "hahahah"
 
 
         print "Now begins step %s" % (current_step +1)
