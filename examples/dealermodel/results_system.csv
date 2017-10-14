@@ -1,4 +1,4 @@
-,current_step,system_debt,system_direct_losses,system_assets,system_loss_equity_from_indirect_effects,system_TAS,system_equity,system_vulnerability,system_loss_assets_from_indirect_effects
+,current_step,system_debt,system_equity_losses,system_assets,system_loss_equity_from_indirect_effects,system_TAS,system_equity,system_vulnerability,system_loss_assets_from_indirect_effects
 0,0,1.996598091e+12,0.0,2.140054223e+12,0.0,0.0,1.43456132e+11,0.0,0.0
 1,1,1.82358649571e+12,-12089613800.0,1.95495301391e+12,0.0,-1.73011595286e+11,1.313665182e+11,0.0,0.0
 2,1,1.4952689002e+12,-12089613800.0,1.60314869041e+12,0.0,-3.28317595518e+11,1.0787979021e+11,-0.178787778741,0.0

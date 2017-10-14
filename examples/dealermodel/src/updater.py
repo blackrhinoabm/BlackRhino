@@ -103,7 +103,7 @@ class Updater(BaseModel):
                 environment.variable_parameters['system_equity']  += agent.state_variables['equity']
                 environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
                 environment.variable_parameters['system_debt'] += agent.state_variables['debt']
-                environment.variable_parameters['system_direct_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
+                environment.variable_parameters['system_equity_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
 
 
                 agent.append_results_to_dataframe(current_step)
@@ -154,8 +154,8 @@ class Updater(BaseModel):
 
             """Just printing first round effects to screen"""
             #print("TOTAL ASSET SALES BY: "), agent.identifier, agent.state_variables['total_asset_sales']
-            agent.calc_direct_losses()
-            #print ("Direct losses: "), agent.state_variables["direct_losses"], agent.identifier
+            agent.calc_equity_losses()
+            #print ("Direct losses: "), agent.state_variables["equity_losses"], agent.identifier
             #print agent.identifier, "total asset sales", agent.state_variables['total_asset_sales'], current_step
 
             "The next method call is very important."
@@ -196,12 +196,12 @@ class Updater(BaseModel):
             environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
             environment.variable_parameters['system_equity'] += agent.state_variables['equity']
             environment.variable_parameters['system_debt'] += agent.state_variables['debt']
-            environment.variable_parameters['system_direct_losses'] += agent.state_variables['direct_losses']
-            print agent.identifier, environment.variable_parameters['system_direct_losses']
+            environment.variable_parameters['system_equity_losses'] += agent.state_variables['equity_losses']
+            print agent.identifier, environment.variable_parameters['system_equity_losses']
             agent.update_results_to_dataframe(current_step)
 
         self.plug_agents_and_system_results_together(environment, current_step)
-        print environment.variable_parameters['system_direct_losses'], "hahahah"
+        print environment.variable_parameters['system_equity_losses'], "hahahah"
 
 
         print "Now begins step %s" % (current_step +1)
@@ -223,7 +223,7 @@ class Updater(BaseModel):
             agent.initialize_shock(environment)
 
             agent.calc_total_asset_sales(environment, current_step)
-            agent.calc_indirect_losses(environment.variable_parameters['system_equity'] , current_step)
+            agent.calc_inequity_losses(environment.variable_parameters['system_equity'] , current_step)
         #     # this adds up the sales of m1, m2, m3 etc  across the banks
         #     # but not across classes, so we get a dictionary with
         #     # total sales of m1:value ,total sales of m2: value, etc.
@@ -419,7 +419,7 @@ class Updater(BaseModel):
         #  OLD CODE THROUGH WHICH I SUFFERED A GREAT DEAL - here for memorial
         #for asset_class in environment.agents[0].state_variables:
 
-        #     if asset_class != 'leverage' and asset_class != 'losses_from_system_deleveraging' and asset_class != 'direct_losses' and asset_class != 'shock_for_agent' and asset_class != 'total_assets' and asset_class != 'total_asset_sales' and :
+        #     if asset_class != 'leverage' and asset_class != 'losses_from_system_deleveraging' and asset_class != 'equity_losses' and asset_class != 'shock_for_agent' and asset_class != 'total_assets' and asset_class != 'total_asset_sales' and :
 
         #         self.asset_sales_across_banks_per_asset_class[asset_class] = 0.0
 

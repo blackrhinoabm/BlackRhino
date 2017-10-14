@@ -132,8 +132,8 @@ class Measurement(BaseMeasurement):
         for agent in self.environment.agents:
             out_row.append(self.runner.current_step + 1)
             out_row.append(agent.identifier)
-            out_row.append(agent.state_variables['direct_losses'])
-            out_row.append(agent.state_variables['direct_losses'])
+            out_row.append(agent.state_variables['equity_losses'])
+            out_row.append(agent.state_variables['equity_losses'])
             out_row.append(agent.state_variables['total_asset_sales'])
             out_row.append(agent.state_variables['leverage'])
             out_row.append(agent.state_variables['total_assets'])

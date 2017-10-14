@@ -192,7 +192,7 @@ class Environment(BaseConfig):
 
         self.variable_parameters['system_loss_equity_from_indirect_effects'] = 0
         self.variable_parameters['system_loss_assets_from_indirect_effects'] = 0
-        self.variable_parameters['system_direct_losses'] = 0
+        self.variable_parameters['system_equity_losses'] = 0
 
         self.variable_parameters['system_vulnerability'] = 0
 

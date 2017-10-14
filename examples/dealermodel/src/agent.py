@@ -145,7 +145,7 @@ class Agent(BaseAgent):
         self.state_variables['shock_for_agent'] = 0.0
         self.state_variables['total_asset_sales'] = 0.0
 
-        self.state_variables["direct_losses"] = 0.0
+        self.state_variables["equity_losses"] = 0.0
         self.state_variables["losses_from_system_deleveraging"] = 0.0
 
         self.pre_shock_equity = 0
@@ -233,17 +233,17 @@ class Agent(BaseAgent):
             #print "The shock for ", self.identifier, "TOTAL ASSET is:", self.state_variables['shock_for_agent'], "so", self.state_variables['shock_for_agent'] * 100 , "per cent"
 
     #Calculate direct losses (shock proportional to asset share times total assets)
-    def calc_direct_losses(self):
+    def calc_equity_losses(self):
         # print self.shock_for_agent, self.total_assets, self.identifier
 
-        self.state_variables["direct_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
+        self.state_variables["equity_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
 
         if self.identifier == "SBSA":
-            print "***AGENT.PY***The direct losses for ", self.identifier, "are:", self.state_variables['direct_losses'], "(hit on its equity)"
+            print "***AGENT.PY***The direct losses for ", self.identifier, "are:", self.state_variables['equity_losses'], "(hit on its equity)"
 
 
     #Calculate indirect losses
-    def calc_indirect_losses(self, pre_shock_system_equity, current_step):
+    def calc_inequity_losses(self, pre_shock_system_equity, current_step):
 
         if current_step>0:
 
