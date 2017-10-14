@@ -183,9 +183,19 @@ class Environment(BaseConfig):
         self.static_parameters["illiquidity"] = ""
         self.agents = []
         self.shocks = []
-        
-        self.variable_parameters['system_equity'] = 0 
 
+        #variables interesting for simulation and measurement
+        self.variable_parameters['system_TAS'] = 0
+        self.variable_parameters['system_assets'] = 0
+        self.variable_parameters['system_equity'] = 0
+        self.variable_parameters['system_debt'] = 0
+
+        self.variable_parameters['system_loss_equity_from_indirect_effects'] = 0
+        self.variable_parameters['system_loss_assets_from_indirect_effects'] = 0
+        self.variable_parameters['system_loss_equity_from_direct_effects'] = 0
+        self.variable_parameters['system_loss_assets_from_direct_effects'] = 0
+
+        self.variable_parameters['system_vulnerability'] = 0
 
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
@@ -226,9 +236,6 @@ class Environment(BaseConfig):
        # you can use this code below to see if the function of reading the shock worked
         for key in shock.asset_returns:
             if shock.asset_returns[key]!= 0.0:
-                # print "0. ***ENV.PY*** When shock is initialised:  The asset class", key, "is shocked by", shock.asset_returns[key] * 100, "%" 
+                # print "0. ***ENV.PY*** When shock is initialised:  The asset class", key, "is shocked by", shock.asset_returns[key] * 100, "%"
                 pass
             #print shock.asset_returns.items()
-
-
-
