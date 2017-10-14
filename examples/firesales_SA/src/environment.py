@@ -183,15 +183,27 @@ class Environment(BaseConfig):
         self.static_parameters["illiquidity"] = ""
         self.agents = []
         self.shocks = []
+        self.shock_measure = (0,0)
+
+        #variables interesting for simulation and measurement
+        self.variable_parameters['system_TAS'] = 0
+        self.variable_parameters['system_assets'] = 0
+        self.variable_parameters['system_equity'] = 0
+        self.variable_parameters['system_debt'] = 0
+
+        self.variable_parameters['system_equity_losses'] = 0
+
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
-        logging.info(" environment file read: %s", environment_filename)
+        logging.info("We read the environment file from: %s", environment_filename)
 
         # then read in all the agents
         self.initialize_agents_from_files(self.static_parameters['agent_directory'])
 
         self.initialize_shock(self.static_parameters['shock_config'])
+
+
 
     # -------------------------------------------------------------------------
     def initialize_agents_from_files(self, agent_directory):
@@ -217,10 +229,15 @@ class Environment(BaseConfig):
         shock.read_xml_config_file(shock_config)
         self.shocks.append(shock)
 
+        shock.measure_intitial_shock(self)
+        for k, v in shock.legend.iteritems():
+            if shock.legend[k] != 0:
+                self.shock_measure = (k, v)
+                # df_shock = pd.DataFrame[]
+
        # you can use this code below to see if the function of reading the shock worked
         for key in shock.asset_returns:
             if shock.asset_returns[key]!= 0.0:
-                print "0. ***ENV.PY*** When shock is initialised:  The asset class", key, "is shocked by", shock.asset_returns[key] * 100, "%" 
-        
+                # print "0. ***ENV.PY*** When shock is initialised:  The asset class", key, "is shocked by", shock.asset_returns[key] * 100, "%"
+                pass
             #print shock.asset_returns.items()
-

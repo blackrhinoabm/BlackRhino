@@ -35,7 +35,7 @@ class Shock():
     #
     #
     identifier = ""
-    
+
     #
     #
     # METHODS
@@ -55,12 +55,53 @@ class Shock():
         return self.identifier
 
     def __init__(self, environment, runner):
-
         self.asset_returns = {}
-
+        self.legend= {}
         self.environment = environment
-
         self.runner = runner
+
+
+
+    def make_legend(self):
+        alist = [("m_1 Cash and gold reserves", 0.0),\
+                 ("m_2 SA Interbank deposits, loans and advances", 0.0),\
+                 ("m_3 Rand Deposits with and loans to foreign banks", 0.0),\
+                 ("m_4 Loans granted under repo agreement", 0.0),\
+                 ("m_5 Foreign currency loans and advances", 0.0),\
+                 ("m_6 Redeemable preference shares", 0.0),\
+                 ("m_7 Corporate instalment credit", 0.0),\
+                 ("m_8 Household instalment credit", 0.0),\
+                 ("m_9 Corporate mortgage", 0.0),\
+                 ("m_10 Household mortgage", 0.0),\
+                 ("m_11 Unsecured lending corporate", 0.0),\
+                 ("m_12 Unsecured lending households", 0.0),\
+                 ("m_13 Other credit (credit card + leasing + Overdarft + factoring debt", 0.0),\
+                 ("m_14 Central and provincial government bonds", 0.0),\
+                 ("m_15 Other public-sector bonds", 0.0),\
+                 ("m_16 Private sector bonds", 0.0),\
+                 ("m_17 Equity holdings in subsidiaries and joint ventures", 0.0),\
+                 ("m_18 Listed and unlisted equities", 0.0),\
+                 ("m_19 Securitisation/ asset-backed securities", 0.0),\
+                 ("m_20 Derivative instruments", 0.0),\
+                 ("m_21 Treasury bills, SA Reserve Bank bills,  Land Bank bills", 0.0),\
+                 ("m_22 Other investments", 0.0),\
+                 ("m_23 Non financial assets", 0.0)]
+
+        self.legend = dict(alist)
+
+    def measure_intitial_shock(self, environment):
+        self.make_legend()
+        for i in self.asset_returns:
+            try:
+                if self.asset_returns[i] != 0 :
+                    print "We have a shock for: %s" %i
+
+                    for k, v in self.legend.iteritems():
+                        if i in k:
+                            self.legend[k]= self.asset_returns[i]
+
+            except:
+                raise TypeError
 
     def read_xml_config_file(self, config_file):
         from xml.etree import ElementTree
@@ -86,4 +127,15 @@ class Shock():
             logging.error("    ERROR: %s could not be parsed", config_file)
 
 
+    def __getattr__(self, attr):
+        if (attr in self.asset_returns) and (attr in self.legend):
+            raise AttributeError('The same name exists in both legend and asset_returns.')
+        else:
+            try:
+                return self.legend[attr]
+            except:
+                try:
+                    return self.asset_returns[attr]
+                except:
+                    raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
     # -------------------------------------------------------------------------

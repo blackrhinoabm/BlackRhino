@@ -19,7 +19,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from src.measurement import Measurement
 from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
 
@@ -32,7 +31,6 @@ from abm_template.src.baserunner import BaseRunner
 #
 # -------------------------------------------------------------------------
 
-
 class Runner(BaseRunner):
     #
     #
@@ -43,7 +41,6 @@ class Runner(BaseRunner):
     identifier = ""
     num_sweeps = 0
 
-    #
     #
     # METHODS
     #
@@ -65,8 +62,8 @@ class Runner(BaseRunner):
 
         self.num_sweeps = int(environment.static_parameters['num_sweeps'])
 
-    # -------------------------------------------------------------------------
-
+        #For measurement
+        self.sweep_result_list = []
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
     # get_identifier
@@ -102,8 +99,7 @@ class Runner(BaseRunner):
         # loop over all time steps and do the updating
         # For each update step
 
-        #measurement = Measurement(environment, self)
-        #measurement.open_file()
+
 
         for i in range(self.num_sweeps):
 
@@ -111,12 +107,9 @@ class Runner(BaseRunner):
 
                 self.updater.do_update(environment, i)
 
-                #measurement.write_all_to_file()
+        self.sweep_result_list.append(self.updater.env_var_par_df)
 
-        print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
-        print("***\nThis run had the illiquidity coefficient %s " ) % (environment.static_parameters['illiquidity'])
+        self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
+        print("Check the simulation specific output file that was written as result_all_sweeps.csv in the main folder\n***")
 
-        print("Check the output file that was written as csv in the measurements folder\n***")
-
-        #measurement.close_file()
     # ------------------------------------------------------------------------
