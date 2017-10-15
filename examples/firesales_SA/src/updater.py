@@ -381,25 +381,27 @@ class Updater(BaseModel):
         self.env_var_par_df.to_csv("results_system_sweeps.csv")
 
         resultagentlist = []
-        resultagents_columns = []
+
         for k, v in self.all_agents_result_dictionary_with_dataframes.iteritems():
             resultagentlist.append(self.all_agents_result_dictionary_with_dataframes[k])
 
         "To get column names, we need to work around a bit\
         The next code takes all the different agents' header names\
         and puts them in a list called x"
-        for i in range(len(resultagentlist)):
-            resultagents_columns.append(resultagentlist[i].columns.values)
-            x = np.array([[resultagents_columns[i-1]],[resultagents_columns[i]]]).tolist()
+
+        resultagents_columns = np.array([resultagentlist[i].columns.values for i in range(len(resultagentlist))])
+
+        total = []
+        for i in range(len((resultagents_columns))):
+            for k in resultagents_columns[i]:
+                total.append(k)
 
         "However, x has a number of agents of sublists. We need to merge\
         them and put them all together in one list called total,\
         which we use to give our csv column names\
         This neat little code here does that (python can be really cool)"
-        total = []
-        for i in range(len(x)):
-            for k in x[i]:
-                total += k
+
+        
         "Finally we have a result dataframe we can write to csv!!"
         df_stacked = pd.concat([r for r in resultagentlist], axis=1,  ignore_index=True)
         df_stacked.columns = total

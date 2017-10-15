@@ -30,14 +30,14 @@ on Complexity through the grant RESINEE.
 #
 # -------------------------------------------------------------------------
 if __name__ == '__main__':
-
     from src.environment import Environment
     from src.runner import Runner
     import logging
+    import pandas as pd
 
 # We pass in the name of the environment xml as args[1] here:
 
-    args = ["configs/environment/", "firesales", "log/"]
+    args = [ "configs/environment/", "firesales", "log/"]
 
 #
 # INITIALIZATION
@@ -46,58 +46,64 @@ if __name__ == '__main__':
     identifier = str(args[1])
     log_directory = str(args[2])
 
-
 ####### Logging Configuration!!!
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         filename=log_directory + identifier + ".log", level=logging.INFO)
     logging.info('The program starts! Logging enabled.')
 ############
-
-
     environment = Environment(environment_directory, identifier)
     runner = Runner(environment)
-
 #
 # UPDATE STEP
 #
-
-    sim_result_list = []
-
     for i in range(int(environment.static_parameters['num_simulations'])):
+
         if i == 0:
 
             print("**********START simulation %s") % (i+1)
             environment.initialize(environment_directory, identifier)
             environment.shocks[0].asset_returns['m_14'] = -0.1
-            runner.initialize(environment)
-                    # do the run
-            runner.do_run(environment)
-            sim_result_list.append(runner.sweep_result_list)
 
-            print("***\nSimulation number %s had total number of %s sweeps" ) % (i+1, runner.num_sweeps)
-            print("***\nThis run had the illiquidity coefficient %s " ) % (environment.static_parameters['illiquidity'])
+            logging.info('  STARTED with run %s',  str(i))
+            runner.initialize(environment)
+            # do the run
+            runner.do_run(environment)
+            df1 = runner.updater.env_var_par_df
+            logging.info(' Run DONE')
+            logging.info("***\nSimulation number %s had total number of %s sweeps", i+1, str(runner.num_sweeps))
+            logging.info("***\nThis run had the illiquidity coefficient %s " , environment.static_parameters['illiquidity'])
 
         if i == 1:
             print("**********START simulation %s") % (i+1)
             environment.initialize(environment_directory, identifier)
             environment.shocks[0].asset_returns['m_14'] = -0.2
 
+            logging.info('  STARTED with run %s',  str(i))
             runner.initialize(environment)
             # do the run
             runner.do_run(environment)
+            df2 = runner.updater.env_var_par_df
+            logging.info(' Run DONE')
+            logging.info("***\nSimulation number %s had total number of %s sweeps", (i+1), str(runner.num_sweeps))
+            logging.info("***\nThis run had the illiquidity coefficient %s ", environment.static_parameters['illiquidity'])
 
-            sim_result_list.append(runner.sweep_result_list)
-            print("***\nSimulation number %s had total number of %s sweeps" ) % (i+1, runner.num_sweeps)
-            print("***\nThis run had the illiquidity coefficient %s " ) % (environment.static_parameters['illiquidity'])
+        if i == 2:
+            print("**********START simulation %s") % (i+1)
+            environment.initialize(environment_directory, identifier)
+            environment.shocks[0].asset_returns['m_14'] = -0.3
+            logging.info('  STARTED with run %s',  str(i))
+            runner.initialize(environment)
+            # do the run
+            runner.do_run(environment)
+            df3 = runner.updater.env_var_par_df
 
-        # print sim_result_list
-
-        logging.info('  STARTED with run %s',  str(i))
-        runner.initialize(environment)
-        # do the run
-        runner.do_run(environment)
-
-        logging.info(' Run DONE')
-
+            logging.info(' Run DONE')
+            logging.info("***\nSimulation number %s had total number of %s sweeps", (i+1), str(runner.num_sweeps))
+            logging.info("***\nThis run had the illiquidity coefficient %s ", environment.static_parameters['illiquidity'])
+            results_varnames = []
+            for i in runner.sweep_result_list[0]:
+                results_varnames.append(i)
+            df_all = pd.concat([df1, df2, df3], keys=["-10%", '-20%', "-30%"], ignore_index = False).to_csv("test.csv")
+            
     print('Program DONE! Fire-sales happend!')
     logging.info('FINISHED Program logging for run: %s \n', environment_directory + identifier + ".xml")

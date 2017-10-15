@@ -86,6 +86,13 @@ class Runner(BaseRunner):
         return self.num_sweeps
     # -------------------------------------------------------------------------
 
+    def traverse(self, item):
+        try:
+            for i in iter(item):
+                for j in self.traverse(i):
+                    yield j
+        except TypeError:
+            yield item
     # -------------------------------------------------------------------------
     # set_num_simulations
     # -------------------------------------------------------------------------
@@ -107,7 +114,7 @@ class Runner(BaseRunner):
 
                 self.updater.do_update(environment, i)
 
-        self.sweep_result_list.append(self.updater.env_var_par_df)
+                self.sweep_result_list.append(self.updater.env_var_par_df)
 
         self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
         print("Check the simulation specific output file that was written as result_all_sweeps.csv in the main folder\n***")
