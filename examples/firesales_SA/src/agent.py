@@ -159,6 +159,8 @@ class Agent(BaseAgent):
         self.state_variables['systemicness']= 0
         self.results_df = 0
 
+        self.current_weights = {}
+        self.balance_sheet_valuation = {}
 
 
     def get_parameters_from_file(self, agent_filename, environment):
@@ -198,13 +200,12 @@ class Agent(BaseAgent):
 
         self.state_variables['total_assets']  = self.state_variables['debt'] + self.state_variables['equity']
 
-        return self.state_variables['total_assets']
+        self.state_variables['cash_reserves'] = self.state_variables['total_assets'] * self.parameters['m_1']
 
     def update_balance_sheet(self):
 
         self.state_variables['debt'] = self.state_variables['debt'] + self.state_variables['total_asset_sales']
         self.state_variables['equity'] = self.state_variables['equity'] + (self.state_variables['shock_for_agent']  * self.state_variables['total_assets'])
-
         self.state_variables['total_assets'] = self.state_variables['debt'] + self.state_variables['equity']
 
     def check_accounts(self):
@@ -234,29 +235,57 @@ class Agent(BaseAgent):
 
     #Calculate direct losses (shock proportional to asset share times total assets)
     def calc_equity_losses(self):
-        # print self.shock_for_agent, self.total_assets, self.identifier
-
         self.state_variables["equity_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
 
         if self.identifier == "SBSA":
             print "***AGENT.PY***The direct losses for ", self.identifier, "are:", self.state_variables['equity_losses'], "(hit on its equity)"
 
+    def check_losses_against_capital_bufffer(self, environment, current_step):
 
-    #Calculate indirect losses
-    def calc_systemic_deleveraging_contribution(self, pre_shock_system_equity, current_step):
+        self.state_variables['cash_reserves'] =  self.parameters['m_1']*self.state_variables['total_assets']
+        x = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
+        x = -x
+        if self.state_variables['cash_reserves'] > x:
+            self.state_variables['cash_reserves'] = self.state_variables['cash_reserves'] - x
+            print self.state_variables['cash_reserves'], "Cash reserves are enough!!!, no fire-sale for", self.identifier
+        else:
+            self.state_variables['cash_reserves'] = 0
+            print self.state_variables['cash_reserves'], "Cash reserves are NOT enough!!!, Fire-sale for", self.identifier
 
-        if current_step>0:
+    def update_asset_weights(self, environment, current_step):
+            x = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
 
-            self.state_variables["losses_from_system_deleveraging"] = (self.state_variables['shock_for_agent'] * self.state_variables['total_assets'] )
-            # self.state_variables['systemicness']= self.state_variables["losses_from_system_deleveraging"] / pre_shock_system_equity
-            # return self.systemicness
-            # print self.systemicness*100, self.identifier
+            for p in self.parameters:
+                if not any(c in p for c in ( "leverage")):
+                    self.balance_sheet_valuation[p] = (self.parameters[p]*self.state_variables['total_assets'])
 
+            old_total = 0
+            for k, v in self.balance_sheet_valuation.iteritems():
+                old_total += v
+
+            new_cash = 0
+            for k, v in self.balance_sheet_valuation.iteritems():
+                if k ==("m_1"):
+                    new_cash = v + x
+                    self.balance_sheet_valuation[k] = new_cash
+
+            new_total = 0
+            for k, v in self.balance_sheet_valuation.iteritems():
+                new_total += v
+
+            #calculate new weights!
+            for k in set(self.parameters) & set(self.balance_sheet_valuation):
+                self.parameters[k]= float((self.balance_sheet_valuation[k] / (new_total)))
+
+            x = (self.state_variables['shock_for_agent'] * self.state_variables['total_assets'])
+            self.state_variables['total_assets']  = new_total
+            self.state_variables['equity'] =  self.state_variables['equity']+ x
 
     #This takes direct losses and multiplies it with leverages to get total shortfall
     def calc_total_asset_sales(self, environment, current_step):
 
         for shock in environment.shocks:
+
             self.state_variables['total_asset_sales'] = 0.0
 
             local_sum = 0.0   # not elegant, but safe, just to keep track of summing
@@ -277,17 +306,17 @@ class Agent(BaseAgent):
 #                    self.state_variables['total_asset_sales'] = self.state_variables['total_asset_sales'] + self.state_variables[k] * shock.asset_returns[k]
 #                self.state_variables['total_asset_sales'] = self.state_variables['total_assets'] * self.state_variables['total_asset_sales'] * self.state_variables['leverage']
 
-    def add_parameters_dealer(self, updater):
-
-        if any(c in self.identifier for c in ("SBSA", "ABSA", "NEDBANK", "DB", "JpM", "HSBC", "FNB", "CITYBANK", "INVESTEC")):
-            self.parameters['dealer']= 1.0
-            for k in self.parameters:
-                if k == 'm_14':
-                    self.state_variables['inventory_risky_asset']  =  self.parameters[k] * self.state_variables['total_assets']
-                    self.state_variables['inventory_risky_asset_quantity'] = self.state_variables['inventory_risky_asset'] / updater.prices['risky_asset']
-                    return self.state_variables['inventory_risky_asset']
-        else:
-            self.parameters['dealer']=0
+    # def add_parameters_dealer(self, updater):
+    #
+    #     if any(c in self.identifier for c in ("SBSA", "ABSA", "NEDBANK", "DB", "JpM", "HSBC", "FNB", "CITYBANK", "INVESTEC")):
+    #         self.parameters['dealer']= 1.0
+    #         for k in self.parameters:
+    #             if k == 'm_14':
+    #                 self.state_variables['inventory_risky_asset']  =  self.parameters[k] * self.state_variables['total_assets']
+    #                 self.state_variables['inventory_risky_asset_quantity'] = self.state_variables['inventory_risky_asset'] / updater.prices['risky_asset']
+    #                 return self.state_variables['inventory_risky_asset']
+    #     else:
+    #         self.parameters['dealer']=0
 
     def append_results_to_dataframe(self, current_step):
         import pandas as pd
@@ -323,10 +352,8 @@ class Agent(BaseAgent):
         above. But DON't forget to change method\
         def update_results_to_dataframe below\
         and uncomment "
-        # self.results_df = pd.concat([df2, df1, df3], axis=1)
-        # logging.info('Agent.py; function: Appended agents parameter and state_variables results to %s dataframe' %self.identifier )
-
-
+        self.results_df = pd.concat([df2, df1, df3], axis=1)
+        logging.info('Agent.py; function: Appended agents parameter and state_variables results to %s dataframe' %self.identifier )
         return self.results_df
 
 
@@ -347,9 +374,8 @@ class Agent(BaseAgent):
             "To add parameters uncomment, but also change method\
             def  append_results_to_dataframe in above!!\
             uncomment "
-            # for p in self.parameters:
-            #     temp.append(self.parameters[p])
-
+            for p in self.parameters:
+                temp.append(self.parameters[p])
             x = list(self.results_df.columns.values)
 
             dftemp = pd.DataFrame([temp], columns=x)

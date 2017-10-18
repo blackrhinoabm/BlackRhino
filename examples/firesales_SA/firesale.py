@@ -34,17 +34,18 @@ if __name__ == '__main__':
     from src.runner import Runner
     import logging
     import pandas as pd
+    import sys
 
 # We pass in the name of the environment xml as args[1] here:
-
-    args = [ "configs/environment/", "firesales", "log/"]
+    print "The name of the script is ", sys.argv[0]
+    # args = []
 
 #
 # INITIALIZATION
 #
-    environment_directory = str(args[0])
-    identifier = str(args[1])
-    log_directory = str(args[2])
+    environment_directory = str("configs/environment/")
+    identifier = str("firesales")
+    log_directory = str("log/")
 
 ####### Logging Configuration!!!
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
@@ -53,6 +54,7 @@ if __name__ == '__main__':
 ############
     environment = Environment(environment_directory, identifier)
     runner = Runner(environment)
+
 #
 # UPDATE STEP
 #
@@ -62,7 +64,7 @@ if __name__ == '__main__':
 
             print("**********START simulation %s") % (i+1)
             environment.initialize(environment_directory, identifier)
-            environment.shocks[0].asset_returns['m_14'] = -0.1
+            environment.shocks[0].asset_returns[sys.argv[4]] = float(sys.argv[1])
 
             logging.info('  STARTED with run %s',  str(i))
             runner.initialize(environment)
@@ -76,7 +78,7 @@ if __name__ == '__main__':
         if i == 1:
             print("**********START simulation %s") % (i+1)
             environment.initialize(environment_directory, identifier)
-            environment.shocks[0].asset_returns['m_14'] = -0.2
+            environment.shocks[0].asset_returns[sys.argv[4]] = float(sys.argv[2])
 
             logging.info('  STARTED with run %s',  str(i))
             runner.initialize(environment)
@@ -90,7 +92,7 @@ if __name__ == '__main__':
         if i == 2:
             print("**********START simulation %s") % (i+1)
             environment.initialize(environment_directory, identifier)
-            environment.shocks[0].asset_returns['m_14'] = -0.3
+            environment.shocks[0].asset_returns[sys.argv[4]] = float(sys.argv[3])
             logging.info('  STARTED with run %s',  str(i))
             runner.initialize(environment)
             # do the run
@@ -103,7 +105,7 @@ if __name__ == '__main__':
             results_varnames = []
             for i in runner.sweep_result_list[0]:
                 results_varnames.append(i)
-            df_all = pd.concat([df1, df2, df3], keys=["-10%", '-20%', "-30%"], ignore_index = False).to_csv("test.csv")
-            
+            df_all = pd.concat([df1, df2, df3], keys=[ float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3])], ignore_index = False).to_csv("test.csv")
+
     print('Program DONE! Fire-sales happend!')
     logging.info('FINISHED Program logging for run: %s \n', environment_directory + identifier + ".xml")

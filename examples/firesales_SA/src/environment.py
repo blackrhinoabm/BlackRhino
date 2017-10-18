@@ -51,6 +51,8 @@ class Environment(BaseConfig):
     static_parameters["illiquidity"] = ""
 
 
+
+
     variable_parameters = {}
     assets = {}
 
@@ -189,9 +191,14 @@ class Environment(BaseConfig):
         self.variable_parameters['system_TAS'] = 0
         self.variable_parameters['system_assets'] = 0
         self.variable_parameters['system_equity'] = 0
+        self.variable_parameters['system_equity_pre_shock'] = 0
         self.variable_parameters['system_debt'] = 0
+        self.variable_parameters['cum_equity_losses'] = 0
+        self.variable_parameters['rel_equity_losses'] = 0
+
 
         self.variable_parameters['system_equity_losses'] = 0
+        self.variable_parameters['system_cash_reserves'] = 0
 
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
