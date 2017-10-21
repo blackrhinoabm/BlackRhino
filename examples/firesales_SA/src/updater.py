@@ -110,13 +110,17 @@ class Updater(BaseModel):
 
                 agent.append_results_to_dataframe(current_step)
             self.plug_agents_and_system_results_together(environment, current_step)
+
+            #############
             self.do_firstround_effects(environment, current_step)
+            #############
 
         else:
             logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
 
+            #########
             self.do_secondround_effects(environment, current_step)
-
+            ########
             "Uncomment the following if you want beginning and\
             end of the period (2 results per current_steps). Default leave out!)"
             # for agent in environment.agents:
@@ -161,9 +165,9 @@ class Updater(BaseModel):
             if agent.state_variables['cash_reserves'] ==0:
                 agent.calc_total_asset_sales(environment, current_step)
                 agent.calc_equity_losses()
-
             else:
                 pass
+
 
             "The next method call is very important."
             "We loop over the m asset classes in"
@@ -179,6 +183,8 @@ class Updater(BaseModel):
             environment.variable_parameters['system_TAS'] = environment.variable_parameters['system_TAS'] + self.asset_sales_across_banks_per_asset_class[i]
         print "***Updater.py*** In Step:", (current_step+1) , "Total assets whiped out by shock:", environment.variable_parameters['system_TAS']
 
+        for agent in environment.agents:
+            agent.calc_systemicness(environment, current_step)
 
     def do_secondround_effects(self, environment, current_step):
         print "2.**** UPDATER.PY*** SECOND ROUND EFFECTS FOR THIS SIMULATION:"
@@ -199,6 +205,13 @@ class Updater(BaseModel):
 
         for agent in environment.agents:
             agent.update_balance_sheet()
+
+            if agent.state_variables['equity']<=0:
+                agent.state_variables['equity'] = 0
+                agent.state_variables['debt'] = 0
+                agent.state_variables['total_assets'] = 0
+            else:
+                pass
 
             environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
             environment.variable_parameters['system_equity'] += agent.state_variables['equity']
@@ -262,6 +275,9 @@ class Updater(BaseModel):
             environment.variable_parameters['system_TAS'] = environment.variable_parameters['system_TAS'] + self.asset_sales_across_banks_per_asset_class[i]
 
         print "***UPDATER.PY Assets whiped out by feedback effects:", environment.variable_parameters['system_TAS'], "in step:", (current_step+1)
+
+        for agent in environment.agents:
+            agent.calc_systemicness(environment, current_step)
 
         # "Updating  balance sheets!"
         # "reset the system values to not double count"

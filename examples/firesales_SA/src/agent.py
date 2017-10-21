@@ -204,9 +204,14 @@ class Agent(BaseAgent):
 
     def update_balance_sheet(self):
 
-        self.state_variables['debt'] = self.state_variables['debt'] + self.state_variables['total_asset_sales']
-        self.state_variables['equity'] = self.state_variables['equity'] + (self.state_variables['shock_for_agent']  * self.state_variables['total_assets'])
-        self.state_variables['total_assets'] = self.state_variables['debt'] + self.state_variables['equity']
+        if self.state_variables['total_assets'] - self.state_variables['total_asset_sales'] >0:
+            self.state_variables['debt'] = self.state_variables['debt'] + self.state_variables['total_asset_sales']
+            self.state_variables['equity'] = self.state_variables['equity'] + (self.state_variables['shock_for_agent']  * self.state_variables['total_assets'])
+            self.state_variables['total_assets'] = self.state_variables['debt'] + self.state_variables['equity']
+
+        else:
+            self.state_variables['total_asset_sales'] = self.state_variables['total_assets']
+            self.state_variables['equity'] = -1
 
     def check_accounts(self):
         if self.state_variables['total_assets'] == self.state_variables['equity'] + self.state_variables['debt']:
@@ -305,7 +310,12 @@ class Agent(BaseAgent):
                     #print self.state_variables['total_asset_sales'],  self.state_variables[k], shock.asset_returns[k]
 #                    self.state_variables['total_asset_sales'] = self.state_variables['total_asset_sales'] + self.state_variables[k] * shock.asset_returns[k]
 #                self.state_variables['total_asset_sales'] = self.state_variables['total_assets'] * self.state_variables['total_asset_sales'] * self.state_variables['leverage']
-
+    def calc_systemicness(self, environment, current_step):
+        self.state_variables["losses_from_system_deleveraging"] = (self.state_variables['shock_for_agent'] * self.state_variables['total_assets'] )
+        try:
+            self.state_variables['systemicness'] = self.state_variables["losses_from_system_deleveraging"] / environment.variable_parameters['system_equity_losses']
+        except:
+            pass
     # def add_parameters_dealer(self, updater):
     #
     #     if any(c in self.identifier for c in ("SBSA", "ABSA", "NEDBANK", "DB", "JpM", "HSBC", "FNB", "CITYBANK", "INVESTEC")):
