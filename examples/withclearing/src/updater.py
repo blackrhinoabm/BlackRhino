@@ -98,6 +98,9 @@ class Updater(BaseModel):
         # As a first step, we accrue all interest over the transactions
         # Thus, important to notice to keep 0 as interest by default
         # Unless transaction should carry interest
+
+        print "Accounts:" , environment.banks[0].identifier, environment.banks[0].accounts
+
         self.accrue_interests(environment, time)
         # Then agents get their labour endowment for the step (work hours to spend)
         self.endow_labour(environment, time)
@@ -134,9 +137,11 @@ class Updater(BaseModel):
         # The above is important as the same transactions may be on the books
         # of different agents, we don't want to double count the interest
         for agent in environment.agents_generator():  # Iterate over all agents
+
             for tranx in agent.accounts:  # Iterate over all transactions
                 if tranx.identifier not in done_list:  # If not amended previously
                     # The below adds the interest on the principal amount
+
                     tranx.amount = tranx.amount + tranx.amount * tranx.interest
                     # The below makes sure that we don't double count
                     done_list.append(tranx.identifier)

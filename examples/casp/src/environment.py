@@ -31,38 +31,25 @@ from abm_template.src.baseconfig import BaseConfig
 #
 # -------------------------------------------------------------------------
 class Environment(BaseConfig):
+
+    from state import State
+    from parameters import Parameters
     #
     #
     # VARIABLES
     #
-    #
+    parameters = Parameters()
+    state = State()
+
     identifier = ""  # identifier of the specific bank
 
-    banks = []  # a list containing all banks (instances of class Bank)
-    households = []  # a list containing all households (instances of class Household)
+    funds = []  # a list containing all funds (instances of class fund)
     firms = []  # a list containing all firms (instances of class Firm)
     agents = []
 
     static_parameters = {}  # a dictionary containing all static parameters (with a fixed value)
     variable_parameters = {}  # a dictionary containing all variable parameters (with a range of possible values)
-    # DO NOT EVER ASSIGN PARAMETERS BY HAND AS DONE BELOW IN PRODUCTION CODE
-    # ALWAYS READ THE PARAMETERS FROM CONFIG FILES
-    # OR USE THE FUNCTIONS FOR SETTING / CHANGING VARIABLES
-    # CONVERSELY, IF YOU WANT TO READ THE VALUE, DON'T USE THE FULL NAMES
-    # INSTEAD USE __getattr__ POWER TO CHANGE THE COMMAND FROM
-    # instance.static_parameters["xyz"] TO instance.xyz - THE LATTER IS PREFERRED
-    static_parameters["num_simulations"] = 0  # number of simulations to be performed
-    static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
 
-    static_parameters["num_banks"] = 0  # number of banks in a simulation
-    static_parameters["num_firms"] = 0  # number of firms in a simulation
-    static_parameters["num_households"] = 0  # number of households in a simulation
-
-    static_parameters["bank_directory"] = ""  # directory containing bank config files
-    static_parameters["firm_directory"] = ""  # directory containing firm config files
-    static_parameters["household_directory"] = ""  # directory containing household config files
-
-    #
     #
     # CODE
     #
@@ -152,7 +139,7 @@ class Environment(BaseConfig):
     # generator yielding all agents
     # -------------------------------------------------------------------------
     def agents_generator(self):
-        # self.agents = [self.banks, self.firms, self.households]
+        # self.agents = [self.funds, self.firms, self.households]
         return super(Environment, self).agents_generator()
     # -------------------------------------------------------------------------
 
@@ -161,7 +148,7 @@ class Environment(BaseConfig):
     # returns an agent based on the id
     # -------------------------------------------------------------------------
     def get_agent_by_id(self, ident):
-        # self.agents = [self.banks, self.firms, self.households]
+        # self.agents = [self.funds, self.firms, self.households]
         return super(Environment, self).get_agent_by_id(ident)
     # -------------------------------------------------------------------------
 
@@ -170,8 +157,8 @@ class Environment(BaseConfig):
     # if the attribute isn't found by Python we tell Python
     # to look for it first in static and then in variable parameters
     # which allows for directly fetching parameters from the Environment
-    # i.e. environment.num_banks instead of a bit more bulky
-    # environment.static_parameters["num_banks"]
+    # i.e. environment.num_funds instead of a bit more bulky
+    # environment.static_parameters["num_funds"]
     # makes sure we don't have it in both containers, which
     # would be bad practice [provides additional checks]
     # -------------------------------------------------------------------------
@@ -220,15 +207,64 @@ class Environment(BaseConfig):
     # parameters to whatever is in the config file
     # -------------------------------------------------------------------------
     def read_xml_config_file(self, config_file_name):
-        super(Environment, self).read_xml_config_file(config_file_name)
-    # -------------------------------------------------------------------------
+    	from xml.etree import ElementTree
+        xmlText = open(config_file_name).read()
+        element = ElementTree.XML(xmlText)
+        self.identifier = element.attrib['identifier']
+        self.parameters.identifier = self.identifier
 
-    # -------------------------------------------------------------------------
+		# loop over all entries in the xml file
+        for subelement in element:
+			# the first set of parameters will be valid for the whole simulation
+			if (subelement.attrib['name'] == 'num_sweeps'):
+				self.parameters.num_sweeps = int(subelement.attrib['value'])
+			if (subelement.attrib['name'] == 'num_simulations'):
+				self.parameters.num_simulations = int(subelement.attrib['value'])
+			if (subelement.attrib['name'] == 'num_firms'):
+				self.parameters.num_firms = int(subelement.attrib['value'])
+			if (subelement.attrib['name'] == 'fund_directory'):
+				self.parameters.fund_directory = str(subelement.attrib['value'])
+			if (subelement.attrib['name'] == 'firm_directory'):
+				self.parameters.firm_directory = str(subelement.attrib['value'])
+
+			# now also read in the parameters that can change during the simulation
+			if (subelement.attrib['type'] == 'changing'):
+				name = subelement.attrib['name']
+				value = float(subelement.attrib['value'])
+				validFrom = subelement.attrib['validity'].rsplit("-")[0]
+				validTo = subelement.attrib['validity'].rsplit("-")[1]
+				self.parameters.add_parameter(name,  value,  validFrom, validTo)
+
+        # loop over all entries in the xml file
+        for subelement in element:
+            name = subelement.attrib['name']
+
+            if subelement.attrib['type'] == 'static':
+                try:  # we see whether the value is a float
+                    value = float(subelement.attrib['value'])
+                except:  # if not, it is a string
+                    value = str(subelement.attrib['value'])
+                self.static_parameters[name] = value
+
+            if subelement.attrib['type'] == 'changing':
+                try:  # we see whether the value is a float
+                    value = float(subelement.attrib['value'])
+                except:  # if not, it is a string
+                    value = str(subelement.attrib['value'])
+                self.variable_parameters[name] = value
+
+        # print self.variable_parameters
+        # print self.static_parameters
+        # print self.parameters.print_parameters()
+    # -----------------------------------------------------------------
+
+    # -----------------------------------------------------------------
     # initialize(self,  environment_directory,  identifier)
     # initializes the environment, initializing all the variables
     # reading the config file from supplied environment_directory and
     # identifier, and initializes all agents from the directories
     # supplied in the main config file
+    #
     # -------------------------------------------------------------------------
     def initialize(self,  environment_directory,  identifier):
         self.identifier = identifier
@@ -236,12 +272,9 @@ class Environment(BaseConfig):
         self.static_parameters = {}
         self.static_parameters["num_simulations"] = 0
         self.static_parameters["num_sweeps"] = 0
-        self.static_parameters["num_banks"] = 0
         self.static_parameters["num_firms"] = 0
-        self.static_parameters["num_households"] = 0
-        self.static_parameters["bank_directory"] = ""
+        self.static_parameters["fund_directory"] = ""
         self.static_parameters["firm_directory"] = ""
-        self.static_parameters["household_directory"] = ""
         self.variable_parameters = {}
 
         # first, read in the environment file
@@ -249,89 +282,84 @@ class Environment(BaseConfig):
         self.read_xml_config_file(environment_filename)
         logging.info("  environment file read: %s",  environment_filename)
 
-        # then read in all the banks
-        if (self.bank_directory != ""):
-            if (self.bank_directory != "none"):  # none is used for tests only
-                self.initialize_banks_from_files(self.bank_directory)
-                logging.info("  banks read from directory: %s",  self.bank_directory)
+        # then read in all the funds
+        if (self.fund_directory != ""):
+            if (self.fund_directory != "none"):  # none is used for tests only
+                self.initialize_funds_from_files(self.fund_directory, 0, 0)
+                logging.info("  funds read from directory: %s",  self.fund_directory)
         else:
             logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
-        # then read in all the firms
-        if (self.firm_directory != ""):
-            if (self.firm_directory != "none"):  # none is used for tests only
-                self.initialize_firms_from_files(self.firm_directory)
-                logging.info("  firms read from directory: %s",  self.firm_directory)
-        else:
-            logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
-        # then read in all the households
-        if (self.household_directory != ""):
-            if (self.household_directory != "none"):  # none is used for tests only
-                self.initialize_households_from_files(self.household_directory)
-                logging.info("  households read from directory: %s",  self.household_directory)
-        else:
-            logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
-
-        # add agents to the list of all agents
-        self.agents = [self.banks, self.firms, self.households]
-
-        # then, initialize transactions from the config files for banks
-        if (self.bank_directory != ""):
-            if (self.bank_directory != "none"):  # none is used for tests only
-                self.read_transactions_for_banks(self.bank_directory)
-                logging.info("  banks' transactions read from directory: %s",  self.bank_directory)
-        else:
-            logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
-
-        # then, initialize transactions from the config files for firms
-        if (self.firm_directory != ""):
-            if (self.firm_directory != "none"):  # none is used for tests only
-                self.read_transactions_for_firms(self.firm_directory)
-                logging.info("  firms' transactions read from directory: %s",  self.firm_directory)
-        else:
-            logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
-
-        # then, initialize transactions from the config files for households
-        # if (self.household_directory != ""):
-        #     if (self.household_directory != "none"):  # none is used for tests only
-        #         self.read_transactions_for_households(self.household_directory)
-        #         logging.info("  households read from directory: %s",  self.household_directory)
+        #
+        # # then read in all the firms
+        # if (self.firm_directory != ""):
+        #     if (self.firm_directory != "none"):  # none is used for tests only
+        #         self.initialize_firms_from_files(self.firm_directory)
+        #         logging.info("  firms read from directory: %s",  self.firm_directory)
         # else:
-        #     logging.error("ERROR: no household_directory given in %s\n",  environment_filename)
+        #     logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
+        #
+        # # add agents to the list of all agents
+        # self.agents = [self.funds, self.firms]
+
+
+    # transaction
+    # #
+    # #
+    #     # then, initialize transactions from the config files for funds
+    #     if (self.fund_directory != ""):
+    #         if (self.fund_directory != "none"):  # none is used for tests only
+    #             self.read_transactions_for_funds(self.fund_directory)
+    #             logging.info("  funds' transactions read from directory: %s",  self.fund_directory)
+    #     else:
+    #         logging.error("ERROR: no fund_directory given in %s\n",  environment_filename)
+    #
+    #     # then, initialize transactions from the config files for firms
+    #     if (self.firm_directory != ""):
+    #         if (self.firm_directory != "none"):  # none is used for tests only
+    #             self.read_transactions_for_firms(self.firm_directory)
+    #             logging.info("  firms' transactions read from directory: %s",  self.firm_directory)
+    #     else:
+    #         logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
+
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
-    # initialize_banks_from_files(self,  bank_directory)
-    # banks have to be initialized for each simulation as a number of
-    # banks might become inactive in the previous simulation
+    # initialize_funds_from_files(self,  fund_directory)
+    # funds have to be initialized for each simulation as a number of
+    # funds might become inactive in the previous simulation
     # this reads all config files in the provided directory and
-    # initializes banks with the contents of these configs
+    # initializes funds with the contents of these configs
     # -------------------------------------------------------------------------
-    def initialize_banks_from_files(self,  bank_directory):
-        from src.bank import Bank
-        # this routine is called more than once, so we have to reset the list of banks each time
-        while len(self.banks) > 0:
-            self.banks.pop()
+    def initialize_funds_from_files(self,  fund_directory, time, state):
+        from src.fund import Fund
+        # this routine is called more than once, so we have to reset the list of funds each time
+        while len(self.funds) > 0:
+            self.funds.pop()
         # we list all the files in the specified directory
-        listing = os.listdir(bank_directory)
+        listing = os.listdir(fund_directory)
         # and check if the number of files is in line with the parameters
-        if (len(listing) != self.num_banks):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
-                          bank_directory,  str(len(listing)), str(self.num_banks))
+        self.num_funds = len(listing) 
+
         # we read the files sequentially
+
         for infile in listing:
-            bank = Bank()
-            bank.get_parameters_from_file(bank_directory + infile,  self)
-            # and read parameters to the banks, only to add them to the environment
-            self.banks.append(bank)
-            # print "Accounts:" , self.banks[0].identifier, self.banks[0].accounts
+            fund = Fund()
+            fund.get_parameters_from_file(fund_directory + infile,  self, self.num_funds, time, self.get_state(0))
+            # and read parameters to the funds, only to add them to the environment
+            self.funds.append(fund)
+
+
+            # print fund
+            # print "Accounts:" , self.funds[0].identifier, self.funds[0].accounts
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # initialize_firms_from_files
-    # banks have to be initialized for each simulation as a number of
-    # banks might become inactive in the previous simulation
+    # funds have to be initialized for each simulation as a number of
+    # funds might become inactive in the previous simulation
     # this reads all config files in the provided directory and
     # initializes firms with the contents of these configs
     # -------------------------------------------------------------------------
@@ -354,44 +382,105 @@ class Environment(BaseConfig):
             self.firms.append(firm)
     # -------------------------------------------------------------------------
 
-    # -------------------------------------------------------------------------
-    # initialize_households_from_files
-    # households have to be initialized for each simulation as a number of
-    # households might become inactive in the previous simulation
-    # this reads all config files in the provided directory and
-    # initializes households with the contents of these configs
-    # -------------------------------------------------------------------------
-    def initialize_households_from_files(self,  household_directory):
-        from src.household import Household
-        # this routine is called more than once, so we have to reset the list of households each time
-        while len(self.households) > 0:
-            self.households.pop()
-        # we list all the files in the specified directory
-        listing = os.listdir(household_directory)
-        # and check if the number of files is in line with the parameters
-        if (len(listing) != self.num_households):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
-                          household_directory,  str(len(listing)), str(self.num_households))
-        # we read the files sequentially
-        for infile in listing:
-            household = Household()
-            household.get_parameters_from_file(household_directory + infile,  self)
-            # and read parameters to the firms, only to add them to the environment
-            self.households.append(household)
-    # -------------------------------------------------------------------------
+	#-------------------------------------------------------------------------
+	# get_state
+	#-------------------------------------------------------------------------
+    def get_state(self,  time): # TODO bring parameters in same order as in environment file and in state.__str__()
+		# for each time t in the simulation return the actual set of paramet
+
+        for parameter in self.parameters.parameters:
+			validFrom = int(parameter['validity'][0])
+			validTo = int(parameter['validity'][1])
+			if (int(time) >= int(validFrom)) and (int(time) <= int(validTo)): # we have a valid parameterset
+                # if parameter['type']=='thetaBank':
+                #     self.state.thetaBank = float(parameter['value'])
+				if parameter['type']=='global_assets_under_management':
+					self.state.global_assets_under_management = float(parameter['value'])
+                # if parameter['type']=='rb':
+				# 	self.state.rb = float(parameter['value'])
+				# if parameter['type']=='rd':
+				# 	self.state.rd = float(parameter['value'])
+				# if parameter['type']=='r':
+				# 	self.state.r = float(parameter['value'])
+				# if parameter['type']=='collateralQuality':
+				# 	self.state.collateralQuality = float(parameter['value'])
+				# if parameter['type']=='successProbabilityFirms':
+				# 	self.state.successProbabilityFirms = float(parameter['value'])
+				if parameter['type']=='num_funds':
+					self.state.num_funds = float(parameter['value'])
+				if parameter['type']=='scaleFactorHouseholds':
+					self.state.scaleFactorHouseholds = float(parameter['value'])
+				# if parameter['type']=='dividendLevel':
+				# 	self.state.dividendLevel = float(parameter['value'])
+				# if parameter['type']=='pFinancial':
+				# 	self.state.pFinancial = float(parameter['value'])
+				# if parameter['type']=='rhoFinancial':
+				# 	self.state.rhoFinancial = float(parameter['value'])
+				# if parameter['type']=='pReal':
+				# 	self.state.pReal = float(parameter['value'])
+				# if parameter['type']=='rhoReal':
+				# 	self.state.rhoReal = float(parameter['value'])
+				# if parameter['type']=='xiBank':
+				# 	self.state.xiBank = float(parameter['value'])
+				# if parameter['type']=='thetaBank':
+				# 	self.state.thetaBank = float(parameter['value'])
+				# if parameter['type']=='rhoBank':
+				# 	self.state.rhoBank = float(parameter['value'])
+				# if parameter['type']=='shockType':
+				# 	self.state.shockType = int(parameter['value'])
+				# if parameter['type']=='gammaBank':
+				# 	self.state.gammaBank = float(parameter['value'])
+				# if parameter['type']=='assetNumber':
+				# 	self.state.assetNumber=float(parameter['value'])
+				# if parameter['type']=='liquidationDiscountFactor':
+				# 	self.state.liquidationDiscountFactor = float(parameter['value'])
+				# if parameter['type']=='riskAversionDiscountFactor':
+				# 	self.state.riskAversionDiscountFactor = float(parameter['value'])
+				# if parameter['type']=='riskAversionAmplificationFactor':
+				# 	self.state.riskAversionAmplificationFactor = float(parameter['value'])
+				# if parameter['type']=='interbankLoanMaturity':
+				# 	self.state.interbankLoanMaturity = float(parameter['value'])
+				# if parameter['type']=='firmLoanMaturity':
+				# 	self.state.firmLoanMaturity = float(parameter['value'])
+				# if parameter['type']=='sifiSurchargeFactor':
+				# 	self.state.sifiSurchargeFactor = float(parameter['value'])
+				# if parameter['type']=='requiredCapitalRatio':
+				# 	self.state.requiredCapitalRatio = float(parameter['value'])
+				# if parameter['type']=='liquidityCoverageRatio':
+				# 	self.state.liquidityCoverageRatio = float(parameter['value'])
+				# if parameter['type']=='netStableFundingRatio':
+				# 	self.state.netStableFundingRatio = float(parameter['value'])
+				# if parameter['type']=='leverageRatio':
+				# 	self.state.leverageRatio = float(parameter['value'])
+
+		#
+		# at this point we have all the variables from the parameters[] list
+		# now we need to update them to incorporate past defaults to calculate
+		# new return and volatility for real and financial assets
+		# self.state.update_state(time)
+        return self.state
+	#--------------------------------------------
 
     # -------------------------------------------------------------------------
     # read_transactions_from_files(self,  bank_directory)
-    # reads transactions for banks from the config files
+    # reads transactions for funds from the config files
     # -------------------------------------------------------------------------
-    def read_transactions_for_banks(self,  bank_directory):
+    def allocate_fund_size(self, state, time):
+
+        print state.global_assets_under_management
+
+        self.num_funds = num_funds
+
+
+
+    def read_transactions_for_funds(self,  bank_directory):
         from xml.etree import ElementTree
         # we list all the files in the specified directory
         listing = os.listdir(bank_directory)
         # and check if the number of files is in line with the parameters
-        if (len(listing) != self.num_banks):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_banks (=%s)",
-                          bank_directory,  str(len(listing)), str(self.num_banks))
+        if (len(listing) != self.num_funds):
+            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_funds (=%s)",
+                          bank_directory,  str(len(listing)), str(self.num_funds))
         # we read the files sequentially)
         for infile in listing:
             # we open the file and find the identifier of the config
@@ -426,30 +515,6 @@ class Environment(BaseConfig):
             firm = self.get_agent_by_id(identifier)
             # then we read the transactions from the config to the appropriate firm
             firm.get_transactions_from_file(firm_directory + infile, self)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # read_transactions_for_households
-    # reads transactions for households from the config files
-    # -------------------------------------------------------------------------
-    def read_transactions_for_households(self,  household_directory):
-        from xml.etree import ElementTree
-        # we list all the files in the specified directory
-        listing = os.listdir(household_directory)
-        # and check if the number of files is in line with the parameters
-        if (len(listing) != self.num_households):
-            logging.error("    ERROR: number of configuration files in %s (=%s) does not match num_households (=%s)",
-                          household_directory,  str(len(listing)), str(self.num_households))
-        # we read the files sequentially
-        for infile in listing:
-            # we open the file and find the identifier of the config
-            xmlText = open(household_directory + infile).read()
-            element = ElementTree.XML(xmlText)
-            identifier = element.attrib['identifier']
-            # and we find the firm with this identifier
-            household = self.get_agent_by_id(identifier)
-            # then we read the transactions from the config to the appropriate firm
-            household.get_transactions_from_file(household_directory + infile, self)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
