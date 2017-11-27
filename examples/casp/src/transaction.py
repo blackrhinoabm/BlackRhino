@@ -72,7 +72,10 @@ class Transaction(BaseTransaction):
     # use remove_transaction() to take transaction off the books
     # -------------------------------------------------------------------------
     def __del__(self):
+        # pass
+        print "deleted"
         super(Transaction, self).__del__()
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

@@ -36,15 +36,15 @@ if __name__ == '__main__':
 
 			value_theta = random.uniform(3,10)
 
-			text = "<fund identifier='" + str(i) + "'>\n"
+			text = "<fund identifier='fund-" + str(i) + "'>\n"
 			text = text + "    <parameter type='parameters' name='domicile' value='" + "0" + "'></parameter>\n"
 			text = text + "    <parameter type='state_variables' name='theta' value='" + str(value_theta) + "' validity='0-1000'></parameter>\n"
 			text = text + "</fund>\n"
 
 		else:
-			value_theta = random.uniform(0, 5)
+			value_theta = random.uniform(3, 10)
 
-			text = "<fund identifier='" + str(i) + "'>\n"
+			text = "<fund identifier='fund-" + str(i) + "'>\n"
 			text = text + "    <parameter type='parameters' name='domicile' value='" + "1" + "' validity='0-1000'></parameter>\n"
 			text = text + "    <parameter type='state_variables' name='theta' value='" + str(value_theta) + "' validity='0-1000'></parameter>\n"
 			text = text + "</fund>\n"

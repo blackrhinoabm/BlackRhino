@@ -78,18 +78,74 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def do_update(self, environment, time):
 
-        self.allocate_returns(environment, time)
+        self.endow_returns_expectations(environment, time)
 
-        for index, fund in enumerate(environment.funds):
+        #pre-update stuff, could also be in environment
+        for fund in (environment.funds):
             fund.calc_optimal_pf(environment)
-            fund.endow_funds_with_shares(time)
         logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
-        logging.info("Endowed funds with investment_shares on the liability side in fund.accounts")
 
+
+        # Initialize investment shares:
+
+            # print environment.agents[0][i].identifier
+        fund_object = environment.get_agent_by_id(environment.agents[0][2].identifier)
+        fund_object.endow_funds_with_shares(environment, time, environment.agents[0][2].identifier)
+
+        print fund_object
+
+        hoops = environment.get_agent_by_id(environment.agents[0][6].identifier)
+        hoops.endow_funds_with_shares(environment, time, environment.agents[0][6].identifier)
+        print hoops.accounts[0]
+
+        # fund_object2 = environment.get_agent_by_id(environment.agents[0][1].identifier)
+        # fund_object2.endow_funds_with_shares(environment, time, environment.agents[0][1].identifier)
+        #
+        # print fund_object2
+        # for index, identifier_values in enumerate(list_with_identifiers):
+        #     for index2, fund_objects in enumerate(environment.funds):
+        #         if index == index2:
+        #             fund_object = environment.get_agent_by_id(identifier_values)
+        #         print fund_object
+                # fund_object.endow_funds_with_shares(environment, time)
+
+                    # fund_object.endow_funds_with_shares(environment, time)
+                    # fund_object.endow_funds_with_shares(environment, time)
+
+        # identifier = environment.agents[0][1].identifier
+        # for fund in (environment.agents[0][0]):
+        #     print fund.identifier
+        # identifier = self.identifier
+
+        # print len(fund_object.accounts)
+
+
+
+        # for i in environment.funds:
+        #     i.endow_funds_with_shares(environment, time)
+        # environment.get_agent_by_id("fund-1")
+            # print fund.identifier
+            # fund.endow_funds_with_shares(time)
+            # for i in fund.accounts:
+            #     print fund.identifier, fund.total_assets, i
+        # logging.info("Endowed funds with investment_shares on the liability side in fund.accounts")
+
+        #Now we're talking
+        self.sell_ama_priced(environment, time)
+        self.sell_eme_priced(environment, time)
 
 
     # -----------------------------------------------------------------------
-    def allocate_returns(self, environment, time):
+
+    def sell_ama_priced(self, environment, time):
+        pass
+
+    def sell_eme_priced(self, environment, time):
+        pass
+
+
+    #This function is used in the beginning so funds have expected returns
+    def endow_returns_expectations(self, environment, time):
         for i, value in enumerate(environment.initialize_ame_returns()):
             for k, v in enumerate(environment.funds):
                 if i == k:
@@ -111,40 +167,3 @@ class Updater(BaseModel):
         random.seed(9001)
         dividers = sorted(random.sample(xrange(1, total), n - 1))
         return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
-
-### Moved this to environment to call after initializing environment and agents
-    # def allocate_fund_size(self, environment):
-    #     # default is 20% eme and 80% ame market cap
-    #     sum_ame = 0
-    #     sum_eme = 0
-    #     for fund in environment.funds:
-    #         if fund.parameters['domicile'] == 0:
-    #             sum_ame += 1
-    #         if fund.parameters['domicile'] == 1:
-    #             sum_eme += 1
-    #
-    #     list_temp_eme  = []
-    #     list_eme = []
-    #     for fund in environment.funds:
-    #         if fund.domicile == 1.0:
-    #             list_temp_eme = self.divide_sum(int(sum_eme), int((environment.global_assets_under_management)*0.2))
-    #             list_eme.append(fund)
-    #     # itrange = list(range(0, len(list_temp)))
-    #     for index, elem in enumerate(list_eme):
-    #         for index2, elem2 in enumerate(list_temp_eme):
-    #             if index == index2:
-    #                 dict={"total_assets" : elem2}
-    #                 elem.append_state_variables(dict)
-    #
-    #     list_temp_ame  = []
-    #     list_ame = []
-    #     for fund in environment.funds:
-    #         if fund.domicile == 0:
-    #             list_temp_ame = self.divide_sum(int(sum_ame), int((environment.global_assets_under_management)*0.8))
-    #             list_ame.append(fund)
-    #     # itrange = list(range(0, len(list_temp)))
-    #     for index, elem in enumerate(list_ame):
-    #         for index2, elem2 in enumerate(list_temp_ame):
-    #             if index == index2:
-    #                 dict={"total_assets" : elem2}
-    #                 elem.append_state_variables(dict)

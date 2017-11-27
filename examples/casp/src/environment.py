@@ -106,11 +106,12 @@ class Environment(BaseConfig):
     def set_shocks(self, params):
         super(Environment, self).set_shocks(params)
 
-    def agents_generator(self):
-        super(Environment, self).agents_generator()
+    # def agents_generator(self):
+    #     # self.agents = [self.funds]
+    #     super(Environment, self).agents_generator()
 
-    def get_agent_by_id(self, ident):
-        super(Environment, self).get_agent_by_id(ident)
+    # def get_agent_by_id(self, ident):
+    #     super(Environment, self).get_agent_by_id(ident)
 
     def check_global_transaction_balance(self, _type):
         super(Environment, self).check_global_transaction_balance(_type)
@@ -182,12 +183,17 @@ class Environment(BaseConfig):
         self.variable_parameters["sum_ame_funds"] = 0
         self.variable_parameters["sum_eme_funds"] = 0
 
+
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
         logging.info(" Environment file read: %s", environment_filename)
+
+
         # then read in all the agents
+
         self.initialize_funds_from_files(self.static_parameters['fund_directory'], 0)
+
         self.agents = [self.funds]
 
 
@@ -201,6 +207,34 @@ class Environment(BaseConfig):
                             self.sum_ame_funds, self.sum_eme_funds)
         logging.info(" Global market cap is %s ; Ame market cap is %s, Eme market cap is %s",\
                     self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
+
+        
+    def agents_generator(self):
+        if self.agents is not None:
+            for agent_type in self.agents:
+                if type(agent_type) == list:
+                    for agent in agent_type:
+                        yield agent
+                else:
+                    yield agent_type
+        else:
+            raise LookupError('There are no agents to iterate over.')
+
+    def get_agent_by_id(self, ident):
+        to_return = None
+        for agent in self.agents_generator():
+            if agent.identifier == ident:
+                if to_return is None:  # checks whether something has been found previously in the function
+                    to_return = agent
+                else:
+                    raise LookupError('At least two agents have the same ID.')
+                    # if we have found something before then IDs are not unique, so we raise an error
+        if to_return is None:
+            raise LookupError('No agents have the provided ID.')
+            # if we don't find any agent with that ID we raise an error
+        else:
+            return to_return
+
 
     # -------------------------------------------------------------------------
     def initialize_funds_from_files(self, fund_directory, time):

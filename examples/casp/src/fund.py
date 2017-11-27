@@ -93,6 +93,9 @@ class Fund(BaseAgent):
         # ret_str = ret_str + "</agent>\n"
         # return ret_str
 
+    def __del__(self):
+		pass
+
     def get_parameters(self):
         return self.parameters
 
@@ -235,21 +238,28 @@ class Fund(BaseAgent):
         D = self.risky * self.w_eme * self.total_assets/p_eme
         return D
 
-    def endow_funds_with_shares(self, time):
+    def endow_funds_with_shares(self, environment, time, identifier_list):
         from transaction import Transaction
         from random import Random
         random = Random()
 
+        print identifier_list, self.identifier
+
         value = 0.0
 
-        #on the liabilities side, transfer deposits from households into investment_shares
-
+            #on the liabilities side, transfer deposits from households into investment_shares
         value = round(float( self.state_variables['total_assets'] ), 4)
+
         transaction = Transaction()
-        transaction.this_transaction("investment_shares", "",  -1,  self.identifier,  value, 0,  0, -1)
+        while len(self.accounts) > 0:
+            self.accounts.pop()        # transaction.add_transaction(environment)
+        transaction.this_transaction("investment_shares", "",  self,  identifier_list,  value, 0,  0, -1)
+        transaction.remove_transaction
         self.accounts.append(transaction)
-        del transaction
-        #
+
+            # transaction.print_transaction()
+        # del transaction
+
         #
         # for object in self.accounts:
         #     object.print_transaction()

@@ -200,6 +200,7 @@ class BaseConfig(object):
     @abc.abstractmethod
     def agents_generator(self):
         if self.agents is not None:
+            # print "hei"
             for agent_type in self.agents:
                 if type(agent_type) == list:
                     for agent in agent_type:
