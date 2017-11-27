@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 """
@@ -18,51 +19,94 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+from src.updater import Updater
+from abm_template.src.baserunner import BaseRunner
 
-from updater import Updater
 
+# from abm_template.src.baserunner import BaseRunner
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 #
 # class Runner
 #
-#-------------------------------------------------------------------------
-class Runner(object):
-#	from environment import Environment
-
-	#
-	# VARIABLES
-	#
-
-	#
-	# METHODS
-	#
-	#-------------------------------------------------------------------------
-	# __init__
-	#-------------------------------------------------------------------------
-	def __init__(self, environment):
-		pass
-	#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 
-	#-------------------------------------------------------------------------
-	# initialize()
-	#-------------------------------------------------------------------------
-	def initialize(self,  environment):
-		self.environment = environment
-		self.updater = Updater(self.environment)
-	#-------------------------------------------------------------------------
+class Runner(BaseRunner):
+    #
+    #
+    # VARIABLES
+    #
+    #
+
+    identifier = ""
+    num_sweeps = 0
+
+    #
+    #
+    # METHODS
+    #
+    #
+
+    # -------------------------------------------------------------------------
+    # __init__
+    # -------------------------------------------------------------------------
+    def __init__(self, environment):
+        pass
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # initialize()
+    # -------------------------------------------------------------------------
+
+    def initialize(self, environment):
+        self.identifier = environment.identifier
+        self.updater = Updater(environment)
+
+        self.num_sweeps = int(environment.static_parameters['num_sweeps'])
+
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # get_identifier
+    # -------------------------------------------------------------------------
+
+    def get_identifier(self):
+        return self.identifier
+
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    # set_identifier
+    # -------------------------------------------------------------------------
+    def set_identifier(self, value):
+        return super(Runner, self).set_identifier(value)
+
+    # -------------------------------------------------------------------------
+    # get_num_sweeps
+    # -------------------------------------------------------------------------
+    def get_num_sweeps(self):
+        return self.num_sweeps
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # set_num_simulations
+    # -------------------------------------------------------------------------
+    def set_num_sweeps(self, value):
+        super(Runner, self).set_num_sweeps(value)
+
+    # -------------------------------------------------------------------------
+    # do_run
+    # -------------------------------------------------------------------------
+    def do_run(self, environment, time):
+        # loop over all time steps and do the updating
+
+        # For each update step
+
+        for i in range(self.num_sweeps):
+
+                self.current_step = i
+
+                self.updater.do_update(environment, i)
 
 
-	#-------------------------------------------------------------------------
-	# do_run
-	#-------------------------------------------------------------------------
-	def do_run(self, measurement,  debug):
-		# loop over all time steps and do the updating
-		for i in range(self.environment.parameters.num_sweeps):
-			# the update step
-			self.updater.do_update(self.environment, i, debug)
-
-			# do the measurement
-			# measurement.do_measurement(self.environment.banks)
-	#------------------------------------------------------------------------
+    # ------------------------------------------------------------------------

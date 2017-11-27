@@ -56,7 +56,7 @@ class BaseAgent(object):
 
     @abc.abstractmethod
     def append_parameters(self, _params):
-        if not isinstance(_variables, dict):
+        if not isinstance(_params, dict):
             raise TypeError
         else:
             self.parameters.update(_params)
@@ -127,6 +127,8 @@ class BaseAgent(object):
                            "]'></variable>\n"
             else:
                 raise TypeError
+        for transaction in self.accounts:
+            ret_str = ret_str + transaction.write_transaction()
         ret_str = ret_str + "  </agent>\n"
 
         return ret_str

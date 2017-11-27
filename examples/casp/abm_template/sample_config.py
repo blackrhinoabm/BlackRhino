@@ -60,6 +60,10 @@ class Config(BaseConfig):
         super(Config, self).__str__()
 
     def __init__(self):
+        self.identifier = ""
+        self.static_parameters = {}
+        self.variable_parameters = {}
+        self.agents = []
         super(Config, self).__init__()
 
     def read_xml_config_file(self, config_file_name):
@@ -88,3 +92,6 @@ class Config(BaseConfig):
 
     def write_environment_file(self,  file_name):
         super(Config, self).write_environment_file(file_name)
+
+    def accrue_interests(self):
+        super(Config, self).accrue_interests()

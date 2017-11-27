@@ -49,22 +49,6 @@ class BaseModel(object):
     model_parameters = abc.abstractproperty(get_model_parameters, set_model_parameters)
 
     @abc.abstractmethod
-    def get_agents(self):
-        return
-    @abc.abstractmethod
-    def set_agents(self, _agents):
-        """
-        Class variables: agents
-        Local variables: _agents
-        """
-        if not isinstance(_agents, list):
-            raise TypeError
-        else:
-            self.agents = _agents
-        return
-    agents = abc.abstractproperty(get_agents, set_agents)
-
-    @abc.abstractmethod
     def get_interactions(self):
         return
     @abc.abstractmethod
@@ -91,8 +75,6 @@ class BaseModel(object):
                 ret_str = ret_str + "  <parameter type='model' name='" + entry + "' value='" + str(value) + "'></parameter>\n"
             else:
                 raise TypeError
-        for agent in self.agents:
-            ret_str = ret_str + agent.__str__()
         if self.interactions:  # if interactions = None, don't print anything
             ret_str = ret_str + self.interactions.__str__()
         ret_str = ret_str + "</model>"
@@ -122,21 +104,5 @@ class BaseModel(object):
         self.set_model_parameters(_params)
 
     @abc.abstractmethod
-    def initialize_agents(self):
-        pass
-
-    @abc.abstractmethod
     def do_update(self):
-        pass
-
-    @abc.abstractmethod
-    def get_agent_by_id(self, _id):
-        """
-        Class variables:
-        Local variables: _id
-        """
-        pass
-
-    @abc.abstractmethod
-    def check_agent_homogeneity(self):
         pass

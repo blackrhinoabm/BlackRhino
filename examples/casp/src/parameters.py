@@ -31,9 +31,9 @@ class Parameters(object):
 	identifier = ""
 	num_simulations = 0
 	num_sweeps = 0
-	num_firms = 0
+	num_agents = 0
 	fund_directory = ""
-	firm_directory = ""
+	agent_directory = ""
 
 	# the array of parameters that changes during the simulation
 	parameters = [] # this contains all parameters for all times with one parameter per validity
@@ -55,7 +55,7 @@ class Parameters(object):
 		print "identifier: " + self.identifier
 		print "num_sweeps: " + str(self.num_sweeps)
 		print "num_simulations: " + str(self.num_simulations)
-		print "num_firms: " + str(self.num_firms)
+		print "num_agents: " + str(self.num_agents)
 		for entry in self.parameters:
 			print str(entry['type']) + " ; " + str(entry['value']) + " ; " + str(entry['validity'][0]) + "-" + str(entry['validity'][1])
 	#-------------------------------------------------------------------------

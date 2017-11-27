@@ -1,4 +1,0 @@
-<firm identifier='firm_3'>
-    <parameter name='productivity' value='1.20'></parameter>
-    <transaction type='cash' asset='' from='firm_3' to='firm_3' amount='100' interest='0.00' maturity='0' time_of_default='-1'></transaction>
-</firm>

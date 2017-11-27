@@ -39,9 +39,13 @@ class Agent(BaseAgent):
         super(Agent, self).set_state_variables(_value)
 
     def __str__(self):
-        super(Agent, self).__str__()
+        return super(Agent, self).__str__()
 
     def __init__(self, _identifier, _params, _variables):
+        self.identifier = ""
+        self.parameters = {}
+        self.state_variables = {}
+        self.accounts = []
         super(Agent, self).__init__(_identifier, _params, _variables)
 
     def __getattr__(self, attr):
@@ -75,3 +79,9 @@ class Agent(BaseAgent):
 
     def purge_accounts(self, environment):
         super(Agent, self).purge_accounts(environment)
+
+    def add_transaction(self, type_, asset,  from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from sample_transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.add_transaction(environment)

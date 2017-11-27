@@ -61,6 +61,17 @@ class Transaction(BaseTransaction):
     # This may be useful for looping over various agent's accounts
     # -------------------------------------------------------------------------
     def __init__(self):
+        self.identifier = None  # unique identifier of the transaction, may be useful for iterators
+        self.type_ = ""  # type of transactions, e.g. "deposit"
+        self.asset = ""  # type of asset, used for investment types
+        self.from_ = 0.0  # agent being the originator of the transaction
+        self.to = 0.0  # agent being the recipient of the transaction
+        self.amount = 0.0  # amount of the transaction
+        self.interest = 0.0  # interest rate paid to the originator each time step
+        self.maturity = 0  # time (in steps) to maturity
+        # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
+        # if timeOfDefault == 0: loan defaults
+        self.time_of_default = -1  # control variable checking for defaulted transactions
         super(Transaction, self).__init__()
     # ------------------------------------------------------------------------
 

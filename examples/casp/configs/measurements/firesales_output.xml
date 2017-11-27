@@ -1,0 +1,13 @@
+<measurement identifier='firesales_output'>
+    <parameter type='filename' value='measurements/Measurement_firesales.csv'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    <parameter type='output' column='2' header='ABSA: total assets' value='ABSA total assets'></parameter>
+    <parameter type='output' column='3' header='ABSA: total equity ' value='ABSA total equity'></parameter>
+    <parameter type='output' column='4' header='ABSA: total asset sales' value='ABSA total asset sales'></parameter>
+    <parameter type='output' column='5' header='SBSA: total assets' value='SBSA total assets'></parameter>
+    <parameter type='output' column='6' header='SBSA: total equity' value='SBSA total equity'></parameter>
+    <parameter type='output' column='7' header='SBSA: total asset sales' value='SBSA total asset sales'></parameter>
+    <parameter type='output' column='8' header='CAPITEC: total assets' value='CAPITEC total assets'></parameter>
+    <parameter type='output' column='9' header='CAPITEC: total equity' value='CAPITEC total equity'></parameter>
+    <parameter type='output' column='10' header='CAPITEC: total asset sales' value='CAPITEC total asset sales' ></parameter>
+</measurement>

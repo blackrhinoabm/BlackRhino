@@ -201,8 +201,11 @@ class BaseConfig(object):
     def agents_generator(self):
         if self.agents is not None:
             for agent_type in self.agents:
-                for agent in agent_type:
-                    yield agent
+                if type(agent_type) == list:
+                    for agent in agent_type:
+                        yield agent
+                else:
+                    yield agent_type
         else:
             raise LookupError('There are no agents to iterate over.')
     # a standard method for iterating over all agents
@@ -287,3 +290,17 @@ class BaseConfig(object):
                 except:
                     raise AttributeError('Environment has no attribute "%s".' % attr)
     # a standard method for returning attributes from the dectionaries as attributes
+
+    @abc.abstractmethod
+    def accrue_interests(self):
+        done_list = []  # This keeps the IDs of updated transactions
+        # The above is important as the same transactions may be on the books
+        # of different agents, we don't want to double count the interest
+        for agent in self.agents_generator():  # Iterate over all agents
+            for tranx in agent.accounts:  # Iterate over all transactions
+                if tranx.identifier not in done_list:  # If not amended previously
+                    # The below adds the interest on the principal amount
+                    tranx.amount = tranx.amount + tranx.amount * tranx.interest
+                    # The below makes sure that we don't double count
+                    done_list.append(tranx.identifier)
+    # a standard method for accruing interest on all transactions
