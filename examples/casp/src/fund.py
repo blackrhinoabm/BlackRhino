@@ -33,9 +33,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 # stored in a dictionary called transition_probabilities
 
 import logging
-
-from src.runner import Runner
-
 from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
@@ -222,6 +219,7 @@ class Fund(BaseAgent):
         self.state_variables["risky"] = ( self.state_variables["r_ip"] - environment.variable_parameters["r_f"])\
                                         / (self.state_variables["theta"] * self.state_variables["variance_ip"] )
 
+
         # print ((self.state_variables["r_ame"])),\
         #         (self.state_variables["r_eme"]),\
         #         environment.variable_parameters["r_f"],\
@@ -229,10 +227,32 @@ class Fund(BaseAgent):
         #         (environment.variable_parameters["std_ame"],\
         #         self.state_variables["r_eme"]),\
         #         self.theta, self.state_variables['w_ame']
+    def demand_ame(self, p_ame):
+        D = self.risky * self.w_ame * self.total_assets/p_ame
+        return D
 
-    def initialize_transactions(self):
-        pass
-        # self.parameters['total_assets'] = total_assets
+    def demand_eme(self, p_eme):
+        D = self.risky * self.w_eme * self.total_assets/p_eme
+        return D
+
+    def initialize_transactions(self, time):
+        from transaction import Transaction
+        from random import Random
+        random = Random()
+
+        value = 0.0
+
+        #on the liabilities side, transfer deposits from households into investment_shares
+
+        value = round(float( self.state_variables['total_assets'] ), 4)
+        transaction = Transaction()
+        transaction.this_transaction("investment_shares", "",  -1,  self.identifier,  value, 0,  0, -1)
+        self.accounts.append(transaction)
+        del transaction
+        #
+        #
+        # for object in self.accounts:
+        #     object.print_transaction()
 
     def update_balance_sheet(self):
         pass

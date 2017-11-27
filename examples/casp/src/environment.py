@@ -185,13 +185,22 @@ class Environment(BaseConfig):
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
-        logging.info(" environment file read: %s", environment_filename)
+        logging.info(" Environment file read: %s", environment_filename)
         # then read in all the agents
         self.initialize_funds_from_files(self.static_parameters['fund_directory'], 0)
         self.agents = [self.funds]
 
+
+        self.allocate_fund_size()
+        logging.info("Determined fund size according to market\
+                    cap and data given in the agents configs")
+
         self.count_ame_funds()
         self.count_eme_funds()
+        logging.info(" Initialized %s ame funds and %s eme funds and stored in environment.funds",\
+                            self.sum_ame_funds, self.sum_eme_funds)
+        logging.info(" Global market cap is %s ; Ame market cap is %s, Eme market cap is %s",\
+                    self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
 
     # -------------------------------------------------------------------------
     def initialize_funds_from_files(self, fund_directory, time):
@@ -209,6 +218,8 @@ class Environment(BaseConfig):
                 agent_filename = fund_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.funds.append(agent)
+        logging.info('Fetched funds data and read into program')
+
         # check if agents were read in correctly
         # for i in self.funds:
         #     print i.identifier
@@ -241,10 +252,62 @@ class Environment(BaseConfig):
                 sum_ame += 1
         self.variable_parameters['sum_ame_funds'] = sum_ame
 
-
     def count_eme_funds(self):
         sum_eme = 0
         for fund in self.funds:
-            if fund.parameters['domicile'] == 0:
+            if fund.parameters['domicile'] == 1:
                 sum_eme += 1
         self.variable_parameters['sum_eme_funds'] = sum_eme
+
+
+    def allocate_fund_size(self):
+        # default is 20% eme and 80% ame market cap
+        sum_ame = 0
+        sum_eme = 0
+        for fund in self.funds:
+            if fund.parameters['domicile'] == 0:
+                sum_ame += 1
+            if fund.parameters['domicile'] == 1:
+                sum_eme += 1
+
+        list_temp_eme  = []
+        list_eme = []
+        eme_market_cap = 0
+        for fund in self.funds:
+            if fund.domicile == 1.0:
+                list_temp_eme = self.divide_sum(int(sum_eme), int((self.global_assets_under_management)*0.2))
+                list_eme.append(fund)
+        # itrange = list(range(0, len(list_temp)))
+        for index, elem in enumerate(list_eme):
+            for index2, elem2 in enumerate(list_temp_eme):
+                if index == index2:
+                    dict={"total_assets" : elem2}
+                    elem.append_state_variables(dict)
+                    eme_market_cap+=elem.total_assets
+        self.variable_parameters["eme_market_cap"] = eme_market_cap
+
+        "The same for AME funds"
+
+        list_temp_ame  = []
+        list_ame = []
+        ame_market_cap = 0
+        for fund in self.funds:
+            if fund.domicile == 0:
+                list_temp_ame = self.divide_sum(int(sum_ame), int((self.global_assets_under_management)*0.8))
+                list_ame.append(fund)
+        # itrange = list(range(0, len(list_temp)))
+        for index, elem in enumerate(list_ame):
+            for index2, elem2 in enumerate(list_temp_ame):
+                if index == index2:
+                    dict={"total_assets" : elem2}
+                    elem.append_state_variables(dict)
+                    ame_market_cap += elem.total_assets
+        self.variable_parameters["ame_market_cap"] = ame_market_cap
+
+    def divide_sum(self, n, total):
+    #Return a randomly chosen list of n positive integers summing to total.
+    #Each such list is equally likely to occur.
+        import random
+        random.seed(9001)
+        dividers = sorted(random.sample(xrange(1, total), n - 1))
+        return [a - b for a, b in zip(dividers + [total], [0] + dividers)]

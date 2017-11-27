@@ -20,8 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from abm_template.src.basemodel import BaseModel
-from src.shock import Shock
-
+import logging
 
 # -------------------------------------------------------------------------
 #  class Updater
@@ -79,55 +78,16 @@ class Updater(BaseModel):
     # -------------------------------------------------------------------------
     def do_update(self, environment, time):
 
-        if time == 0:
-            self.allocate_fund_size(environment) #default is 20% eme and 80% ame market cap
-
         self.allocate_returns(environment, time)
 
         for index, fund in enumerate(environment.funds):
             fund.calc_optimal_pf(environment)
-            fund.initialize_transactions()
-
-        # environment.add_variable_parameter(ame_)
+            fund.initialize_transactions(time)
+        logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
+        logging.info("Endowed funds with investment_shares on the liability side in fund.accounts")
 
 
     # -----------------------------------------------------------------------
-    def allocate_fund_size(self, environment):
-        # default is 20% eme and 80% ame market cap
-        sum_ame = 0
-        sum_eme = 0
-        for fund in environment.funds:
-            if fund.parameters['domicile'] == 0:
-                sum_ame += 1
-            if fund.parameters['domicile'] == 1:
-                sum_eme += 1
-
-        list_temp_eme  = []
-        list_eme = []
-        for fund in environment.funds:
-            if fund.domicile == 1.0:
-                list_temp_eme = self.divide_sum(int(sum_eme), int((environment.global_assets_under_management)*0.2))
-                list_eme.append(fund)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_eme):
-            for index2, elem2 in enumerate(list_temp_eme):
-                if index == index2:
-                    dict={"total_assets" : elem2}
-                    elem.append_state_variables(dict)
-
-        list_temp_ame  = []
-        list_ame = []
-        for fund in environment.funds:
-            if fund.domicile == 0:
-                list_temp_ame = self.divide_sum(int(sum_ame), int((environment.global_assets_under_management)*0.8))
-                list_ame.append(fund)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_ame):
-            for index2, elem2 in enumerate(list_temp_ame):
-                if index == index2:
-                    dict={"total_assets" : elem2}
-                    elem.append_state_variables(dict)
-
     def allocate_returns(self, environment, time):
         for i, value in enumerate(environment.initialize_ame_returns()):
             for k, v in enumerate(environment.funds):
@@ -150,3 +110,40 @@ class Updater(BaseModel):
         random.seed(9001)
         dividers = sorted(random.sample(xrange(1, total), n - 1))
         return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+
+### Moved this to environment to call after initializing environment and agents
+    # def allocate_fund_size(self, environment):
+    #     # default is 20% eme and 80% ame market cap
+    #     sum_ame = 0
+    #     sum_eme = 0
+    #     for fund in environment.funds:
+    #         if fund.parameters['domicile'] == 0:
+    #             sum_ame += 1
+    #         if fund.parameters['domicile'] == 1:
+    #             sum_eme += 1
+    #
+    #     list_temp_eme  = []
+    #     list_eme = []
+    #     for fund in environment.funds:
+    #         if fund.domicile == 1.0:
+    #             list_temp_eme = self.divide_sum(int(sum_eme), int((environment.global_assets_under_management)*0.2))
+    #             list_eme.append(fund)
+    #     # itrange = list(range(0, len(list_temp)))
+    #     for index, elem in enumerate(list_eme):
+    #         for index2, elem2 in enumerate(list_temp_eme):
+    #             if index == index2:
+    #                 dict={"total_assets" : elem2}
+    #                 elem.append_state_variables(dict)
+    #
+    #     list_temp_ame  = []
+    #     list_ame = []
+    #     for fund in environment.funds:
+    #         if fund.domicile == 0:
+    #             list_temp_ame = self.divide_sum(int(sum_ame), int((environment.global_assets_under_management)*0.8))
+    #             list_ame.append(fund)
+    #     # itrange = list(range(0, len(list_temp)))
+    #     for index, elem in enumerate(list_ame):
+    #         for index2, elem2 in enumerate(list_temp_ame):
+    #             if index == index2:
+    #                 dict={"total_assets" : elem2}
+    #                 elem.append_state_variables(dict)

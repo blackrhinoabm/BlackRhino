@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from src.updater import Updater
+import logging
 from abm_template.src.baserunner import BaseRunner
 
 
@@ -101,12 +102,13 @@ class Runner(BaseRunner):
         # loop over all time steps and do the updating
 
         # For each update step
-
+        logging.info('Call runner.do_run and start iteration over sweeps/update steps')
         for i in range(self.num_sweeps):
 
                 self.current_step = i
 
                 self.updater.do_update(environment, i)
+                logging.info('Finished %s update step', i)
 
 
     # ------------------------------------------------------------------------
