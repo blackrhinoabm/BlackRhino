@@ -82,9 +82,10 @@ class Updater(BaseModel):
 
         for index, fund in enumerate(environment.funds):
             fund.calc_optimal_pf(environment)
-            fund.initialize_transactions(time)
+            fund.endow_funds_with_shares(time)
         logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
         logging.info("Endowed funds with investment_shares on the liability side in fund.accounts")
+
 
 
     # -----------------------------------------------------------------------
