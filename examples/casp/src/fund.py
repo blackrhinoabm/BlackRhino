@@ -235,7 +235,7 @@ class Fund(BaseAgent):
         D = self.risky * self.w_eme * self.total_assets/p_eme
         return D
 
-    def initialize_transactions(self, time):
+    def endow_funds_with_shares(self, time):
         from transaction import Transaction
         from random import Random
         random = Random()
