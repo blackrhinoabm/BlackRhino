@@ -195,9 +195,40 @@ class Fund(BaseAgent):
     def calc_optimal_pf(self, environment):
         environment.variable_parameters["cov_ame_eme"] = environment.variable_parameters["std_ame"] * environment.variable_parameters["std_eme"] * environment.variable_parameters["corr_ame_eme"]
 
-        self.state_variables["w_ame"] = ((self.state_variables["r_ame"] - environment.variable_parameters["r_f"])*(environment.variable_parameters["std_eme"] *environment.variable_parameters["std_eme"])  -((r_eme - r_f) * cov_ame_eme )) /   (   (r_ame - r_f)*(std_eme*std_eme) + ((r_eme - r_f)*(std_ame*std_ame))  - (((r_ame - r_f) + (r_eme - r_f)  )*(cov_ame_eme))               )
 
-        # print self.identifier, self.total_assets
+        x = ((self.state_variables["r_ame"] - environment.variable_parameters["r_f"]))\
+                                        *(environment.variable_parameters["std_eme"] *environment.variable_parameters["std_eme"])\
+                                        -((self.state_variables["r_eme"] - environment.variable_parameters["r_f"])\
+                                        *environment.variable_parameters["cov_ame_eme"] )
+        y =(   (self.state_variables["r_ame"] - environment.variable_parameters["r_f"])\
+                                   *(environment.variable_parameters["std_eme"] *environment.variable_parameters["std_eme"]\
+                                           + ((self.state_variables["r_eme"] - environment.variable_parameters["r_f"])\
+                                          *(environment.variable_parameters["std_ame"]* environment.variable_parameters["std_ame"]))\
+                                            - (((self.state_variables["r_ame"] - environment.variable_parameters["r_f"])\
+                                             + (self.state_variables["r_eme"] - environment.variable_parameters["r_f"])  )\
+                                             *(environment.variable_parameters["cov_ame_eme"]))))
+        self.state_variables["w_ame"] = x/y
+        self.state_variables["w_eme"] = 1 - self.state_variables["w_ame"]
+
+        self.state_variables["r_ip"] = self.state_variables["w_ame"] * self.state_variables["r_ame"]\
+                                    + self.state_variables["w_eme"]  * self.state_variables["r_eme"]
+
+        self.state_variables["variance_ip"] =  self.state_variables["w_ame"]  *  self.state_variables["w_ame"]\
+                                                * environment.variable_parameters["std_ame"]  * environment.variable_parameters["std_ame"]\
+                                                 + self.state_variables["w_eme"]*self.state_variables["w_eme"]\
+                                                 * environment.variable_parameters["std_eme"]*environment.variable_parameters["std_eme"]\
+                                                  + 2 * self.state_variables["w_ame"]*self.state_variables["w_eme"]\
+                                                  * environment.variable_parameters["cov_ame_eme"]
+        self.state_variables["risky"] = ( self.state_variables["r_ip"] - environment.variable_parameters["r_f"])\
+                                        / (self.state_variables["theta"] * self.state_variables["variance_ip"] )
+
+        # print ((self.state_variables["r_ame"])),\
+        #         (self.state_variables["r_eme"]),\
+        #         environment.variable_parameters["r_f"],\
+        #         (environment.variable_parameters["std_eme"]),\
+        #         (environment.variable_parameters["std_ame"],\
+        #         self.state_variables["r_eme"]),\
+        #         self.theta, self.state_variables['w_ame']
 
     def initialize_transactions(self):
         pass

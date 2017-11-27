@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
 		if (i < 20):
 
-			value_theta = random.uniform(0, 5)
+			value_theta = random.uniform(3,10)
 
 			text = "<fund identifier='" + str(i) + "'>\n"
 			text = text + "    <parameter type='parameters' name='domicile' value='" + "0" + "'></parameter>\n"

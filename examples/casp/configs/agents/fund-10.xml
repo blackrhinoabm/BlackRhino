@@ -1,4 +1,4 @@
 <fund identifier='10'>
     <parameter type='parameters' name='domicile' value='0'></parameter>
-    <parameter type='state_variables' name='theta' value='4.20617810293' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='theta' value='8.3303448772' validity='0-1000'></parameter>
 </fund>

@@ -84,8 +84,7 @@ class Updater(BaseModel):
 
         self.allocate_returns(environment, time)
 
-        for fund in environment.funds:
-
+        for index, fund in enumerate(environment.funds):
             fund.calc_optimal_pf(environment)
             fund.initialize_transactions()
 
