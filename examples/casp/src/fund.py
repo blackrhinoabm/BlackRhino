@@ -52,8 +52,6 @@ class Fund(BaseAgent):
     state_variables = {}
     parameters = {}
 
-    ''' Accounts is not used in our example, but it's in the BaseAgent
-    parent class'''
     accounts = []
 
     #
@@ -150,8 +148,11 @@ class Fund(BaseAgent):
         self.identifier = ""  # identifier of the specific agent
         self.state_variables = {}
         self.parameters = {}
-
-
+        "I can't stress enough how important self.accounts here is\
+        I was stuck about 1,5 days because the same transctions\
+        (the last one in the loop) were always initialised and\
+        attached to all agents in the updater (for i in environment.funds)"
+        self.accounts = []
 
     def get_parameters_from_file(self, agent_filename, environment):
         from xml.etree import ElementTree
@@ -238,26 +239,23 @@ class Fund(BaseAgent):
         D = self.risky * self.w_eme * self.total_assets/p_eme
         return D
 
-    def endow_funds_with_shares(self, environment, time, identifier_list):
+    def endow_funds_with_shares(self, environment, time):
         from transaction import Transaction
         from random import Random
         random = Random()
-
-        print identifier_list, self.identifier
 
         value = 0.0
 
             #on the liabilities side, transfer deposits from households into investment_shares
         value = round(float( self.state_variables['total_assets'] ), 4)
 
-        transaction = Transaction()
+
         while len(self.accounts) > 0:
             self.accounts.pop()        # transaction.add_transaction(environment)
-        transaction.this_transaction("investment_shares", "",  self,  identifier_list,  value, 0,  0, -1)
-        transaction.remove_transaction
+        transaction = Transaction()
+        transaction.this_transaction("investment_shares", "",  self.identifier,  self.identifier,  value, 0,  0, -1)
+        # print transaction
         self.accounts.append(transaction)
-
-            # transaction.print_transaction()
         # del transaction
 
         #

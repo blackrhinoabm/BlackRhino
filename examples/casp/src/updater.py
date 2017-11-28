@@ -85,18 +85,27 @@ class Updater(BaseModel):
             fund.calc_optimal_pf(environment)
         logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
 
+        for i in environment.funds:
+            identifier = i.identifier
+            i.endow_funds_with_shares(environment, time)
+
+
+        for i in environment.funds:
+            print i.accounts, i.identifier
+            print i
 
         # Initialize investment shares:
 
+        # for i in range(len(environment.agents)):
+        #     print i
+
             # print environment.agents[0][i].identifier
-        fund_object = environment.get_agent_by_id(environment.agents[0][2].identifier)
-        fund_object.endow_funds_with_shares(environment, time, environment.agents[0][2].identifier)
+        # fund_object = environment.get_agent_by_id(environment.agents[0][2].identifier)
+        # fund_object.endow_funds_with_shares(environment, time, environment.agents[0][2].identifier)
 
-        print fund_object
 
-        hoops = environment.get_agent_by_id(environment.agents[0][6].identifier)
-        hoops.endow_funds_with_shares(environment, time, environment.agents[0][6].identifier)
-        print hoops.accounts[0]
+        # hoops = environment.get_agent_by_id(environment.agents[0][6].identifier)
+        # hoops.endow_funds_with_shares(environment, time, environment.agents[0][6].identifier)
 
         # fund_object2 = environment.get_agent_by_id(environment.agents[0][1].identifier)
         # fund_object2.endow_funds_with_shares(environment, time, environment.agents[0][1].identifier)

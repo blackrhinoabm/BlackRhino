@@ -208,7 +208,7 @@ class Environment(BaseConfig):
         logging.info(" Global market cap is %s ; Ame market cap is %s, Eme market cap is %s",\
                     self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
 
-        
+
     def agents_generator(self):
         if self.agents is not None:
             for agent_type in self.agents:
@@ -252,6 +252,7 @@ class Environment(BaseConfig):
                 agent_filename = fund_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.funds.append(agent)
+                
         logging.info('Fetched funds data and read into program')
 
         # check if agents were read in correctly
