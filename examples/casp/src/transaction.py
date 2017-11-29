@@ -144,6 +144,7 @@ class Transaction(BaseTransaction):
     # -------------------------------------------------------------------------
     def this_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
         super(Transaction, self).this_transaction(type_, asset, from_, to, amount, interest, maturity, time_of_default)
+        # print type_
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

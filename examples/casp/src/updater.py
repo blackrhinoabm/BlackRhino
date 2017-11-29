@@ -85,61 +85,17 @@ class Updater(BaseModel):
             fund.calc_optimal_pf(environment)
         logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
 
-        for i in environment.funds:
-            identifier = i.identifier
-            i.endow_funds_with_shares(environment, time)
-
-
-        for i in environment.funds:
-            print i.accounts, i.identifier
-            print i
-
         # Initialize investment shares:
+        for i in environment.funds:
+            i.endow_funds_with_shares(environment, time)
+        logging.info(" Endowed funds with %s transactions and investment_shares ", len(i.accounts))
 
-        # for i in range(len(environment.agents)):
-        #     print i
+        "endow firms with equity (add transaction to accounts)"
+        for i in environment.firms:
+            i.endow_firms_with_equity(environment, time)
+        logging.info(" Endowed firms with equity  ")
 
-            # print environment.agents[0][i].identifier
-        # fund_object = environment.get_agent_by_id(environment.agents[0][2].identifier)
-        # fund_object.endow_funds_with_shares(environment, time, environment.agents[0][2].identifier)
-
-
-        # hoops = environment.get_agent_by_id(environment.agents[0][6].identifier)
-        # hoops.endow_funds_with_shares(environment, time, environment.agents[0][6].identifier)
-
-        # fund_object2 = environment.get_agent_by_id(environment.agents[0][1].identifier)
-        # fund_object2.endow_funds_with_shares(environment, time, environment.agents[0][1].identifier)
-        #
-        # print fund_object2
-        # for index, identifier_values in enumerate(list_with_identifiers):
-        #     for index2, fund_objects in enumerate(environment.funds):
-        #         if index == index2:
-        #             fund_object = environment.get_agent_by_id(identifier_values)
-        #         print fund_object
-                # fund_object.endow_funds_with_shares(environment, time)
-
-                    # fund_object.endow_funds_with_shares(environment, time)
-                    # fund_object.endow_funds_with_shares(environment, time)
-
-        # identifier = environment.agents[0][1].identifier
-        # for fund in (environment.agents[0][0]):
-        #     print fund.identifier
-        # identifier = self.identifier
-
-        # print len(fund_object.accounts)
-
-
-
-        # for i in environment.funds:
-        #     i.endow_funds_with_shares(environment, time)
-        # environment.get_agent_by_id("fund-1")
-            # print fund.identifier
-            # fund.endow_funds_with_shares(time)
-            # for i in fund.accounts:
-            #     print fund.identifier, fund.total_assets, i
-        # logging.info("Endowed funds with investment_shares on the liability side in fund.accounts")
-
-        #Now we're talking
+        # Now we're talking
         self.sell_ama_priced(environment, time)
         self.sell_eme_priced(environment, time)
 
@@ -147,7 +103,18 @@ class Updater(BaseModel):
     # -----------------------------------------------------------------------
 
     def sell_ama_priced(self, environment, time):
-        pass
+        # First, we find the market equilibrium price yay!
+        # Important to note that this currently does
+        # not depend on the wealth of the buyers
+        # That is their demand may be higher than
+        # what they can actually buy, which may be ok
+        # We set the values necessary for tatonnement
+        # The list of suppliers and their supply functions
+        suppliers = []
+        for agent in environment.firms:
+            print agent.supply_of_labour
+            suppliers.append([agent, agent.supply_of_labour])
+
 
     def sell_eme_priced(self, environment, time):
         pass

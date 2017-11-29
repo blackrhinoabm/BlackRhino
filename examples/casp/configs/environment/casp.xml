@@ -2,10 +2,13 @@
     <!-- simulation parameters -->
     <parameter type='num_sweeps' value='1'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
-    <parameter type='num_agents' value='100'></parameter>
+    <parameter type='num_agents' value=''></parameter>
     <parameter type='num_funds' value='30'></parameter>
+    <parameter type='num_firms' value='200'></parameter>
     <parameter type='fund_directory' value='configs/agents/funds/'></parameter>
+    <parameter type='firm_directory' value='configs/agents/firms/'></parameter>
     <parameter type='variable_parameters' name='global_assets_under_management' value='1000000' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='global_supply_shares' value='10000' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='mu_ame' value='0.08' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='mu_eme' value='0.1' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='std_ame' value='0.1' validity='0-1000'></parameter>

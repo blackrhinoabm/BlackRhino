@@ -67,6 +67,16 @@ class Fund(BaseAgent):
     # we can use them to modify the program easier (e.g. set_num_sweeps)
     #
     #
+
+    def __key__(self):
+        return self.identifier
+
+    def __eq__(self, other):
+        return self.__key__() == other.__key__()
+
+    def __hash__(self):
+        return hash(self.__key__())
+
     def __str__(self):
 		fund_string = super(Fund, self).__str__()
 		fund_string = fund_string.replace("\n", "\n    <type value='fund'>\n", 1)
@@ -119,8 +129,13 @@ class Fund(BaseAgent):
         super(Fund, self).clear_accounts()
 
     def get_account(self, _type):
-        super(Fund, self).get_account(_type)
+        volume = 0.0
 
+        for transaction in self.accounts:
+            if (transaction.type_ == _type):
+                volume = volume + float(transaction.amount)
+
+        return volume
     def purge_accounts(self, environment):
         super(Fund, self).purge_accounts(environment)
 

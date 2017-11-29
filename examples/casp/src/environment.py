@@ -51,6 +51,7 @@ class Environment(BaseConfig):
 
     agents = []
     funds = []
+    firms = []
     variable_parameters = {}
     parameters = Parameters()
     state = State()
@@ -180,6 +181,8 @@ class Environment(BaseConfig):
         self.static_parameters["num_sweeps"] = 0
         self.static_parameters["num_agents"] = 0
         self.static_parameters["fund_directory"] = ""
+        self.static_parameters["firm_directory"] = ""
+
         self.variable_parameters["sum_ame_funds"] = 0
         self.variable_parameters["sum_eme_funds"] = 0
 
@@ -191,22 +194,32 @@ class Environment(BaseConfig):
 
 
         # then read in all the agents
-
         self.initialize_funds_from_files(self.static_parameters['fund_directory'], 0)
+        self.initialize_firms_from_files(self.static_parameters['firm_directory'], 0)
 
-        self.agents = [self.funds]
+
+        self.agents = [self.funds, self.firms]
 
 
         self.allocate_fund_size()
-        logging.info("Determined fund size according to market\
-                    cap and data given in the agents configs")
+        logging.info("Determined fund size according to global market cap and data given in the agents configs")
+        self.allocate_firm_size()
+        logging.info("Determined firm size according to global supply of shares and number of firm configs")
 
-        self.count_ame_funds()
-        self.count_eme_funds()
+
+        self.count_all_agents()
+
         logging.info(" Initialized %s ame funds and %s eme funds and stored in environment.funds",\
                             self.sum_ame_funds, self.sum_eme_funds)
-        logging.info(" Global market cap is %s ; Ame market cap is %s, Eme market cap is %s",\
+        logging.info(" Initialized %s ame firms and %s eme firms and stored in environment.firms",\
+                                self.sum_ame_firms, self.sum_eme_firms)
+        logging.info(" Global market cap is %s currency units; Ame market cap is %s currency units; Eme market cap is %s currency units",\
                     self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
+        logging.info(" Global supply of shares is %s ; Ame firms issue %s shares and Eme firms issue %s shares",\
+                    self.global_supply_shares, self.ame_supply_shares, self.eme_supply_shares)
+        logging.info(" So we are looking for the price of the Ame and Eme equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
+        logging.info(" *******Environment initialisation completed*******")
+
 
 
     def agents_generator(self):
@@ -252,7 +265,7 @@ class Environment(BaseConfig):
                 agent_filename = fund_directory + each_agent_file
                 agent.get_parameters_from_file(agent_filename, self)
                 self.funds.append(agent)
-                
+
         logging.info('Fetched funds data and read into program')
 
         # check if agents were read in correctly
@@ -260,6 +273,24 @@ class Environment(BaseConfig):
         #     print i.identifier
         #     print i.print_variables()
         #     print i
+
+    def initialize_firms_from_files(self, firm_directory, time):
+
+        from src.firm import Firm
+        while len(self.firms) > 0:
+            self.firms.pop()
+
+        agent_files = os.listdir(firm_directory)
+
+        for each_agent_file in agent_files:
+
+            if '.xml' in each_agent_file:
+                agent = Firm()
+                agent_filename = firm_directory + each_agent_file
+                agent.get_parameters_from_file(agent_filename, self)
+                self.firms.append(agent)
+
+        logging.info('Fetched firms data and read into program')
 
     def initialize_ame_returns(self):
         import numpy as np
@@ -279,20 +310,32 @@ class Environment(BaseConfig):
         e = np.random.normal(mu_eme, sigma_eme, (self.variable_parameters['sum_ame_funds']+self.variable_parameters['sum_eme_funds']))
         return e
 
-    def count_ame_funds(self):
-        sum_ame = 0
-
+    def count_all_agents(self):
+        sum = 0
         for fund in self.funds:
             if fund.parameters['domicile'] == 0:
-                sum_ame += 1
-        self.variable_parameters['sum_ame_funds'] = sum_ame
+                sum += 1
+        self.variable_parameters['sum_ame_funds'] = sum
 
-    def count_eme_funds(self):
-        sum_eme = 0
+        sum = 0
         for fund in self.funds:
             if fund.parameters['domicile'] == 1:
-                sum_eme += 1
-        self.variable_parameters['sum_eme_funds'] = sum_eme
+                sum += 1
+        self.variable_parameters['sum_eme_funds'] = sum
+
+################## FIRMS
+
+        sum = 0
+        for firm in self.firms:
+            if firm.parameters['domicile'] == 0:
+                sum += 1
+        self.variable_parameters['sum_ame_firms'] = sum
+
+        sum = 0
+        for firm in self.firms:
+            if firm.parameters['domicile'] == 1:
+                sum += 1
+        self.variable_parameters['sum_eme_firms'] = sum
 
 
     def allocate_fund_size(self):
@@ -346,3 +389,52 @@ class Environment(BaseConfig):
         random.seed(9001)
         dividers = sorted(random.sample(xrange(1, total), n - 1))
         return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+
+    def allocate_firm_size(self):
+        # default is 10% eme and 90% ame supply of global equity assets
+        sum_ame = 0
+        sum_eme = 0
+        for firm in self.firms:
+            if firm.parameters['domicile'] == 0:
+                sum_ame += 1
+            if firm.parameters['domicile'] == 1:
+                sum_eme += 1
+
+        list_temp_eme  = []
+        list_eme = []
+        eme_supply_shares = 0
+        for firm in self.firms:
+            if firm.domicile == 1.0:
+                list_temp_eme = self.divide_sum(int(sum_eme), int((self.global_supply_shares)*0.1))
+                list_eme.append(firm)
+        # itrange = list(range(0, len(list_temp)))
+        for index, elem in enumerate(list_eme):
+            for index2, elem2 in enumerate(list_temp_eme):
+                if index == index2:
+                    dict={"number_of_shares" : elem2}
+                    elem.append_state_variables(dict)
+                    eme_supply_shares+=elem.number_of_shares
+
+        self.variable_parameters["eme_supply_shares"] = eme_supply_shares
+
+        # print eme_supply_shares, self.global_supply_shares*0.1
+
+        "The same for AME firms"
+
+        list_temp_ame  = []
+        list_ame = []
+        ame_supply_shares = 0
+        for firm in self.firms:
+            if firm.domicile == 0:
+                list_temp_ame = self.divide_sum(int(sum_ame), int((self.global_supply_shares)*0.9))
+                list_ame.append(firm)
+        # itrange = list(range(0, len(list_temp)))
+        for index, elem in enumerate(list_ame):
+            for index2, elem2 in enumerate(list_temp_ame):
+                if index == index2:
+                    dict={"number_of_shares" : elem2}
+                    elem.append_state_variables(dict)
+                    ame_supply_shares += elem.number_of_shares
+        self.variable_parameters["ame_supply_shares"] = ame_supply_shares
+
+        # print ame_supply_shares, self.global_supply_shares*0.9
