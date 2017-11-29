@@ -247,12 +247,11 @@ class Fund(BaseAgent):
         #         self.state_variables["r_eme"]),\
         #         self.theta, self.state_variables['w_ame']
     def demand_ame(self, p_ame):
-        D = self.risky * self.w_ame * self.total_assets/p_ame
-        return D
+        return (self.risky * self.w_ame * self.total_assets/p_ame)
+
 
     def demand_eme(self, p_eme):
-        D = self.risky * self.w_eme * self.total_assets/p_eme
-        return D
+        return(self.risky * self.w_eme * self.total_assets/p_eme)
 
     def endow_funds_with_shares(self, environment, time):
         from transaction import Transaction

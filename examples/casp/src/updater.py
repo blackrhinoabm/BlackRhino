@@ -97,27 +97,61 @@ class Updater(BaseModel):
 
         # Now we're talking
         self.sell_ama_priced(environment, time)
+        logging.info(" Found the price of the AME risky asset: %s currency units ", environment.variable_parameters["price_of_AME"]    )
         self.sell_eme_priced(environment, time)
+        logging.info(" Found the price of the EME risky asset: %s currency units ", environment.variable_parameters["price_of_EME"]    )
+
 
 
     # -----------------------------------------------------------------------
 
     def sell_ama_priced(self, environment, time):
-        # First, we find the market equilibrium price yay!
-        # Important to note that this currently does
-        # not depend on the wealth of the buyers
-        # That is their demand may be higher than
-        # what they can actually buy, which may be ok
-        # We set the values necessary for tatonnement
-        # The list of suppliers and their supply functions
+        # We find the market price of AME shares
+        # given supply and demand of the agents
+        # and tolerance of error, resolution of search
+        # and amplification factor for exponential search
         suppliers = []
         for agent in environment.firms:
-            print agent.supply_of_labour
-            suppliers.append([agent, agent.supply_of_labour])
+            if agent.domicile==0:
+                # print agent.get_account("number_of_shares"), agent.identifier
+                suppliers.append([agent, agent.supply_of_shares])
+        # And the list of buyers and their demand functions
+        buyers = []
+        for agent in environment.funds:
+            buyers.append([agent, agent.demand_ame])
+
+        price_dummy = 75
+
+        from market import Market
+        # Put the appropriate settings, i.e. desired identifier
+        market = Market("market")
+        price = market.tatonnement(suppliers, buyers, price_dummy, 0.001, 0.01, 1.1)
+        environment.variable_parameters["price_of_AME"] = price
 
 
     def sell_eme_priced(self, environment, time):
-        pass
+        # We find the market price of AME shares
+        # given supply and demand of the agents
+        # and tolerance of error, resolution of search
+        # and amplification factor for exponential search
+        suppliers = []
+        for agent in environment.firms:
+            if agent.domicile==1.0:
+                # print agent.get_account("number_of_shares"), agent.identifier
+                suppliers.append([agent, agent.supply_of_shares])
+        # And the list of buyers and their demand functions
+        buyers = []
+        for agent in environment.funds:
+            buyers.append([agent, agent.demand_ame])
+
+        price_dummy = 75
+
+        from market import Market
+        # Put the appropriate settings, i.e. desired identifier
+        market = Market("market")
+        price = market.tatonnement(suppliers, buyers, price_dummy, 0.001, 0.01, 1.1)
+        print price
+        environment.variable_parameters["price_of_EME"] = price
 
 
     #This function is used in the beginning so funds have expected returns
