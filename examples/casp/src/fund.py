@@ -154,6 +154,14 @@ class Fund(BaseAgent):
     def update_maturity(self):
         super(Fund, self).update_maturity()
 
+
+
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.add_transaction(environment)
+
     # -----------------------------------------------------------------------
     # __init__  used to automatically instantiate an agent as an object when
     # the agent class is called
@@ -209,49 +217,49 @@ class Fund(BaseAgent):
     # ---------------------------------------------------------------------
 
     def calc_optimal_pf(self, environment):
-        environment.variable_parameters["cov_ame_eme"] = environment.variable_parameters["std_ame"] * environment.variable_parameters["std_eme"] * environment.variable_parameters["corr_ame_eme"]
+        environment.variable_parameters["cov_a_b"] = environment.variable_parameters["std_a"] * environment.variable_parameters["std_b"] * environment.variable_parameters["corr_a_b"]
 
 
-        x = ((self.state_variables["r_ame"] - environment.variable_parameters["r_f"]))\
-                                        *(environment.variable_parameters["std_eme"] *environment.variable_parameters["std_eme"])\
-                                        -((self.state_variables["r_eme"] - environment.variable_parameters["r_f"])\
-                                        *environment.variable_parameters["cov_ame_eme"] )
-        y =(   (self.state_variables["r_ame"] - environment.variable_parameters["r_f"])\
-                                   *(environment.variable_parameters["std_eme"] *environment.variable_parameters["std_eme"]\
-                                           + ((self.state_variables["r_eme"] - environment.variable_parameters["r_f"])\
-                                          *(environment.variable_parameters["std_ame"]* environment.variable_parameters["std_ame"]))\
-                                            - (((self.state_variables["r_ame"] - environment.variable_parameters["r_f"])\
-                                             + (self.state_variables["r_eme"] - environment.variable_parameters["r_f"])  )\
-                                             *(environment.variable_parameters["cov_ame_eme"]))))
-        self.state_variables["w_ame"] = x/y
-        self.state_variables["w_eme"] = 1 - self.state_variables["w_ame"]
+        x = ((self.state_variables["r_a"] - environment.variable_parameters["r_f"]))\
+                                        *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"])\
+                                        -((self.state_variables["r_b"] - environment.variable_parameters["r_f"])\
+                                        *environment.variable_parameters["cov_a_b"] )
+        y =(   (self.state_variables["r_a"] - environment.variable_parameters["r_f"])\
+                                   *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"]\
+                                           + ((self.state_variables["r_b"] - environment.variable_parameters["r_f"])\
+                                          *(environment.variable_parameters["std_a"]* environment.variable_parameters["std_a"]))\
+                                            - (((self.state_variables["r_a"] - environment.variable_parameters["r_f"])\
+                                             + (self.state_variables["r_b"] - environment.variable_parameters["r_f"])  )\
+                                             *(environment.variable_parameters["cov_a_b"]))))
+        self.state_variables["w_a"] = x/y
+        self.state_variables["w_b"] = 1 - self.state_variables["w_a"]
 
-        self.state_variables["r_ip"] = self.state_variables["w_ame"] * self.state_variables["r_ame"]\
-                                    + self.state_variables["w_eme"]  * self.state_variables["r_eme"]
+        self.state_variables["r_ip"] = self.state_variables["w_a"] * self.state_variables["r_a"]\
+                                    + self.state_variables["w_b"]  * self.state_variables["r_b"]
 
-        self.state_variables["variance_ip"] =  self.state_variables["w_ame"]  *  self.state_variables["w_ame"]\
-                                                * environment.variable_parameters["std_ame"]  * environment.variable_parameters["std_ame"]\
-                                                 + self.state_variables["w_eme"]*self.state_variables["w_eme"]\
-                                                 * environment.variable_parameters["std_eme"]*environment.variable_parameters["std_eme"]\
-                                                  + 2 * self.state_variables["w_ame"]*self.state_variables["w_eme"]\
-                                                  * environment.variable_parameters["cov_ame_eme"]
+        self.state_variables["variance_ip"] =  self.state_variables["w_a"]  *  self.state_variables["w_a"]\
+                                                * environment.variable_parameters["std_a"]  * environment.variable_parameters["std_a"]\
+                                                 + self.state_variables["w_b"]*self.state_variables["w_b"]\
+                                                 * environment.variable_parameters["std_b"]*environment.variable_parameters["std_b"]\
+                                                  + 2 * self.state_variables["w_a"]*self.state_variables["w_b"]\
+                                                  * environment.variable_parameters["cov_a_b"]
         self.state_variables["risky"] = ( self.state_variables["r_ip"] - environment.variable_parameters["r_f"])\
                                         / (self.state_variables["theta"] * self.state_variables["variance_ip"] )
 
 
-        # print ((self.state_variables["r_ame"])),\
-        #         (self.state_variables["r_eme"]),\
+        # print ((self.state_variables["r_a"])),\
+        #         (self.state_variables["r_b"]),\
         #         environment.variable_parameters["r_f"],\
-        #         (environment.variable_parameters["std_eme"]),\
-        #         (environment.variable_parameters["std_ame"],\
-        #         self.state_variables["r_eme"]),\
-        #         self.theta, self.state_variables['w_ame']
-    def demand_ame(self, p_ame):
-        return (self.risky * self.w_ame * self.total_assets/p_ame)
+        #         (environment.variable_parameters["std_b"]),\
+        #         (environment.variable_parameters["std_a"],\
+        #         self.state_variables["r_b"]),\
+        #         self.theta, self.state_variables['w_a']
+    def demand_a(self, p_a):
+        return (self.risky * self.w_a * self.total_assets)/p_a
 
 
-    def demand_eme(self, p_eme):
-        return(self.risky * self.w_eme * self.total_assets/p_eme)
+    def demand_b(self, p_b):
+        return(self.risky * self.w_b * self.total_assets/p_b)
 
     def endow_funds_with_shares(self, environment, time):
         from transaction import Transaction
@@ -267,7 +275,7 @@ class Fund(BaseAgent):
         while len(self.accounts) > 0:
             self.accounts.pop()        # transaction.add_transaction(environment)
         transaction = Transaction()
-        transaction.this_transaction("investment_shares", "",  self.identifier,  self.identifier,  value, 0,  0, -1)
+        transaction.this_transaction("investment_shares", "liabilities",  self.identifier,  self.identifier,  value, 0,  0, -1)
         # print transaction
         self.accounts.append(transaction)
         # del transaction
@@ -278,5 +286,42 @@ class Fund(BaseAgent):
 
     def update_balance_sheet(self):
         pass
-    def check_accounts(self):
-        pass
+
+    def check_accounts(self, environment):
+        return self.get_account("A") * environment.price_of_a\
+               +self.get_account("B") * environment.price_of_b\
+               + self.get_account("Risk_free")\
+               == self.get_account("investment_shares")
+
+
+
+
+
+    def endow_portfolio_transactions(self, environment, time):
+        valuation_a = 0
+        valuation_b = 0
+        A = 0
+        B = 0
+
+        for firm in environment.firms:
+            if firm.domicile == 0:
+                A = firm.identifier
+            if firm.domicile ==1:
+                B = firm.identifier
+
+        amount = self.demand_b(environment.fair_value_b)
+        valuation_b = amount * environment.fair_value_b
+
+        self.add_transaction("B", "assets", B,self.identifier, amount, 0, 0, -1, environment)
+
+        amount = self.demand_a(environment.fair_value_a)
+        valuation_a = amount * environment.fair_value_a
+
+
+
+        self.add_transaction("A", "assets", A,self.identifier, amount, 0, 0, -1, environment)
+
+        amount = self.total_assets - valuation_b - valuation_a
+        self.add_transaction("Risk_free", "assets", self.identifier,self.identifier, amount, 0, 0, -1, environment)
+
+        # print "Consistency for", self.identifier, ":", self.check_accounts(environment)

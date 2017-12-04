@@ -32,7 +32,7 @@ if __name__ == '__main__':
 		fileName += ".xml"
 		outFile = open(fileName,  'w')
 
-		if (i < 20):
+		if (i < 2):
 
 			value_theta = random.uniform(3,10)
 

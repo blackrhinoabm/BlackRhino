@@ -32,19 +32,23 @@ if __name__ == '__main__':
 		fileName += ".xml"
 		outFile = open(fileName,  'w')
 
-		if (i < 180):
+		if (i < 1):
 
-			value_theta = random.uniform(3,10)
+			# value_theta = random.uniform(3,10)
 
 			text = "<firm identifier='firm-" + str(i) + "'>\n"
 			text = text + "    <parameter type='parameters' name='domicile' value='" + "0" + "'></parameter>\n"
+			text = text + "    <parameter type='state_variables' name='dividend_firm' value='" + "6" + "' validity='0-1000'></parameter>\n"
+			text = text + "    <parameter type='state_variables' name='success_probability_firm' value='" + "0.9" + "' validity='0-1000'></parameter>\n"
 			text = text + "</firm>\n"
 
 		else:
-			value_theta = random.uniform(3, 10)
+			# value_theta = random.uniform(3, 10)
 
 			text = "<firm identifier='firm-" + str(i) + "'>\n"
 			text = text + "    <parameter type='parameters' name='domicile' value='" + "1" + "' validity='0-1000'></parameter>\n"
+			text = text + "    <parameter type='state_variables' name='dividend_firm' value='" + "8" + "' validity='0-1000'></parameter>\n"
+			text = text + "    <parameter type='state_variables' name='success_probability_firm' value='" + "0.8" + "' validity='0-1000'></parameter>\n"
 			text = text + "</firm>\n"
 
 

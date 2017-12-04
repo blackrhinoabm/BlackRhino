@@ -183,8 +183,8 @@ class Environment(BaseConfig):
         self.static_parameters["fund_directory"] = ""
         self.static_parameters["firm_directory"] = ""
 
-        self.variable_parameters["sum_ame_funds"] = 0
-        self.variable_parameters["sum_eme_funds"] = 0
+        self.variable_parameters["sum_a_funds"] = 0
+        self.variable_parameters["sum_b_funds"] = 0
 
 
         # first, read in the environment file
@@ -203,21 +203,17 @@ class Environment(BaseConfig):
 
         self.allocate_fund_size()
         logging.info("Determined fund size according to global market cap and data given in the agents configs")
-        self.allocate_firm_size()
-        logging.info("Determined firm size according to global supply of shares and number of firm configs")
-
 
         self.count_all_agents()
 
-        logging.info(" Initialized %s ame funds and %s eme funds and stored in environment.funds",\
-                            self.sum_ame_funds, self.sum_eme_funds)
-        logging.info(" Initialized %s ame firms and %s eme firms and stored in environment.firms",\
-                                self.sum_ame_firms, self.sum_eme_firms)
-        logging.info(" Global market cap is %s currency units; Ame market cap is %s currency units; Eme market cap is %s currency units",\
+        logging.info(" Initialized %s A funds and %s B funds and stored in environment.funds",\
+                            self.sum_a_funds, self.sum_b_funds)
+        logging.info(" Initialized %s A firms and %s B firms and stored in environment.firms",\
+                                self.sum_a_firms, self.sum_b_firms)
+        logging.info(" Global assets under management are %s currency units; A assets are %s currency units; B assets are %s currency units",\
                     self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
-        logging.info(" Global supply of shares is %s ; Ame firms issue %s shares and Eme firms issue %s shares",\
-                    self.global_supply_shares, self.ame_supply_shares, self.eme_supply_shares)
-        logging.info(" So we are looking for the price of the Ame and Eme equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
+
+        logging.info(" So we are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
         logging.info(" *******Environment initialisation completed*******")
 
 
@@ -292,36 +288,35 @@ class Environment(BaseConfig):
 
         logging.info('Fetched firms data and read into program')
 
-    def initialize_ame_returns(self):
+    def initialize_returns(self, environment):
         import numpy as np
         import random
 
-        random.seed(900)
-        mu_ame, sigma_ame = self.mu_ame, 0.01 # mean and standard deviation
-        s = np.random.normal(mu_ame, sigma_ame, (self.variable_parameters['sum_ame_funds']+self.variable_parameters['sum_eme_funds']))
-        return s
+        for i in self.firms:
+            if i.domicile == 0:
+                self.fair_value_a = i.dividend_firm/i.discount
+                self.mu_a = i.dividend_firm/self.fair_value_a
+            else:
+                self.fair_value_b = i.dividend_firm/i.discount
+                self.mu_b= i.dividend_firm/self.fair_value_b
 
-    def initialize_eme_returns(self):
-        import numpy as np
-        import random
 
-        random.seed(900)
-        mu_eme, sigma_eme = self.mu_eme, 0.01 # mean and standard deviation
-        e = np.random.normal(mu_eme, sigma_eme, (self.variable_parameters['sum_ame_funds']+self.variable_parameters['sum_eme_funds']))
-        return e
+        environment.variable_parameters["price_of_b"] = self.fair_value_b
+        environment.variable_parameters["price_of_a"] = self.fair_value_a
+        return self.fair_value_a, self.fair_value_a, self.mu_a, self.mu_b
 
     def count_all_agents(self):
         sum = 0
         for fund in self.funds:
             if fund.parameters['domicile'] == 0:
                 sum += 1
-        self.variable_parameters['sum_ame_funds'] = sum
+        self.variable_parameters['sum_a_funds'] = sum
 
         sum = 0
         for fund in self.funds:
             if fund.parameters['domicile'] == 1:
                 sum += 1
-        self.variable_parameters['sum_eme_funds'] = sum
+        self.variable_parameters['sum_b_funds'] = sum
 
 ################## FIRMS
 
@@ -329,53 +324,53 @@ class Environment(BaseConfig):
         for firm in self.firms:
             if firm.parameters['domicile'] == 0:
                 sum += 1
-        self.variable_parameters['sum_ame_firms'] = sum
+        self.variable_parameters['sum_a_firms'] = sum
 
         sum = 0
         for firm in self.firms:
             if firm.parameters['domicile'] == 1:
                 sum += 1
-        self.variable_parameters['sum_eme_firms'] = sum
+        self.variable_parameters['sum_b_firms'] = sum
 
 
     def allocate_fund_size(self):
-        # default is 20% eme and 80% ame market cap
-        sum_ame = 0
-        sum_eme = 0
+        # default is 20% B and 80% A market cap
+        sum_a = 0
+        sum_b = 0
         for fund in self.funds:
             if fund.parameters['domicile'] == 0:
-                sum_ame += 1
+                sum_a += 1
             if fund.parameters['domicile'] == 1:
-                sum_eme += 1
+                sum_b += 1
 
-        list_temp_eme  = []
-        list_eme = []
+        list_temp_b  = []
+        list_b = []
         eme_market_cap = 0
         for fund in self.funds:
             if fund.domicile == 1.0:
-                list_temp_eme = self.divide_sum(int(sum_eme), int((self.global_assets_under_management)*0.2))
-                list_eme.append(fund)
+                list_temp_b = self.divide_sum(int(sum_b), int((self.global_assets_under_management)*0.2))
+                list_b.append(fund)
         # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_eme):
-            for index2, elem2 in enumerate(list_temp_eme):
+        for index, elem in enumerate(list_b):
+            for index2, elem2 in enumerate(list_temp_b):
                 if index == index2:
                     dict={"total_assets" : elem2}
                     elem.append_state_variables(dict)
                     eme_market_cap+=elem.total_assets
         self.variable_parameters["eme_market_cap"] = eme_market_cap
 
-        "The same for AME funds"
+        "The same for A funds"
 
-        list_temp_ame  = []
-        list_ame = []
+        list_temp_a  = []
+        list_a = []
         ame_market_cap = 0
         for fund in self.funds:
             if fund.domicile == 0:
-                list_temp_ame = self.divide_sum(int(sum_ame), int((self.global_assets_under_management)*0.8))
-                list_ame.append(fund)
+                list_temp_a = self.divide_sum(int(sum_a), int((self.global_assets_under_management)*0.8))
+                list_a.append(fund)
         # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_ame):
-            for index2, elem2 in enumerate(list_temp_ame):
+        for index, elem in enumerate(list_a):
+            for index2, elem2 in enumerate(list_temp_a):
                 if index == index2:
                     dict={"total_assets" : elem2}
                     elem.append_state_variables(dict)
@@ -389,52 +384,3 @@ class Environment(BaseConfig):
         random.seed(9001)
         dividers = sorted(random.sample(xrange(1, total), n - 1))
         return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
-
-    def allocate_firm_size(self):
-        # default is 10% eme and 90% ame supply of global equity assets
-        sum_ame = 0
-        sum_eme = 0
-        for firm in self.firms:
-            if firm.parameters['domicile'] == 0:
-                sum_ame += 1
-            if firm.parameters['domicile'] == 1:
-                sum_eme += 1
-
-        list_temp_eme  = []
-        list_eme = []
-        eme_supply_shares = 0
-        for firm in self.firms:
-            if firm.domicile == 1.0:
-                list_temp_eme = self.divide_sum(int(sum_eme), int((self.global_supply_shares)*0.1))
-                list_eme.append(firm)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_eme):
-            for index2, elem2 in enumerate(list_temp_eme):
-                if index == index2:
-                    dict={"number_of_shares" : elem2}
-                    elem.append_state_variables(dict)
-                    eme_supply_shares+=elem.number_of_shares
-
-        self.variable_parameters["eme_supply_shares"] = eme_supply_shares
-
-        # print eme_supply_shares, self.global_supply_shares*0.1
-
-        "The same for AME firms"
-
-        list_temp_ame  = []
-        list_ame = []
-        ame_supply_shares = 0
-        for firm in self.firms:
-            if firm.domicile == 0:
-                list_temp_ame = self.divide_sum(int(sum_ame), int((self.global_supply_shares)*0.9))
-                list_ame.append(firm)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_ame):
-            for index2, elem2 in enumerate(list_temp_ame):
-                if index == index2:
-                    dict={"number_of_shares" : elem2}
-                    elem.append_state_variables(dict)
-                    ame_supply_shares += elem.number_of_shares
-        self.variable_parameters["ame_supply_shares"] = ame_supply_shares
-
-        # print ame_supply_shares, self.global_supply_shares*0.9

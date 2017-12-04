@@ -1,0 +1,5 @@
+<firm identifier='firm-1'>
+    <parameter type='parameters' name='domicile' value='1' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='dividend_firm' value='6.4' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='discount' value='0.16' validity='0-1000'></parameter>
+</firm>

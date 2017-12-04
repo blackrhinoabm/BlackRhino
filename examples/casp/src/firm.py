@@ -243,7 +243,7 @@ class Firm(BaseAgent):
     def check_accounts(self):
         pass
 
-    def endow_firms_with_equity(self, environment, time):
-
+    def endow_firms_with_equity(self, environment, time, number_of_shares):
+        self.number_of_shares = number_of_shares
         amount = self.number_of_shares
         self.add_transaction("number_of_shares", "", self.identifier,self.identifier, amount, 0, 0, -1, environment)

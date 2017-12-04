@@ -7,13 +7,12 @@
     <parameter type='num_firms' value='200'></parameter>
     <parameter type='fund_directory' value='configs/agents/funds/'></parameter>
     <parameter type='firm_directory' value='configs/agents/firms/'></parameter>
-    <parameter type='variable_parameters' name='global_assets_under_management' value='1000000' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='global_supply_shares' value='10000' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='mu_ame' value='0.08' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='mu_eme' value='0.1' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='std_ame' value='0.1' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='std_eme' value='0.2' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='corr_ame_eme' value='0.3' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='global_assets_under_management' value='100000' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='mu_a' value='0' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='mu_b' value='0' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='std_a' value='0.1' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='std_b' value='0.2' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='corr_a_b' value='0.3' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='r_f' value='0.05' validity='0-1000'></parameter>
     <parameter type='measurement_config' value='configs/measurements/firesales_output.xml'></parameter>
 </environment>
