@@ -1,0 +1,36 @@
+<environment title='test_stand_bank'>
+    <!-- simulation parameters -->
+    <parameter type='numSweeps' value='2'></parameter>
+    <parameter type='numSimulations' value='2'></parameter>
+    <parameter type='numBanks' value='3'></parameter>
+    <parameter type='bankDirectory' value='tests/banks/stand_bank/'></parameter>
+    <parameter type='graphType' value='gexf'></parameter>
+    <parameter type='contractsNetworkFile' value='tests/networks/full-3_banks'></parameter>
+    <!-- parameters determining the payment flow of banks -->
+    <parameter type='changing' name='rb' value='0.02' validity='0-2'></parameter>
+    <parameter type='changing' name='rd' value='0.01' validity='0-2'></parameter>
+    <!-- parameters for the central bank -->
+    <parameter type='changing' name='collateralQuality' value='0.8' validity='0-2'></parameter>
+    <!-- firm parameters-->
+    <parameter type='changing' name='successProbabilityFirms' value='0.9' validity='0-2'></parameter>
+    <parameter type='changing' name='positiveReturnFirms' value='0.03' validity='0-2'></parameter>
+    <parameter type='changing' name='firmLoanMaturity' value='50.0' validity='0-2'></parameter>
+    <!-- household parameters -->
+    <parameter type='changing' name='scaleFactorHouseholds' value='0.01' validity='0-2'></parameter>
+    <!-- bank parameters -->
+    <parameter type='changing' name='dividendLevel' value='1.0' validity='0-2'></parameter>
+    <parameter type='changing' name='assetNumber' value='6.0' validity='0-2'></parameter>
+    <parameter type='changing' name='interbankLoanMaturity' value='2.0' validity='0-2'></parameter>
+    <!-- simulation specific parameters -->
+    <parameter type='changing' name='shockType' value='0.0' validity='2-2'></parameter>
+    <parameter type='changing' name='liquidationDiscountFactor' value='0.0' validity='0-2'></parameter>
+    <parameter type='changing' name='riskAversionDiscountFactor' value='0.01' validity='0-2'></parameter>
+    <parameter type='changing' name='riskAversionAmplificationFactor' value='0.1' validity='0-2'></parameter>
+    <!-- regulation specific parameters -->
+    <parameter type='changing' name='r' value='0.05' validity='0-2'></parameter>
+    <parameter type='changing' name='sifiSurchargeFactor' value='1.0' validity='0-2'></parameter>
+    <parameter type='changing' name='liquidityCoverageRatio' value='0.1' validity='0-2'></parameter>
+    <parameter type='changing' name='netStableFundingRatio' value='0.1' validity='0-2'></parameter>
+    <parameter type='changing' name='leverageRatio' value='0.03' validity='0-2'></parameter>
+    <parameter type='changing' name='requiredCapitalRatio' value='0.05' validity='0-2'></parameter>
+</environment>
