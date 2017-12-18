@@ -1,15 +1,15 @@
 <environment identifier='casp'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='1'></parameter>
+    <parameter type='num_sweeps' value='2'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value=''></parameter>
-    <parameter type='num_funds' value='30'></parameter>
-    <parameter type='num_firms' value='200'></parameter>
+    <parameter type='num_funds' value=' '></parameter>
+    <parameter type='num_firms' value=' '></parameter>
     <parameter type='fund_directory' value='configs/agents/funds/'></parameter>
     <parameter type='firm_directory' value='configs/agents/firms/'></parameter>
     <parameter type='variable_parameters' name='global_assets_under_management' value='100000' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='mu_a' value='0' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='mu_b' value='0' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='fundamentalists' value='0.5' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='chartists' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='std_a' value='0.1' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='std_b' value='0.2' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='corr_a_b' value='0.3' validity='0-1000'></parameter>

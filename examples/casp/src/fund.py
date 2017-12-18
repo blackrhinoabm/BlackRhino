@@ -20,24 +20,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-# This script contains the Agent class which is later called in the Environment
-# script. In the degroot learning algorithm a group of individuals observe
-# each other's opinions and adapt their subjective propability distribution
-# of an unknown value of a parameter theta
-# The model (which is executed in the updater script) describes how the group
-# forms a collective subjective propability distrbution by revealing their
-# individual distribution to each other and pooling their opnion
-
-# Implementation: Every agent has an opinion variable and weights/probabilities
-# describing how much it'cares' for the opinion of the other. These weights are
-# stored in a dictionary called transition_probabilities
+# This script contains the Agent class which is called in the Environment
+# script.
 
 import logging
 from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
 #
-# class Bank
+# class Fund
 #
 # ============================================================================
 
@@ -81,7 +72,7 @@ class Fund(BaseAgent):
 		fund_string = super(Fund, self).__str__()
 		fund_string = fund_string.replace("\n", "\n    <type value='fund'>\n", 1)
 		text = "\n"
-		for transaction in self.accounts:
+		for index, transaction in enumerate(self.accounts, start=1):
 			text = text + transaction.write_transaction()
 		text = text + "  </agent>"
 		return fund_string.replace("\n  </agent>", text, 1)
@@ -161,6 +152,11 @@ class Fund(BaseAgent):
         transaction = Transaction()
         transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.add_transaction(environment)
+    def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.remove_transaction()
 
     # -----------------------------------------------------------------------
     # __init__  used to automatically instantiate an agent as an object when
@@ -216,26 +212,27 @@ class Fund(BaseAgent):
     #
     # ---------------------------------------------------------------------
 
-    def calc_optimal_pf(self, environment):
+    def calc_optimal_pf(self, environment, mu_a, mu_b):
+
         environment.variable_parameters["cov_a_b"] = environment.variable_parameters["std_a"] * environment.variable_parameters["std_b"] * environment.variable_parameters["corr_a_b"]
 
 
-        x = ((self.state_variables["r_a"] - environment.variable_parameters["r_f"]))\
+        x = ((mu_a - environment.variable_parameters["r_f"]))\
                                         *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"])\
-                                        -((self.state_variables["r_b"] - environment.variable_parameters["r_f"])\
+                                        -((mu_b - environment.variable_parameters["r_f"])\
                                         *environment.variable_parameters["cov_a_b"] )
-        y =(   (self.state_variables["r_a"] - environment.variable_parameters["r_f"])\
+        y =(   (mu_a - environment.variable_parameters["r_f"])\
                                    *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"]\
-                                           + ((self.state_variables["r_b"] - environment.variable_parameters["r_f"])\
+                                           + ((mu_b - environment.variable_parameters["r_f"])\
                                           *(environment.variable_parameters["std_a"]* environment.variable_parameters["std_a"]))\
-                                            - (((self.state_variables["r_a"] - environment.variable_parameters["r_f"])\
-                                             + (self.state_variables["r_b"] - environment.variable_parameters["r_f"])  )\
+                                            - (((mu_a - environment.variable_parameters["r_f"])\
+                                             + (mu_b - environment.variable_parameters["r_f"])  )\
                                              *(environment.variable_parameters["cov_a_b"]))))
         self.state_variables["w_a"] = x/y
         self.state_variables["w_b"] = 1 - self.state_variables["w_a"]
 
-        self.state_variables["r_ip"] = self.state_variables["w_a"] * self.state_variables["r_a"]\
-                                    + self.state_variables["w_b"]  * self.state_variables["r_b"]
+        self.state_variables["r_ip"] = self.state_variables["w_a"] * mu_a\
+                                    + self.state_variables["w_b"]  * mu_b
 
         self.state_variables["variance_ip"] =  self.state_variables["w_a"]  *  self.state_variables["w_a"]\
                                                 * environment.variable_parameters["std_a"]  * environment.variable_parameters["std_a"]\
@@ -247,19 +244,73 @@ class Fund(BaseAgent):
                                         / (self.state_variables["theta"] * self.state_variables["variance_ip"] )
 
 
-        # print ((self.state_variables["r_a"])),\
-        #         (self.state_variables["r_b"]),\
-        #         environment.variable_parameters["r_f"],\
-        #         (environment.variable_parameters["std_b"]),\
-        #         (environment.variable_parameters["std_a"],\
-        #         self.state_variables["r_b"]),\
-        #         self.theta, self.state_variables['w_a']
-    def demand_a(self, p_a):
-        return (self.risky * self.w_a * self.total_assets)/p_a
 
+    def calc_demand_asset(self, asset, price):
 
-    def demand_b(self, p_b):
-        return(self.risky * self.w_b * self.total_assets/p_b)
+        if "A" in asset.identifier:
+            return (self.risky * self.w_a * self.total_assets)/price
+
+        if "B" in asset.identifier:
+            return (self.risky * self.w_b * self.total_assets)/price
+
+    def get_net_demand_a(self, goal):
+        if goal <  0 and self.get_account("A") > 0:
+            demand =  goal - self.get_account("A")
+
+        elif goal <  0 and self.get_account("A") < 0:
+            demand =  goal + self.get_account("A")
+
+        elif goal >  0 and self.get_account("A") > 0:
+            demand =  goal - self.get_account("A")
+
+        else:
+            demand =  self.get_account("A") - goal
+        return demand
+
+    def get_net_demand_b(self, goal):
+        if goal <  0 and self.get_account("B") > 0:
+            demand =  goal - self.get_account("B")
+
+        elif goal <  0 and self.get_account("B") < 0:
+            demand =  goal + self.get_account("A")
+
+        elif goal >  0 and self.get_account("B") > 0:
+            demand =  goal - self.get_account("B")
+
+        else:
+            demand =  self.get_account("B") - goal
+        return demand
+
+    def demand_tatonnement_a(self, price):
+
+        goal = (self.risky * self.w_a * self.total_assets)/price
+        if goal <  0 and self.get_account("A") > 0:
+            demand =  goal - self.get_account("A")
+            demand = demand * (-1)
+        elif goal <  0 and self.get_account("A") < 0:
+            demand =  goal + self.get_account("A")
+            demand = demand * (-1)
+        elif goal >  0 and self.get_account("A") > 0:
+            demand =  goal - self.get_account("A")
+
+        else:
+            demand =  self.get_account("A") - goal
+        return demand
+
+    def demand_tatonnement_b(self, price):
+        goal = (self.risky * self.w_b * self.total_assets)/price
+        if goal <  0 and self.get_account("B") > 0:
+            demand =  goal - self.get_account("B")
+
+        elif goal <  0 and self.get_account("B") < 0:
+            demand =  goal + self.get_account("A")
+
+        elif goal >  0 and self.get_account("B") > 0:
+            demand =  goal - self.get_account("B")
+
+        else:
+            demand =  self.get_account("B") - goal
+        return demand
 
     def endow_funds_with_shares(self, environment, time):
         from transaction import Transaction
@@ -284,6 +335,22 @@ class Fund(BaseAgent):
         # for object in self.accounts:
         #     object.print_transaction()
 
+    def update_belief(self, environment,  asset_a,  asset_b):
+
+        if self.strategy == "fundamentalist":
+            expected_price_a = asset_a.prices[-1] + self.gamma_f * ( asset_a.funda_v - asset_a.prices[-1]   )
+            expected_price_b = asset_b.prices[-1] + self.gamma_f * ( asset_b.funda_v - asset_b.prices[-1]   )
+        if self.strategy == "chartist":
+            expected_price_a = asset_a.prices[-1] + self.gamma_c * ( asset_a.prices[-1] - asset_a.prices[-2]   )
+            expected_price_b = asset_b.prices[-1] + self.gamma_c * ( asset_b.prices[-1] - asset_b.prices[-2]   )
+        # print expected_price_a, expected_price_b
+        self.state_variables['exp_mu_a'] = (asset_a.calc_exp_return(asset_a.prices[-1], expected_price_a, asset_a.firm.dividend))
+        self.state_variables['exp_mu_b']= (asset_b.calc_exp_return(asset_b.prices[-1], expected_price_b, asset_b.firm.dividend))
+        exp_mu_a, exp_mu_b = self.state_variables['exp_mu_a'] , self.state_variables['exp_mu_b']
+
+        return expected_price_a, expected_price_b, exp_mu_a, exp_mu_b
+
+
     def update_balance_sheet(self):
         pass
 
@@ -293,35 +360,23 @@ class Fund(BaseAgent):
                + self.get_account("Risk_free")\
                == self.get_account("investment_shares")
 
+    def init_portfolio_transactions(self, environment, time, amount_a, amount_b):
 
-
-
-
-    def endow_portfolio_transactions(self, environment, time):
         valuation_a = 0
         valuation_b = 0
-        A = 0
-        B = 0
 
-        for firm in environment.firms:
-            if firm.domicile == 0:
-                A = firm.identifier
-            if firm.domicile ==1:
-                B = firm.identifier
+        valuation_b = amount_b * environment.price_of_b
+        self.add_transaction("B", "assets", "firm-1", self.identifier, amount_b, 0, 0, -1, environment)
+        # Code to see transctions and keeping track of index, value pairs
+        # for num, line in enumerate(self.accounts):
+        #     print("{}: {}".format(num, line))
 
-        amount = self.demand_b(environment.fair_value_b)
-        valuation_b = amount * environment.fair_value_b
-
-        self.add_transaction("B", "assets", B,self.identifier, amount, 0, 0, -1, environment)
-
-        amount = self.demand_a(environment.fair_value_a)
-        valuation_a = amount * environment.fair_value_a
-
-
-
-        self.add_transaction("A", "assets", A,self.identifier, amount, 0, 0, -1, environment)
-
+        valuation_a = amount_a * environment.price_of_a
+        self.add_transaction("A", "assets", "firm-0",self.identifier, amount_a, 0, 0, -1, environment)
+        #
         amount = self.total_assets - valuation_b - valuation_a
         self.add_transaction("Risk_free", "assets", self.identifier,self.identifier, amount, 0, 0, -1, environment)
 
+
+        # Code to check balance sheet identity
         # print "Consistency for", self.identifier, ":", self.check_accounts(environment)

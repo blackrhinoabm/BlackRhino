@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import logging
+from initialisation import *
 
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
@@ -37,24 +38,15 @@ class Environment(BaseConfig):
     from state import State
     from parameters import Parameters
     #
-    #
     # VARIABLES
-    #
     #
     identifier = ""  # identifier of the environment
     static_parameters = {}  # a dictionary containing all environmenet parameters
-
-    static_parameters["num_simulations"] = 0  # number of simulations
-    static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
-    static_parameters["num_agents"] = 0  # number of agents in a simulation
-    static_parameters["fund_directory"] = ""  # directory containing agent xmls
-
     agents = []
-    funds = []
-    firms = []
     variable_parameters = {}
-    parameters = Parameters()
-    state = State()
+    #
+    # parameters = Parameters()
+    # state = State()
     #
     # CODE
     #
@@ -107,13 +99,6 @@ class Environment(BaseConfig):
     def set_shocks(self, params):
         super(Environment, self).set_shocks(params)
 
-    # def agents_generator(self):
-    #     # self.agents = [self.funds]
-    #     super(Environment, self).agents_generator()
-
-    # def get_agent_by_id(self, ident):
-    #     super(Environment, self).get_agent_by_id(ident)
-
     def check_global_transaction_balance(self, _type):
         super(Environment, self).check_global_transaction_balance(_type)
 
@@ -127,7 +112,6 @@ class Environment(BaseConfig):
         super(Environment, self).update_asset_returns()
 
     def __init__(self, environment_directory, identifier):
-
         self.initialize(environment_directory, identifier)
     # -------------------------------------------------------------------------
 
@@ -138,7 +122,6 @@ class Environment(BaseConfig):
     # -------------------------------------------------------------------------
 
     def read_xml_config_file(self, env_filename):
-
         try:
             xmlText = open(env_filename).read()
             element = ElementTree.XML(xmlText)  # we tell python it's an xml
@@ -165,6 +148,7 @@ class Environment(BaseConfig):
 
         except:
             logging.error("    ERROR: %s could not be parsed", env_filename)
+            
     # -------------------------------------------------------------------------
     # the next function
     # initializes the environment, initializing all the variables
@@ -175,36 +159,28 @@ class Environment(BaseConfig):
 
     def initialize(self, environment_directory, identifier):
         self.identifier = identifier
-
-        self.static_parameters = {}
-        self.static_parameters["num_simulations"] = 0
-        self.static_parameters["num_sweeps"] = 0
-        self.static_parameters["num_agents"] = 0
-        self.static_parameters["fund_directory"] = ""
-        self.static_parameters["firm_directory"] = ""
-
-        self.variable_parameters["sum_a_funds"] = 0
-        self.variable_parameters["sum_b_funds"] = 0
-
-
+        self.funds = []
+        self.firms = []
+        self.assets = []
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
         logging.info(" Environment file read: %s", environment_filename)
 
-
         # then read in all the agents
-        self.initialize_funds_from_files(self.static_parameters['fund_directory'], 0)
-        self.initialize_firms_from_files(self.static_parameters['firm_directory'], 0)
-
-
+        init_firms(self, self.static_parameters['firm_directory'], 0)
+        init_funds(self, self.static_parameters['fund_directory'], 0)
         self.agents = [self.funds, self.firms]
 
+        for i in self.firms:
+            i.endow_firms_with_equity(self, 10000)
 
-        self.allocate_fund_size()
-        logging.info("Determined fund size according to global market cap and data given in the agents configs")
+        init_assets(self)
 
-        self.count_all_agents()
+        #Now we determine the amount of fundamentalists and chartists
+        self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
+        self.variable_parameters['amount_chartist'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['chartists'])
+
 
         logging.info(" Initialized %s A funds and %s B funds and stored in environment.funds",\
                             self.sum_a_funds, self.sum_b_funds)
@@ -215,8 +191,6 @@ class Environment(BaseConfig):
 
         logging.info(" So we are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
         logging.info(" *******Environment initialisation completed*******")
-
-
 
     def agents_generator(self):
         if self.agents is not None:
@@ -244,67 +218,7 @@ class Environment(BaseConfig):
         else:
             return to_return
 
-
     # -------------------------------------------------------------------------
-    def initialize_funds_from_files(self, fund_directory, time):
-
-        from src.fund import Fund
-        while len(self.funds) > 0:
-            self.funds.pop()
-
-        agent_files = os.listdir(fund_directory)
-
-        for each_agent_file in agent_files:
-
-            if '.xml' in each_agent_file:
-                agent = Fund()
-                agent_filename = fund_directory + each_agent_file
-                agent.get_parameters_from_file(agent_filename, self)
-                self.funds.append(agent)
-
-        logging.info('Fetched funds data and read into program')
-
-        # check if agents were read in correctly
-        # for i in self.funds:
-        #     print i.identifier
-        #     print i.print_variables()
-        #     print i
-
-    def initialize_firms_from_files(self, firm_directory, time):
-
-        from src.firm import Firm
-        while len(self.firms) > 0:
-            self.firms.pop()
-
-        agent_files = os.listdir(firm_directory)
-
-        for each_agent_file in agent_files:
-
-            if '.xml' in each_agent_file:
-                agent = Firm()
-                agent_filename = firm_directory + each_agent_file
-                agent.get_parameters_from_file(agent_filename, self)
-                self.firms.append(agent)
-
-        logging.info('Fetched firms data and read into program')
-
-    def initialize_returns(self, environment):
-        import numpy as np
-        import random
-
-        for i in self.firms:
-            if i.domicile == 0:
-                self.fair_value_a = i.dividend_firm/i.discount
-                self.mu_a = i.dividend_firm/self.fair_value_a
-            else:
-                self.fair_value_b = i.dividend_firm/i.discount
-                self.mu_b= i.dividend_firm/self.fair_value_b
-
-
-        environment.variable_parameters["price_of_b"] = self.fair_value_b
-        environment.variable_parameters["price_of_a"] = self.fair_value_a
-        return self.fair_value_a, self.fair_value_a, self.mu_a, self.mu_b
-
     def count_all_agents(self):
         sum = 0
         for fund in self.funds:
@@ -332,55 +246,4 @@ class Environment(BaseConfig):
                 sum += 1
         self.variable_parameters['sum_b_firms'] = sum
 
-
-    def allocate_fund_size(self):
-        # default is 20% B and 80% A market cap
-        sum_a = 0
-        sum_b = 0
-        for fund in self.funds:
-            if fund.parameters['domicile'] == 0:
-                sum_a += 1
-            if fund.parameters['domicile'] == 1:
-                sum_b += 1
-
-        list_temp_b  = []
-        list_b = []
-        eme_market_cap = 0
-        for fund in self.funds:
-            if fund.domicile == 1.0:
-                list_temp_b = self.divide_sum(int(sum_b), int((self.global_assets_under_management)*0.2))
-                list_b.append(fund)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_b):
-            for index2, elem2 in enumerate(list_temp_b):
-                if index == index2:
-                    dict={"total_assets" : elem2}
-                    elem.append_state_variables(dict)
-                    eme_market_cap+=elem.total_assets
-        self.variable_parameters["eme_market_cap"] = eme_market_cap
-
-        "The same for A funds"
-
-        list_temp_a  = []
-        list_a = []
-        ame_market_cap = 0
-        for fund in self.funds:
-            if fund.domicile == 0:
-                list_temp_a = self.divide_sum(int(sum_a), int((self.global_assets_under_management)*0.8))
-                list_a.append(fund)
-        # itrange = list(range(0, len(list_temp)))
-        for index, elem in enumerate(list_a):
-            for index2, elem2 in enumerate(list_temp_a):
-                if index == index2:
-                    dict={"total_assets" : elem2}
-                    elem.append_state_variables(dict)
-                    ame_market_cap += elem.total_assets
-        self.variable_parameters["ame_market_cap"] = ame_market_cap
-
-    def divide_sum(self, n, total):
-    #Return a randomly chosen list of n positive integers summing to total.
-    #Each such list is equally likely to occur.
-        import random
-        random.seed(9001)
-        dividers = sorted(random.sample(xrange(1, total), n - 1))
-        return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+        return self.variable_parameters['sum_a_funds'] , self.variable_parameters['sum_b_funds']

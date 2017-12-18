@@ -21,23 +21,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 # This script contains the Agent class which is later called in the Environment
-# script. In the degroot learning algorithm a group of individuals observe
-# each other's opinions and adapt their subjective propability distribution
-# of an unknown value of a parameter theta
-# The model (which is executed in the updater script) describes how the group
-# forms a collective subjective propability distrbution by revealing their
-# individual distribution to each other and pooling their opnion
-
-# Implementation: Every agent has an opinion variable and weights/probabilities
-# describing how much it'cares' for the opinion of the other. These weights are
-# stored in a dictionary called transition_probabilities
+# script.
 
 import logging
 from abm_template.src.baseagent import BaseAgent
 
 # ============================================================================
 #
-# class Bank
+# class Firm
 #
 # ============================================================================
 
@@ -54,128 +45,11 @@ class Firm(BaseAgent):
 
     accounts = []
 
-    parameters["active"] = 0
-
     #
     #
     # CODE
     #
     #
-
-    #
-    #
-    # all the methods inherited from the abstract class BaseAgent
-    # that we need to include so the agent class gets instantiated
-    # we can use them to modify the program easier (e.g. set_num_sweeps)
-    #
-    #
-
-    def __key__(self):
-        return self.identifier
-
-    def __eq__(self, other):
-        return self.__key__() == other.__key__()
-
-    def __hash__(self):
-        return hash(self.__key__())
-
-    def __str__(self):
-		firm_string = super(Firm, self).__str__()
-		firm_string = firm_string.replace("\n", "\n    <type value='firm'>\n", 1)
-		text = "\n"
-		for transaction in self.accounts:
-			text = text + transaction.write_transaction()
-		text = text + "  </agent>"
-		return firm_string.replace("\n  </agent>", text, 1)
-
-    def __getattr__(self, attr):
-		return super(Firm, self).__getattr__(attr)
-        # ret_str = "  <agent identifier='" + self.identifier + "'>\n "
-
-        # ret_str = ret_str + " <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
-
-        # for each_agent in self.transition_probabilities:
-        #     weight = self.transition_probabilities[each_agent]
-        #     if isinstance(weight, int) or isinstance(weight, float) or isinstance(weight, str):
-        #         ret_str = ret_str + "    <parameter type='transition' + 'name='" + each_agent + "' value='" + str(weight) + "'></parameter>\n"
-        #     else:
-        #         raise TypeError
-        # ret_str = ret_str + "</agent>\n"
-        # return ret_str
-
-    def __del__(self):
-		pass
-
-    def get_parameters(self):
-        return self.parameters
-
-    def append_parameters(self, values):
-        super(Firm, self).append_parameters(values)
-
-    def set_parameters(self, values):
-        super(Firm, self).append_parameters(values)
-
-    def append_state_variables(self, values):
-        super(Firm, self).append_state_variables(values)
-
-    def get_state_variables(self):
-        return self.state_variables
-
-    def set_state_variables(self, _variables):
-        super(Firm, self).set_state_variables(_variables)
-
-    def check_consistency(self):
-        assets = []
-        liabilities = []
-        return super(Firm, self).check_consistency(assets, liabilities)
-
-    def clear_accounts(self):
-        super(Firm, self).clear_accounts()
-
-
-
-    def purge_accounts(self, environment):
-        super(Firm, self).purge_accounts(environment)
-
-    def get_account_num_transactions(self, _type):
-        super(Firm, self).get_account_num_transactions(_type)
-
-    def get_transactions_from_file(self, filename, environment):
-        super(Firm, self).get_transactions_from_file(filename, environment)
-
-    def get_identifier(self):
-        return self.identifier
-
-    def set_identifier(self, value):
-        super(Firm, self).set_identifier(value)
-
-    def update_maturity(self):
-        super(Firm, self).update_maturity()
-
-    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
-        from src.transaction import Transaction
-        transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
-        transaction.add_transaction(environment)
-
-    def clear_accounts(self):
-        super(Firm, self).clear_accounts()
-
-    def purge_accounts(self, environment):
-        super(Firm, self).purge_accounts(environment)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # get_transactions_from_file
-    # reads transactions from the config file to the firm's accounts
-    # -------------------------------------------------------------------------
-    def get_transactions_from_file(self, filename, environment):
-        super(Firm, self).get_transactions_from_file(filename, environment)
-    # -------------------------------------------------------------------------
-
-
-
-
 
     # -----------------------------------------------------------------------
     # __init__  used to automatically instantiate an agent as an object when
@@ -184,11 +58,33 @@ class Firm(BaseAgent):
 
     def __init__(self):
         self.identifier = ""  # identifier of the specific agent
-        self.state_variables = {}
-        self.parameters = {}
-        self.accounts = []
+        self.state_variables = {} # stores all state_variables
+        self.parameters = {} # stores all parameters
+        self.accounts = [] # accounts with transactions for the agent
+        self.profit_results = [] # list containing profit result per time period
+        self.dividends = []
+        self.growth_results =  []
+
 
     def get_parameters_from_file(self, agent_filename, environment):
+        """
+        Method to read in data given in an xml file and stored in
+        dictionaries attached to the agent object.
+
+        Arguments
+        ---
+        agent_filename - Individual xml file given in the agent directory
+        Example: fund-01.xml
+
+        Output
+        ---
+        Stores all parameters and state_variables read from the config
+        files in dictionaries self.parameters and self.state_variables
+
+        Called
+        ---
+        In environment.py when instantiation happens
+        """
         from xml.etree import ElementTree
 
         try:
@@ -219,9 +115,6 @@ class Firm(BaseAgent):
             logging.error("    ERROR: %s could not be parsed", agent_filename)
 
 
-    def print_variables(self):
-        print self.state_variables
-        print self.parameters
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
@@ -238,12 +131,143 @@ class Firm(BaseAgent):
 
         return volume
 
-    def update_balance_sheet(self):
-        pass
-    def check_accounts(self):
-        pass
+    def add_stuff(self, initial_profit=[100000],growth = [0]):
+        self.growth_results = growth
+        self.profit_results = initial_profit
 
-    def endow_firms_with_equity(self, environment, time, number_of_shares):
+
+    def calc_profit(self):
+        """
+        Using the stochastic process brownian motion to calculate firm profit.
+        Import method from folder "function"
+        ---
+        returns profit as float
+
+        Where do parameters come from?
+        Parameters are passed into agent objects after initializing in
+        function add_stuff() (see above)
+
+        """
+        from functions.brownian_drift import brownian_drift
+
+        self.state_variables['profit'] = self.profit_results[-1] * (brownian_drift(self.brown_dt, self.brown_mu, self.brown_sigma))
+
+        self.state_variables['growth'] = (self.state_variables['profit'] - self.profit_results[-1]  )/self.profit_results[-1]
+        self.growth_results.append(self.state_variables['growth'])
+        self.profit_results.append(self.state_variables['profit'])
+        return self.state_variables['profit']
+
+    def initialize_profits(self):
+        import itertools
+        # creates profits.
+        for _ in itertools.repeat(0,1):
+            self.calc_profit()
+
+    def endow_firms_with_equity(self, environment, number_of_shares):
         self.number_of_shares = number_of_shares
         amount = self.number_of_shares
         self.add_transaction("number_of_shares", "", self.identifier,self.identifier, amount, 0, 0, -1, environment)
+
+    def print_variables(self):
+        print self.state_variables
+        print self.parameters
+
+    """
+    Black Rhino abm_template functions. These functions
+    need to be included for inheritance.
+    All the methods inherited from the abstract class BaseAgent
+    that we need to include so the agent class gets instantiated
+    """
+    def __key__(self):
+        return self.identifier
+
+    def __eq__(self, other):
+        return self.__key__() == other.__key__()
+
+    def __hash__(self):
+        return hash(self.__key__())
+
+    def __str__(self):
+		firm_string = super(Firm, self).__str__()
+		firm_string = firm_string.replace("\n", "\n    <type value='firm'>\n", 1)
+		text = "\n"
+		for transaction in self.accounts:
+			text = text + transaction.write_transaction()
+		text = text + "  </agent>"
+		return firm_string.replace("\n  </agent>", text, 1)
+
+    def __getattr__(self, attr):
+		return super(Firm, self).__getattr__(attr)
+
+    def __del__(self):
+		pass
+
+    def get_parameters(self):
+        return self.parameters
+
+    def append_parameters(self, values):
+        super(Firm, self).append_parameters(values)
+
+    def set_parameters(self, values):
+        super(Firm, self).append_parameters(values)
+
+    def append_state_variables(self, values):
+        super(Firm, self).append_state_variables(values)
+
+    def get_state_variables(self):
+        return self.state_variables
+
+    def set_state_variables(self, _variables):
+        super(Firm, self).set_state_variables(_variables)
+
+    def check_consistency(self):
+        assets = []
+        liabilities = []
+        return super(Firm, self).check_consistency(assets, liabilities)
+
+    def clear_accounts(self):
+        super(Firm, self).clear_accounts()
+
+    def purge_accounts(self, environment):
+        super(Firm, self).purge_accounts(environment)
+
+    def get_account_num_transactions(self, _type):
+        super(Firm, self).get_account_num_transactions(_type)
+
+    def get_transactions_from_file(self, filename, environment):
+        super(Firm, self).get_transactions_from_file(filename, environment)
+
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, value):
+        super(Firm, self).set_identifier(value)
+
+    def update_maturity(self):
+        super(Firm, self).update_maturity()
+
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.add_transaction(environment)
+    def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.remove_transaction()
+
+    def clear_accounts(self):
+        super(Firm, self).clear_accounts()
+
+    def purge_accounts(self, environment):
+        super(Firm, self).purge_accounts(environment)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # get_transactions_from_file
+    # reads transactions from the config file to the firm's accounts
+    # -------------------------------------------------------------------------
+    def get_transactions_from_file(self, filename, environment):
+        super(Firm, self).get_transactions_from_file(filename, environment)
+    # -------------------------------------------------------------------------
