@@ -11,14 +11,29 @@ def init_funds(environment, fund_directory, time):
     allocate_fund_size(environment)
     init_fund_type(environment)
 
-def init_assets(environment):
+def init_assets(environment, asset_directory, time):
+    initialize_shares(environment, asset_directory, time)
+    # initialize_bond_from_files(environment)
+    init_asset_prices(environment)
+
+def initialize_shares(environment, asset_directory, time):
+    from src.asset import Asset
+    for i in environment.firms:
+        asset = Asset(i)
+        environment.assets.append(asset)
+
+def init_asset_prices(environment):
     """
     Assets A and B are intiantilized with a randomized initial price
     pA and pB.
 
+    Bond is initialised with given return (e.g. 5%)
+    and price is calculated with calc_bond_price
+
     Calls method init_return in same script.
 
     Argument
+    Environment
     ===
 
     Result
@@ -27,10 +42,6 @@ def init_assets(environment):
 
     """
     import random
-    from src.asset import Asset
-    for i in environment.firms:
-        asset = Asset(i)
-        environment.assets.append(asset)
 
     random.seed(000)
     pA = random.randint(35, 41)
@@ -53,13 +64,16 @@ def init_assets(environment):
         if i.identifier == "A":
             i.mu = init_return(i.firm.dividend, pA)
             environment.variable_parameters['mu_a'] = i.mu
-            # i.prices.append(prices_a)
             i.prices.extend(prices_a)
         else:
             i.mu = init_return(i.firm.dividend, pB)
             environment.variable_parameters['mu_b'] = i.mu
-            i.prices.append(prices_b)
             i.prices.extend(prices_b)
+
+    """For the deterministic bond price we use the
+    bond price formula stored in functions/bond_price"""
+    from functions.bond_price import calc_bond_price
+    environment.variable_parameters['price_of_bond'] = calc_bond_price(100, 10, environment.variable_parameters["r_f"] , 0, 2)
 
 def init_return(div, current):
     return div/current

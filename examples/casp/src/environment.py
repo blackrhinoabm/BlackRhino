@@ -26,6 +26,7 @@ from initialisation import *
 
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
+from src.network import Network
 
 # -------------------------------------------------------------------------
 #
@@ -44,6 +45,8 @@ class Environment(BaseConfig):
     static_parameters = {}  # a dictionary containing all environmenet parameters
     agents = []
     variable_parameters = {}
+
+    network = Network("")  # network of transaction
     #
     # parameters = Parameters()
     # state = State()
@@ -111,6 +114,14 @@ class Environment(BaseConfig):
     def update_asset_returns(self):
         super(Environment, self).update_asset_returns()
 
+    def new_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        # transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment)
+
+    # -------------------------------------------------------------------------
+
     def __init__(self, environment_directory, identifier):
         self.initialize(environment_directory, identifier)
     # -------------------------------------------------------------------------
@@ -148,7 +159,7 @@ class Environment(BaseConfig):
 
         except:
             logging.error("    ERROR: %s could not be parsed", env_filename)
-            
+
     # -------------------------------------------------------------------------
     # the next function
     # initializes the environment, initializing all the variables
@@ -170,12 +181,17 @@ class Environment(BaseConfig):
         # then read in all the agents
         init_firms(self, self.static_parameters['firm_directory'], 0)
         init_funds(self, self.static_parameters['fund_directory'], 0)
-        self.agents = [self.funds, self.firms]
+        government = Government()
+        household = Household()
+        self.agents = [self.funds, self.firms, government, household]
+
+        print self.agents[2].identifier
 
         for i in self.firms:
             i.endow_firms_with_equity(self, 10000)
 
-        init_assets(self)
+        #Function called from initialisation.py
+        init_assets(self, self.static_parameters['asset_directory'], 0)
 
         #Now we determine the amount of fundamentalists and chartists
         self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
@@ -247,3 +263,19 @@ class Environment(BaseConfig):
         self.variable_parameters['sum_b_firms'] = sum
 
         return self.variable_parameters['sum_a_funds'] , self.variable_parameters['sum_b_funds']
+
+class Government(object):
+    def __init__(self):
+        self.identifier = "Government"
+        self.accounts = []
+
+    def __key__(self):
+        return self.identifier
+
+class Household(object):
+    def __init__(self):
+        self.identifier = "Household"
+        self.accounts = []
+
+    def __key__(self):
+        return self.identifier

@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from abm_template.src.basetransaction import BaseTransaction
+import networkx as nx
 
 # -------------------------------------------------------------------------
 #
@@ -61,90 +62,77 @@ class Transaction(BaseTransaction):
     # This may be useful for looping over various agent's accounts
     # -------------------------------------------------------------------------
     def __init__(self):
+        self.identifier = None  # unique identifier of the transaction, may be useful for iterators
+        self.type_ = ""  # type of transactions, e.g. "deposit"
+        self.asset = ""  # type of asset, used for investment types
+        self.from_ = 0.0  # agent being the originator of the transaction
+        self.to = 0.0  # agent being the recipient of the transaction
+        self.amount = 0.0  # amount of the transaction
+        self.interest = 0.0  # interest rate paid to the originator each time step
+        self.maturity = 0  # time (in steps) to maturity
+        # this is used only for loans I, and will be > 0 for defaulting loans. with each update step, it is reduced by 1
+        # if timeOfDefault == 0: loan defaults
+        self.time_of_default = -1  # control variable checking for defaulted transactions
         super(Transaction, self).__init__()
     # ------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # __del__()
-    # removes the transaction from appropriate accounts and deletes the instance
-    # if transaction hasn't been properly added there is no need to change accounts
-    # DO NOT USE IN PRODUCTION, this is a failsafe
-    # use remove_transaction() to take transaction off the books
-    # -------------------------------------------------------------------------
-    def __del__(self):
-        # pass
-        print "deleted"
-        super(Transaction, self).__del__()
-
-    # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # functions for setting/changing variables
     # these either return or set specific value to the above variables
     # -------------------------------------------------------------------------
+    def get_identifier(self):
+        return self.identifier
+
+    def set_identifier(self, identifier, environment):
+        super(Transaction, self).set_identifier(identifier, environment)
+
     def get_type_(self):
         return self.type_
 
-    def set_type_(self, type_):
-        super(Transaction, self).set_type_(type_)
+    def set_type_(self, type_, environment):
+        super(Transaction, self).set_type_(type_, environment)
 
     def get_asset(self):
         return self.asset
 
-    def set_asset(self, asset):
-        super(Transaction, self).set_asset(asset)
+    def set_asset(self, asset, environment):
+        super(Transaction, self).set_asset(asset, environment)
 
     def get_from_(self):
         return self.from_
 
-    def set_from_(self, from_):
-        super(Transaction, self).set_from_(from_)
+    def set_from_(self, from_, environment):
+        super(Transaction, self).set_from_(from_, environment)
 
     def get_to(self):
         return self.to
 
-    def set_to(self, to):
-        super(Transaction, self).set_to(to)
+    def set_to(self, to, environment):
+        super(Transaction, self).set_to(to, environment)
 
     def get_amount(self):
         return self.amount
 
-    def set_amount(self, amount):
-        super(Transaction, self).set_amount(amount)
+    def set_amount(self, amount, environment):
+        super(Transaction, self).set_amount(amount, environment)
 
     def get_interest(self):
         return self.interest
 
-    def set_interest(self, interest):
-        super(Transaction, self).set_interest(interest)
+    def set_interest(self, interest, environment):
+        super(Transaction, self).set_interest(interest, environment)
 
     def get_maturity(self):
         return self.maturity
 
-    def set_maturity(self, maturity):
-        super(Transaction, self).set_maturity(maturity)
+    def set_maturity(self, maturity, environment):
+        super(Transaction, self).set_maturity(maturity, environment)
 
     def get_time_of_default(self):
         return self.time_of_default
 
-    def set_time_of_default(self, time_of_default):
-        super(Transaction, self).set_time_of_default(time_of_default)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # this_transaction(type_,
-    #                  asset,
-    #                  from_,
-    #                  to,
-    #                  amount,
-    #                  interest,
-    #                  maturity,
-    #                  time_of_default)
-    # sets the variables of the transaction to the given amounts
-    # -------------------------------------------------------------------------
-    def this_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default):
-        super(Transaction, self).this_transaction(type_, asset, from_, to, amount, interest, maturity, time_of_default)
-        # print type_
+    def set_time_of_default(self, time_of_default, environment):
+        super(Transaction, self).set_time_of_default(time_of_default, environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -153,16 +141,16 @@ class Transaction(BaseTransaction):
     # TODO: we need to make sure we don't do it twice when we iterate over
     # transactions in the accounts of agents (this may be tricky)
     # -------------------------------------------------------------------------
-    def add_transaction(self, environment):
-        super(Transaction, self).add_transaction(environment)
+    def add_transaction(self, type_, asset, from_, to, amount,  interest,  maturity, time_of_default, environment):
+        super(Transaction, self).add_transaction(type_, asset, from_, to, amount,  interest,  maturity, time_of_default, environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # remove_transaction
     # removes the transaction from appropriate agents' accounts
     # -------------------------------------------------------------------------
-    def remove_transaction(self):
-        super(Transaction, self).remove_transaction()
+    def remove_transaction(self, environment):
+        super(Transaction, self).remove_transaction(environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -177,8 +165,8 @@ class Transaction(BaseTransaction):
     # __str__()
     # prints the transaction and its properties
     # -------------------------------------------------------------------------
-    def __str__(self):
-        return super(Transaction, self).write_transaction()
+    # def __str__(self):
+    #     return super(Transaction, self).write_transaction()
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -195,8 +183,8 @@ class Transaction(BaseTransaction):
     # this should be used very sparingly, as this does not account
     # for the economics of the process
     # -------------------------------------------------------------------------
-    def clear_accounts(self, agent):
-        super(Transaction, self).clear_accounts(agent)
+    def clear_accounts(self, agent, environment):
+        super(Transaction, self).clear_accounts(agent, environment)
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

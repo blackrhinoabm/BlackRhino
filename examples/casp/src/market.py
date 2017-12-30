@@ -73,7 +73,10 @@ class Market(BaseMarket):
         self.resolution = 0.01
         self.amplification = 1.1
         self.lambda_ = 0.01
+        self.inventory = {}
 
+        self.inventory['A'] = 0.0
+        self.inventory['B'] = 0.0
  # -------------------------------------------------------------------------
     def market_maker(self, price, excess_demand ):
 
@@ -357,7 +360,25 @@ class Market(BaseMarket):
         return to_return
         # return super(Market, self).rationing(agents)
     # -------------------------------------------------------------------------
-
+    def return_total_demand(self, agents):
+        demand = 0.0
+        supply = 0.0
+        for agent in agents:
+            if agent[1] > 0:
+                supply = supply + agent[1]
+            else:
+                demand = demand - agent[1]
+        return demand
+    # -------------------------------------------------------------------------
+    def return_total_supply(self, agents):
+        demand = 0.0
+        supply = 0.0
+        for agent in agents:
+            if agent[1] > 0:
+                supply = supply + agent[1]
+            else:
+                demand = demand - agent[1]
+        return supply
     # -------------------------------------------------------------------------
     # rationing_proportional(agents)
     # This function performs a rationing mechanism to clear the market.

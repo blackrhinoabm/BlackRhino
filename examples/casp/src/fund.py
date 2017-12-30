@@ -69,28 +69,11 @@ class Fund(BaseAgent):
         return hash(self.__key__())
 
     def __str__(self):
-		fund_string = super(Fund, self).__str__()
-		fund_string = fund_string.replace("\n", "\n    <type value='fund'>\n", 1)
-		text = "\n"
-		for index, transaction in enumerate(self.accounts, start=1):
-			text = text + transaction.write_transaction()
-		text = text + "  </agent>"
-		return fund_string.replace("\n  </agent>", text, 1)
+        return super(Fund, self).__str__()
 
     def __getattr__(self, attr):
 		return super(Fund, self).__getattr__(attr)
-        # ret_str = "  <agent identifier='" + self.identifier + "'>\n "
 
-        # ret_str = ret_str + " <parameter type='static' name=opinion value=" + str(self.opinion) + "></parameter>\n"
-
-        # for each_agent in self.transition_probabilities:
-        #     weight = self.transition_probabilities[each_agent]
-        #     if isinstance(weight, int) or isinstance(weight, float) or isinstance(weight, str):
-        #         ret_str = ret_str + "    <parameter type='transition' + 'name='" + each_agent + "' value='" + str(weight) + "'></parameter>\n"
-        #     else:
-        #         raise TypeError
-        # ret_str = ret_str + "</agent>\n"
-        # return ret_str
 
     def __del__(self):
 		pass
@@ -150,12 +133,10 @@ class Fund(BaseAgent):
     def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
-        transaction.add_transaction(environment)
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment )
     def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.remove_transaction()
 
     # -----------------------------------------------------------------------
@@ -265,6 +246,7 @@ class Fund(BaseAgent):
 
         else:
             demand =  self.get_account("A") - goal
+        self.state_variables['net_demand_a'] =  demand
         return demand
 
     def get_net_demand_b(self, goal):
@@ -279,8 +261,10 @@ class Fund(BaseAgent):
 
         else:
             demand =  self.get_account("B") - goal
+        self.state_variables['net_demand_b'] =  demand
         return demand
 
+    "Tentative"
     def demand_tatonnement_a(self, price):
 
         goal = (self.risky * self.w_a * self.total_assets)/price
@@ -323,12 +307,12 @@ class Fund(BaseAgent):
         value = round(float( self.state_variables['total_assets'] ), 4)
 
 
-        while len(self.accounts) > 0:
-            self.accounts.pop()        # transaction.add_transaction(environment)
-        transaction = Transaction()
-        transaction.this_transaction("investment_shares", "liabilities",  self.identifier,  self.identifier,  value, 0,  0, -1)
+        # while len(self.accounts) > 0:
+        #     self.accounts.pop()        # transaction.add_transaction(environment)
+        # transaction = Transaction()
+        self.add_transaction("investment_shares", "liabilities",  environment.agents[3].identifier,  self.identifier,  value, 0,  0, -1, environment)
         # print transaction
-        self.accounts.append(transaction)
+        # self.accounts.append(transaction)
         # del transaction
 
         #
@@ -351,19 +335,41 @@ class Fund(BaseAgent):
         return expected_price_a, expected_price_b, exp_mu_a, exp_mu_b
 
 
-    def update_balance_sheet(self):
-        pass
+    def update_books(self, time, environment):
+        valuation_a, valuation_b, valuation_bond = 0,0,0
+
+        valuation_a = self.get_account("A") * environment.price_of_a
+        valuation_b = self.get_account("B") * environment.price_of_b
+        valuation_bond = self.get_account("Risk_free") * environment.price_of_bond
+
+
+
+    def net_bond_quantity_demanded(self, time, environment):
+        valuation_a, valuation_b, valuation_bond = 0,0,0
+
+        valuation_a = self.get_account("A") * environment.price_of_a
+        valuation_b = self.get_account("B") * environment.price_of_b
+        valuation_bond = self.get_account("Risk_free") * environment.price_of_bond
+
+        net_demand_quantity = (self.get_account("investment_shares")-valuation_a -  valuation_b)/environment.price_of_bond - self.get_account("Risk_free")
+        return net_demand_quantity
+
 
     def check_accounts(self, environment):
         return self.get_account("A") * environment.price_of_a\
                +self.get_account("B") * environment.price_of_b\
-               + self.get_account("Risk_free")\
+               + self.get_account("Risk_free")* environment.price_of_bond\
                == self.get_account("investment_shares")
 
     def init_portfolio_transactions(self, environment, time, amount_a, amount_b):
-
         valuation_a = 0
         valuation_b = 0
+
+        """One must be cautious with the from_ agents for the
+        transactions. For the moment it's  harcoded with the agents'
+        identifiers, i.e. firm-0, firm-1 and Government.
+        If the identifier change, the from code in add_transaction must also
+        change."""
 
         valuation_b = amount_b * environment.price_of_b
         self.add_transaction("B", "assets", "firm-1", self.identifier, amount_b, 0, 0, -1, environment)
@@ -374,8 +380,11 @@ class Fund(BaseAgent):
         valuation_a = amount_a * environment.price_of_a
         self.add_transaction("A", "assets", "firm-0",self.identifier, amount_a, 0, 0, -1, environment)
         #
-        amount = self.total_assets - valuation_b - valuation_a
-        self.add_transaction("Risk_free", "assets", self.identifier,self.identifier, amount, 0, 0, -1, environment)
+
+        """Be careful with the from_ agent here: environment.agents[2].identifier. Government is the third
+        item in environment.agents list"""
+        amount = (self.total_assets - valuation_b - valuation_a)/environment.price_of_bond
+        self.add_transaction("Risk_free", "assets", environment.agents[2].identifier ,self.identifier, amount, 0, 0, -1, environment)
 
 
         # Code to check balance sheet identity

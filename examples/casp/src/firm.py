@@ -249,12 +249,10 @@ class Firm(BaseAgent):
     def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
-        transaction.add_transaction(environment)
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default, environment)
     def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
         from src.transaction import Transaction
         transaction = Transaction()
-        transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.remove_transaction()
 
     def clear_accounts(self):

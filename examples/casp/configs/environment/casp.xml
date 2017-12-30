@@ -7,6 +7,7 @@
     <parameter type='num_firms' value=' '></parameter>
     <parameter type='fund_directory' value='configs/agents/funds/'></parameter>
     <parameter type='firm_directory' value='configs/agents/firms/'></parameter>
+    <parameter type='asset_directory' value='configs/agents/assets/'></parameter>
     <parameter type='variable_parameters' name='global_assets_under_management' value='100000' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='fundamentalists' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='chartists' value='0.5' validity='0-1000'></parameter>
