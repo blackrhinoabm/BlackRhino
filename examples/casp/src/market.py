@@ -72,15 +72,24 @@ class Market(BaseMarket):
         self.tolerance = 0.01
         self.resolution = 0.01
         self.amplification = 1.1
-        self.lambda_ = 0.01
-        self.inventory = {}
+        self.lambda_ = 0.001
 
-        self.inventory['A'] = 0.0
-        self.inventory['B'] = 0.0
+
+        self.current_demand_a, self.current_demand_b = 0.0, 0.0
+        self.current_supply_a, self.current_supply_b = 0.0, 0.0
+
+        self.net_demand_bonds = 0.0
+
+
+        self.accounts = []
+
+        # self.inventory['A'] = 0.0
+        # self.inventory['B'] = 0.0
  # -------------------------------------------------------------------------
     def market_maker(self, price, excess_demand ):
 
-        noise = np.random.normal(0,1,1)
+        noise = np.random.normal(0,0.1,1)
+
         market_price  = (price + self.lambda_*(excess_demand) + noise)
 
         # print price, excess_demand
@@ -96,7 +105,23 @@ class Market(BaseMarket):
         # else:
         #     self.sell_order
 
+    def show_open_orders(self, time):
+    # Code to see demand
+        self.accounts=[self.current_demand_a,self.current_supply_a,self.current_demand_b, self.current_supply_b]
 
+        names = ["Current demand for A", "Current supply for A", "Current demand for B", "Current supply for B",]
+        for num, line in zip(names, self.accounts):
+            if line == 0:
+                print "Open market orders at step %s " % time
+            print(" {}: {}".format(num, line))
+
+
+
+
+        # self.current_demand_a, self.current_demand_b = 0.0, 0.0
+        # self.current_supply_a, self.current_demand_b = 0.0, 0.0
+        #
+        # self.net_demand_bonds = 0.0
 
     # tatonnement([sellers], [buyers], starting_price)
     # This function performs a Walrasian auction to determine the

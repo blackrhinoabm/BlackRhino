@@ -185,10 +185,14 @@ class Environment(BaseConfig):
         household = Household()
         self.agents = [self.funds, self.firms, government, household]
 
-        print self.agents[2].identifier
+        # That's our government agent
+        # print self.agents[2].identifier
 
         for i in self.firms:
             i.endow_firms_with_equity(self, 10000)
+
+        #Function called from initialisation.py
+        init_profits(self, 0)
 
         #Function called from initialisation.py
         init_assets(self, self.static_parameters['asset_directory'], 0)
@@ -205,7 +209,7 @@ class Environment(BaseConfig):
         logging.info(" Global assets under management are %s currency units; A assets are %s currency units; B assets are %s currency units",\
                     self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
 
-        logging.info(" So we are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
+        logging.info(" We are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
         logging.info(" *******Environment initialisation completed*******")
 
     def agents_generator(self):
@@ -276,6 +280,8 @@ class Household(object):
     def __init__(self):
         self.identifier = "Household"
         self.accounts = []
+        self.scaleFactorHouseholds=0.5
+
 
     def __key__(self):
         return self.identifier

@@ -25,7 +25,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import logging
 from abm_template.src.baseagent import BaseAgent
-
+import random
+import numpy as np
 # ============================================================================
 #
 # class Firm
@@ -63,7 +64,9 @@ class Firm(BaseAgent):
         self.accounts = [] # accounts with transactions for the agent
         self.profit_results = [] # list containing profit result per time period
         self.dividends = []
+        self.state_variables["dividend_rate"] = 0.0
         self.growth_results =  []
+        self.state_variables["profit"] = 0.0
 
 
     def get_parameters_from_file(self, agent_filename, environment):
@@ -124,22 +127,20 @@ class Firm(BaseAgent):
 
     def get_account(self, _type):
         volume = 0.0
-
         for transaction in self.accounts:
             if (transaction.type_ == _type):
                 volume = volume + float(transaction.amount)
-
         return volume
 
-    def add_stuff(self, initial_profit=[100000],growth = [0]):
+    def add_stuff(self, initial_profit ,growth  ):
         self.growth_results = growth
         self.profit_results = initial_profit
 
 
-    def calc_profit(self):
+    def calc_profit(self, time):
         """
         Using the stochastic process brownian motion to calculate firm profit.
-        Import method from folder "function"
+        Import method from folder "functions"
         ---
         returns profit as float
 
@@ -148,20 +149,65 @@ class Firm(BaseAgent):
         function add_stuff() (see above)
 
         """
-        from functions.brownian_drift import brownian_drift
+        from functions.brownian import brownian
+        from functions.brownian import geom_brownian_drift
 
-        self.state_variables['profit'] = self.profit_results[-1] * (brownian_drift(self.brown_dt, self.brown_mu, self.brown_sigma))
 
-        self.state_variables['growth'] = (self.state_variables['profit'] - self.profit_results[-1]  )/self.profit_results[-1]
+        # print self.profit_results, self.identifier, time
+        # print self.profit_results[time]
+
+        self.state_variables['profit'] = self.profit_results[time]
+
+        # #test - this didn't work
+        # # self.state_variables['profit'] = float(brownian(self.profit_results[-1], 1,1, 2))
+        # # self.state_variables['profit'] = self.profit_results[-1] * (geom_brownian_drift(self.brown_dt, self.brown_mu, self.brown_sigma))
+        # self.profit_results.append(self.state_variables['profit'])
+
+        if time >0:
+            self.state_variables['growth'] = (self.state_variables['profit'] -  self.profit_results[time-1]  )/ self.profit_results[time-1]
         self.growth_results.append(self.state_variables['growth'])
-        self.profit_results.append(self.state_variables['profit'])
+
         return self.state_variables['profit']
 
-    def initialize_profits(self):
-        import itertools
-        # creates profits.
-        for _ in itertools.repeat(0,1):
-            self.calc_profit()
+    def update_and_distribute_dividends(self, environment, time):
+        if self.get_account("number_of_shares") != 0:
+            self.state_variables['dividend'] = max(0, self.state_variables['profit'] * self.state_variables['dividend_rate']/ self.get_account("number_of_shares"))
+        self.dividends.append(self.state_variables['dividend'])
+        logging.info(" %s distributes  %s per share in step %s", self.identifier, self.dividend, time)
+
+        for i in environment.agents_generator():
+            if "fund" in i.identifier:
+                if self.domicile==0:
+                    amount = i.get_account("A")* self.state_variables['dividend']
+                    for transaction in i.accounts:
+                        if transaction.type_ == "investment_shares":
+                            transaction.set_amount(transaction.amount + amount, environment)
+                    i.state_variables['total_assets'] = i.get_account("investment_shares")
+                else:
+                    amount = i.get_account("B")* self.state_variables['dividend']
+                    for transaction in i.accounts:
+                        if transaction.type_ == "investment_shares":
+                            transaction.set_amount(transaction.amount + amount, environment)
+                    i.state_variables['total_assets'] = i.get_account("investment_shares")
+        # print self.identifier, self.dividends
+        # if time > 5:
+        #     if self.domicile == 0:
+        #         environment.variable_parameters["std_a"] = np.std(environment.assets[0].prices[:time])
+        #     if self.domicile == 1:
+        #         environment.variable_parameters["std_b"] = np.std(environment.assets[1].prices[:time])
+
+        #     a = self.dividends[:time]
+        #
+        #     from scipy.stats import linregress
+        #     for firm in environment.firms:
+        #         if firm.identifier == self.identifier:
+        #             a = firm.dividends[:time]
+        #         if firm.identifier != self.identifier:
+        #             b = firm.dividends[:time]
+        #
+        #     if len(a)==len(b):
+        #         environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
+        return self.state_variables['dividend']
 
     def endow_firms_with_equity(self, environment, number_of_shares):
         self.number_of_shares = number_of_shares
