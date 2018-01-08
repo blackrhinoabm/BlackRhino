@@ -61,14 +61,16 @@ def init_asset_prices(environment):
 
     """
     import random
-    pA = round(random.randint(47, 49),4)
+    pA = round(random.randint(37, 38),4)
     environment.assets[0].funda_values.append(environment.assets[0].funda_v)
     environment.assets[1].funda_values.append(environment.assets[1].funda_v)
 
-    pB = round(random.randint(44, 46),4)
+    print environment.assets[0].funda_v, environment.assets[1].funda_v
+    pB = round(random.randint(24, 26),4)
+    print pB
 
-    prices_a = [random.uniform(47, 49) for _ in range(int(1))]
-    prices_b = [random.uniform(44, 46) for _ in range(int(1))]
+    prices_a = [random.uniform(37, 38) for _ in range(int(1))]
+    prices_b = [random.uniform(24, 26) for _ in range(int(1))]
 
     prices_a.append(pA)
     prices_b.append(pB)
@@ -83,10 +85,12 @@ def init_asset_prices(environment):
         if i.identifier == "A":
             i.mu = init_return(i.firm.dividend, pA)
             environment.variable_parameters['mu_a'] = i.mu
+            print i.mu
             i.prices.extend(prices_a)
         if i.identifier == "B":
             i.mu = init_return(i.firm.dividend, pB)
             environment.variable_parameters['mu_b'] = i.mu
+            print i.mu
             i.prices.extend(prices_b)
         else:
             pass

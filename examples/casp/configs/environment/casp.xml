@@ -1,6 +1,6 @@
 <environment identifier='casp'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='1000'></parameter>
+    <parameter type='num_sweeps' value='2000'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value=''></parameter>
     <parameter type='num_funds' value=' '></parameter>

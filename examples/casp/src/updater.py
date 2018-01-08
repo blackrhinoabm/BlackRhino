@@ -78,6 +78,10 @@ class Updater(BaseModel):
 
         from market import Market
         self.market = Market("market")
+
+        self.count_trade_a = []
+        self.count_trade_b = []
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
@@ -92,35 +96,36 @@ class Updater(BaseModel):
         if time ==0:
             self.pre_trade(environment, time)
 
-        else:
-
-            # instantiate Market for
-            "We collect dividends, fluctuate deposits and update profits of firms"
-            for fund in environment.funds:
-    			# next, determine stochastic deposit outflows/inflows
-                change = fund.calc_new_deposits(environment.scaleFactorHouseholds, environment)
-
-            # print len(environment.firms)
-
-
             for firm in environment.firms:
-                #we need to reset the values (TO Do: code this inside firm or asset)
-                # firm.state_variables['dividend'] = 0
-                profit = firm.calc_profit(time)
+                print firm.number_of_shares
 
-                # determine new dividends and total assets after dividends
-                dividend = firm.update_and_distribute_dividends(environment, time)
-                # firm.dividend = firm.dividend *  (1+ firm.growth )
-                funda_v = round (  firm.state_variables['dividend']/firm.discount  , 4)
+        else:
+            # While market orders are submitted contineously,
+            # dividends are only updated twice a year
+            list = [i for i in range(1, environment.num_sweeps/180)]
+            profit_frequency = list[::(1)]
 
-                logging.info(" %s's asset's fundamental value is %s per share in step %s", firm.identifier, funda_v , time)
+            for ii, value2 in enumerate(profit_frequency):
+                if time == ii:
+                    "We collect dividends, fluctuate deposits and update profits of firms"
+                    for fund in environment.funds:
+            			# next, determine stochastic deposit outflows/inflows
+                        change = fund.calc_new_deposits(environment.scaleFactorHouseholds, environment)
 
-                if firm.identifier=="firm-0":
-                    self.asset_a.funda_v = funda_v
-                    self.asset_a.funda_values.append(funda_v)
-                if firm.identifier=="firm-1":
-                    self.asset_b.funda_v = funda_v
-                    self.asset_b.funda_values.append(funda_v)
+                    for firm in environment.firms:
+                        profit = firm.calc_profit(time)
+                        # determine new dividends and total assets after dividends
+                        dividend = firm.update_and_distribute_dividends(environment, time)
+
+                        funda_v = round (  firm.state_variables['dividend']/firm.discount  , 4)
+                        logging.info(" %s's asset's fundamental value is %s per share in step %s", firm.identifier, funda_v , time)
+
+                        if firm.identifier=="firm-0":
+                            self.asset_a.funda_v = funda_v
+                            self.asset_a.funda_values.append(funda_v)
+                        if firm.identifier=="firm-1":
+                            self.asset_b.funda_v = funda_v
+                            self.asset_b.funda_values.append(funda_v)
 
             """Determine new expected prices and
             who is buying and selling"""
@@ -133,12 +138,11 @@ class Updater(BaseModel):
             self.remove_transactions_after_sell(environment, tracking_a, tracking_b)
 
             """Exchange risk-free asset"""
-            omega_bonds= self.exchange_bonds(environment, time)
+            omega_bonds= self.exchange_bonds(environment, time) * 0.01
 
             # # self.drag_out_fund(environment, "fund-3")
             # for fund in environment.funds:
             #     print fund.check_accounts(environment), fund.identifier, "check",    time
-
 
             """ Get new price according to excess demand"""
             # self.market.show_open_orders(time)
@@ -146,10 +150,15 @@ class Updater(BaseModel):
             #  omega positive : excess demand - price adjusts upwards
             #omega is  (demand -supply) and  passed into market maker
             omega_a =  self.market.current_demand_a  - self.market.current_supply_a
+            print omega_a, "omega a"
             omega_b =  self.market.current_demand_b  - self.market.current_supply_b
-            # print "excess A", omega_a,  "excess B", omega_b
+            print omega_b, "omega b"
             self.determine_price_risky_assets(environment, omega_a, omega_b, time)
             self.determine_price_riskfree_asset(environment, omega_bonds, time)
+
+            """Introduce Policy action"""
+        # if time>50:
+        #     self.policy_action(environment)
 
     def update_expectation_demand(self, environment, time):
         expected_price_a, expected_price_b, exp_mu_a, exp_mu_b = 0, 0, 0, 0
@@ -215,6 +224,27 @@ class Updater(BaseModel):
         self.market.current_demand_b =  self.market.return_total_demand(for_rationing_b)
         self.market.current_supply_a =  self.market.return_total_supply(for_rationing_a)
         self.market.current_supply_b =  self.market.return_total_supply(for_rationing_b)
+
+        temp = 0
+        if self.market.current_demand_a and self.market.current_supply_a >0:
+            temp = 1
+            self.count_trade_a.append(temp)
+        else:
+            temp = 0
+            self.count_trade_a.append(temp)
+
+        temp = 0
+        if self.market.current_demand_b and self.market.current_supply_b >0:
+            temp = 1
+            self.count_trade_b.append(temp)
+        else:
+            temp = 0
+            self.count_trade_b.append(temp)
+
+
+
+        self.count_trade_a
+
         print "********************"
         print "Aggregate demand and supply for risky assets in the market(Quantity) at step",time
         print "********************"
@@ -238,7 +268,7 @@ class Updater(BaseModel):
         excess demand (see Day and Huang 1990)
         """
         self.asset_a.prices.append(max(0.01, self.market.market_maker( self.asset_a.prices[-1],excess_a )))
-        self.asset_b.prices.append(max(0.01,self.market.market_maker( self.asset_b.prices[-1],excess_b )))
+        self.asset_b.prices.append(max(0.01,   self.market.market_maker(self.asset_b.prices[-1],excess_b)  )   )
 
         # Look at the price series if you want
         # print "new price A", self.asset_a.prices
@@ -297,9 +327,9 @@ class Updater(BaseModel):
                         to_delete_a.add(tranx)
                         # print balance_a, "balance", seller_a.identifier, "seller"
                         if self.market.current_supply_a >0:
-                            self.market.current_supply_a += -abs(balance_a)
+                            self.market.current_supply_a += -abs(balance_a) * 0.01
                         if self.market.current_supply_a <0:
-                            self.market.current_supply_a += abs(balance_a)
+                            self.market.current_supply_a += abs(balance_a) * 0.01
 
                         # Net the books
                         for firm in environment.firms:
@@ -330,48 +360,54 @@ class Updater(BaseModel):
                 if tranx.type_ == "A" and tranx.to.identifier == fund.identifier and "firm" in tranx.from_.identifier :
                     tranx.set_amount( tranx.amount + x , environment)
         logging.info("  A assets netted on step: %s",  time)
-        self.market.current_demand_a = remaining_a_aggregate
+        self.market.current_demand_a = remaining_a_aggregate * 0.01
 
         "Now everything for B"
-        "Net the seller's account."
         for seller_b in environment.funds:
             for tranx in seller_b.accounts:
-                # Find the B transactions
+                # Find the selling b-transactions
                 if tranx.type_ == "B":
                     if tranx.from_.identifier == seller_b.identifier:
                         balance_b = balance_b + tranx.amount
-                        to_delete_b.add(tranx)
-                        if self.market.current_supply_b >0:
-                            self.market.current_supply_b += -abs(balance_b)
-                        if self.market.current_supply_b <0:
-                            self.market.current_supply_b += abs(balance_b)
 
+                        # Add to the tracking set
+                        to_delete_a.add(tranx)
+                        # print balance_a, "balance", seller_a.identifier, "seller"
+                        if self.market.current_supply_b >0:
+                            self.market.current_supply_b += -abs(balance_b) * 0.01
+                        if self.market.current_supply_b<0:
+                            self.market.current_supply_b += abs(balance_b) * 0.01
+
+                        # Net the books
                         for firm in environment.firms:
                                 for tranx in seller_b.accounts:
                                     if tranx.type_ == "B":
                                         if tranx.from_ == firm:
-                                            # print tranx.amount, "before"
                                             tranx.set_amount(tranx.amount - balance_b, environment)
+                                            # This is a little trick so avoid double counting
                                             balance_b = 0
-                                            # print tranx.amount, "after"
-
         remaining_b_aggregate = 0
-        "Net the buyer's account."
+        #Now we loop over the buyers of A
         for fund in environment.funds:
+            # We get the balance amount of new A assets aquired
+            # Some funds bought nothing, so the next functions returns None
+            #In that case we set the balancing amount to 0
             if self.get_buyer_b_balance_amount(fund) is None:
-                y = 0
-            else:
-                y = self.get_buyer_b_balance_amount(fund)
-                remaining_b = abs(fund.state_variables["net_demand_b"]) - abs(y)
-                remaining_b_aggregate  += remaining_b
+                x = 0
 
-        # Add new Assets to total
+            #otherwise we get x as balancing amount
+            else:
+                x = self.get_buyer_b_balance_amount(fund)
+                # print x, fund.state_variables["net_demand_a"], "a net vs balance"
+                remaining_b = abs(fund.state_variables["net_demand_b"]) - abs(x)
+                remaining_b_aggregate += remaining_b
+
+            # Set the A account to the new amount
             for tranx in fund.accounts:
                 if tranx.type_ == "B" and tranx.to.identifier == fund.identifier and "firm" in tranx.from_.identifier :
-                    tranx.set_amount( tranx.amount + y , environment)
+                    tranx.set_amount( tranx.amount + x , environment)
         logging.info("  B assets netted on step: %s",  time)
-        self.market.current_demand_b = remaining_b_aggregate
-
+        self.market.current_demand_b = remaining_b_aggregate * 0.01
         # print "A:",self.market.current_demand_a,    self.market.current_supply_a
         # print "B:",self.market.current_demand_b,   self.market.current_supply_b
 
@@ -409,12 +445,9 @@ class Updater(BaseModel):
 
     def determine_price_riskfree_asset(self, environment, excess_bond, time):
         "update_bond price and yield"
-
         # excess demand pushes the price upward, excess supply downwards
-
         price_bond=(self.market.market_maker( environment.price_of_bond, excess_bond ))
         # print environment.price_of_bond, price_bond
-
         environment.assets[2].prices.append(price_bond)
         environment.variable_parameters['price_of_bond'] = environment.assets[2].prices[-1]
 
@@ -423,6 +456,11 @@ class Updater(BaseModel):
         # The new price has an effect on the yield which will affect the new step
         environment.variable_parameters['r_f'] = new_yield
         logging.info("New price for bond is %s; new yield is %s; at step %s",environment.variable_parameters['price_of_bond'], environment.variable_parameters['r_f'] , time)
+
+    def policy_action(self, environment):
+        QE = environment.variable_parameters['r_f'] - 4 * (environment.variable_parameters['price_of_bond'] - environment.assets[2].prices[-2])
+
+
 
 
     def remove_transactions_after_sell(self, environment, tracking_a, tracking_b):
@@ -460,12 +498,22 @@ class Updater(BaseModel):
                     return balance_a
 
     def get_buyer_b_balance_amount(self, fund_identifier):
-        "call this before transactions are deleted!"
-        balance_b  = 0
+        """
+        Method to get buyer's balance amount
+
+        Argument
+        =====
+        Fund object
+
+        Output
+        ===
+        None or float
+        Call this before transactions are deleted!
+        """
+        balance_b = 0
         num_transactions = 0.0
 
         new_list = []
-
         for tranx in fund_identifier.accounts:
             # Find the transactions
             if tranx.type_ == "B" and tranx.to.identifier == fund_identifier.identifier and "firm" not in tranx.from_.identifier :
@@ -476,7 +524,6 @@ class Updater(BaseModel):
                 balance_b = balance_b + value.amount
                 if index == (num_transactions-1):
                     return balance_b
-
     # -----------------------------------------------------------------------
     def pre_trade(self, environment, time):
         #pre-trade stuff, could also be in environment

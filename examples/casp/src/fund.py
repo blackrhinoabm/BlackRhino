@@ -310,7 +310,7 @@ class Fund(BaseAgent):
             demand =  -self.get_account("A")
 
         self.state_variables['net_demand_a'] =  demand
-        return demand * 0.10
+        return demand * 0.01
 
     def get_net_demand_b(self, goal):
         demand = 0
@@ -325,7 +325,7 @@ class Fund(BaseAgent):
         if goal == 0 and self.get_account("B") > 0:
             demand =  -self.get_account("B")
         self.state_variables['net_demand_b'] =  demand
-        return demand * 0.10
+        return demand * 0.01
 
     "Tentative"
     def demand_tatonnement_a(self, price):

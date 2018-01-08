@@ -72,7 +72,7 @@ class Market(BaseMarket):
         self.tolerance = 0.01
         self.resolution = 0.01
         self.amplification = 1.1
-        self.lambda_ = 0.001
+        self.lambda_ = 0.01
 
 
         self.current_demand_a, self.current_demand_b = 0.0, 0.0
@@ -89,7 +89,7 @@ class Market(BaseMarket):
     def market_maker(self, price, excess_demand ):
 
         noise = np.random.normal(0,0.1,1)
-
+        print "price", price , "lambda", self.lambda_, "excess demand", (excess_demand), "noise",  noise
         market_price  = (price + self.lambda_*(excess_demand) + noise)
 
         # print price, excess_demand
