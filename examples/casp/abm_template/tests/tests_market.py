@@ -571,7 +571,7 @@ class TestsMarket(object):
         starting_price = 0.0
         price = 0.0
         market = Market("market")
-        price = market.tatonnement(sellers, buyers, starting_price, 0.00000001, 0.01, 1.1)
+        price = market.tatonnement(sellers, buyers, starting_price, 0.00000001, 1, 1.1)
         print("Price found through tatonnement:")
         print(price)
 

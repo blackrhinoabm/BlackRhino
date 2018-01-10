@@ -177,36 +177,23 @@ class Firm(BaseAgent):
 
         for i in environment.agents_generator():
             if "fund" in i.identifier:
+                # "Firm at home distributes A"
                 if self.domicile==0:
                     amount = i.get_account("A")* self.state_variables['dividend']
+                    # print "additional A", amount, i.identifier
                     for transaction in i.accounts:
                         if transaction.type_ == "investment_shares":
                             transaction.set_amount(transaction.amount + amount, environment)
                     i.state_variables['total_assets'] = i.get_account("investment_shares")
+                # "Firm abroad distributes B"
                 else:
                     amount = i.get_account("B")* self.state_variables['dividend']
+                    # print "additional B", amount, i.identifier
                     for transaction in i.accounts:
                         if transaction.type_ == "investment_shares":
                             transaction.set_amount(transaction.amount + amount, environment)
                     i.state_variables['total_assets'] = i.get_account("investment_shares")
-        # print self.identifier, self.dividends
-        # if time > 5:
-        #     if self.domicile == 0:
-        #         environment.variable_parameters["std_a"] = np.std(environment.assets[0].prices[:time])
-        #     if self.domicile == 1:
-        #         environment.variable_parameters["std_b"] = np.std(environment.assets[1].prices[:time])
-
-        #     a = self.dividends[:time]
-        #
-        #     from scipy.stats import linregress
-        #     for firm in environment.firms:
-        #         if firm.identifier == self.identifier:
-        #             a = firm.dividends[:time]
-        #         if firm.identifier != self.identifier:
-        #             b = firm.dividends[:time]
-        #
-        #     if len(a)==len(b):
-        #         environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
+        # print self.identifier, self.dividends, "DIVIDENDS"
         return self.state_variables['dividend']
 
     def endow_firms_with_equity(self, environment, number_of_shares):

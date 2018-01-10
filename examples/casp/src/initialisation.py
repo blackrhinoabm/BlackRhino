@@ -61,19 +61,24 @@ def init_asset_prices(environment):
 
     """
     import random
-    pA = round(random.randint(37, 38),4)
+    pA = round(random.randint(38, 38),4)
     environment.assets[0].funda_values.append(environment.assets[0].funda_v)
     environment.assets[1].funda_values.append(environment.assets[1].funda_v)
+    print environment.assets[0].funda_v, environment.assets[1].funda_v, "Fundamental values"
 
-    print environment.assets[0].funda_v, environment.assets[1].funda_v
-    pB = round(random.randint(24, 26),4)
-    print pB
+    pB = round(random.randint(24, 25),4)
+    print pB, "Initialisation pB"
+    print pA, "Initialisation pA"
 
-    prices_a = [random.uniform(37, 38) for _ in range(int(1))]
-    prices_b = [random.uniform(24, 26) for _ in range(int(1))]
+    prices_a = [random.uniform(37, 39) for _ in range(int(1))]
+    prices_b = [random.uniform(24, 25) for _ in range(int(1))]
 
     prices_a.append(pA)
     prices_b.append(pB)
+
+    environment.prices.append(prices_a)
+    environment.prices.append(prices_b)
+
 
     # print "Price history of A:", prices_a
     # print "Price history of B:", prices_b
@@ -85,12 +90,12 @@ def init_asset_prices(environment):
         if i.identifier == "A":
             i.mu = init_return(i.firm.dividend, pA)
             environment.variable_parameters['mu_a'] = i.mu
-            print i.mu
+            # print i.mu
             i.prices.extend(prices_a)
         if i.identifier == "B":
             i.mu = init_return(i.firm.dividend, pB)
             environment.variable_parameters['mu_b'] = i.mu
-            print i.mu
+            # print i.mu
             i.prices.extend(prices_b)
         else:
             pass
@@ -105,8 +110,10 @@ def init_asset_prices(environment):
     from functions.bond_price import calc_bond_price
     environment.variable_parameters['price_of_bond'] = round(calc_bond_price(100, 10, environment.variable_parameters["r_f"] , 0, 2),4)
 
-    environment.assets[2].prices.append(environment.price_of_bond)
+    environment.assets[2].prices.append(environment.variable_parameters['price_of_bond'])
     logging.info(" Price of bond initialised at %s per unit",  environment.variable_parameters['price_of_bond'] )
+
+    environment.prices.append(environment.assets[2].prices)
 
     # environment.variable_parameters['price_of_bond'] = calc_bond_price(100, 10, environment.variable_parameters["r_f"] , 0, 2)
 
@@ -129,8 +136,8 @@ def init_fund_type(environment):
 
     """
     import random
-    gamma_fs = [random.uniform(0, 0.5) for _ in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
-    gamma_cs = [random.uniform(1, 10) for _ in range(int((environment.variable_parameters["chartists"]*len(environment.funds))))]
+    gamma_fs = [random.uniform(0, 1) for _ in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
+    gamma_cs = [random.uniform(1, 1.5) for _ in range(int((environment.variable_parameters["chartists"]*len(environment.funds))))]
 
     fundamentalist_guys = [fundamentalist_guy for fundamentalist_guy in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
     for index, agent in zip(fundamentalist_guys, environment.funds):

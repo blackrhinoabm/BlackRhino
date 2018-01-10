@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 from abm_template.src.basemarket import BaseMarket
 import numpy as np
+import math
 
 
 class Market(BaseMarket):
@@ -67,7 +68,7 @@ class Market(BaseMarket):
     # -------------------------------------------------------------------------
     # __init__(environment)
     # -------------------------------------------------------------------------
-    def __init__(self, identifier):
+    def __init__(self, identifier, scenario):
         self.identifier = identifier
         self.tolerance = 0.01
         self.resolution = 0.01
@@ -79,7 +80,7 @@ class Market(BaseMarket):
         self.current_supply_a, self.current_supply_b = 0.0, 0.0
 
         self.net_demand_bonds = 0.0
-
+        self.current_demand_bond, self.current_supply_bond = 0.0, 0.0
 
         self.accounts = []
 
@@ -87,15 +88,16 @@ class Market(BaseMarket):
         # self.inventory['B'] = 0.0
  # -------------------------------------------------------------------------
     def market_maker(self, price, excess_demand ):
-
         noise = np.random.normal(0,0.1,1)
-        print "price", price , "lambda", self.lambda_, "excess demand", (excess_demand), "noise",  noise
-        market_price  = (price + self.lambda_*(excess_demand) + noise)
-
-        # print price, excess_demand
-        return float(market_price)
+        # print "price", price , "lambda", self.lambda_, "excess demand", (excess_demand), "noise",  noise
+        new_price  = (price + self.lambda_*(excess_demand) + noise)
+        return float(new_price)
     # -------------------------------------------------------------------------
-
+    def market_maker_log(self, price, demand, supply  ):
+        noise = np.random.normal(0,0.1,1)
+        # print "price", price , "lambda", self.lambda_, "net_demand", (demand), math.log10(demand+1), " net_supply", supply, math.log10(supply +1), "noise",  noise
+        new_price  = price + self.lambda_* (math.log10(demand+1) - math.log10(supply +1)) + noise
+        return float(new_price)
 
     def add_order(self, asset, quantity):
         pass
@@ -419,6 +421,10 @@ class Market(BaseMarket):
     # -------------------------------------------------------------------------
     def rationing_proportional(self, agents):
         return super(Market, self).rationing_proportional(agents)
+
+
+
+
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------

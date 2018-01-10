@@ -47,6 +47,7 @@ class Asset_risky(object):
         self.funda_values = []
         self.dividends = []
         self.set_identifier()
+        self.returns=[]
 
         self.funda_v = self.firm.dividend/self.firm.discount
         self.state_variables['mu'] = 0.0
@@ -83,6 +84,10 @@ class Asset_risky(object):
         # rate = (new_price - prev_price + self.dividends[-0)/prev_price
         rate = self.state_variables['mu']
         return rate
+
+    def update_returns(self, environment):
+        self.return_ = (self.prices[-1] - self.prices[-2] + self.firm.dividend)/self.prices[-2]
+        self.returns.append(self.return_)
 
     def moving_average(self, n):
         history = len(self.prices)

@@ -1,6 +1,6 @@
 <environment identifier='casp'>
     <!-- simulation parameters -->
-    <parameter type='num_sweeps' value='2000'></parameter>
+    <parameter type='num_sweeps' value='10000'></parameter>
     <parameter type='num_simulations' value='1'></parameter>
     <parameter type='num_agents' value=''></parameter>
     <parameter type='num_funds' value=' '></parameter>
@@ -14,7 +14,7 @@
     <parameter type='variable_parameters' name='chartists' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='std_a' value='0.20' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='std_b' value='0.40' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='corr_a_b' value='0.3' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='corr_a_b' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='r_f' value='0.05' validity='0-1000'></parameter>
     <parameter type='measurement_config' value='configs/measurements/firesales_output.xml'></parameter>
 </environment>

@@ -45,7 +45,7 @@ class Environment(BaseConfig):
     static_parameters = {}  # a dictionary containing all environmenet parameters
     agents = []
     variable_parameters = {}
-
+    prices = []
     network = Network("")  # network of transaction
     #
     # parameters = Parameters()
