@@ -256,22 +256,17 @@ class Fund(BaseAgent):
         self.l_wa.append(self.state_variables["w_a"])
         self.l_wb.append(self.state_variables["w_b"])
 
-        if self.moving_average(self.l_risky, 5) != None:
-            self.risky_weighted = self.moving_average(self.l_risky, 5)
-        else:
-            self.risky_weighted = self.state_variables["risky"]
 
     def calc_demand_asset(self, asset, price, time):
         if "A" in asset.identifier:
-            # print "XXXXXXXXXXXXXX cal net demand A"
-            # print "risky:", self.risky_weighted , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
-
-            return ((self.risky_weighted* self.w_a * self.get_account("investment_shares"))/price)
+            print "XXXXXXXXXXXXXX cal net demand A"
+            print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
+            return ((self.risky * self.w_a * self.get_account("investment_shares"))/price)
 
         if "B" in asset.identifier:
             # print "XXXXXXXXXXXXXX cal net demand B"
             # print "risky:", self.risky_weighted , "B" , self.w_b , self.w_b  + self.w_a, self.identifier
-            return ((self.risky_weighted * self.w_b * self.get_account("investment_shares"))/price)
+            return ((self.risky  * self.w_b * self.get_account("investment_shares"))/price)
 
     def get_net_demand_a(self, goal):
         demand = 0

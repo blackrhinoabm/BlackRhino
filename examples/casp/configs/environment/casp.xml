@@ -12,8 +12,8 @@
     <parameter type='variable_parameters' name='scaleFactorHouseholds' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='fundamentalists' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='chartists' value='0.5' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='std_a' value='0.20' validity='0-1000'></parameter>
-    <parameter type='variable_parameters' name='std_b' value='0.40' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='std_a' value='0.2' validity='0-1000'></parameter>
+    <parameter type='variable_parameters' name='std_b' value='0.8' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='corr_a_b' value='0.5' validity='0-1000'></parameter>
     <parameter type='variable_parameters' name='r_f' value='0.05' validity='0-1000'></parameter>
     <parameter type='measurement_config' value='configs/measurements/firesales_output.xml'></parameter>

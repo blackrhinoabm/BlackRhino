@@ -96,7 +96,7 @@ class Market(BaseMarket):
     def market_maker_log(self, price, demand, supply  ):
         noise = np.random.normal(0,0.1,1)
         # print "price", price , "lambda", self.lambda_, "net_demand", (demand), math.log10(demand+1), " net_supply", supply, math.log10(supply +1), "noise",  noise
-        new_price  = price + self.lambda_* (math.log10(demand+1) - math.log10(supply +1)) + noise
+        new_price  = price + self.lambda_* (math.log10(demand+1) - math.log10(supply +1)  ) + noise
         return float(new_price)
 
     def add_order(self, asset, quantity):

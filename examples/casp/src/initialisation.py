@@ -61,17 +61,17 @@ def init_asset_prices(environment):
 
     """
     import random
-    pA = round(random.randint(38, 38),4)
+    pA = round(random.randint(40, 40),4)
     environment.assets[0].funda_values.append(environment.assets[0].funda_v)
     environment.assets[1].funda_values.append(environment.assets[1].funda_v)
     print environment.assets[0].funda_v, environment.assets[1].funda_v, "Fundamental values"
 
-    pB = round(random.randint(24, 25),4)
+    pB = round(random.randint(25,25),4)
     print pB, "Initialisation pB"
     print pA, "Initialisation pA"
 
     prices_a = [random.uniform(37, 39) for _ in range(int(1))]
-    prices_b = [random.uniform(24, 25) for _ in range(int(1))]
+    prices_b = [random.uniform(25, 25) for _ in range(int(1))]
 
     prices_a.append(pA)
     prices_b.append(pB)
