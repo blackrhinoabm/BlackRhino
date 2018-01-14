@@ -259,14 +259,14 @@ class Fund(BaseAgent):
 
     def calc_demand_asset(self, asset, price, time):
         if "A" in asset.identifier:
-            print "XXXXXXXXXXXXXX cal net demand A"
-            print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
-            return ((self.risky * self.w_a * self.get_account("investment_shares"))/price)
+            # print "XXXXXXXXXXXXXX cal net demand A"
+            # print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
+            return ((self.risky * self.w_a * self.get_account("investment_shares"))/max(0.0001, price))
 
         if "B" in asset.identifier:
             # print "XXXXXXXXXXXXXX cal net demand B"
             # print "risky:", self.risky_weighted , "B" , self.w_b , self.w_b  + self.w_a, self.identifier
-            return ((self.risky  * self.w_b * self.get_account("investment_shares"))/price)
+            return ((self.risky  * self.w_b * self.get_account("investment_shares"))/max(0.0001, price))
 
     def get_net_demand_a(self, goal):
         demand = 0
@@ -475,7 +475,6 @@ class Fund(BaseAgent):
     def calc_new_deposits(self,scaleFactor,environment):
         from random import Random
         random = Random()
-        random.seed(999)
         oldValue = 0.0
         newValue = 0.0
         returnValue = 0.0
@@ -483,9 +482,10 @@ class Fund(BaseAgent):
         for tranx in self.accounts:
             if tranx.type_ == "investment_shares":
                 oldValue = tranx.amount
-                newValue = max(round(1.0 - scaleFactor + 0.07*scaleFactor*random.random()*oldValue,4 )      ,0.0)
+                newValue = max(   round(1.0 - scaleFactor + 0.4*scaleFactor*random.random()*oldValue,4 ) ,0.0)
                 tranx.set_amount(tranx.amount - newValue, environment)
- 		returnValue = round(oldValue - newValue, 4)
+        print oldValue, newValue, "test"
+        returnValue = round(oldValue - newValue, 4)
         self.state_variables['total_assets']= returnValue
         return returnValue
 

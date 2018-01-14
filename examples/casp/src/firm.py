@@ -66,8 +66,8 @@ class Firm(BaseAgent):
         self.dividends = []
         self.state_variables["dividend_rate"] = 0.0
         self.growth_results =  []
-        self.state_variables["profit"] = 0.0
-
+        self.state_variables["current_profit"] = 0.0
+        self.state_variables["cum_profit"] = 0.0
 
     def get_parameters_from_file(self, agent_filename, environment):
         """
@@ -116,8 +116,6 @@ class Firm(BaseAgent):
 
         except:
             logging.error("    ERROR: %s could not be parsed", agent_filename)
-
-
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
@@ -137,7 +135,7 @@ class Firm(BaseAgent):
         self.profit_results = initial_profit
 
 
-    def calc_profit(self, time):
+    def calc_profit(self, time, frequency):
         """
         Using the stochastic process brownian motion to calculate firm profit.
         Import method from folder "functions"
@@ -155,23 +153,25 @@ class Firm(BaseAgent):
 
         # print self.profit_results, self.identifier, time
         # print self.profit_results[time]
-
-        self.state_variables['profit'] = self.profit_results[time]
-
+        self.state_variables["cum_profit"] = 0
+        self.state_variables['current_profit'] = self.profit_results[time]
+        # for profit in enumerate(profit_results):
+        for i in self.profit_results[ time +1 - frequency : time+1]:
+            self.state_variables["cum_profit"]+= i
         # #test - this didn't work
-        # # self.state_variables['profit'] = float(brownian(self.profit_results[-1], 1,1, 2))
-        # # self.state_variables['profit'] = self.profit_results[-1] * (geom_brownian_drift(self.brown_dt, self.brown_mu, self.brown_sigma))
-        # self.profit_results.append(self.state_variables['profit'])
+        # # self.state_variables['current_profit'] = float(brownian(self.profit_results[-1], 1,1, 2))
+        # # self.state_variables['current_profit'] = self.profit_results[-1] * (geom_brownian_drift(self.brown_dt, self.brown_mu, self.brown_sigma))
+        # self.profit_results.append(self.state_variables['current_profit'])
 
         if time >0:
-            self.state_variables['growth'] = (self.state_variables['profit'] -  self.profit_results[time-1]  )/ self.profit_results[time-1]
+            self.state_variables['growth'] = (self.state_variables['current_profit'] -  self.profit_results[time-1]  )/ self.profit_results[time-1]
         self.growth_results.append(self.state_variables['growth'])
 
-        return self.state_variables['profit']
+        return self.state_variables['current_profit']
 
     def update_and_distribute_dividends(self, environment, time):
         if self.get_account("number_of_shares") != 0:
-            self.state_variables['dividend'] = max(0, self.state_variables['profit'] * self.state_variables['dividend_rate']/ self.get_account("number_of_shares"))
+            self.state_variables['dividend'] = max(0, self.state_variables['cum_profit'] * self.state_variables['dividend_rate']/ self.get_account("number_of_shares"))
         self.dividends.append(self.state_variables['dividend'])
         logging.info(" %s distributes  %s per share in step %s", self.identifier, self.dividend, time)
 

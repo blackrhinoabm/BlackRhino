@@ -105,7 +105,7 @@ def brownian_process(intitial_profit, sweeps, num_firms):
 
     # Initial values of x.
     x[:,0] = intitial_profit
-    np.random.seed(seed=80) # 4
+    np.random.seed(seed=360) # 4, 36
 
     # np.random.seed(seed=4) # without loc=0.01 in function, looks like SA
     #There is a parameter inside def brownian - loc, with whom it's possible to get
@@ -125,7 +125,7 @@ def brownian_process_individual(intitial_profit, sweeps, num_firms, delta):
     # The Wiener process parameter.
     delta = delta
     # Total time.
-    T = 2.0
+    T = 1
     # Number of steps.
     N = sweeps
     # Time step size
@@ -137,7 +137,7 @@ def brownian_process_individual(intitial_profit, sweeps, num_firms, delta):
 
     # Initial values of x.
     x[:,0] = intitial_profit
-    np.random.seed(seed=4) # 4
+    np.random.seed(seed=75) # 4, 37
 
     # np.random.seed(seed=4) # without loc=0.01 in function, looks like SA
     #There is a parameter inside def brownian - loc, with whom it's possible to get

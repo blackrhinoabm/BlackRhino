@@ -73,7 +73,7 @@ class Market(BaseMarket):
         self.tolerance = 0.01
         self.resolution = 0.01
         self.amplification = 1.1
-        self.lambda_ = 0.01
+        self.lambda_ = 0.001
 
 
         self.current_demand_a, self.current_demand_b = 0.0, 0.0

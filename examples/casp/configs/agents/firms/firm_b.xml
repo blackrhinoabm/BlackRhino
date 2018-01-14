@@ -1,8 +1,8 @@
 <firm identifier='firm-1'>
     <parameter type='parameters' name='domicile' value='1' validity='0-1000'></parameter>
     <!-- <parameter type='state_variables' name='dividend' value='6.4' validity='0-1000'></parameter> -->
-    <parameter type='state_variables' name='dividend_rate' value='1' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='dividend_rate' value='0.5' validity='0-1000'></parameter>
     <parameter type='state_variables' name='discount' value='0.15' validity='0-1000'></parameter>
     <parameter type='state_variables' name='initial_profit' value='38000' validity='0-1000'></parameter>
-    <parameter type='state_variables' name='brown_delta' value='0.3' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='brown_delta' value='0.1' validity='0-1000'></parameter>
 </firm>

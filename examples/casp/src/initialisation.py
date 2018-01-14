@@ -90,12 +90,14 @@ def init_asset_prices(environment):
         if i.identifier == "A":
             i.mu = init_return(i.firm.dividend, pA)
             environment.variable_parameters['mu_a'] = i.mu
+            i.riskyness.append(environment.variable_parameters["std_a"])
             # print i.mu
             i.prices.extend(prices_a)
         if i.identifier == "B":
             i.mu = init_return(i.firm.dividend, pB)
             environment.variable_parameters['mu_b'] = i.mu
-            # print i.mu
+            i.riskyness.append(environment.variable_parameters["std_b"])
+            print i.riskyness
             i.prices.extend(prices_b)
         else:
             pass
@@ -190,11 +192,11 @@ def init_profits(environment, time):
 
     from src.functions.brownian_motion import brownian_process_individual
 
-    x_a = brownian_process_individual(100, environment.num_sweeps, 1, brown_delta_a )
-    x_a = np.divide(x_a, 100)
+    x_a = brownian_process_individual(1, environment.num_sweeps, 1, brown_delta_a )
+    x_a = np.divide(x_a, 1000)
 
-    x_b = brownian_process_individual(100, environment.num_sweeps, 1, brown_delta_b)
-    x_b = np.divide(x_b, 100)
+    x_b = brownian_process_individual(1, environment.num_sweeps, 1, brown_delta_b)
+    x_b = np.divide(x_b, 1000)
 
     for firm in environment.firms:
         if firm.domicile == 0:
@@ -217,6 +219,7 @@ def init_profits(environment, time):
 
         if firm.get_account("number_of_shares") != 0:
             firm.dividend = firm.profit_results[0]/firm.get_account("number_of_shares")
+            firm.state_variables["cum_profit"] = firm.dividend
 
     # For both simultaneously
     # from src.functions.brownian_motion import brownian_process

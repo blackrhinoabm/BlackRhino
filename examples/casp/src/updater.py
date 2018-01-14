@@ -102,6 +102,13 @@ class Updater(BaseModel):
             for firm in environment.firms:
                 print firm.number_of_shares, "Number of shares", firm.identifier
 
+            for fund in environment.funds:
+                print fund.get_account("investment_shares"), fund.identifier
+
+            self.asset_a.dividends = [0 for i in range(0, environment.num_sweeps)]
+            self.asset_b.dividends = [0 for i in range(0, environment.num_sweeps)]
+            # self.asset_b.funda_values
+            # self.asset_b.funda_values
             # Check if books balance
             # for fund in environment.funds:
             #     if fund.identifier == "fund-3":
@@ -110,21 +117,29 @@ class Updater(BaseModel):
         else:
             # While market orders are submitted contineously,
             # dividends are only updated infrequent times
-            list = [i for i in range(1, environment.num_sweeps)]
-            # determine frquency of dividends and household withdrawals
-            profit_frequency = list[::(360)]
-            for ii, value2 in enumerate(profit_frequency):
-                # python counts from 0
-                if time-1 == ii:
+            list = [i for i in range(0, environment.num_sweeps)]
+            list2 = [0 for i in range(0, environment.num_sweeps)]
+
+            environment.profit_frequency = int(environment.num_sweeps/4)
+
+            for i, value in enumerate(list2):
+                if time-1==i and i % environment.profit_frequency==0:
                     "We collect dividends, fluctuate deposits and update profits of firms"
                     for fund in environment.funds:
             			# next, determine stochastic deposit outflows/inflows
                         fund.calc_new_deposits(environment.scaleFactorHouseholds, environment)
-
+                        # print fund.get_account("investment_shares")
                     for firm in environment.firms:
-                        profit = firm.calc_profit(time)
+                        profit = firm.calc_profit(time,  environment.profit_frequency )
                         # determine new dividends and total assets after dividends
                         dividend = firm.update_and_distribute_dividends(environment, time)
+
+                        if firm.identifier=="firm-0":
+                            self.asset_a.dividends[i]= dividend
+                            # print "Dividend a", self.asset_a.dividends, time
+                        if firm.identifier=="firm-1":
+                            self.asset_b.dividends[i]=dividend
+                            # print "Dividend b", self.asset_b.dividends, time
                         funda_v = round (  firm.state_variables['dividend']/firm.discount  , 4)
                         logging.info(" %s's asset's fundamental value is %s per share in step %s", firm.identifier, funda_v , time)
 
@@ -134,6 +149,7 @@ class Updater(BaseModel):
                         if firm.identifier=="firm-1":
                             self.asset_b.funda_v = funda_v
                             self.asset_b.funda_values.append(funda_v)
+
 
             """Now the trading begins. We have two scenarios. QE and no QE"""
 
@@ -163,24 +179,28 @@ class Updater(BaseModel):
                     self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
 
                 # """Introduce Policy action"""
-                if time>environment.num_sweeps/2:
+                if time>environment.num_sweeps*0.5 and time <environment.num_sweeps*0.5+environment.num_sweeps*0.3:
                     if environment.variable_parameters['r_f']>0.01:
-                #     print "HHHHHHHHHHEEEEEELLLLOOO"
-                        self.policy_action(environment)
+                         self.policy_action(environment)
                     if environment.variable_parameters['r_f']<0.01:
                         self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
+
+
+                if time>environment.num_sweeps*0.5+environment.num_sweeps*0.3:
+                    self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
+
 
                 self.asset_a.update_returns(environment)
                 self.asset_b.update_returns(environment)
                 # python counts from 0
-                if time>environment.num_sweeps/2:
+                if time>2 :
                     environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                    environment.variable_parameters["std_a"] =   np.std(self.asset_a.returns[:time])
+                    environment.variable_parameters["std_a"] =  min( 0.8, np.std(self.asset_a.returns[:time])) * 100
                     # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
                     print environment.variable_parameters["std_a"], "standard deviation a"
 
                     environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
-                    environment.variable_parameters["std_b"] =     np.std(self.asset_b.returns[:time])
+                    environment.variable_parameters["std_b"] =   min( 0.8,  np.std(self.asset_b.returns[:time])) * 100
                     # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
                     print environment.variable_parameters["std_b"], "standard deviation b"
 
@@ -192,50 +212,50 @@ class Updater(BaseModel):
                         environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
                         print environment.variable_parameters["corr_a_b"]
 
-        if self.scenario == "no_QE":
+            if self.scenario == "no_QE":
 
-            """Determine new expected prices and
-            who is buying and selling"""
-            rationed_a, rationed_b = self.update_expectation_demand_logsmalltrade(environment, time)
-            """Trade risky assets"""
-            self.exchange_assets_create_transactions(environment, rationed_a, rationed_b, time)
-            tracking_a, tracking_b = self.exchange_assets_netting(environment, time)
-            self.remove_transactions_after_sell(environment, tracking_a, tracking_b)
+                """Determine new expected prices and
+                who is buying and selling"""
+                rationed_a, rationed_b = self.update_expectation_demand_logsmalltrade(environment, time)
+                """Trade risky assets"""
+                self.exchange_assets_create_transactions(environment, rationed_a, rationed_b, time)
+                tracking_a, tracking_b = self.exchange_assets_netting(environment, time)
+                self.remove_transactions_after_sell(environment, tracking_a, tracking_b)
 
-            #Get excess demand
-            omega_a =  self.market.current_demand_a  - self.market.current_supply_a
-            omega_b =  self.market.current_demand_b  - self.market.current_supply_b
-            omega_bonds = self.exchange_bonds(environment, time)
+                #Get excess demand
+                omega_a =  self.market.current_demand_a  - self.market.current_supply_a
+                omega_b =  self.market.current_demand_b  - self.market.current_supply_b
+                omega_bonds = self.exchange_bonds(environment, time)
 
-            # "Now the trading is complete and books should balance"
-            # for fund in environment.funds:
-            #     if fund.identifier == "fund-3":
-            #         print fund.check_accounts(environment), fund.identifier, "check",    time
-            "At the end of the period, prices are adjusted"
-            self.determine_price_risky_assets(environment, time, omega_a, omega_b, self.scenario )
-            self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
+                # "Now the trading is complete and books should balance"
+                # for fund in environment.funds:
+                #     if fund.identifier == "fund-3":
+                #         print fund.check_accounts(environment), fund.identifier, "check",    time
+                "At the end of the period, prices are adjusted"
+                self.determine_price_risky_assets(environment, time, omega_a, omega_b, self.scenario )
+                self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
 
-            self.asset_a.update_returns(environment)
-            self.asset_b.update_returns(environment)
-            # python counts from 0
-            if time> 100:
-                environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                environment.variable_parameters["std_a"] = min( 0.8, np.std(self.asset_a.returns[:time]) *10)
-                # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                print environment.variable_parameters["std_a"], "standard deviation a"
+                self.asset_a.update_returns(environment)
+                self.asset_b.update_returns(environment)
+                # python counts from 0
+                if time> 2 :
+                    environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
+                    environment.variable_parameters["std_a"] = min( 0.8, np.std(self.asset_a.returns[:time]) *100)
+                    # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
+                    print environment.variable_parameters["std_a"], "standard deviation a"
 
-                environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
-                environment.variable_parameters["std_b"] = min( 0.8, np.std(self.asset_b.returns[:time]) *10)
-                # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
-                print environment.variable_parameters["std_b"], "standard deviation b"
+                    environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
+                    environment.variable_parameters["std_b"] = min( 0.8, np.std(self.asset_b.returns[:time]) *100)
+                    # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
+                    print environment.variable_parameters["std_b"], "standard deviation b"
 
-                from scipy.stats import linregress
-                a = self.asset_a.returns[:time]
-                b = self.asset_b.returns[:time]
+                    from scipy.stats import linregress
+                    a = self.asset_a.returns[:time]
+                    b = self.asset_b.returns[:time]
 
-                if len(a)==len(b):
-                    environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
-                    print environment.variable_parameters["corr_a_b"]
+                    if len(a)==len(b):
+                        environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
+                        print environment.variable_parameters["corr_a_b"]
 
     def update_expectation_demand_logsmalltrade(self, environment, time):
         trade_limit_a = 0.01 * environment.firms[0].number_of_shares
@@ -573,9 +593,9 @@ class Updater(BaseModel):
         environment.variable_parameters['price_of_bond'] = p
         print "QE", QE
 
-        for fund in environment.funds:
-            if environment.variable_parameters["r_f"] < 0.03:
-                fund.state_variables["theta"] = 12
+        # for fund in environment.funds:
+        #     if environment.variable_parameters["r_f"] < 0.03:
+        #         fund.state_variables["theta"] = 3
 
 
     def remove_transactions_after_sell(self, environment, tracking_a, tracking_b):
@@ -746,3 +766,6 @@ class Updater(BaseModel):
         for fund in environment.funds:
             if fund.identifier==str(ident):
                 print fund
+
+    def altElement(self, a, frequency):
+        return a[::frequency]
