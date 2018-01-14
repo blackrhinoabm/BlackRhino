@@ -77,8 +77,8 @@ class Updater(BaseModel):
             self.asset_b = environment.assets[0]
             self.asset_a = environment.assets[1]
 
-        # self.scenario = "no_QE"
-        self.scenario = "QE"
+        self.scenario = "no_QE"
+        # self.scenario = "QE"
 
         from market import Market
         self.market = Market("market", self.scenario)
@@ -115,6 +115,8 @@ class Updater(BaseModel):
             #         print fund.check_accounts(environment), fund.identifier, "check",    time
 
         else:
+            print "********************************"
+            print time
             # While market orders are submitted contineously,
             # dividends are only updated infrequent times
             list = [i for i in range(0, environment.num_sweeps)]

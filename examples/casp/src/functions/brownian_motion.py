@@ -137,7 +137,7 @@ def brownian_process_individual(intitial_profit, sweeps, num_firms, delta):
 
     # Initial values of x.
     x[:,0] = intitial_profit
-    np.random.seed(seed=75) # 4, 37
+    np.random.seed(seed=44) # 4, 37
 
     # np.random.seed(seed=4) # without loc=0.01 in function, looks like SA
     #There is a parameter inside def brownian - loc, with whom it's possible to get
