@@ -64,24 +64,6 @@ class Asset_risky(object):
         else:
             self.identifier = "B"
 
-    def set_value(self):
-        import numpy as np
-
-        #Based on growth
-        x = np.array([ 1 + (i) for i in self.firm.growth_results ])
-        z = np.multiply(x, self.firm.dividend)
-        q = np.divide( z , self.firm.discount)
-
-        #Base it on profits
-        # x = np.array([  (i) for i in self.firm.profit_results ])
-        # z = np.divide( x , self.firm.discount)
-        # prices_value = np.divide( z, self.firm.get_account("number_of_shares"))
-        # self.prices=[prices_value]
-
-        # self.dividends = z.tolist()
-        # self.funda_values = q.tolist()
-        # print "Fundamental values of " , self.identifier, self.funda_values
-
     def calc_exp_return(self, prev_price, exp_price, dividend):
         self.state_variables['mu'] = (exp_price-prev_price + dividend )/ prev_price
         # rate = (new_price - prev_price + self.dividends[-0)/prev_price
@@ -99,8 +81,6 @@ class Asset_risky(object):
         else:
             moving_average = sum(self.prices[-n:]) / n
             return moving_average
-
-
 
 
     def new_price(self):
