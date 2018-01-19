@@ -12,7 +12,7 @@ from math import sqrt
 def brownian(x0, n, dt, delta, out=None):
 
 	x0 = np.asarray(x0)
-	r = norm.rvs(loc=0.1, size=x0.shape + (n,), scale=delta*sqrt(dt))
+	r = norm.rvs(loc=(0.0000001)/2, size=x0.shape + (n,), scale=delta*sqrt(dt))
 
     # If `out` was not given, create an output array.
 	if out is None:
@@ -26,68 +26,6 @@ def brownian(x0, n, dt, delta, out=None):
 	out += np.expand_dims(x0, axis=-1)
 	return out
 
-def geom_brownian_drift(brown_dt, brown_mu, brown_sigma):
-
-	"""
-
-	Arguments
-	---
-	Wiener process parameters:
-	dt : lenght of steps
-
-	mu:
-		The drift factor (e.g. of firm profits)
-
-	sigma:
-		volatility in per cent
-	(T: float
-		for the process as a whole there is T: total time periods and
-		steps: T/dt	)
-	"""
-
-	#source: https://scipy.github.io/old-wiki/pages/Cookbook/BrownianMotion.html
-
-	W = np.random.standard_normal()
-	W = np.cumsum(W)*np.sqrt(brown_dt) ### standard brownian motion ###
-	X = (brown_mu-0.5*brown_sigma**2) + brown_sigma*W
-	return float(np.exp(X)) ### geometric brownian motion ###
-
-# def main():
-#
-#     # The Wiener process parameter.
-#     delta = 2
-#     # Total time.
-#     T = 2.0
-#     # Number of steps.
-#     N = 50
-#     # Time step size
-#     dt = T/N
-#     # Number of realizations to generate.
-#     m = 2
-#     # Create an empty array to store the realizations.
-#     x = np.empty((m,N+1))
-#
-#     # Initial values of x.
-#     x[:,0] = 100
-#     # np.random.seed(seed=4) # m = 2
-#
-#     np.random.seed(seed=4) # without loc=0.01 in function, looks like SA
-#     #There is a parameter inside def brownian - loc, with whom it's possible to get
-#     #a drift  # mu = 0.05
-#
-#     brownian(x[:,0], N, dt, delta, out=x[:,1:])
-#
-#     t = np.linspace(0.0, N*dt, N+1)
-#     for k in range(m):
-#         plot(t, x[k])
-#     xlabel('t', fontsize=16)
-#     ylabel('x', fontsize=16)
-#     grid(True)
-#     show()
-
-#
-# if __name__ == "__main__":
-#     main()
 
 def brownian_process(intitial_profit, sweeps, num_firms):
     # The Wiener process parameter.
@@ -137,17 +75,37 @@ def brownian_process_individual(intitial_profit, sweeps, num_firms, delta):
 
     # Initial values of x.
     x[:,0] = intitial_profit
-    np.random.seed(seed=44) # 4, 37
+    np.random.seed(seed=32) # 4, 37
 
     # np.random.seed(seed=4) # without loc=0.01 in function, looks like SA
     #There is a parameter inside def brownian - loc, with whom it's possible to get
     #a drift  # mu = 0.0 np.random.seed(seed=1)
     return brownian(x[:,0], N, dt, delta, out=x[:,1:])
 
-    # t = np.linspace(0.0, N*dt, N+1)
-    # for k in range(m):
-    #     plot(t, x[k])
-    # xlabel('t', fontsize=16)
-    # ylabel('x', fontsize=16)
-    # grid(True)
-    # show()
+
+def ornstein_uhlenbeck():
+	import numpy as np
+	import matplotlib.pyplot as plt
+	t_0 = 0
+	t_end = 2
+	length = 10000
+	theta  = 1.1
+	mu =0.3
+	sigma = 0.1
+
+	t = np.linspace(t_0,t_end,length) # define time axis
+	dt = np.mean(np.diff(t))
+	y = np.zeros(length)
+	y0 = np.random.normal(loc=0.0,scale=1.0) # initial condition
+	drift = lambda y,t: theta*(mu-y) # define drift term, google to learn about lambda
+	diffusion = lambda y,t: sigma # define diffusion term
+	noise = np.random.normal(loc=0.0,scale=1.0,size=length)*np.sqrt(dt) #define noise process
+
+	 # solve SDE
+	for i in xrange(1,length):
+		y[i] = y[i-1] + drift(y[i-1],i*dt)*dt + diffusion(y[i-1],i*dt)*noise[i]
+
+	plt.plot(t,y)
+	plt.show()
+
+# ornstein_uhlenbeck()

@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from abm_template.src.basemodel import BaseModel
+import random
 import logging
 import numpy as np
 
@@ -42,6 +43,8 @@ class Updater(BaseModel):
     # METHODS
     #
 
+    # These are functions from the abm template. They have to
+    # be defined for the simulation to run
     def get_identifier(self):
         return self.identifier
 
@@ -70,67 +73,69 @@ class Updater(BaseModel):
     # __init__
     # -------------------------------------------------------------------------
     def __init__(self, environment):
-        if  environment.assets[0].identifier =="A":
-            self.asset_a = environment.assets[0]
-            self.asset_b = environment.assets[1]
-        else:
-            self.asset_b = environment.assets[0]
-            self.asset_a = environment.assets[1]
 
+    # attach the risky assets to the updater
+
+        self.asset_a = environment.get_agent_by_id("A")
+        self.asset_b = environment.get_agent_by_id("B")
+        self.riskfree_domestic = environment.get_agent_by_id("riskfree_A")
+
+
+        # Determine sceario
         self.scenario = "no_QE"
         # self.scenario = "QE"
 
+        # instantiate market class
         from market import Market
         self.market = Market("market", self.scenario)
-
-        self.count_trade_a = []
-        self.count_trade_b = []
-
     # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # do_update
     # -------------------------------------------------------------------------
     def do_update(self, environment, time):
-        import random
-
         """We set up optimal portfolios and
         initialize accounts """
+        row_holding = 0
         if time ==0:
             self.pre_trade(environment, time)
 
-            for firm in environment.firms:
-                print firm.number_of_shares, "Number of shares", firm.identifier
+            # for firm in environment.firms:
+            #     print firm.number_of_shares, "Number of shares", firm.identifier
 
+            sum_bond_quantity = 0
             for fund in environment.funds:
-                print fund.get_account("investment_shares"), fund.identifier
+                sum_bond_quantity+=fund.get_account("Risk_free")
+            # print "total_bonds", sum_bond_quantity
+            row_holdings = environment.assets[2].parameters["quantity"] - sum_bond_quantity
+
+            for agent in environment.agents_generator():
+                if agent.identifier == "Government":
+                    agent.add_transaction("Risk_free", "assets", agent.identifier, agent.identifier, row_holdings, 0, 0, -1, environment)
 
             self.asset_a.dividends = [0 for i in range(0, environment.num_sweeps)]
             self.asset_b.dividends = [0 for i in range(0, environment.num_sweeps)]
-            # self.asset_b.funda_values
-            # self.asset_b.funda_values
+            self.asset_a.funda_values
+            self.asset_b.funda_values
             # Check if books balance
             # for fund in environment.funds:
             #     if fund.identifier == "fund-3":
             #         print fund.check_accounts(environment), fund.identifier, "check",    time
-
         else:
             print "********************************"
-            print time
+            print time # print time steps to screen
             # While market orders are submitted contineously,
             # dividends are only updated infrequent times
-            list = [i for i in range(0, environment.num_sweeps)]
+            # list = [i for i in range(0, environment.num_sweeps)]
             list2 = [0 for i in range(0, environment.num_sweeps)]
 
-            environment.profit_frequency = int(environment.num_sweeps/4)
+            environment.profit_frequency = int(environment.num_sweeps/10 )
 
             for i, value in enumerate(list2):
                 if time-1==i and i % environment.profit_frequency==0:
                     "We collect dividends, fluctuate deposits and update profits of firms"
                     for fund in environment.funds:
-            			# next, determine stochastic deposit outflows/inflows
                         fund.calc_new_deposits(environment.scaleFactorHouseholds, environment)
-                        # print fund.get_account("investment_shares")
                     for firm in environment.firms:
                         profit = firm.calc_profit(time,  environment.profit_frequency )
                         # determine new dividends and total assets after dividends
@@ -138,81 +143,14 @@ class Updater(BaseModel):
 
                         if firm.identifier=="firm-0":
                             self.asset_a.dividends[i]= dividend
-                            # print "Dividend a", self.asset_a.dividends, time
+                            # print "Dividend a", self.asset_a.dividends, time #for debugging
                         if firm.identifier=="firm-1":
                             self.asset_b.dividends[i]=dividend
-                            # print "Dividend b", self.asset_b.dividends, time
-                        funda_v = round (  firm.state_variables['dividend']/firm.discount  , 4)
-                        logging.info(" %s's asset's fundamental value is %s per share in step %s", firm.identifier, funda_v , time)
-
-                        if firm.identifier=="firm-0":
-                            self.asset_a.funda_v = funda_v
-                            self.asset_a.funda_values.append(funda_v)
-                        if firm.identifier=="firm-1":
-                            self.asset_b.funda_v = funda_v
-                            self.asset_b.funda_values.append(funda_v)
-
+                            # print "Dividend b", self.asset_b.dividends, time #for debugging
 
             """Now the trading begins. We have two scenarios. QE and no QE"""
-
-            if self.scenario == "QE":
-
-                """Determine new expected prices and
-                who is buying and selling"""
-                rationed_a, rationed_b = self.update_expectation_demand_logsmalltrade(environment, time)
-                """Trade risky assets"""
-                self.exchange_assets_create_transactions(environment, rationed_a, rationed_b, time)
-                tracking_a, tracking_b = self.exchange_assets_netting(environment, time)
-                self.remove_transactions_after_sell(environment, tracking_a, tracking_b)
-
-                #Get excess demand
-                omega_a =  self.market.current_demand_a  - self.market.current_supply_a
-                omega_b =  self.market.current_demand_b  - self.market.current_supply_b
-                omega_bonds = self.exchange_bonds(environment, time)
-
-                # "Now the trading is complete and books should balance"
-                # for fund in environment.funds:
-                #     if fund.identifier == "fund-3":
-                #         print fund.check_accounts(environment), fund.identifier, "check",    time
-                "At the end of the period, prices are adjusted"
-                self.determine_price_risky_assets(environment, time, omega_a, omega_b, self.scenario )
-
-                if time<environment.num_sweeps/2:
-                    self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
-
-                # """Introduce Policy action"""
-                if time>environment.num_sweeps*0.5 and time <environment.num_sweeps*0.5+environment.num_sweeps*0.3:
-                    if environment.variable_parameters['r_f']>0.01:
-                         self.policy_action(environment)
-                    if environment.variable_parameters['r_f']<0.01:
-                        self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
-
-
-                if time>environment.num_sweeps*0.5+environment.num_sweeps*0.3:
-                    self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
-
-
-                self.asset_a.update_returns(environment)
-                self.asset_b.update_returns(environment)
-                # python counts from 0
-                if time>2 :
-                    environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                    environment.variable_parameters["std_a"] =  min( 0.8, np.std(self.asset_a.returns[:time])) * 100
-                    # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                    print environment.variable_parameters["std_a"], "standard deviation a"
-
-                    environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
-                    environment.variable_parameters["std_b"] =   min( 0.8,  np.std(self.asset_b.returns[:time])) * 100
-                    # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
-                    print environment.variable_parameters["std_b"], "standard deviation b"
-
-                    from scipy.stats import linregress
-                    a = self.asset_a.returns[:time]
-                    b = self.asset_b.returns[:time]
-
-                    if len(a)==len(b):
-                        environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
-                        print environment.variable_parameters["corr_a_b"]
+            self.count_trade_a = []
+            self.count_trade_b = []
 
             if self.scenario == "no_QE":
 
@@ -220,36 +158,57 @@ class Updater(BaseModel):
                 who is buying and selling"""
                 rationed_a, rationed_b = self.update_expectation_demand_logsmalltrade(environment, time)
                 """Trade risky assets"""
-                self.exchange_assets_create_transactions(environment, rationed_a, rationed_b, time)
+                self.exchange_risky_assets_create_transactions(environment, rationed_a, rationed_b, time)
                 tracking_a, tracking_b = self.exchange_assets_netting(environment, time)
-                self.remove_transactions_after_sell(environment, tracking_a, tracking_b)
+                self.remove_transactions_after_sell(environment, tracking_a)
+                self.remove_transactions_after_sell(environment, tracking_b)
 
                 #Get excess demand
                 omega_a =  self.market.current_demand_a  - self.market.current_supply_a
                 omega_b =  self.market.current_demand_b  - self.market.current_supply_b
-                omega_bonds = self.exchange_bonds(environment, time)
 
-                # "Now the trading is complete and books should balance"
-                # for fund in environment.funds:
-                #     if fund.identifier == "fund-3":
-                #         print fund.check_accounts(environment), fund.identifier, "check",    time
+                rationed_bond = self.exchange_bonds(environment, time)
+
+                """Trade riskfree assets"""
+                self.exchange_rfree_assets_create_transactions(environment, rationed_bond, time)
+
+                tracking_bond = self.exchange_assets_netting_riskfree(environment, time)
+                self.remove_transactions_after_sell(environment, tracking_bond)
+
                 "At the end of the period, prices are adjusted"
                 self.determine_price_risky_assets(environment, time, omega_a, omega_b, self.scenario )
-                self.determine_price_riskfree_asset(environment, time,  omega_bonds, self.scenario)
+                self.determine_price_riskfree_asset(environment, time,  0, self.scenario)
+                self.valuation_changes(environment, time)
+
+                delta = 0
+                for fund in environment.funds:
+                    cash = fund.get_cash(environment)
+                    # delta += fund.check_accounts(environment)
+                    if fund.get_cash(environment) > 0: #it's a buyer
+                        environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+
+                    if fund.get_cash(environment) < 0: #it's a seller
+                        environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+            #
+                # for fund in environment.funds:
+                #     fund.check_accounts(environment), fund.identifier
 
                 self.asset_a.update_returns(environment)
                 self.asset_b.update_returns(environment)
                 # python counts from 0
-                if time> 2 :
+
+                if time >2:
+                 if time-1==i and i % environment.profit_frequency==0:
+
                     environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
                     environment.variable_parameters["std_a"] = min( 0.8, np.std(self.asset_a.returns[:time]) *100)
                     # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
-                    print environment.variable_parameters["std_a"], "standard deviation a"
+                    # print environment.variable_parameters["std_a"], "standard deviation a"
 
                     environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
                     environment.variable_parameters["std_b"] = min( 0.8, np.std(self.asset_b.returns[:time]) *100)
                     # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
-                    print environment.variable_parameters["std_b"], "standard deviation b"
+                    # print environment.variable_parameters["std_b"], "standard deviation b"
 
                     from scipy.stats import linregress
                     a = self.asset_a.returns[:time]
@@ -257,11 +216,107 @@ class Updater(BaseModel):
 
                     if len(a)==len(b):
                         environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
-                        print environment.variable_parameters["corr_a_b"]
+                        # print environment.variable_parameters["corr_a_b"]
+
+            # if self.scenario == "QE":
+            #
+            #     """Determine new expected prices and
+            #     who is buying and selling"""
+            #     rationed_a, rationed_b = self.update_expectation_demand_logsmalltrade(environment, time)
+            #     """Trade risky assets"""
+            #     self.exchange_risky_assets_create_transactions(environment, rationed_a, rationed_b, time)
+            #     tracking_a, tracking_b = self.exchange_assets_netting(environment, time)
+            #     self.remove_transactions_after_sell(environment, tracking_a)
+            #     self.remove_transactions_after_sell(environment, tracking_b)
+            #
+            #     #Get excess demand
+            #     omega_a =  self.market.current_demand_a  - self.market.current_supply_a
+            #     omega_b =  self.market.current_demand_b  - self.market.current_supply_b
+            #
+            #     rationed_bond = self.exchange_bonds(environment, time)
+            #
+            #     """Trade riskfree assets"""
+            #     self.exchange_rfree_assets_create_transactions(environment, rationed_bond, time)
+            #
+            #     tracking_bond = self.exchange_assets_netting_riskfree(environment, time)
+            #     self.remove_transactions_after_sell(environment, tracking_bond)
+            #
+            #     "At the end of the period, prices are adjusted"
+            #     self.determine_price_risky_assets(environment, time, omega_a, omega_b, self.scenario )
+            #     self.determine_price_riskfree_asset(environment, time,  0, self.scenario)
+            #     self.valuation_changes(environment, time)
+            #
+            #     delta = 0
+            #     for fund in environment.funds:
+            #         cash = fund.get_cash(environment)
+            #         # delta += fund.check_accounts(environment)
+            #         if fund.get_cash(environment) > 0: #it's a buyer
+            #             environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+            #
+            #         if fund.get_cash(environment) < 0: #it's a seller
+            #             environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+            # #
+            #     # for fund in environment.funds:
+            #     #     fund.check_accounts(environment), fund.identifier
+            #
+            #     self.asset_a.update_returns(environment)
+            #     self.asset_b.update_returns(environment)
+            #     # python counts from 0
+            #     if time >2:
+            #      if time-1==i and i % environment.profit_frequency==0:
+            #
+            #         environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
+            #         environment.variable_parameters["std_a"] = min( 0.8, np.std(self.asset_a.returns[:time]) *100)
+            #         # environment.assets[0].riskyness.append(environment.variable_parameters["std_a"])
+            #         # print environment.variable_parameters["std_a"], "standard deviation a"
+            #
+            #         environment.assets[1].riskyness.append(environment.variable_parameters["std_b"])
+            #         environment.variable_parameters["std_b"] = min( 0.8, np.std(self.asset_b.returns[:time]) *100)
+            #         # environment.assets[2].riskyness.append(environment.variable_parameters["std_a"])
+            #         # print environment.variable_parameters["std_b"], "standard deviation b"
+            #
+            #         from scipy.stats import linregress
+            #         a = self.asset_a.returns[:time]
+            #         b = self.asset_b.returns[:time]
+            #
+            #         if len(a)==len(b):
+            #             environment.variable_parameters["corr_a_b"] = linregress(a, b)[2]
+            #             # print environment.va
+            #
+            #     if time>environment.num_sweeps:
+
+
+    def valuation_changes(self, environment, time):
+        delta_a, effect_on_equity = 0, 0
+        delta_a = self.asset_a.prices[-1] - self.asset_a.prices[-2]
+        for fund in environment.funds:
+            effect_on_equity = delta_a *  fund.get_account("A")
+            for tranx in fund.accounts:
+                if tranx.type_ == "investment_shares":
+                    tranx.set_amount(tranx.amount + effect_on_equity , environment)
+        # print self.asset_a.prices, self.asset_b.prices
+
+        delta_b, effect_on_equity = 0, 0
+        delta_b = self.asset_b.prices[-1] - self.asset_b.prices[-2]
+        for fund in environment.funds:
+            effect_on_equity = delta_b *  fund.get_account("B")
+            for tranx in fund.accounts:
+                if tranx.type_ == "investment_shares":
+                    tranx.set_amount(tranx.amount + effect_on_equity , environment)
+
+        delta, effect_on_equity = 0, 0
+        delta = environment.assets[2].prices[-1] - environment.assets[2].prices[-2]
+        for fund in environment.funds:
+            effect_on_equity = delta *  fund.get_account("Risk_free")
+            for tranx in fund.accounts:
+                if tranx.type_ == "investment_shares":
+                    tranx.set_amount(tranx.amount + effect_on_equity , environment)
 
     def update_expectation_demand_logsmalltrade(self, environment, time):
-        trade_limit_a = 0.01 * environment.firms[0].number_of_shares
-        trade_limit_b = 0.01 * environment.firms[1].number_of_shares
+        "Careful here with accessing supply of shares"
+        percent = 1
+        trade_limit_a = percent * environment.firms[0].number_of_shares
+        trade_limit_b = percent * environment.firms[1].number_of_shares
         expected_price_a, expected_price_b, exp_mu_a, exp_mu_b = 0, 0, 0, 0
         demand_a, demand_b = 0, 0
         supply_a, supply_b = 0, 0
@@ -270,11 +325,11 @@ class Updater(BaseModel):
         # print "********************"
         # print "Demand for risky assets in the market (Quantity)"
         # print "********************"
+        assets = [ self.asset_a,  self.asset_b]
 
         for fund in (environment.funds):
             expected_price_a, expected_price_b, exp_mu_a, exp_mu_b = fund.update_belief(environment, self.asset_a, self.asset_b, time)
-
-            fund.calc_optimal_pf(environment,  exp_mu_a, exp_mu_b)
+            fund.calc_optimal_pf(environment, assets, exp_mu_a, exp_mu_b)
             target_a =  round ( fund.calc_demand_asset(self.asset_a, expected_price_a, time)   , 4)
             if target_a >0:
                 target_a=(min(fund.get_account("investment_shares"), target_a))
@@ -286,11 +341,11 @@ class Updater(BaseModel):
             if target_b <0:
                 target_b = 0
 
-            # Printing
-            # print fund.identifier, fund.strategy, "price:", self.asset_a.prices[-1], "expected price a",  expected_price_a,  "expected mu a", "\n"\
-            # ,  exp_mu_a, "dividend a", self.asset_a.firm.dividend, "funda_v", self.asset_a.funda_v, "target a ", target_a,\
-            #   "has", fund.get_account("A"), "net", fund.get_net_demand_a(target_a),\
-            #    fund.get_account("investment_shares"),  time
+            # Printing for debugging
+            print fund.identifier, fund.strategy, "price:", self.asset_a.prices[-1], "expected price a",  expected_price_a,  "expected mu a", "\n"\
+            ,  exp_mu_a, "dividend a", self.asset_a.firm.dividend, "funda_v", self.asset_a.funda_v, "target a ", target_a,\
+              "has", fund.get_account("A"), "net", fund.get_net_demand_a(target_a),\
+               fund.get_account("investment_shares"),  time
             #
             # print fund.identifier, fund.strategy, "price:", self.asset_b.prices[-1], "expected price b",  expected_price_b,  "expected mu b", "\n",\
             #  exp_mu_b,"dividend b", self.asset_b.firm.dividend, "funda_v", self.asset_b.funda_v, "target b", target_b,\
@@ -312,7 +367,7 @@ class Updater(BaseModel):
 
         for fund in (environment.funds):
             expected_price_a, expected_price_b, exp_mu_a, exp_mu_b = fund.update_belief(environment, self.asset_a, self.asset_b, time)
-            fund.calc_optimal_pf(environment,  exp_mu_a, exp_mu_b)
+            fund.calc_optimal_pf(environment, assets, exp_mu_a, exp_mu_b)
 
             target_a =  round ( fund.calc_demand_asset(self.asset_a, expected_price_a, time)   , 4)
             if target_a >0:
@@ -380,9 +435,12 @@ class Updater(BaseModel):
         logging.info("B demand: %s; B supply: %s at step %s", self.market.current_demand_b, self.market.current_supply_b, time)
         rationed_a = self.market.rationing_proportional(for_rationing_a)
         rationed_b = self.market.rationing_proportional(for_rationing_b)
-        # print "**********", "Rations:"
-        # self.show_ration(rationed_a, "A")
-        # # self.show_ration(rationed_b, "B")
+
+        # for selling_ration in rationed_a:
+        #     print selling_ration[0]
+        print "**********", "Rations:"
+        self.show_ration(rationed_a, "A")
+        # self.show_ration(rationed_b, "B")
         return rationed_a, rationed_b
 
     def determine_price_risky_assets(self, environment, time, excess_a , excess_b, scenario):
@@ -406,8 +464,8 @@ class Updater(BaseModel):
         environment.variable_parameters['price_of_a'] = self.asset_a.prices[-1]
         logging.info("New price for A is %s; new price for B is %s; at step %s", environment.variable_parameters['price_of_a'], environment.variable_parameters['price_of_b'], time)
     # -----------------------------------------------------------------------
-    def exchange_assets_create_transactions(self, environment, list_for_a, list_for_b, time):
-        """Method to exchange assets via ration.
+    def exchange_risky_assets_create_transactions(self, environment, list_for_a, list_for_b, time):
+        """Method to exchange assets via rationing.
         We start with the A asset and create new transactions."""
 
         #Loop over the rationed list of agent pairs
@@ -421,6 +479,15 @@ class Updater(BaseModel):
         "Now the B asset"
         for index, item in enumerate(list_for_b):
             environment.new_transaction("B", "assets", item[0].identifier, item[1].identifier,item[2], 0,  0, -1, environment)
+
+    def exchange_rfree_assets_create_transactions(self, environment, list_bond, time):
+        #Loop over the rationed list of agent pairs
+        for index, item in enumerate(list_bond):
+            # if index==2:  # Uncomment to keep track of only one ration
+            print item, "Seller Risk_free:", item[0].identifier  #This is the seller of the specific ration
+            print item, "Buyer: Risk_free", item[1].identifier  #This is the seller of the specific ration
+            # Create the sell transaction between the agent pair
+            environment.new_transaction("Risk_free", "assets", item[0].identifier, item[1].identifier,item[2], 0,  0, -1, environment)
 
     def exchange_assets_netting(self, environment, time):
         """
@@ -525,35 +592,134 @@ class Updater(BaseModel):
         return to_delete_a,  to_delete_b
 
     def exchange_bonds(self, environment, time):
-        net_demand_bonds = 0.0
+        demand_bond, supply_bond = 0, 0
+        for_rationing_bond = []
+        trade_limit_bond = 0
+        order_limit_bond = 0
+        net_demand_bonds, ind_demand_bonds = 0.0, 0.0
         ag_demand_bonds = 0.0
         valuation_a, valuation_b, valuation_bond = 0,0,0
         difference = 0.0
 
         for fund in environment.funds:
-            valuation_a = round( fund.get_account("A") * environment.variable_parameters['price_of_a'], 4)
-            valuation_b =  round (fund.get_account("B") * environment.variable_parameters['price_of_b'], 4)
-            valuation_bond = round (fund.get_account("Risk_free") * environment.variable_parameters['price_of_bond'], 4)
-
-            # #if difference positive, fill in the gap with more risk-free Assets
-            #if difference negative, sell risk-free asset until accounts balance
-            difference = (round(fund.get_account("investment_shares"),4)-valuation_a -  valuation_b -valuation_bond)
-            ag_demand_bonds+= round(difference/environment.variable_parameters['price_of_bond'], 4)
-            net_demand_bonds = round(difference/environment.variable_parameters['price_of_bond'], 4)
+            ind_demand_bonds= (fund.state_variables["risk_free_proportion"] * fund.get_account("investment_shares"))/  (environment.variable_parameters['price_of_bond'])
+            net_demand_bonds = fund.get_account("Risk_free") - ind_demand_bonds
             if net_demand_bonds >0:
                 self.market.current_demand_bond+=net_demand_bonds
             if net_demand_bonds <0:
                 self.market.current_supply_bond+=net_demand_bonds
-            x = 0
+
+        demand_bond = abs(self.market.current_demand_bond)
+        supply_bond = abs(self.market.current_supply_bond)
+        ind_demand_bonds = 0 #reset value
+
+        percent =1
+        "Careful with acessing asset supply here"
+        trade_limit_bond = percent * environment.assets[2].quantity
+        order_limit_bond = min(trade_limit_bond, demand_bond , supply_bond)
+
+        # We loop over it again
+        for fund in environment.funds:
+            ind_demand_bonds= (fund.state_variables["risk_free_proportion"] * fund.get_account("investment_shares"))/  (environment.variable_parameters['price_of_bond'])
+            net_demand_bonds = fund.get_account("Risk_free") - ind_demand_bonds
+            # Selling agents
+            if net_demand_bonds<0:
+                sold_bond = (abs( net_demand_bonds ) * order_limit_bond)/max(supply_bond, 0.0000000001)
+                for_rationing_bond.append([fund, sold_bond ])
+            #DEMAND side rationing bonds
+            if net_demand_bonds>0:
+                buy_a = (net_demand_bonds * order_limit_bond)/max(demand_bond, 0.0000000001)
+                for_rationing_bond.append([fund, -buy_a])
+
+        rationed_bonds = self.market.rationing_proportional(for_rationing_bond)
+        return rationed_bonds
+
+        # OOOOLD
+        # for fund in environment.funds:
+        #     valuation_a = round( fund.get_account("A") * environment.variable_parameters['price_of_a'], 4)
+        #     valuation_b =  round (fund.get_account("B") * environment.variable_parameters['price_of_b'], 4)
+        #     valuation_bond = round (fund.get_account("Risk_free") * environment.variable_parameters['price_of_bond'], 4)
+        #
+        #     # #if difference positive, fill in the gap with more risk-free Assets
+        #     #if difference negative, sell risk-free asset until accounts balance
+        #     difference = (round(fund.get_account("investment_shares"),4)-valuation_a -  valuation_b -valuation_bond)
+        #
+        #     ag_demand_bonds+= round(difference/environment.variable_parameters['price_of_bond'], 4)
+        #
+        #     net_demand_bonds = round(difference/environment.variable_parameters['price_of_bond'], 4)
+        #     if net_demand_bonds >0:
+        #         self.market.current_demand_bond+=net_demand_bonds
+        #     if net_demand_bonds <0:
+        #         self.market.current_supply_bond+=net_demand_bonds
+        #     x = 0
+        #
+        #     for tranx in fund.accounts:
+        #         if tranx.from_.identifier == "Government":
+        #             tranx.set_amount(tranx.amount + net_demand_bonds , environment)
+        #             # print tranx.amount, net_demand_bonds , environment.variable_parameters['price_of_bond'] , valuation_b  , valuation_a , fund.get_account("investment_shares")
+        #             x = ( (tranx.amount + net_demand_bonds ) *environment.variable_parameters['price_of_bond'] + valuation_b   + valuation_a)- fund.get_account("investment_shares")
+        #     # net the residual
+        #         if tranx.type_ == "investment_shares":
+        #             tranx.set_amount(tranx.amount + x, environment)
+    def exchange_assets_netting_riskfree(self, environment, time):
+        """
+        Method to net the books of the sellers and buyers of bonds.
+        We net the transactions, so they don't accumulate
+        over the course of the simulation
+
+        Argument
+        ========
+        Environment to loop over buyers and sellers
+
+        Output
+        ======
+        Two sets with transactions (one for each traded asset) marked for deletion.
+        """
+
+        #To keep track of the sell operations, we use these balance floats
+        balance_bond = 0.0
+        # We create a proxy set for deleting transaction
+        to_delete_bond = set([])
+
+        # We start with the sellers of A and loop over them
+        for seller_bond in environment.funds:
+            for tranx in seller_bond.accounts:
+                # Find the selling A-transactions
+                if tranx.type_ == "Risk_free":
+                    if tranx.from_.identifier == seller_bond.identifier:
+                        balance_bond = balance_bond + tranx.amount
+
+                        # Add to the tracking set
+                        to_delete_bond.add(tranx)
+                        # Net the books
+                        "Careful with acessing the government here"
+                        for tranx in seller_bond.accounts:
+                            if tranx.type_ == "Risk_free":
+                                if tranx.from_.identifier == "Government":
+                                    tranx.set_amount(tranx.amount - balance_bond, environment)
+                                    # This is a little trick so avoid double counting
+                                    balance_bond = 0
+        remaining_bond_aggregate = 0
+        #Now we loop over the buyers of bonds
+        for fund in environment.funds:
+            # We get the balance amount of new bonds assets aquired
+            # Some funds bought nothing, so the next functions returns None
+            #In that case we set the balancing amount to 0
+            if self.get_buyer_bond_balance_amount(fund) is None:
+                x = 0
+
+            #otherwise we get x as balancing amount
+            else:
+                x = self.get_buyer_bond_balance_amount(fund)
+                # print x, fund.state_variables["net_demand_a"], "a net vs balance"
+                remaining_bond = abs(fund.state_variables["net_demand_bonds"]) - abs(x)
+                remaining_bond_aggregate += remaining_bond
+
+            # Set the bond account to the new amount
             for tranx in fund.accounts:
-                if tranx.from_.identifier == "Government":
-                    tranx.set_amount(tranx.amount + net_demand_bonds , environment)
-                    # print tranx.amount, net_demand_bonds , environment.variable_parameters['price_of_bond'] , valuation_b  , valuation_a , fund.get_account("investment_shares")
-                    x = ( (tranx.amount + net_demand_bonds ) *environment.variable_parameters['price_of_bond'] + valuation_b   + valuation_a)- fund.get_account("investment_shares")
-            # net the residual
-                if tranx.type_ == "investment_shares":
-                    tranx.set_amount(tranx.amount + x, environment)
-        return ag_demand_bonds
+                if tranx.type_ == "Risk_free" and tranx.to.identifier == fund.identifier and "Government" in tranx.from_.identifier :
+                    tranx.set_amount( tranx.amount + x , environment)
+        return to_delete_bond
 
     def determine_price_riskfree_asset(self, environment,time,  excess_bond, scenario ):
         "update_bond price and yield"
@@ -561,6 +727,7 @@ class Updater(BaseModel):
         if self.scenario == "QE" or self.scenario == "no_QE":
         # excess demand pushes the price upward, excess supply downwards
             # print "Bond market maker log impact:"
+            print self.market.current_demand_bond, self.market.current_supply_bond
             price_bond=(self.market.market_maker_log( environment.variable_parameters['price_of_bond'], self.market.current_demand_bond, abs(self.market.current_supply_bond) ))
 
         # print environment.variable_parameters['price_of_bond'], price_bond
@@ -599,11 +766,8 @@ class Updater(BaseModel):
         #     if environment.variable_parameters["r_f"] < 0.03:
         #         fund.state_variables["theta"] = 3
 
-
-    def remove_transactions_after_sell(self, environment, tracking_a, tracking_b):
-        for tranx in tracking_a:
-            tranx.remove_transaction(environment)
-        for tranx in tracking_b:
+    def remove_transactions_after_sell(self, environment, list_with_tranx):
+        for tranx in list_with_tranx:
             tranx.remove_transaction(environment)
 
     def get_buyer_a_balance_amount(self, fund_identifier):
@@ -661,6 +825,35 @@ class Updater(BaseModel):
                 balance_b = balance_b + value.amount
                 if index == (num_transactions-1):
                     return balance_b
+
+
+    def get_buyer_bond_balance_amount(self, fund_identifier):
+        """
+        Method to get buyer's balance amount
+
+        Argument
+        =====
+        Fund object
+
+        Output
+        ===
+        None or float
+        Call this before transactions are deleted!
+        """
+        balance_bond = 0
+        num_transactions = 0.0
+
+        new_list = []
+        for tranx in fund_identifier.accounts:
+            # Find the transactions
+            if tranx.type_ == "Risk_free" and tranx.to.identifier == fund_identifier.identifier and "Government" not in tranx.from_.identifier :
+                num_transactions +=1
+                new_list.append(tranx)
+        for index, value in enumerate(new_list):
+            if value.type_ == "Risk_free" and value.to.identifier == fund_identifier.identifier and "Government" not in value.from_.identifier :
+                balance_bond = balance_bond + value.amount
+                if index == (num_transactions-1):
+                    return balance_bond
     # -----------------------------------------------------------------------
     def pre_trade(self, environment, time):
         #pre-trade stuff, could also be in environment
@@ -668,9 +861,11 @@ class Updater(BaseModel):
         Sets up funds with optimal portfolio and
         initializes accounts
         """
+        assets = [self.asset_a, self.asset_b]
+        # To do: add more assets!!
         for fund in (environment.funds):
             fund.endow_funds_with_shares(environment, time)
-            fund.calc_optimal_pf(environment, self.asset_a.mu, self.asset_b.mu)
+            fund.calc_optimal_pf(environment, assets, self.asset_a.mu, self.asset_b.mu)
         logging.info(" Optimal portfolio for %s funds calculated", len(environment.funds))
         logging.info(" Endowed funds with transactions and investment_shares ")
     # Now we allocate initial portfolio to funds
@@ -718,10 +913,10 @@ class Updater(BaseModel):
         #     fund.endow_portfolio_transactions(environment, time)
             amount_a = round(fund.calc_demand_asset(self.asset_a, self.asset_a.prices[-1], time), 4)
             amount_b = round(fund.calc_demand_asset(self.asset_b, self.asset_b.prices[-1], time), 4)
+            print amount_a, amount_b, fund.identifier
             sum_a += amount_a
             sum_b += amount_b
-            if time == 0:
-                fund.init_portfolio_transactions(environment, time, amount_a, amount_b)
+            fund.init_portfolio_transactions(environment, time, amount_a, amount_b)
 
     def divide_sum(self, n, total):
     #Return a randomly chosen list of n positive integers summing to total.

@@ -175,25 +175,26 @@ class Firm(BaseAgent):
         self.dividends.append(self.state_variables['dividend'])
         logging.info(" %s distributes  %s per share in step %s", self.identifier, self.dividend, time)
 
-        for i in environment.agents_generator():
-            if "fund" in i.identifier:
-                # "Firm at home distributes A"
-                if self.domicile==0:
-                    amount = i.get_account("A")* self.state_variables['dividend']
-                    # print "additional A", amount, i.identifier
-                    for transaction in i.accounts:
-                        if transaction.type_ == "investment_shares":
-                            transaction.set_amount(transaction.amount + amount, environment)
-                    i.state_variables['total_assets'] = i.get_account("investment_shares")
-                # "Firm abroad distributes B"
-                else:
-                    amount = i.get_account("B")* self.state_variables['dividend']
-                    # print "additional B", amount, i.identifier
-                    for transaction in i.accounts:
-                        if transaction.type_ == "investment_shares":
-                            transaction.set_amount(transaction.amount + amount, environment)
-                    i.state_variables['total_assets'] = i.get_account("investment_shares")
-        # print self.identifier, self.dividends, "DIVIDENDS"
+        #Dividends are paid to households
+        # for i in environment.agents_generator():
+        #     if "fund" in i.identifier:
+        #         # "Firm at home distributes A"
+        #         if self.domicile==0:
+        #             amount = i.get_account("A")* self.state_variables['dividend']
+        #             # print "additional A", amount, i.identifier
+        #             for transaction in i.accounts:
+        #                 if transaction.type_ == "investment_shares":
+        #                     transaction.set_amount(transaction.amount + amount, environment)
+        #             i.state_variables['total_assets'] = i.get_account("investment_shares")
+        #         # "Firm abroad distributes B"
+        #         else:
+        #             amount = i.get_account("B")* self.state_variables['dividend']
+        #             # print "additional B", amount, i.identifier
+        #             for transaction in i.accounts:
+        #                 if transaction.type_ == "investment_shares":
+        #                     transaction.set_amount(transaction.amount + amount, environment)
+        #             i.state_variables['total_assets'] = i.get_account("investment_shares")
+        # # print self.identifier, self.dividends, "DIVIDENDS"
         return self.state_variables['dividend']
 
     def endow_firms_with_equity(self, environment, number_of_shares):

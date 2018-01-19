@@ -49,7 +49,7 @@ class Asset_risky(object):
         self.set_identifier()
         self.returns=[]
         self.riskyness = []
-        
+
         self.expected_mu = []
 
         self.funda_v = self.firm.dividend/self.firm.discount

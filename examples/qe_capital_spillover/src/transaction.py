@@ -194,3 +194,38 @@ class Transaction(BaseTransaction):
     def purge_accounts(self, environment):
         super(Transaction, self).purge_accounts(environment)
     # -------------------------------------------------------------------------
+    def add_cash(self, type_, asset, from_, to, amount, interest, maturity, time_of_default, environment):
+        self.type_ = type_
+        self.asset = asset
+        self.amount = amount
+        self.interest = interest
+        self.maturity = maturity
+        self.time_of_default = time_of_default
+
+        if amount >= 0:
+            self.from_ = from_
+            self.to = to
+        else:  # negative amounts reverse direction and delete sign
+            self.from_ = to
+            self.to = from_
+        # We attempt to add the transaction to the agents to which it belongs to
+        # First we check whether from_ is a string, if it is we need to find the
+        # actual agent object and link it to from_
+        if isinstance(self.from_, str):
+            self.from_ = environment.get_agent_by_id(self.from_)
+        # We do the same thing with to agent
+        if isinstance(self.to, str):
+            self.to = environment.get_agent_by_id(self.to)
+        # Then we check if both agents have accounts (ie are actual agents)
+        # instead of something diffeerent than string but unrelated
+        if hasattr(self.from_, "accounts") and hasattr(self.to, "accounts"):
+            # And apend the from_ and to_ to accounts of the appropriate agents
+            if self.from_ == self.to:
+                self.from_.accounts.append(self)
+            else:
+                self.from_.accounts.append(self)
+                self.to.accounts.append(self)
+            environment.network.transactions.add_edge(self.from_.identifier, self.to.identifier, key=self.identifier, type_=self.type_, asset=self.asset, amount=self.amount, interest=self.interest, maturity=self.maturity, time_of_default=self.time_of_default)
+        else:
+            raise TypeError("Transaction's from or to is not an instance of an agent.")
+    # a standard function which adds the transaction to the appropriate agents' accounts

@@ -3,20 +3,18 @@ import logging
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-
 def init_firms(environment, firm_directory, time):
     initialize_firms_from_files(environment, firm_directory, time)
-
 
 def init_funds(environment, fund_directory, time):
     initialize_funds_from_files(environment, fund_directory, time)
     allocate_fund_size(environment)
     init_fund_type(environment)
 
-def init_assets(environment, asset_directory, time):
+def init_assets(environment, asset_directory, time, risky_assets_funda_values):
     initialize_shares(environment, asset_directory, time)
     initialize_bond_from_files(environment, asset_directory)
-    init_asset_prices(environment)
+    init_asset_prices(environment, risky_assets_funda_values )
 
 def initialize_shares(environment, asset_directory, time):
     from src.asset import Asset_risky
@@ -25,23 +23,19 @@ def initialize_shares(environment, asset_directory, time):
         environment.assets.append(asset)
 
 def initialize_bond_from_files(environment, asset_directory):
-
     from src.asset import Asset_riskfree
-
     asset_files = os.listdir(asset_directory)
 
     for each_agent_file in asset_files:
-
         if '.xml' in each_agent_file:
             bond = Asset_riskfree()
             agent_filename = asset_directory + each_agent_file
             bond.get_parameters_from_file(agent_filename, environment)
-
             environment.assets.append(bond)
 
     logging.info('Fetched bond data and read into program')
 
-def init_asset_prices(environment):
+def init_asset_prices(environment, risky_assets_funda_values):
     """
     Assets A and B are intiantilized with a randomized initial price
     pA and pB.
@@ -61,9 +55,19 @@ def init_asset_prices(environment):
 
     """
     import random
-    pA = round(random.randint(40, 40),4)
-    environment.assets[0].funda_values.append(environment.assets[0].funda_v)
-    environment.assets[1].funda_values.append(environment.assets[1].funda_v)
+
+    # do this better if there are more assets
+    for asset, value in risky_assets_funda_values.items():
+        if asset == "A":
+            asset_a = environment.get_agent_by_id("A")
+            asset_a.funda_values.extend(value)
+        if asset == "B":
+            asset_b = environment.get_agent_by_id("B")
+            asset_b.funda_values.extend(value)
+
+    pA = round(random.randint(37, 37),4)
+    asset_a.funda_values.append(environment.assets[0].funda_v)
+    asset_b.funda_values.append(environment.assets[1].funda_v)
     print environment.assets[0].funda_v, environment.assets[1].funda_v, "Fundamental values"
 
     pB = round(random.randint(25,25),4)
@@ -138,7 +142,7 @@ def init_fund_type(environment):
 
     """
     import random
-    gamma_fs = [random.uniform(0, 1) for _ in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
+    gamma_fs = [random.uniform(0, 0.5) for _ in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
     gamma_cs = [random.uniform(1, 1.5) for _ in range(int((environment.variable_parameters["chartists"]*len(environment.funds))))]
 
     fundamentalist_guys = [fundamentalist_guy for fundamentalist_guy in range(int((environment.variable_parameters["fundamentalists"]*len(environment.funds))))]
@@ -193,34 +197,54 @@ def init_profits(environment, time):
     from src.functions.brownian_motion import brownian_process_individual
 
     x_a = brownian_process_individual(1, environment.num_sweeps, 1, brown_delta_a )
-    x_a = np.divide(x_a, 1000)
+    # print x_a, "profit process a"
 
-    x_b = brownian_process_individual(1, environment.num_sweeps, 1, brown_delta_b)
-    x_b = np.divide(x_b, 1000)
+    x_b = brownian_process_individual(1, environment.num_sweeps  ,1 , brown_delta_b)
+    # print x_b, "profit process b"
 
+    #Make a copy for fundamental values
+    x_a_funda =  x_a
+    x_b_funda =  x_b
+
+    #for profits
     for firm in environment.firms:
         if firm.domicile == 0:
             x_a[0] = np.multiply(x_a[0], firm.initial_profit)
         if firm.domicile == 1:
             x_b[0] = np.multiply(x_b[0], firm.initial_profit)
-    #
+
     profit_history1 = x_a[0].tolist()
     profit_history2 = x_b[0].tolist()
-    # plt.plot(profit_history1 )
-    # plt.plot(profit_history2 )
-    # # plt.legend(["a", "b"])
+
+    # for fundamental values
+    for firm in environment.firms:
+        if firm.domicile == 0:
+            x_a_funda[0] = np.divide(x_a_funda[0], (firm.number_of_shares * firm.discount))
+        if firm.domicile == 1:
+            x_b_funda[0] = np.divide(x_b_funda[0], (firm.number_of_shares * firm.discount))
+
+    #save and return this list (will be used later when assets are initialised)
+    # To do - make this a matrix, it's way too complicated if there are more assets
+    profit_funda_a = x_a_funda[0].tolist()
+    profit_funda_b = x_b_funda[0].tolist()
+    risky_assets_funda_values = { "A" : profit_funda_a , "B": profit_funda_b}
+
+    # plt.plot(profit_funda1)
+    # plt.plot(profit_funda2 )
+    # plt.legend(["a", "b"])
     # plt.show()
 
     for firm in environment.firms:
         if firm.domicile==0:
             firm.profit_results = profit_history1
-        else:
+        if firm.domicile==1:
             firm.profit_results = profit_history2
 
         if firm.get_account("number_of_shares") != 0:
             firm.dividend = firm.profit_results[0]/firm.get_account("number_of_shares")
             firm.state_variables["cum_profit"] = firm.dividend
 
+    return risky_assets_funda_values
     # For both simultaneously
     # from src.functions.brownian_motion import brownian_process
     #
@@ -268,7 +292,6 @@ def initialize_funds_from_files(environment, fund_directory, time):
 
 
 def allocate_fund_size(environment):
-    # default is 20% B and 80% A market cap
     sum_a = 0
     sum_b = 0
     for fund in environment.funds:
@@ -282,7 +305,7 @@ def allocate_fund_size(environment):
     eme_market_cap = 0
     for fund in environment.funds:
         if fund.domicile == 1.0:
-            list_temp_b = split_equal(int(sum_b), int((environment.global_assets_under_management)*0.5))
+            list_temp_b = split_equal(int(sum_b), int((environment.global_assets_under_management)*0))
             list_b.append(fund)
     # itrange = list(range(0, len(list_temp)))
     for index, elem in enumerate(list_b):
@@ -300,7 +323,7 @@ def allocate_fund_size(environment):
     ame_market_cap = 0
     for fund in environment.funds:
         if fund.domicile == 0:
-            list_temp_a = split_equal(int(sum_a), int((environment.global_assets_under_management)*0.5))
+            list_temp_a = split_equal(int(sum_a), int((environment.global_assets_under_management)*1))
             print list_temp_a
             list_a.append(fund)
     # itrange = list(range(0, len(list_temp)))

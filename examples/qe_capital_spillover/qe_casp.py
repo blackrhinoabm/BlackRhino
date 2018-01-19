@@ -12,7 +12,7 @@ if __name__ == '__main__':
     from src.environment import Environment
     from src.runner import Runner
 
-    args = ["configs/environment/", "casp", "log/"]
+    args = ["configs/environment/", "qe_casp", "log/"]
 
 #
 # INITIALIZATION
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     logging.info('Iterating over %s number of simulations ', environment.static_parameters['num_simulations'] )
     for i in range(int(environment.static_parameters['num_simulations'])):
         # environment.initialize(environment_directory, identifier)  Turns out I don't need to call this as already initialized environment?? Crazy
-        logging.info('Call runner.initialize to get num_sweeps and pass into runner')
+        # logging.info('Call runner.initialize to get num_sweeps and pass into runner')
 
         runner.initialize(environment)
     #     # do the run

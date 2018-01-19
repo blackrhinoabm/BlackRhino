@@ -1,8 +1,10 @@
-<asset identifier='bond'>
+<asset identifier='riskfree_A'>
+  <parameter type='parameters' name='identifier' value='0' validity='0-1000'></parameter>
     <parameter type='parameters' name='domicile' value='0' validity='0-1000'></parameter>
     <parameter type='parameters' name='years' value='10' validity='0-1000'></parameter>
     <!--  interest_Rate is the same as r_free in environment -->
     <parameter type='parameters' name='interest_rate' value='0.05' validity='0-1000'></parameter>
     <parameter type='parameters' name='coupon' value='0' validity='0-1000'></parameter>
     <parameter type='parameters' name='face_value' value='100' validity='0-1000'></parameter>
+    <parameter type='parameters' name='quantity' value='10000' validity='0-1000'></parameter>
 </asset>

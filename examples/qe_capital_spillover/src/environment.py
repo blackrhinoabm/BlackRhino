@@ -120,6 +120,12 @@ class Environment(BaseConfig):
         # transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment)
 
+    def add_cash(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        # transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
+        transaction.add_cash(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment)
+
     # -------------------------------------------------------------------------
 
     def __init__(self, environment_directory, identifier):
@@ -183,7 +189,7 @@ class Environment(BaseConfig):
         init_funds(self, self.static_parameters['fund_directory'], 0)
         government = Government()
         household = Household()
-        self.agents = [self.funds, self.firms, government, household]
+        self.agents = [self.funds, self.firms, government, household, self.assets]
 
         # That's our government agent
         # print self.agents[2].identifier
@@ -192,10 +198,10 @@ class Environment(BaseConfig):
             i.endow_firms_with_equity(self, 10000)
 
         #Function called from initialisation.py
-        init_profits(self, 0)
+        risky_assets_funda_values = init_profits(self, 0)
 
         #Function called from initialisation.py
-        init_assets(self, self.static_parameters['asset_directory'], 0)
+        init_assets(self, self.static_parameters['asset_directory'], 0, risky_assets_funda_values )
 
         #Now we determine the amount of fundamentalists and chartists
         self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
@@ -276,11 +282,21 @@ class Government(object):
     def __key__(self):
         return self.identifier
 
+
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment )
+    def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.transaction import Transaction
+        transaction = Transaction()
+        transaction.remove_transaction()
+
 class Household(object):
     def __init__(self):
         self.identifier = "Household"
         self.accounts = []
-        self.scaleFactorHouseholds=0.5
+        self.scaleFactorHouseholds=0
 
 
     def __key__(self):

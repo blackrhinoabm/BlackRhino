@@ -150,6 +150,8 @@ class Fund(BaseAgent):
         #Without putting them here in __init__ they can't called direclty in runner
         self.state_variables["net_demand_a"] = 0.0
         self.state_variables["net_demand_b"] = 0.0
+        self.state_variables["net_demand_bonds"] = 0.0
+
         self.state_variables["exp_mu_a"] = 0.0
         self.state_variables["exp_mu_b"] = 0.0
         self.exp_mu_a = []
@@ -196,9 +198,20 @@ class Fund(BaseAgent):
     #
     # ---------------------------------------------------------------------
 
-    def calc_optimal_pf(self, environment, mu_a, mu_b):
-        environment.variable_parameters["cov_a_b"] = environment.variable_parameters["std_a"] * environment.variable_parameters["std_b"] * environment.variable_parameters["corr_a_b"]
+    def calc_optimal_pf(self, environment, list_assets, mu_a, mu_b):
+        from functions.portfolio import *
 
+        # list_mus 
+        #
+        # asset_a.returns_
+
+        returns, cov_mat, avg_rets = create_matrices(environment, time)
+
+        "No shortselling"
+        weights = min_var_portfolio(cov_mat, allow_short=False)
+        print_portfolio_info(returns, avg_rets, weights)
+
+        environment.variable_parameters["cov_a_b"] = environment.variable_parameters["std_a"] * environment.variable_parameters["std_b"] * environment.variable_parameters["corr_a_b"]
 
         x = ((mu_a - environment.variable_parameters["r_f"]))\
                                         *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"])\
@@ -247,7 +260,9 @@ class Fund(BaseAgent):
             self.state_variables["risky"] = min(1, self.state_variables["risky"] )
 
         if self.state_variables["risky"] < 0:
-            self.state_variables["risky"] = max(-1, self.state_variables["risky"] )
+            self.state_variables["risky"] = 0
+        # if self.state_variables["risky"] < 0:
+        #     self.state_variables["risky"] = max(-1, self.state_variables["risky"] )
 
 
         self.state_variables["risk_free_proportion"] = 1 - self.state_variables["risky"]
@@ -260,7 +275,7 @@ class Fund(BaseAgent):
     def calc_demand_asset(self, asset, price, time):
         if "A" in asset.identifier:
             # print "XXXXXXXXXXXXXX cal net demand A"
-            # print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
+            print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
             return ((self.risky * self.w_a * self.get_account("investment_shares"))/max(0.0001, price))
 
         if "B" in asset.identifier:
@@ -299,36 +314,18 @@ class Fund(BaseAgent):
         self.state_variables['net_demand_b'] =  demand
         return demand
 
-    def get_net_demand_a_small_trade(self, goal):
+    def get_net_demand_bond(self, goal):
         demand = 0
-        self.state_variables['net_demand_a'] = 0
+        self.state_variables['net_demand_bond'] = 0
 
-        if goal >  0 and self.get_account("A") > 0:
-            demand =  goal - self.get_account("A")
-
-        if goal >  0 and self.get_account("A") == 0:
+        if goal >  0 and self.get_account("Risk_free") > 0:
+            demand =  goal - self.get_account("Risk_free")
+        if goal >  0 and self.get_account("Risk_free") == 0:
             demand =  goal
-
-        if goal ==  0 and self.get_account("A") > 0:
-            demand =  -self.get_account("A")
-
-        self.state_variables['net_demand_a'] =  demand
-        return demand *0.01
-
-    def get_net_demand_b_small_trade(self, goal):
-        demand = 0
-        self.state_variables['net_demand_b'] = 0
-
-        if goal >  0 and self.get_account("B") > 0:
-            demand =  goal - self.get_account("B")
-
-        if goal >  0 and self.get_account("B") == 0:
-            demand =  goal
-
-        if goal == 0 and self.get_account("B") > 0:
-            demand =  -self.get_account("B")
-        self.state_variables['net_demand_b'] =  demand
-        return demand *0.01
+        if goal ==  0 and self.get_account("Risk_free") > 0:
+            demand =  -self.get_account("Risk_free")
+        self.state_variables['Risk_free'] =  demand
+        return demand
 
     "Tentative"
     def demand_tatonnement_a(self, price):
@@ -379,8 +376,11 @@ class Fund(BaseAgent):
         # del transaction
 
     def update_belief(self, environment,  asset_a,  asset_b, time):
+        asset_b.funda_v = asset_a.funda_values[time]
+        asset_a.funda_v =  asset_b.funda_values[time]
+
         if self.strategy == "fundamentalist":
-            expected_price_a = round(max(0, asset_a.prices[-1] + self.gamma_f * ( asset_a.funda_v - asset_a.prices[-1])),4)
+            expected_price_a = round(max(0, asset_a.prices[-1] + self.gamma_f * ( asset_a.funda_v  - asset_a.prices[-1])),4)
             expected_price_b =  round( max(0, asset_b.prices[-1] + self.gamma_f * ( asset_b.funda_v - asset_b.prices[-1])), 4)
 
         if self.strategy == "chartist":
@@ -423,29 +423,47 @@ class Fund(BaseAgent):
         #if difference positive, fill in the gap with more risk-free
         net_demand_quantity = round(difference/environment.variable_parameters['price_of_bond'], 4)
         #if difference negative, sell risk-free asset until accounts balance
-
         return net_demand_quantity
 
+    def get_cash(self, environment):
+        delta = round(round( self.get_account("A") * environment.variable_parameters['price_of_a'], 4)\
+               +  round(self.get_account("B") * environment.variable_parameters['price_of_b'], 4)\
+               + round(self.get_account("Risk_free")* environment.variable_parameters['price_of_bond'], 4),2)\
+               - round(round( self.get_account("investment_shares"), 4),2)
+        return delta
 
     def check_accounts(self, environment):
+        print   self.get_account("Cash"),  "\n"
         print  self.get_account("A"), environment.variable_parameters['price_of_a'], "\n"
         print self.get_account("B"), environment.variable_parameters['price_of_b'], "\n"
         print self.get_account("Risk_free"), environment.variable_parameters['price_of_bond']
         print "**************"
 
-        print round(round( self.get_account("A") * environment.variable_parameters['price_of_a'], 4)\
+        print  self.get_account("Cash")     \
+        +    round(round( self.get_account("A") * environment.variable_parameters['price_of_a'], 4)\
        +  round(self.get_account("B") * environment.variable_parameters['price_of_b'], 4)\
        + round(self.get_account("Risk_free")* environment.variable_parameters['price_of_bond'], 4),2)
         print "==", round(round( self.get_account("investment_shares"), 4),2)
 
-        return round(round( self.get_account("A") * environment.variable_parameters['price_of_a'], 4)\
+        delta = self.get_account("Cash")  \
+                +  round(round( self.get_account("A") * environment.variable_parameters['price_of_a'], 4)\
                +  round(self.get_account("B") * environment.variable_parameters['price_of_b'], 4)\
                + round(self.get_account("Risk_free")* environment.variable_parameters['price_of_bond'], 4),2)\
-               == round(round( self.get_account("investment_shares"), 4),2)
+               - round(round( self.get_account("investment_shares"), 4),2)
+
+        if delta > 0:
+            print "negative Cash needed; Delta: ", delta, self.identifier
+        if delta < 0:
+            print "positive Cash needed; Delta: ", delta, self.identifier
+
+        return delta
 
     def init_portfolio_transactions(self, environment, time, amount_a, amount_b):
         valuation_a = 0
         valuation_b = 0
+
+        print "Fund init_portfolio_transactions with risky:", self.risky, "w_a", self.w_a
+
 
         """One must be cautious with the from_ agents for the
         transactions. For the moment it's  harcoded with the agents'
@@ -474,20 +492,37 @@ class Fund(BaseAgent):
 
     def calc_new_deposits(self,scaleFactor,environment):
         from random import Random
+        import numpy as np
         random = Random()
         oldValue = 0.0
         newValue = 0.0
         returnValue = 0.0
-
+        noise = int(np.random.normal(0,1,1))
         for tranx in self.accounts:
             if tranx.type_ == "investment_shares":
                 oldValue = tranx.amount
-                newValue = max(   round(1.0 - scaleFactor + 0.4*scaleFactor*random.random()*oldValue,4 ) ,0.0)
-                tranx.set_amount(tranx.amount - newValue, environment)
-        print oldValue, newValue, "test"
-        returnValue = round(oldValue - newValue, 4)
-        self.state_variables['total_assets']= returnValue
-        return returnValue
+                newValue = max(   round(1.0 - scaleFactor +scaleFactor*random.random()*oldValue,4 ) ,0.0)
+                tranx.set_amount(tranx.amount + noise, environment)
+        # print oldValue, newValue, "test"
+        # returnValue = round(oldValue - newValue, 4)
+        # self.state_variables['total_assets']= returnValue
+        # return returnValue
+
+
+        # random = Random()
+        # oldValue = 0.0
+        # newValue = 0.0
+        # returnValue = 0.0
+        #
+        # for tranx in self.accounts:
+        #     if tranx.type_ == "investment_shares":
+        #         oldValue = tranx.amount
+        #         newValue = max(   round(1.0 - scaleFactor + 0.04*scaleFactor*random.random()*oldValue,4 ) ,0.0)
+        #         tranx.set_amount(tranx.amount - newValue, environment)
+        # print oldValue, newValue, "test"
+        # returnValue = round(oldValue - newValue, 4)
+        # self.state_variables['total_assets']= returnValue
+        # return returnValue
 
     def moving_average(self, list, n):
         history = len(list)
