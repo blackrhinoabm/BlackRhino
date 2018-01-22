@@ -124,13 +124,6 @@ class Runner(BaseRunner):
                 results_e.append(environment.variable_parameters['r_f'])
 
 
-
-                results_a2.append(environment.funds[0].get_account("Risk_free"))
-                results_b2.append(environment.funds[1].get_account("Risk_free"))
-                results_c2.append(environment.funds[2].get_account("Risk_free"))
-                results_d2.append(environment.funds[3].get_account("Risk_free"))
-
-
                 self.updater.do_update(environment, i)
 
                 logging.info('Finished update step %s ', i)
@@ -216,81 +209,13 @@ class Runner(BaseRunner):
         # ax[3][1].set_xlim(xmin=xmin)
         # ax[4][0].set_xlabel("period", fontsize=15)
         # ax[4][0].legend(["riskyness"], loc='best')
-
-        plt.show()
-        plt.close()
-        # ##############
-
-        "PROFIT RESULTS"
-        # ax[1].plot(environment.firms[0].profit_results )
-        # ax[1].plot(  environment.firms[1].profit_results)
-        # ax[0].legend([environment.firms[0].identifier, environment.firms[1].identifier], loc='best')
-        # ax[1].legend([environment.firms[0].identifier, environment.firms[1].identifier], loc='best')
-
-        # ax[1].plot(results_c)
-        # ax[1].plot(results_d)
-
-        # ax[1].plot(environment.assets[2].prices)
-        # ax[1].legend(["bond"], loc='best')]
-
-        # RISK FREE YIELD
-        # ax[1].plot(results_b)
-        # ax[1].legend(["Risk_free yield"], loc='best')
-        # ax[0].legend(["Price A", "Price B"], loc='best')
-
-
-        # fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15,6))
-        # ax[0].plot(environment.firms[0].profit_results)
-        # ax[1].plot(environment.firms[1].profit_results)
-        # plt.show()
-
-        # "Results"
-        # fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(15,6))
-        #
-        # ax[0][0].plot(self.updater.asset_b.returns )
-        # ax[0][0].plot(self.updater.asset_a.returns)
-        # # ax[1][0].plot(results_b)
-        # ax[1][0].plot(results_b)
-        # # ax[1][0].plot(results_c)
-        # # ax[1][0].plot(results_d)
-        # # ax[0][1].plot(environment.firms[0].dividends )
-        # ax[0][1].plot(self.updater.asset_a.prices )
-        # ax[0][1].plot(self.updater.asset_b.prices )
-        # # ax[1][0].plot(  )
-        #
-        # ax[1][1].plot(  environment.assets[2].prices  ) #
-        #
-        # ax[0][0].legend(["asset b returns", "asset a returns"], loc='best')
-        # ax[1][0].legend(["investment_shares"], loc='best')
-        #
-        # ax[1][1].legend(["risk free price "], loc='best')
-        # ax[0][1].legend(["price a", "price b"], loc='best')
-        # ax[1][0].legend(["div a"], loc='best' )
         #
         # plt.show()
         # plt.close()
+        # # ##############
 
-        "Risky proportion"
-        # "Results"
-        # fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(15,6))
-        #
-        # ax[0][0].plot(environment.funds[0].l_risky)
-        # ax[0][0].plot(environment.funds[1].l_risky )
-        # ax[0][0].plot(environment.funds[2].l_risky )
-        # ax[0][0].plot(environment.funds[3].l_risky )
-        # ax[1][0].plot(results_b)
-        # # ax[0][1].plot(environment.firms[0].dividends )
-        # ax[0][1].plot(self.updater.asset_a.prices )
-        # ax[0][1].plot(self.updater.asset_b.prices )
-        # # ax[1][0].plot(  )
-        #
-        # # ax[1][1].plot(  environment.assets[2].prices  ) #
-        # ax[0][0].legend(["risky_f0", "risky_f1",  "risky_f3",  "risky_f4"], loc='best')
-        # ax[1][0].legend(["yield"], loc='best')
-        #
-        # # ax[1][1].legend(["risk free "], loc='best')
-        # ax[0][1].legend(["price a", "price b"], loc='best')
-        # plt.show()
-        # plt.close()
+
+
+
 
     # ------------------------------------------------------------------------

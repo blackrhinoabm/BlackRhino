@@ -3,6 +3,8 @@ import logging
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy as sp
+
 def init_firms(environment, firm_directory, time):
     initialize_firms_from_files(environment, firm_directory, time)
 
@@ -12,19 +14,33 @@ def init_funds(environment, fund_directory, time):
     init_fund_type(environment)
 
 def init_assets(environment, asset_directory, time, risky_assets_funda_values):
-    initialize_shares(environment, asset_directory, time)
-    initialize_bond_from_files(environment, asset_directory)
+    global_assets = []
+    list_shares = initialize_shares(environment, asset_directory, time)
+    list_bonds = initialize_bond_from_files(environment, asset_directory)
     init_asset_prices(environment, risky_assets_funda_values )
+
+    for asset in list_shares:
+        global_assets.append(asset)
+    for asset in list_bonds:
+        if asset.domicile == 0:
+            global_assets.append(asset)
+    dict2 = {"domestic_market" : global_assets}
+    environment.region.update(dict2)
+    print environment.region
 
 def initialize_shares(environment, asset_directory, time):
     from src.asset import Asset_risky
+    shares_list = []
     for i in environment.firms:
         asset = Asset_risky(i)
         environment.assets.append(asset)
+        shares_list.append(asset)
+    return shares_list
 
 def initialize_bond_from_files(environment, asset_directory):
     from src.asset import Asset_riskfree
     asset_files = os.listdir(asset_directory)
+    bond_list = []
 
     for each_agent_file in asset_files:
         if '.xml' in each_agent_file:
@@ -32,8 +48,9 @@ def initialize_bond_from_files(environment, asset_directory):
             agent_filename = asset_directory + each_agent_file
             bond.get_parameters_from_file(agent_filename, environment)
             environment.assets.append(bond)
-
-    logging.info('Fetched bond data and read into program')
+            bond_list.append(bond)
+    # logging.info('Fetched bond data and read into program')
+    return bond_list
 
 def init_asset_prices(environment, risky_assets_funda_values):
     """
@@ -83,28 +100,53 @@ def init_asset_prices(environment, risky_assets_funda_values):
     environment.prices.append(prices_a)
     environment.prices.append(prices_b)
 
-
     # print "Price history of A:", prices_a
     # print "Price history of B:", prices_b
 
     environment.variable_parameters['price_of_b'] = pB
     environment.variable_parameters['price_of_a'] = pA
 
-    for i in environment.assets:
-        if i.identifier == "A":
-            i.mu = init_return(i.firm.dividend, pA)
-            environment.variable_parameters['mu_a'] = i.mu
-            i.riskyness.append(environment.variable_parameters["std_a"])
-            # print i.mu
-            i.prices.extend(prices_a)
-        if i.identifier == "B":
-            i.mu = init_return(i.firm.dividend, pB)
-            environment.variable_parameters['mu_b'] = i.mu
-            i.riskyness.append(environment.variable_parameters["std_b"])
-            print i.riskyness
-            i.prices.extend(prices_b)
-        else:
-            pass
+    xtra_values = 2
+    i = environment.get_agent_by_id("A")
+    i.mu = init_return(i.firm.dividend, pA)
+    environment.variable_parameters['mu_a'] = i.mu
+    i.riskyness.append(environment.variable_parameters["std_a"])
+    i.returns.append(i.mu)
+    i.std=environment.variable_parameters["std_a"]
+    # print i.mu
+    i.prices.extend(prices_a)
+
+    for ii in range(xtra_values):
+	 		# Instantiate the generator
+	 	norm1 = sp.stats.norm(loc = i.mu, scale = i.std)
+		#Generate a random value for history:
+		i.returns.append(norm1.rvs())
+		# print i.returns, i.identifier
+
+    i = environment.get_agent_by_id("B")
+
+    i.mu = init_return(i.firm.dividend, pB)
+    i.returns.append(i.mu)
+    environment.variable_parameters['mu_b'] = i.mu
+    i.riskyness.append(environment.variable_parameters["std_b"])
+    i.std=environment.variable_parameters["std_b"]
+    i.prices.extend(prices_b)
+
+    for ii in range(xtra_values):
+	 		# Instantiate the generator
+	 	norm1 = sp.stats.norm(loc = i.mu, scale = i.std)
+		#Generate a random value for history:
+		i.returns.append(norm1.rvs())
+		print i.returns, i.identifier
+
+    i = environment.get_agent_by_id("riskfree_A")
+    for ii in range(xtra_values):
+	 		# Instantiate the generator
+	 	norm1 = sp.stats.norm(loc = i.mu, scale = i.std)
+		#Generate a random value for history:
+		i.returns.append(norm1.rvs())
+		print i.returns, i.identifier
+
     logging.info(" Price of A initialised at %s per unit  ",  pA  )
     logging.info(" Price of B initialised at %s per unit  ",  pB )
 

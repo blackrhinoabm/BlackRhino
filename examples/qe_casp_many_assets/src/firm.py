@@ -147,10 +147,6 @@ class Firm(BaseAgent):
         function add_stuff() (see above)
 
         """
-        from functions.brownian import brownian
-        from functions.brownian import geom_brownian_drift
-
-
         # print self.profit_results, self.identifier, time
         # print self.profit_results[time]
         self.state_variables["cum_profit"] = 0

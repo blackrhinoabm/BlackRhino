@@ -36,9 +36,8 @@ from src.network import Network
 
 
 class Environment(BaseConfig):
-    from state import State
-    from parameters import Parameters
-    #
+
+
     # VARIABLES
     #
     identifier = ""  # identifier of the environment
@@ -47,9 +46,7 @@ class Environment(BaseConfig):
     variable_parameters = {}
     prices = []
     network = Network("")  # network of transaction
-    #
-    # parameters = Parameters()
-    # state = State()
+
     #
     # CODE
     #
@@ -92,6 +89,7 @@ class Environment(BaseConfig):
 
     def get_assets(self):
         return self.assets
+
 
     def set_assets(self, params):
         super(Environment, self).set_assets(params)
@@ -179,6 +177,7 @@ class Environment(BaseConfig):
         self.funds = []
         self.firms = []
         self.assets = []
+        self.region = {}
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
@@ -190,30 +189,23 @@ class Environment(BaseConfig):
         government = Government()
         household = Household()
         self.agents = [self.funds, self.firms, government, household, self.assets]
-
         # That's our government agent
         # print self.agents[2].identifier
 
+        "Careful - hardcoded firm supply of shares" #TO do: take parameter from xml file
         for i in self.firms:
             i.endow_firms_with_equity(self, 10000)
-
         #Function called from initialisation.py
         risky_assets_funda_values = init_profits(self, 0)
 
         #Function called from initialisation.py
         init_assets(self, self.static_parameters['asset_directory'], 0, risky_assets_funda_values )
+        # put assets into a market/region
+
 
         #Now we determine the amount of fundamentalists and chartists
         self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
         self.variable_parameters['amount_chartist'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['chartists'])
-
-
-        logging.info(" Initialized %s A funds and %s B funds and stored in environment.funds",\
-                            self.sum_a_funds, self.sum_b_funds)
-        logging.info(" Initialized %s A firms and %s B firms and stored in environment.firms",\
-                                self.sum_a_firms, self.sum_b_firms)
-        logging.info(" Global assets under management are %s currency units; A assets are %s currency units; B assets are %s currency units",\
-                    self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
 
         logging.info(" We are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
         logging.info(" *******Environment initialisation completed*******")

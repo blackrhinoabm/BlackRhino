@@ -197,21 +197,9 @@ class Fund(BaseAgent):
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
-
-    def calc_optimal_pf(self, environment, list_assets, mu_a, mu_b):
-        from functions.portfolio import *
-
-        # list_mus 
-        #
-        # asset_a.returns_
-
-        returns, cov_mat, avg_rets = create_matrices(environment, time)
-
-        "No shortselling"
-        weights = min_var_portfolio(cov_mat, allow_short=False)
-        print_portfolio_info(returns, avg_rets, weights)
-
+    def calc_optimal_pf(self, environment, mu_a, mu_b):
         environment.variable_parameters["cov_a_b"] = environment.variable_parameters["std_a"] * environment.variable_parameters["std_b"] * environment.variable_parameters["corr_a_b"]
+
 
         x = ((mu_a - environment.variable_parameters["r_f"]))\
                                         *(environment.variable_parameters["std_b"] *environment.variable_parameters["std_b"])\
@@ -260,28 +248,77 @@ class Fund(BaseAgent):
             self.state_variables["risky"] = min(1, self.state_variables["risky"] )
 
         if self.state_variables["risky"] < 0:
-            self.state_variables["risky"] = 0
-        # if self.state_variables["risky"] < 0:
-        #     self.state_variables["risky"] = max(-1, self.state_variables["risky"] )
+            self.state_variables["risky"] = max(-1, self.state_variables["risky"] )
 
 
-        self.state_variables["risk_free_proportion"] = 1 - self.state_variables["risky"]
+        self.state_variables["riskfree_weight"] = 1 - self.state_variables["risky"]
 
         self.l_risky.append(self.state_variables["risky"])
         self.l_wa.append(self.state_variables["w_a"])
         self.l_wb.append(self.state_variables["w_b"])
 
 
-    def calc_demand_asset(self, asset, price, time):
-        if "A" in asset.identifier:
-            # print "XXXXXXXXXXXXXX cal net demand A"
-            print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
-            return ((self.risky * self.w_a * self.get_account("investment_shares"))/max(0.0001, price))
+    def calc_optimal_global(self, environment, exp_returns, time):
+        from functions.portfolio import *
+        # if time> 10:
+        returns_panda, cov_mat, avg_rets = create_pandas(environment, exp_returns)
+        "No shortselling"
+            # pf_risk_aversion(environment, returns, list_assets,  time,  environment.num_assets_total)
+        weights = optimal_portfolio_world(returns_panda, cov_mat, avg_rets, self.theta)
+        # print weights, time
+        np.set_printoptions(suppress=True)
 
-        if "B" in asset.identifier:
-            # print "XXXXXXXXXXXXXX cal net demand B"
-            # print "risky:", self.risky_weighted , "B" , self.w_b , self.w_b  + self.w_a, self.identifier
-            return ((self.risky  * self.w_b * self.get_account("investment_shares"))/max(0.0001, price))
+        # Ways to print
+        # print(weights.head())
+        # print("Optimal weights:\n{}\n".format(weights))
+        # print_portfolio_info(returns_panda, avg_rets, weights)
+
+        for i in weights.index:
+            if "riskfree" in i:
+                self.state_variables["riskfree_weight"]=weights[i]
+            if "A" in i:
+                self.state_variables['w_a'] = weights[i]
+                # print self.state_variables['w_a']
+            if "B" in i:
+                self.state_variables['w_b'] = weights[i]
+                # print self.state_variables['w_b']
+
+        self.state_variables["risky"] = 1 - self.state_variables["riskfree_weight"]
+        # We store the results
+        self.l_risky.append(self.state_variables["risky"])
+        self.l_wa.append(self.state_variables["w_a"])
+        self.l_wb.append(self.state_variables["w_b"])
+
+        return weights
+
+
+    def calc_demand_asset_global(self, asset, price, exchange_rate, time, idend, weights):
+
+        if idend in asset.identifier:
+
+            # print "XXXXXXXXXXXXXX cal net demand A"
+            # print "risky:", self.w_a ,  self.get_account("investment_shares"), self.identifier
+            return ((  self.w_a * self.get_account("investment_shares"))/max(0.0001, price))
+
+    def get_net_demand_global(self, asset, goal, ident):
+        demand = 0
+
+        if asset.identifier == ident:
+            x = str("net_demand_" + ident)
+            self.state_variables[x] = 0
+            if goal >  0 and self.get_account(str(ident)) > 0:
+                demand =  goal - self.get_account(ident)
+
+            if goal >  0 and self.get_account(str(ident)) == 0:
+                demand =  goal
+
+            if goal ==  0 and self.get_account(str(ident)) > 0:
+                demand =  -self.get_account(str(ident))
+
+
+            return demand
+            self.state_variables[x] =  demand
+
 
     def get_net_demand_a(self, goal):
         demand = 0
@@ -327,37 +364,6 @@ class Fund(BaseAgent):
         self.state_variables['Risk_free'] =  demand
         return demand
 
-    "Tentative"
-    def demand_tatonnement_a(self, price):
-
-        goal = (self.risky * self.w_a * self.get_account("investment_shares"))/price
-        if goal <  0 and self.get_account("A") > 0:
-            demand =  goal - self.get_account("A")
-            demand = demand * (-1)
-        elif goal <  0 and self.get_account("A") < 0:
-            demand =  goal + self.get_account("A")
-            demand = demand * (-1)
-        elif goal >  0 and self.get_account("A") > 0:
-            demand =  goal - self.get_account("A")
-
-        else:
-            demand =  self.get_account("A") - goal
-        return demand
-
-    def demand_tatonnement_b(self, price):
-        goal = (self.risky * self.w_b * self.get_account("investment_shares"))/price
-        if goal <  0 and self.get_account("B") > 0:
-            demand =  goal - self.get_account("B")
-
-        elif goal <  0 and self.get_account("B") < 0:
-            demand =  goal + self.get_account("A")
-
-        elif goal >  0 and self.get_account("B") > 0:
-            demand =  goal - self.get_account("B")
-
-        else:
-            demand =  self.get_account("B") - goal
-        return demand
 
     def endow_funds_with_shares(self, environment, time):
         from transaction import Transaction
@@ -376,8 +382,12 @@ class Fund(BaseAgent):
         # del transaction
 
     def update_belief(self, environment,  asset_a,  asset_b, time):
-        asset_b.funda_v = asset_a.funda_values[time]
-        asset_a.funda_v =  asset_b.funda_values[time]
+        asset_b.funda_v = asset_b.funda_values[time]
+        asset_a.funda_v =  asset_a.funda_values[time]
+
+        if self.identifier == "fund-2":
+            print 'Funda a ', asset_a.funda_v
+            print  'Fundab ', asset_b.funda_v
 
         if self.strategy == "fundamentalist":
             expected_price_a = round(max(0, asset_a.prices[-1] + self.gamma_f * ( asset_a.funda_v  - asset_a.prices[-1])),4)
@@ -395,14 +405,125 @@ class Fund(BaseAgent):
 
         # print (expected_price_a - asset_a.prices[-1] )/asset_a.prices[-1], asset_a.firm.dividend , self.identifier, time
         self.state_variables['exp_mu_a'] =     round( (expected_price_a - asset_a.prices[-1] + asset_a.firm.dividend )/asset_a.prices[-1] , 4)
-        # self.state_variables['exp_mu_a'] = round( (asset_a.calc_exp_return(asset_a.prices[-1], expected_price_a, asset_a.firm.dividend)) , 4)
-        # self.state_variables['exp_mu_b'] = round(  (asset_b.calc_exp_return(asset_b.prices[-1], expected_price_b, asset_b.firm.dividend)) , 4)
         self.state_variables['exp_mu_b']=    round( (expected_price_b - asset_b.prices[-1] + asset_b.firm.dividend )/asset_b.prices[-1] , 4)
 
         exp_mu_a, exp_mu_b = self.state_variables['exp_mu_a'] , self.state_variables['exp_mu_b']
         self.exp_mu_a.append(exp_mu_a)
         self.exp_mu_b.append(exp_mu_b)
+
+        list_returns=[exp_mu_a, exp_mu_b]
         return expected_price_a, expected_price_b, exp_mu_a, exp_mu_b
+
+
+    def update_belief_global(self, environment,  list_assets, time):
+        # Prepare return and price dictionary to return
+
+        dictexpmus = {}
+        for i in list_assets:
+            dict2 = {  i.identifier : 0}
+            # dict2 = { str("exp_mu_" +  i.identifier) : 0}
+            dictexpmus.update(dict2)
+
+        dictassets = {}
+        for i in list_assets:
+            dict2 = { str("asset_" +  i.identifier) : i}
+            dictassets.update(dict2)
+
+        dictexpp = {}
+        for i in list_assets:
+            dict2 = {  i.identifier : 0}
+            # dict2 = { str("exp_p_" +  i.identifier) : 0}
+            dictexpp.update(dict2)
+
+        if self.strategy == "fundamentalist":
+            for asset in list_assets:
+                # New expected price
+                if str("risky") in str(type(asset)) :
+                    # New expected price
+                    expected_price = round(max(0, asset.prices[-1] + self.gamma_f * ( asset.funda_v  - asset.prices[-1])),4)
+                    x =  round( (expected_price  - asset.prices[-1] + asset.firm.dividend )/asset.prices[-1] , 4)
+                    x = x * 100
+                    y =   str(asset.identifier)
+                    # y = "exp_mu_" + str(asset.identifier)
+                    self.state_variables[y] = x
+
+                    #SAve it in expected price dictionary to return
+                    for key, value in dictexpp.iteritems():
+                        if asset.identifier in key and "riskfree" not in key :
+                            dictexpp[key] = expected_price
+
+                    #SAve it in expected returns dictionary to return
+                        for key, value in dictexpmus.iteritems():
+                            if asset.identifier in key and "riskfree" not in key :
+
+                                dictexpmus[key] = x
+
+                #We need to do the same for bonds
+                if str("riskfree") in str(type(asset)):
+                     for key, value in dictexpmus.iteritems():
+                         if str("riskfree") in key:
+                             dictexpmus[key] = environment.variable_parameters["r_f"] * 100
+                #
+                if str("riskfree") in str(type(asset)) :
+                    for key, value in dictexpp.iteritems():
+                         if str("riskfree") in key:
+                            dictexpp[key] = environment.variable_parameters["price_of_bond"]
+
+        ##################################
+
+        if self.strategy == "chartist":
+            for asset in list_assets:
+
+                if str("risky") in str(type(asset)) :
+                    #New expected price
+                    expected_price = round(max(0, asset.prices[-1] + self.gamma_c * ( asset.funda_v  - asset.prices[-1])),4)
+                    #New expected return
+                    x =  round( (expected_price  - asset.prices[-1] + asset.firm.dividend )/asset.prices[-1] , 4)
+                    x = x * 100
+                    # y = "exp_mu_" + str(asset.identifier)
+                    y = str(asset.identifier)
+
+                    self.state_variables[y] = x
+                    #SAve it in dictionary to return
+                    for key, value in dictexpp.iteritems():
+                        if asset.identifier in key and "riskfree" not in key :
+                            dictexpp[key] = expected_price
+
+                #SAve it in expected returns dictionary to return
+                    for key, value in dictexpmus.iteritems():
+                        if asset.identifier in key and "riskfree" not in key :
+
+                            dictexpmus[key] = x
+
+                    #We need to save it correclty - yes we repeat it. i don't know how to do this smarter
+                    if asset.moving_average(3)!= None:
+                        expected_price = round (max(0, asset.prices[-1] + self.gamma_c * ( asset.moving_average(3) - asset.moving_average(2)  )) ,  4)
+                        x =  round( (expected_price  - asset.prices[-1] + asset.firm.dividend )/asset.prices[-1] , 4)
+                        y =  str(asset.identifier)
+                        # y = "exp_mu_" + str(asset.identifier)
+
+                        self.state_variables[y] = x
+                        #SAve it in dictionary to return
+                        for key, value in dictexpp.iteritems():
+                            if asset.identifier in key and "riskfree" not in key :
+                                dictexpp[key] = expected_price
+
+                        #SAve it in expected returns dictionary to return
+                            for key, value in dictexpmus.iteritems():
+                                if asset.identifier in key and "riskfree" not in key :
+                                    dictexpmus[key] = x
+
+                #We need to do the same for bonds
+                if str("riskfree") in str(type(asset)):
+                     for key, value in dictexpmus.iteritems():
+                         if str("riskfree") in key:
+                             dictexpmus[key] = environment.variable_parameters["r_f"] *100
+                #
+                if str("riskfree") in str(type(asset)) :
+                    for key, value in dictexpp.iteritems():
+                         if str("riskfree") in key:
+                            dictexpp[key] = environment.variable_parameters["price_of_bond"]
+        return dictexpp, dictexpmus
 
 
     def update_books(self, time, environment):
@@ -462,9 +583,7 @@ class Fund(BaseAgent):
         valuation_a = 0
         valuation_b = 0
 
-        print "Fund init_portfolio_transactions with risky:", self.risky, "w_a", self.w_a
-
-
+        print "Fund init_portfolio_transactions"
         """One must be cautious with the from_ agents for the
         transactions. For the moment it's  harcoded with the agents'
         identifiers, i.e. firm-0, firm-1 and Government.
@@ -488,7 +607,7 @@ class Fund(BaseAgent):
         # print "Riskfree", self.get_account("Risk_free")
 
         # Code to check balance sheet identity
-        #  print "Consistency for", self.identifier, ":", self.check_accounts(environment)
+        # print "Consistency for", self.identifier, ":", self.check_accounts(environment)
 
     def calc_new_deposits(self,scaleFactor,environment):
         from random import Random
@@ -503,26 +622,6 @@ class Fund(BaseAgent):
                 oldValue = tranx.amount
                 newValue = max(   round(1.0 - scaleFactor +scaleFactor*random.random()*oldValue,4 ) ,0.0)
                 tranx.set_amount(tranx.amount + noise, environment)
-        # print oldValue, newValue, "test"
-        # returnValue = round(oldValue - newValue, 4)
-        # self.state_variables['total_assets']= returnValue
-        # return returnValue
-
-
-        # random = Random()
-        # oldValue = 0.0
-        # newValue = 0.0
-        # returnValue = 0.0
-        #
-        # for tranx in self.accounts:
-        #     if tranx.type_ == "investment_shares":
-        #         oldValue = tranx.amount
-        #         newValue = max(   round(1.0 - scaleFactor + 0.04*scaleFactor*random.random()*oldValue,4 ) ,0.0)
-        #         tranx.set_amount(tranx.amount - newValue, environment)
-        # print oldValue, newValue, "test"
-        # returnValue = round(oldValue - newValue, 4)
-        # self.state_variables['total_assets']= returnValue
-        # return returnValue
 
     def moving_average(self, list, n):
         history = len(list)
@@ -531,3 +630,14 @@ class Fund(BaseAgent):
         else:
             moving_average = sum(list[-n:]) / n
             return moving_average
+
+    def calc_demand_asset(self, asset, price, time):
+        if "A" in asset.identifier:
+            # print "XXXXXXXXXXXXXX cal net demand A"
+            print "risky:", self.risky , self.w_a , self.w_b,  self.get_account("investment_shares"), self.identifier
+            return ((self.risky * self.w_a * self.get_account("investment_shares"))/max(0.0001, price))
+
+        if "B" in asset.identifier:
+            # print "XXXXXXXXXXXXXX cal net demand B"
+            # print "risky:", self.risky_weighted , "B" , self.w_b , self.w_b  + self.w_a, self.identifier
+            return ((self.risky  * self.w_b * self.get_account("investment_shares"))/max(0.0001, price))

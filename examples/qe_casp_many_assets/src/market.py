@@ -84,6 +84,10 @@ class Market(BaseMarket):
 
         self.accounts = []
 
+        self.current_demand = {}
+        self.current_supply = {}
+        self.count_trades = {}
+
         # self.inventory['A'] = 0.0
         # self.inventory['B'] = 0.0
  # -------------------------------------------------------------------------

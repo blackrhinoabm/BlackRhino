@@ -50,18 +50,21 @@ class Asset_risky(object):
         self.returns=[]
         self.riskyness = []
 
-        self.expected_mu = []
+        self.state_variables['expected_mu'] = 0.0
+        self.state_variables['expected_price'] = 0.0
 
         self.funda_v = self.firm.dividend/self.firm.discount
         self.state_variables['mu'] = 0.0
-
+        self.state_variables['std'] = 0.0
+        "Make sure that assets are not wrongly assigned 0 domicile. Check initialisation"
+        self.parameters['domicile'] = 0
     # -------------------------------------------------------------------------
     #
 
     def set_identifier(self):
         if self.firm.domicile == 0:
             self.identifier = "A"
-        else:
+        if self.firm.domicile == 1:
             self.identifier = "B"
 
     def calc_exp_return(self, prev_price, exp_price, dividend):
@@ -81,7 +84,6 @@ class Asset_risky(object):
         else:
             moving_average = sum(self.prices[-n:]) / n
             return moving_average
-
 
     def new_price(self):
         pass
@@ -141,12 +143,14 @@ class Asset_risky(object):
 		pass
 
 class Asset_riskfree(object):
-
     def __init__(self):
         self.identifier = ""  # identifier of the specific agent
         self.state_variables = {} # stores all state_variables
         self.parameters = {} # stores all parameters
         self.prices = []
+        self.returns = []
+        self.state_variables['mu'] = 0.0
+        self.state_variables['std'] = 0.0
 
     def __key__(self):
         return self.identifier
@@ -180,7 +184,9 @@ class Asset_riskfree(object):
             logging.error("    ERROR: %s could not be parsed", agent_filename)
 
         self.state_variables["r_f"] = environment.variable_parameters['r_f']
-
+        self.returns.append(self.state_variables["r_f"])
+        self.state_variables['mu'] = self.state_variables["r_f"]
+        self.state_variables['std'] = 0.0001
 
     def __str__(self):
         """
