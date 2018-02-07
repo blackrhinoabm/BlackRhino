@@ -22,11 +22,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import logging
-from initialisation import *
+from functions.initialisation import *
 
 from xml.etree import ElementTree
 from abm_template.src.baseconfig import BaseConfig
-from src.network import Network
+from src.functions.network import Network
 
 # -------------------------------------------------------------------------
 #
@@ -50,6 +50,163 @@ class Environment(BaseConfig):
     #
     # CODE
     #
+
+
+    def __init__(self, environment_directory, identifier):
+        self.initialize(environment_directory, identifier)
+    # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # read_xml_config_file(self, config_file_name)
+    # reads an xml file with config and sets identifier and parameters
+    # -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+
+    def read_xml_config_file(self, env_filename):
+        try:
+            xmlText = open(env_filename).read()
+            element = ElementTree.XML(xmlText)  # we tell python it's an xml
+            self.identifier = element.attrib['identifier']
+
+            # loop over all entries in the xml file
+            for subelement in element:
+
+                try:  # we see whether the value is a int
+                    if subelement.attrib['type'] == 'variable_parameters':
+                        value = float(subelement.attrib['value'])
+                        name = subelement.attrib['name']
+                        self.variable_parameters[name] = value
+
+                    else:
+                        value = int(subelement.attrib['value'])
+                        type_ = subelement.attrib['type']
+                        self.static_parameters[type_] = value
+
+                except:  # if not, it is a string
+                    value = str(subelement.attrib['value'])
+                    type_ = subelement.attrib['type']
+                    self.static_parameters[type_] = value
+
+        except:
+            logging.error("    ERROR: %s could not be parsed", env_filename)
+
+    # -------------------------------------------------------------------------
+    # the next function
+    # initializes the environment, initializing all the variables
+    # reading the env_config file from supplied environment_directory and
+    # identifier, and initializes all agents from the directories
+    # supplied in the main config file
+    # -------------------------------------------------------------------------
+
+    def initialize(self, environment_directory, identifier):
+        self.identifier = identifier
+        self.funds = []
+        self.firms = []
+        self.assets = []
+        self.region = {}
+        #Give region code numbers labels
+        self.region_labels = ((0, "domestic_market"), (1, "foreign_market"))
+
+        # first, read in the environment file
+        environment_filename = environment_directory + identifier + ".xml"
+        self.read_xml_config_file(environment_filename)
+        logging.info(" Environment file read: %s", environment_filename)
+
+        # then read in all the agents
+        init_firms(self, self.static_parameters['firm_directory'], 0)
+        init_funds(self, self.static_parameters['fund_directory'], 0)
+
+        government = Government()
+        household = Household()
+        self.agents = [self.funds, self.firms, government, household, self.assets]
+        # That's our government agent
+        # print self.agents[2].identifier
+
+        "Careful - hardcoded firm supply of shares" #TO do: take parameter from xml file
+        for i in self.firms:
+             i.endow_firms_with_equity(self, i.number_of_shares )
+        #Function called from initialisation.py
+        risky_assets_funda_values = init_profits(self, 0)
+        print risky_assets_funda_values , "fundamental values"
+
+        #Function called from initialisation.py
+        init_assets(self, self.static_parameters['asset_directory'], 0, risky_assets_funda_values )
+        # put assets into a market/region
+
+
+        #Now we determine the amount of fundamentalists and chartists
+        self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
+        self.variable_parameters['amount_chartist'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['chartists'])
+
+        # logging.info(" We are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
+        # logging.info(" *******Environment initialisation completed*******")
+
+
+    def agents_generator(self):
+        if self.agents is not None:
+            for agent_type in self.agents:
+                if type(agent_type) == list:
+                    for agent in agent_type:
+                        yield agent
+                else:
+                    yield agent_type
+        else:
+            raise LookupError('There are no agents to iterate over.')
+
+    def get_agent_by_id(self, ident):
+        to_return = None
+        for agent in self.agents_generator():
+            if agent.identifier == ident:
+                if to_return is None:  # checks whether something has been found previously in the function
+                    to_return = agent
+                else:
+                    raise LookupError('At least two agents have the same ID.')
+                    # if we have found something before then IDs are not unique, so we raise an error
+        if to_return is None:
+            raise LookupError('No agents have the provided ID.')
+            # if we don't find any agent with that ID we raise an error
+        else:
+            return to_return
+
+    # -------------------------------------------------------------------------
+    def count_all_agents(self):
+        sum = 0
+        for fund in self.funds:
+            if fund.parameters['domicile'] == 0:
+                sum += 1
+        self.variable_parameters['sum_a_funds'] = sum
+
+        sum = 0
+        for fund in self.funds:
+            if fund.parameters['domicile'] == 1:
+                sum += 1
+        self.variable_parameters['sum_b_funds'] = sum
+
+################## FIRMS
+
+        sum = 0
+        for firm in self.firms:
+            if firm.parameters['domicile'] == 0:
+                sum += 1
+        self.variable_parameters['sum_a_firms'] = sum
+
+        sum = 0
+        for firm in self.firms:
+            if firm.parameters['domicile'] == 1:
+                sum += 1
+        self.variable_parameters['sum_b_firms'] = sum
+
+        return self.variable_parameters['sum_a_funds'] , self.variable_parameters['sum_b_funds']
+
+    def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.exchange_classes.transaction  import Transaction
+        transaction = Transaction()
+        transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment )
+
+    def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
+        from src.exchange_classes.transaction  import Transaction
+        transaction = Transaction()
+        transaction.remove_transaction()
 
     def __getattr__(self, attr):
         return super(Environment, self).__getattr__(attr)
@@ -113,170 +270,30 @@ class Environment(BaseConfig):
         super(Environment, self).update_asset_returns()
 
     def new_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
-        from src.transaction import Transaction
+        from src.exchange_classes.transaction  import Transaction
         transaction = Transaction()
         # transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment)
 
     def add_cash(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
-        from src.transaction import Transaction
+        from src.exchange_classes.transaction import Transaction
         transaction = Transaction()
         # transaction.this_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default)
         transaction.add_cash(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment)
 
     # -------------------------------------------------------------------------
 
-    def __init__(self, environment_directory, identifier):
-        self.initialize(environment_directory, identifier)
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # read_xml_config_file(self, config_file_name)
-    # reads an xml file with config and sets identifier and parameters
-    # -------------------------------------------------------------------------
-    # -------------------------------------------------------------------------
-
-    def read_xml_config_file(self, env_filename):
-        try:
-            xmlText = open(env_filename).read()
-            element = ElementTree.XML(xmlText)  # we tell python it's an xml
-            self.identifier = element.attrib['identifier']
-
-            # loop over all entries in the xml file
-            for subelement in element:
-
-                try:  # we see whether the value is a int
-                    if subelement.attrib['type'] == 'variable_parameters':
-                        value = float(subelement.attrib['value'])
-                        name = subelement.attrib['name']
-                        self.variable_parameters[name] = value
-
-                    else:
-                        value = int(subelement.attrib['value'])
-                        type_ = subelement.attrib['type']
-                        self.static_parameters[type_] = value
-
-                except:  # if not, it is a string
-                    value = str(subelement.attrib['value'])
-                    type_ = subelement.attrib['type']
-                    self.static_parameters[type_] = value
-
-        except:
-            logging.error("    ERROR: %s could not be parsed", env_filename)
-
-    # -------------------------------------------------------------------------
-    # the next function
-    # initializes the environment, initializing all the variables
-    # reading the env_config file from supplied environment_directory and
-    # identifier, and initializes all agents from the directories
-    # supplied in the main config file
-    # -------------------------------------------------------------------------
-
-    def initialize(self, environment_directory, identifier):
-        self.identifier = identifier
-        self.funds = []
-        self.firms = []
-        self.assets = []
-        self.region = {}
-        # first, read in the environment file
-        environment_filename = environment_directory + identifier + ".xml"
-        self.read_xml_config_file(environment_filename)
-        logging.info(" Environment file read: %s", environment_filename)
-
-        # then read in all the agents
-        init_firms(self, self.static_parameters['firm_directory'], 0)
-        init_funds(self, self.static_parameters['fund_directory'], 0)
-        government = Government()
-        household = Household()
-        self.agents = [self.funds, self.firms, government, household, self.assets]
-        # That's our government agent
-        # print self.agents[2].identifier
-
-        "Careful - hardcoded firm supply of shares" #TO do: take parameter from xml file
-        for i in self.firms:
-            i.endow_firms_with_equity(self, 10000)
-        #Function called from initialisation.py
-        risky_assets_funda_values = init_profits(self, 0)
-
-        #Function called from initialisation.py
-        init_assets(self, self.static_parameters['asset_directory'], 0, risky_assets_funda_values )
-        # put assets into a market/region
-
-
-        #Now we determine the amount of fundamentalists and chartists
-        self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
-        self.variable_parameters['amount_chartist'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['chartists'])
-
-        logging.info(" We are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
-        logging.info(" *******Environment initialisation completed*******")
-
-    def agents_generator(self):
-        if self.agents is not None:
-            for agent_type in self.agents:
-                if type(agent_type) == list:
-                    for agent in agent_type:
-                        yield agent
-                else:
-                    yield agent_type
-        else:
-            raise LookupError('There are no agents to iterate over.')
-
-    def get_agent_by_id(self, ident):
-        to_return = None
-        for agent in self.agents_generator():
-            if agent.identifier == ident:
-                if to_return is None:  # checks whether something has been found previously in the function
-                    to_return = agent
-                else:
-                    raise LookupError('At least two agents have the same ID.')
-                    # if we have found something before then IDs are not unique, so we raise an error
-        if to_return is None:
-            raise LookupError('No agents have the provided ID.')
-            # if we don't find any agent with that ID we raise an error
-        else:
-            return to_return
-
-    # -------------------------------------------------------------------------
-    def count_all_agents(self):
-        sum = 0
-        for fund in self.funds:
-            if fund.parameters['domicile'] == 0:
-                sum += 1
-        self.variable_parameters['sum_a_funds'] = sum
-
-        sum = 0
-        for fund in self.funds:
-            if fund.parameters['domicile'] == 1:
-                sum += 1
-        self.variable_parameters['sum_b_funds'] = sum
-
-################## FIRMS
-
-        sum = 0
-        for firm in self.firms:
-            if firm.parameters['domicile'] == 0:
-                sum += 1
-        self.variable_parameters['sum_a_firms'] = sum
-
-        sum = 0
-        for firm in self.firms:
-            if firm.parameters['domicile'] == 1:
-                sum += 1
-        self.variable_parameters['sum_b_firms'] = sum
-
-        return self.variable_parameters['sum_a_funds'] , self.variable_parameters['sum_b_funds']
-
 class Government(object):
     def __init__(self):
         self.identifier = "Government"
         self.accounts = []
+        self.domicile = 0.0
 
     def __key__(self):
         return self.identifier
 
-
     def add_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):
-        from src.transaction import Transaction
+        from src.exchange_classes.transaction  import Transaction
         transaction = Transaction()
         transaction.add_transaction(type_, asset, from_id,  to_id,  amount,  interest,  maturity,  time_of_default,environment )
     def remove_transaction(self,  type_, asset, from_id,  to_id,  amount,  interest,  maturity, time_of_default, environment):

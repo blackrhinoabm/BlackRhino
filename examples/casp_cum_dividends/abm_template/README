@@ -1,0 +1,14 @@
+This is a template for writing financial agent-based models in python. It uses abstract base classes and is implemented in sample_model.py.
+The implementation is very basic and shows to implement the abstract base classes, the implementation is of a simple game with parameter
+theta, two agents, two choices of action (1,0) and a payout matrix:
+  	1				0
+1 [	(1-theta,1-theta)		(-theta,0)	]
+0 [	(0,-theta)			(0,0)		]
+
+There are simple equilibria:
+Theta is known to both agents, there is common knowledge about theta.
+If theta < 0, both agents find attack the dominant action: unique Nash equilibrium: {1, 1}
+If theta > 1, both agents find refrain the dominant action: unique Nash equilibrium: {0, 0}
+If theta is between [0, 1] both equilibria can be sustained as pure strategy Nash equilibria.
+
+co-pierre.georg@uct.ac.za, 2015

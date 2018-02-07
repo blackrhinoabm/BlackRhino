@@ -116,10 +116,10 @@ class Runner(BaseRunner):
                 self.current_step = i
 
                 #Append results for plotting, e.g look at the evolution of net_demand_a for fund-0
-                results_a.append(self.updater.market.current_supply_a )
-                results_b.append(self.updater.market.current_demand_a)
-                results_c.append(self.updater.market.current_supply_b)
-                results_d.append(self.updater.market.current_demand_b)
+                # results_a.append(self.updater.market.current_supply_a )
+                # results_b.append(self.updater.market.current_demand_a)
+                # results_c.append(self.updater.market.current_supply_b)
+                # results_d.append(self.updater.market.current_demand_b)
 
                 results_e.append(environment.variable_parameters['r_f'])
 
@@ -149,20 +149,6 @@ class Runner(BaseRunner):
         ax[1][0].set_xlabel("period", fontsize=15)
         ax[1][0].legend(["dividends a", "dividends b"], loc='best')
 
-        ax[0][1].plot(results_a)
-        ax[0][1].plot(results_b)
-        # ax[0][1].set_xlim(xmin=xmin)
-        # ax[0][1].set_ylim(ymax=100)
-        ax[0][1].set_xlabel("period", fontsize=15)
-        ax[0][1].legend(["supply a", "demand a"], loc='best')
-        #
-        ax[1][1].plot(results_c)
-        ax[1][1].plot(results_d)
-        # ax[1][1].set_xlim(xmin=xmin)
-        # ax[1][1].set_ylim(ymax=100)
-        # ax[1][1].set_ylim(ymin=0)
-        ax[1][1].set_xlabel("period", fontsize=15)
-        ax[1][1].legend(["supply_b", "demand_b"], loc='best')
         #
         # ax[2][0].legend(["price risk free"], loc='best')
         # ax[2][0].plot(environment.assets[2].prices)
@@ -212,7 +198,7 @@ class Runner(BaseRunner):
         #
         # plt.show()
         # plt.close()
-        # # ##############
+        # ##############
 
 
 

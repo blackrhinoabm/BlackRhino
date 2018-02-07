@@ -1,8 +1,9 @@
-<firm identifier='firm-0'>
+<firm identifier='firm-domestic'>
     <parameter type='parameters' name='domicile' value='0'></parameter>
+    <parameter type='parameters' name='number_of_shares' value='10000'></parameter>
      <!-- <parameter type='state_variables' name='dividend' value='3.8' validity='0-1000'></parameter> -->
     <parameter type='state_variables' name='dividend_rate' value='0.5' validity='0-1000'></parameter>
     <parameter type='state_variables' name='discount' value='0.1' validity='0-1000'></parameter>
-    <parameter type='state_variables' name='brown_delta' value='0.0001' validity='0-1000'></parameter>
+    <parameter type='state_variables' name='brown_delta' value='0.001' validity='0-1000'></parameter>
     <parameter type='state_variables' name='initial_profit' value='38000' validity='0-1000'></parameter>
 </firm>

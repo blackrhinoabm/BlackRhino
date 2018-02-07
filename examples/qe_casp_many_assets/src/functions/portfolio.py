@@ -147,7 +147,7 @@ def pf_risk_aversion(environment, returns, list_assets,  time, number_of_assets 
 	list_temp = []
 
 	for i, ii in enumerate(list_assets):
-   	# 	if "riskfree" not in str(i.identifier):
+   		#if "riskfree" not in str(i.identifier):
 		list_temp.append(ii.returns[-1])
 
 	mu = np.array(list_temp).reshape(n,1)
@@ -183,12 +183,12 @@ def create_matrices(environment, list_assets, list_returns, time , number_of_ass
  	list_temp_returns = []
 	random.seed(10)
 	for i in list_assets:
-  	# 	if "riskfree" not in str(i.identifier):
+  	# 	#if "riskfree" not in str(i.identifier):
 		list_temp_returns.append(i.returns)
 
 	list_temp_identifier = []
 	for i in list_assets:
-		# if "riskfree" not in str(i.identifier):
+		#if "riskfree" not in str(i.identifier):
 		list_temp_identifier.append(i.identifier)
 
 	assets = list_temp_identifier
@@ -286,7 +286,7 @@ def optimal_portfolio_world(return_panda, cov_mat, avg_rets, risk_aversion):
 	np.set_printoptions(suppress=True)
 	return weights
 
- 
+
 def section(caption):
     print('\n\n' + str(caption))
     print('-' * len(caption))
