@@ -1,4 +1,0 @@
-<bank identifier='bank_test_config_id_second'>
-	<parameter type='static' name='interest_rate_loans' value='0.06'></parameter>
-    <parameter type='static' name='interest_rate_deposits' value='0.02'></parameter>
-</bank>
