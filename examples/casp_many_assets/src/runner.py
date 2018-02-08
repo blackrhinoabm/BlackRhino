@@ -101,11 +101,6 @@ class Runner(BaseRunner):
         results_f=[]
         results_g=[]
 
-        results_a2=[]
-        results_b2=[]
-        results_c2=[]
-        results_d2=[]
-        results_e2=[]
 
         # loop over all time steps and do the updating
 
@@ -120,8 +115,7 @@ class Runner(BaseRunner):
                 # results_b.append(self.updater.market.current_demand_a)
                 # results_c.append(self.updater.market.current_supply_b)
                 # results_d.append(self.updater.market.current_demand_b)
-
-                results_e.append(environment.variable_parameters['r_f'])
+                # results_e.append(environment.variable_parameters['r_f'])
 
 
                 self.updater.do_update(environment, i)
@@ -134,7 +128,6 @@ class Runner(BaseRunner):
         "Counting trade, prices and demand/supply"
         fig, ax = plt.subplots(nrows=4, ncols=2, figsize=(15,6))
         ###############
-
         ax[0][0].plot(self.updater.asset_a.funda_values)
         ax[0][0].plot(self.updater.asset_b.funda_values)
         # ax[0][0].plot(self.updater.count_trade_a)
@@ -142,59 +135,31 @@ class Runner(BaseRunner):
         # ax[0][0].set_xlim(xmin=xmin)
         ax[0][0].set_xlabel("period", fontsize=15)
         ax[0][0].legend(["funda_a", "funda b" ], loc='best')
-
         ax[1][0].plot(self.updater.asset_a.dividends,'bo')
         ax[1][0].plot(self.updater.asset_b.dividends, '--', color="red")
         # ax[1][0].set_xlim(xmin=xmin)
         ax[1][0].set_xlabel("period", fontsize=15)
         ax[1][0].legend(["dividends a", "dividends b"], loc='best')
-
         #
-        # ax[2][0].legend(["price risk free"], loc='best')
-        # ax[2][0].plot(environment.assets[2].prices)
         ax[3][1].plot(results_e)
-        # ax[2][0].set_xlim(xmin=xmin)
         ax[3][1].legend(["yield risk free"], loc='best')
-
-        # ax[2][0].set_xlabel("period", fontsize=15)
-        # ax[2][0].legend(["price risk free"], loc='best')
 
         ax[2][1].plot(self.updater.asset_a.prices)
         ax[2][1].plot(self.updater.asset_b.prices, color="crimson" )
-        # ax[2][1].set_xlim(xmin=xmin)
-        # ax[2][1].set_ylim(ymin=32)
-        # ax[2][1].set_ylim(ymax=40)
-
         ax[2][1].set_xlabel("period", fontsize=15)
         ax[2][1].legend(["price_a", "price_b"], loc='best')
 
-        #
-        # ax[2][2].plot(environment.assets[0].riskyness)
-        # ax[2][2].plot(environment.assets[1].riskyness)
-        # ax[2][2].set_xlim(xmin=xmin)
-        # ax[2][2].set_xlabel("period", fontsize=15)
-        # ax[2][2].legend(["std_a", "std_b"], loc='best')
 
         ax[3][0].plot(environment.assets[0].returns)
         ax[3][0].plot(environment.assets[1].returns)
-        # ax[3][1].set_xlim(xmin=xmin)
         ax[3][0].set_xlabel("period", fontsize=15)
         ax[3][0].legend(["m_a", "m_b"], loc='best')
-
-        ax[2][0].plot(results_a2)
-        ax[2][0].plot(results_b2)
-        ax[2][0].plot(results_c2)
-        ax[2][0].plot(results_d2)
-        #
+ 
         # ax[3][1].set_xlim(xmin=xmin)
         # ax[4][1].set_xlabel("period", fontsize=15)
         ax[2][0].legend(["risk_free" ], loc='best')
         #
-        # ax[4][0].plot(environment.funds[0].l_risky)
-        # ax[4][0].plot(environment.funds[1].l_risky)
-        # ax[3][1].set_xlim(xmin=xmin)
-        # ax[4][0].set_xlabel("period", fontsize=15)
-        # ax[4][0].legend(["riskyness"], loc='best')
+
         #
         # plt.show()
         # plt.close()

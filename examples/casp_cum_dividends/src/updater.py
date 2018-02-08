@@ -77,8 +77,8 @@ class Updater(BaseModel):
             self.asset_b = environment.assets[0]
             self.asset_a = environment.assets[1]
 
-        # self.scenario = "no_QE"
-        self.scenario = "QE"
+        self.scenario = "no_QE"
+        # self.scenario = "QE"
 
         from market import Market
         self.market = Market("market", self.scenario)
