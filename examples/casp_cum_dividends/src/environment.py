@@ -176,7 +176,6 @@ class Environment(BaseConfig):
         # first, read in the environment file
         environment_filename = environment_directory + identifier + ".xml"
         self.read_xml_config_file(environment_filename)
-        logging.info(" Environment file read: %s", environment_filename)
 
         # then read in all the agents
         init_firms(self, self.static_parameters['firm_directory'], 0)
@@ -201,16 +200,6 @@ class Environment(BaseConfig):
         self.variable_parameters['amount_fundamentalists'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['fundamentalists'])
         self.variable_parameters['amount_chartist'] = int((self.count_all_agents()[0] + self.count_all_agents()[1])* self.variable_parameters['chartists'])
 
-
-        logging.info(" Initialized %s A funds and %s B funds and stored in environment.funds",\
-                            self.sum_a_funds, self.sum_b_funds)
-        logging.info(" Initialized %s A firms and %s B firms and stored in environment.firms",\
-                                self.sum_a_firms, self.sum_b_firms)
-        logging.info(" Global assets under management are %s currency units; A assets are %s currency units; B assets are %s currency units",\
-                    self.global_assets_under_management, self.ame_market_cap, self.eme_market_cap)
-
-        logging.info(" We are looking for the price of the A and B equity assets (given an additional risk-free bond asset), introduce QE and look for spillover effects")
-        logging.info(" *******Environment initialisation completed*******")
 
     def agents_generator(self):
         if self.agents is not None:

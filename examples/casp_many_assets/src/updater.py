@@ -80,7 +80,6 @@ class Updater(BaseModel):
         self.asset_b = environment.get_agent_by_id("B")
         self.riskfree_domestic = environment.get_agent_by_id("riskfree_A")
 
-
         # Determine sceario
         self.scenario = "no_QE"
         # self.scenario = "QE"
@@ -132,6 +131,7 @@ class Updater(BaseModel):
             list2 = [0 for i in range(0, environment.num_sweeps)]
             environment.profit_frequency = int(environment.num_sweeps)
 
+            # This code is for profit distribution
             # for i, value in enumerate(list2):
             #     if time-1==i and i % environment.profit_frequency==0:
             #         "We collect dividends, fluctuate deposits and update profits of firms"
@@ -174,18 +174,18 @@ class Updater(BaseModel):
                 self.market.determine_price_riskfree_asset(environment, time, global_assets )
                 self.valuation_changes(environment, time, global_assets)
 
-            #     delta = 0
-            #     for fund in environment.funds:
-            #         cash = fund.get_cash(environment)
-            #         # delta += fund.check_accounts(environment)
-            #         if fund.get_cash(environment) > 0: #it's a buyer
-            #             environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+                delta = 0
+                for fund in environment.funds:
+                    cash = fund.get_cash(environment)
+                    # delta += fund.check_accounts(environment)
+                    if fund.get_cash(environment) > 0: #it's a buyer
+                        environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
+
+                    if fund.get_cash(environment) < 0: #it's a seller
+                        environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
             #
-            #         if fund.get_cash(environment) < 0: #it's a seller
-            #             environment.add_cash("Cash", "assets", fund.identifier , fund.identifier , -cash , 0,  0, -1, environment)
-            # #
-                # for fund in environment.funds:
-                #     fund.check_accounts(environment), fund.identifier
+                for fund in environment.funds:
+                    fund.check_accounts(environment), fund.identifier
                 for asset in global_assets:
                     if "riskfree" not in asset.identifier:
                         asset.update_returns(environment)
@@ -372,9 +372,8 @@ class Updater(BaseModel):
         for asset in global_assets:
             # print str(asset.identifier)
             for fund in (environment.funds):
-                if time ==1 or time % 10==0:
-                    fund.exp_prices, fund.exp_mus = fund.update_belief_global(environment, global_assets, time)
-                    fund.weights = fund.calc_optimal_global(environment, fund.exp_mus, time)
+                fund.exp_prices, fund.exp_mus = fund.update_belief_global(environment, global_assets, time)
+                fund.weights = fund.calc_optimal_global(environment, fund.exp_mus, time)
                 # print weights
                 #we need the price
                 for identifier, price in fund.exp_prices.iteritems():
