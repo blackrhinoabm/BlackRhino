@@ -1,6 +1,0 @@
-<config identifier="test">
-	<parameter type="output" kind="float" column="3" low="0.0" high="4.0" target="2.0"></parameter>
-	<parameter type="output" kind="comp" column="3-2" low="0.0" high="10.0" target="0.0"></parameter>
-	<parameter type="distance" kind="squared"></parameter>
-	<parameter type="folder" name="samples\goodness" heads="yes"></parameter>
-</config>

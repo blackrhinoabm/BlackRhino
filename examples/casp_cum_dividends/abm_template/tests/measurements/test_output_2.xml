@@ -1,5 +1,0 @@
-<measurement identifier='test_output'>
-    <parameter type='filename' value='TestMeasurement.csv'></parameter>
-    <parameter type='static' column='1' header='Step' value='self.runner.current_step'></parameter>
-    <parameter type='static' column='2' header='Price' value='self.environment.price_of_labour'></parameter>
-</measurement>
