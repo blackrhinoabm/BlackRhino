@@ -4,12 +4,11 @@ from qe_financial_spillover.src.functions.portfolio import *
 
 class Fund:
 
-    def __init__(self, identifier, theta ):
+    def __init__(self, identifier, theta, phi ):
 
         self.identifier = identifier
         self.state_variables = {}
-        self.parameters = {"theta": theta  }
-        self.accounts = []
+        self.parameters = {"theta": theta  , "phi": phi}
 
         self.weights = pd.Series()
 
@@ -22,8 +21,6 @@ class Fund:
     def calc_optimal_pf(self, asset_dict):
 
         print asset_dict
-
-
 
         weights = 0
         return weights

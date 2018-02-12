@@ -5,28 +5,40 @@ from functions.distribute import *
 
 import random
 
-def init_funds(identifiers_funds, thetas, regions, global_capital):
+def init_funds(identifiers_funds, thetas, phis, regions, asset_dict):
     #Instantiate investor funds using the number of identifiers as range
     fund_list = []
     # Loop over number of funds
-    for ident, theta  in zip(identifiers_funds, thetas):
+    for ident, theta, phi  in zip(identifiers_funds, thetas, phis):
         # Instantiate fund object
-        fund = Fund(ident, theta)
+        fund = Fund(ident, theta, phi)
          # Save in list
         fund_list.append(fund)
 
     fund_regions = distribute_funds_equally(len(identifiers_funds), regions)
-
     # Attach region to funds
     for fund, region_label in zip(fund_list, fund_regions):
         fund.parameters['region'] = region_label
+    # Give balance sheets items to funds
+    for asset, list in asset_dict.iteritems():
+        for i in list:
+            asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
+            for fund, quantity in zip(fund_list, asset_quantity):
+                fund.state_variables[i.identifier] = quantity
 
+    for fund in fund_list:
+        print fund
     # # Allocate fund size
     # fund_sizes = distribute_funds_equally(len(identifiers_funds), [global_capital / len(identifiers_funds)])
     # for fund, size in zip(fund_list, fund_sizes):
     #     fund.state_variables['capital'] = size
 
     return fund_list
+
+def complete_balance_sheets(funds):
+    for fund in
+
+    return global_capital
 
 def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices):
     # Instantiate investor funds using the number of identifiers as range
@@ -45,7 +57,7 @@ def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, glob
         # Instantiate fund object
         asset = Asset(ident, m, rho, omega, face_value, global_supply, price )
 
-        # Save in dict - hard coded; not elegant and problematic if there are more assets
+        # Save in dict - hard coded; not elegant and problematic if there are more regions
         if "domestic" in ident:
             domestic.append(asset)
         if "foreign" in ident:
@@ -65,6 +77,7 @@ def init_returns(assets):
             asset.returns.append(return_)
 
 def init_portfolio_transactions(identifiers_funds, funds, asset_dict):
+
     for fund in funds:
         weights = fund.calc_optimal_pf(asset_dict)
 
