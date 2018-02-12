@@ -44,15 +44,3 @@ class Asset:
         #     ret_str = ret_str + transaction.write_transaction()
         # ret_str = ret_str + "  </agent>\n"
         return ret_str
-
-    # def __getattr__(self, attr):
-    #     if (attr in self.parameters) and (attr in self.state_variables):
-    #         raise AttributeError('The same name exists in both parameters and state variables.')
-    #     else:
-    #         try:
-    #             return self.parameters[attr]
-    #         except:
-    #             try:
-    #                 return self.state_variables[attr]
-    #             except:
-    #                 raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)

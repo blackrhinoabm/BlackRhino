@@ -17,26 +17,47 @@ def init_funds(identifiers_funds, thetas, phis, regions, asset_dict):
 
     fund_regions = distribute_funds_equally(len(identifiers_funds), regions)
     # Attach region to funds
+    count_domestic = 0
+    count_foreign = 0
     for fund, region_label in zip(fund_list, fund_regions):
         fund.parameters['region'] = region_label
+        if "domestic" in fund.parameters['region']:
+            count_domestic+=1
+        if "foreign" in fund.parameters['region']:
+            count_foreign += 1
+
     # Give balance sheets items to funds
+
     for asset, list in asset_dict.iteritems():
         for i in list:
-            asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
-            for fund, quantity in zip(fund_list, asset_quantity):
-                fund.state_variables[i.identifier] = quantity
 
-    for fund in fund_list:
-        print fund
+            # exclude cash
+            if "cash" not in i.identifier:
+                asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
+
+                for fund, quantity in zip(fund_list, asset_quantity):
+                    fund.assets[i.identifier] = quantity
+
+            if "cash" in i.identifier:
+            #check in which region we are
+                for fund in fund_list:
+                    # print fund.parameters['region'], fund.identifier, i.identifier
+                    if "domestic" in fund.parameters['region'] and "domestic" in i.identifier:
+                         fund.assets[i.identifier] = i.parameters['global_supply']/count_domestic
+                    if "foreign" in fund.parameters['region'] and "foreign" in i.identifier:
+                        fund.assets[i.identifier] = i.parameters['global_supply'] / count_foreign
+    fund_size = 0
     # # Allocate fund size
-    # fund_sizes = distribute_funds_equally(len(identifiers_funds), [global_capital / len(identifiers_funds)])
-    # for fund, size in zip(fund_list, fund_sizes):
-    #     fund.state_variables['capital'] = size
-
+    for fund in fund_list:
+        for key, value in fund.assets.iteritems():
+            fund_size += value
+        fund.liabilities = fund_size
     return fund_list
 
-def complete_balance_sheets(funds):
-    for fund in
+def get_fund_size(funds):
+    global_capital = 0
+    for fund in funds:
+         global_capital+= fund.liabilities
 
     return global_capital
 
@@ -89,7 +110,7 @@ def init_portfolio_transactions(identifiers_funds, funds, asset_dict):
     #
     # print fund_sizes
     # for fund, size in zip(fund_list, fund_sizes):
-    #     fund.state_variables['capital'] = size
+    #     fund.assets['capital'] = size
 
     valuation_domestic = 0
     valuation_foreign  = 0

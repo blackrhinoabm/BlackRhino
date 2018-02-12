@@ -7,7 +7,7 @@ class Fund:
     def __init__(self, identifier, theta, phi ):
 
         self.identifier = identifier
-        self.state_variables = {}
+        self.assets = {}
         self.parameters = {"theta": theta  , "phi": phi}
 
         self.weights = pd.Series()
@@ -26,7 +26,7 @@ class Fund:
         return weights
 
     def print_variables(self):
-        print self.state_variables
+        print self.assets
         print self.parameters
 
 
@@ -42,8 +42,8 @@ class Fund:
                 ret_str = ret_str + "    <parameter type='agent' name='" + entry + "' value='" + str(value) + "'></parameter>\n"
             else:
                 raise TypeError
-        for entry in self.state_variables:
-            value = self.state_variables[entry]
+        for entry in self.assets:
+            value = self.assets[entry]
             if isinstance(value, int) or isinstance(value, float) or isinstance(value, str):
                 ret_str = ret_str + "    <variable name='" + entry + "' value='" + str(value) + "'></variable>\n"
             elif isinstance(value, list):

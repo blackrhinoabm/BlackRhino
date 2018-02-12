@@ -9,9 +9,10 @@ def qe_casp_model(identifiers_funds, thetas, phis, regions, identifiers_assets, 
     asset_dict  = init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
     init_returns(asset_dict) # initialize returns
     funds = init_funds(identifiers_funds, thetas, phis, regions, asset_dict)
-    global_capital = complete_balance_sheets(funds)
-
-    # show_assets(asset_dict) # print to screen
+    global_capital = get_fund_size(funds)
+    for fund in funds:
+        print fund
+     # show_assets(asset_dict) # print to screen
     # init_portfolio_transactions(identifiers_funds, funds, asset_dict)
 
     """
