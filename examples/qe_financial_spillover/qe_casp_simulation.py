@@ -28,10 +28,12 @@ identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
 #determine number of fund agents
 number_funds = len(identifiers_funds)
 risk_aversion = 2
+phi = 0.5
 thetas = (np.ones(number_funds) * risk_aversion).tolist()
+phis = (np.ones(number_funds) * phi).tolist()
+
 
 regions = ["domestic", "foreign"]
-global_capital = 1e9 # reverse engineer?
 
 "Asset parameters"
 identifiers_assets = ["domestic_low_risk", "domestic_high_risk", "foreign_high_risk", "foreign_low_risk", " domestic_cash", "foreign_cash"]
@@ -58,11 +60,12 @@ cash_face_value = np.ones(number_cash) * 0
 face_values = np.append(bond_face_value, cash_face_value).tolist()
 
 
-supply = issuance
+supply_bond = issuance
+supply_cash = 0.1 * issuance
 """Creating a list of global_supplies"""
 # Price is one, so quantity is the same as issuance
-bond_supply = (np.ones(number_assets - number_cash ) * supply)
-cash_supply = np.ones(number_cash) * 0
+bond_supply = (np.ones(number_assets - number_cash ) * supply_bond)
+cash_supply = np.ones(number_cash) * supply_cash
 global_supply = np.append(bond_supply, cash_supply).tolist()
 
 
@@ -81,5 +84,5 @@ ms = [0.95, 0.99 , 0.95, 0.99 , 0 , 0 ]  #(1 - m) fraction of principal being re
 
 "Method to call simulation"
 
-qe_casp_model(identifiers_funds, thetas, regions, global_capital,
+qe_casp_model(identifiers_funds, thetas, phis , regions,
               identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
