@@ -1,4 +1,5 @@
 import pandas as pd
+from qe_financial_spillover.src.functions.portfolio import *
 
 
 class Fund:
@@ -13,16 +14,19 @@ class Fund:
         self.weights = pd.Series()
 
     def update_expectation(self, assets):
-
         #Returns of the asset = returns from interest payment, returns from price changes, returns from principal payment
 
         exp_omega, exp_price, exp_exchange_rate, exp_return = 0, 0, 0 ,0
         return exp_omega, exp_price, exp_exchange_rate, exp_return
 
-    def calc_optimal_pf(self):
-        pass
+    def calc_optimal_pf(self, asset_dict):
+
+        print asset_dict
 
 
+
+        weights = 0
+        return weights
 
     def print_variables(self):
         print self.state_variables

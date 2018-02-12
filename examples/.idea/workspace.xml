@@ -13,39 +13,30 @@
     <SUITE FILE_PATH="coverage/examples$qe_casp.coverage" NAME="qe_casp Coverage Results" MODIFIED="1518002181791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_casp_many_assets" />
     <SUITE FILE_PATH="coverage/examples$distribute_countries.coverage" NAME="distribute_countries Coverage Results" MODIFIED="1518091844136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover/src/functions" />
     <SUITE FILE_PATH="coverage/examples$abm_casp.coverage" NAME="abm_casp Coverage Results" MODIFIED="1517996454930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/casp_cum_dividends" />
-    <SUITE FILE_PATH="coverage/examples$qe_casp_simulation.coverage" NAME="qe_casp_simulation Coverage Results" MODIFIED="1518108645884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover" />
+    <SUITE FILE_PATH="coverage/examples$qe_casp_simulation.coverage" NAME="qe_casp_simulation Coverage Results" MODIFIED="1518424513409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover" />
     <SUITE FILE_PATH="coverage/examples$test_distribute_countries.coverage" NAME="test_distribute_countries Coverage Results" MODIFIED="1518083646179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover/src/functions/tests" />
     <SUITE FILE_PATH="coverage/examples$updater.coverage" NAME="updater Coverage Results" MODIFIED="1518101875486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover/src" />
+    <SUITE FILE_PATH="coverage/examples$present_value.coverage" NAME="present_value Coverage Results" MODIFIED="1518164080201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qe_financial_spillover/src/functions" />
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="qe_casp_simulation.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="qe_casp_simulation.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/qe_financial_spillover/qe_casp_simulation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="34" column="28" lean-forward="true" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="updater.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/updater.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="10" column="23" lean-forward="true" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
+            <state relative-caret-position="164">
+              <caret line="30" column="10" lean-forward="false" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
               <folding>
-                <element signature="e#0#28#0" expanded="true" />
+                <element signature="e#0#37#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="initialisation.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="initialisation.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/initialisation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="73" column="91" lean-forward="false" selection-start-line="73" selection-start-column="91" selection-end-line="73" selection-end-column="91" />
+            <state relative-caret-position="609">
+              <caret line="68" column="49" lean-forward="false" selection-start-line="68" selection-start-column="39" selection-end-line="68" selection-end-column="49" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -53,12 +44,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="show.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/show.py">
+      <file leaf-file-name="fund.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/fund.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
-              <folding />
+            <state relative-caret-position="147">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="portfolio.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/portfolio.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="777">
+              <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -66,29 +71,11 @@
       <file leaf-file-name="present_value.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/present_value.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="47" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fund.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/fund.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="asset.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/asset.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="55" column="99" lean-forward="false" selection-start-line="55" selection-start-column="99" selection-end-line="55" selection-end-column="99" />
-              <folding />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -96,8 +83,8 @@
       <file leaf-file-name="updater.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../Backups/casp_backups/qe_casp_many_assets/src/updater.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="377" column="40" lean-forward="true" selection-start-line="377" selection-start-column="40" selection-end-line="377" selection-end-column="40" />
+            <state relative-caret-position="96">
+              <caret line="164" column="72" lean-forward="false" selection-start-line="164" selection-start-column="66" selection-end-line="164" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -106,8 +93,8 @@
       <file leaf-file-name="distribute.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/distribute.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+            <state relative-caret-position="-2">
+              <caret line="30" column="20" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -115,12 +102,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="agent.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/firesales_simple/src/agent.py">
+      <file leaf-file-name="portfolio.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Backups/casp_backups/qe_casp_many_assets/src/functions/portfolio.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="346">
-              <caret line="104" column="19" lean-forward="false" selection-start-line="104" selection-start-column="19" selection-end-line="104" selection-end-column="19" />
-              <folding />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="9" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -142,9 +131,19 @@
       <find>new</find>
       <find>new_tr</find>
       <find>attr</find>
-      <find>temp</find>
+      <find>show</find>
       <find>here</find>
+      <find>face_value</find>
+      <find>portfolio</find>
+      <find>pandas</find>
+      <find>temp</find>
+      <find>init</find>
+      <find>create</find>
+      <find>from</find>
     </findStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/qe_financial_spillover</dir>
+    </dirStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -160,12 +159,14 @@
         <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/tests/test_distribute_countries.py" />
         <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/distribute_countries.py" />
         <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/distribute.py" />
-        <option value="$PROJECT_DIR$/qe_financial_spillover/src/fund.py" />
-        <option value="$PROJECT_DIR$/qe_financial_spillover/src/updater.py" />
-        <option value="$PROJECT_DIR$/qe_financial_spillover/src/asset.py" />
+        <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/present_value.py" />
         <option value="$PROJECT_DIR$/qe_financial_spillover/qe_casp_simulation.py" />
+        <option value="$PROJECT_DIR$/qe_financial_spillover/src/asset.py" />
+        <option value="$PROJECT_DIR$/qe_financial_spillover/src/updater.py" />
         <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/show.py" />
+        <option value="$PROJECT_DIR$/qe_financial_spillover/src/functions/portfolio.py" />
         <option value="$PROJECT_DIR$/qe_financial_spillover/src/initialisation.py" />
+        <option value="$PROJECT_DIR$/qe_financial_spillover/src/fund.py" />
       </list>
     </option>
   </component>
@@ -176,9 +177,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="14" />
-    <option name="y" value="43" />
-    <option name="width" value="1260" />
+    <option name="x" value="-30" />
+    <option name="y" value="33" />
+    <option name="width" value="1310" />
     <option name="height" value="685" />
   </component>
   <component name="ProjectView">
@@ -276,20 +277,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="qe_casp" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="present_value" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/qe_casp_many_assets" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/qe_financial_spillover/src/functions" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="examples" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/qe_casp_many_assets/qe_casp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/qe_financial_spillover/src/functions/present_value.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -353,19 +354,19 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.qe_casp" />
-      <item index="1" class="java.lang.String" itemvalue="Python.test_distribute_countries" />
-      <item index="2" class="java.lang.String" itemvalue="Python.distribute_countries" />
-      <item index="3" class="java.lang.String" itemvalue="Python.qe_casp_simulation" />
-      <item index="4" class="java.lang.String" itemvalue="Python.updater" />
+      <item index="0" class="java.lang.String" itemvalue="Python.test_distribute_countries" />
+      <item index="1" class="java.lang.String" itemvalue="Python.distribute_countries" />
+      <item index="2" class="java.lang.String" itemvalue="Python.qe_casp_simulation" />
+      <item index="3" class="java.lang.String" itemvalue="Python.updater" />
+      <item index="4" class="java.lang.String" itemvalue="Python.present_value" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.qe_casp_simulation" />
-        <item index="1" class="java.lang.String" itemvalue="Python.updater" />
-        <item index="2" class="java.lang.String" itemvalue="Python.distribute_countries" />
-        <item index="3" class="java.lang.String" itemvalue="Python.test_distribute_countries" />
-        <item index="4" class="java.lang.String" itemvalue="Python.qe_casp" />
+        <item index="1" class="java.lang.String" itemvalue="Python.present_value" />
+        <item index="2" class="java.lang.String" itemvalue="Python.updater" />
+        <item index="3" class="java.lang.String" itemvalue="Python.distribute_countries" />
+        <item index="4" class="java.lang.String" itemvalue="Python.test_distribute_countries" />
       </list>
     </recent_temporary>
   </component>
@@ -386,7 +387,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="14" y="43" width="1260" height="685" extended-state="0" />
+    <frame x="-30" y="33" width="1310" height="685" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -395,7 +396,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3779661" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31904763" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13053435" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -464,7 +465,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="11" />
+      <option name="time" value="12" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -582,68 +583,76 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../Backups/casp_backups/qe_casp_many_assets/src/updater.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="377" column="40" lean-forward="true" selection-start-line="377" selection-start-column="40" selection-end-line="377" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/distribute.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/fund.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/asset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="55" column="99" lean-forward="false" selection-start-line="55" selection-start-column="99" selection-end-line="55" selection-end-column="99" />
+        <state relative-caret-position="180">
+          <caret line="12" column="34" lean-forward="false" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/show.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+        <state relative-caret-position="45">
+          <caret line="3" column="23" lean-forward="false" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
+          <folding>
+            <marker date="1518423998000" expanded="true" signature="24:80" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Backups/casp_backups/qe_casp_many_assets/src/functions/portfolio.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="9" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/distribute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2">
+          <caret line="30" column="20" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../Backups/casp_backups/qe_casp_many_assets/src/updater.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="164" column="72" lean-forward="false" selection-start-line="164" selection-start-column="66" selection-end-line="164" selection-end-column="72" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/present_value.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="47" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/qe_casp_simulation.py">
+    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/functions/portfolio.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="107">
-          <caret line="34" column="28" lean-forward="true" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-          <folding />
+        <state relative-caret-position="777">
+          <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/updater.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="10" column="23" lean-forward="true" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
+        <state relative-caret-position="187">
+          <caret line="11" column="51" lean-forward="false" selection-start-line="11" selection-start-column="51" selection-end-line="11" selection-end-column="51" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
@@ -652,10 +661,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/initialisation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="73" column="91" lean-forward="false" selection-start-line="73" selection-start-column="91" selection-end-line="73" selection-end-column="91" />
+        <state relative-caret-position="609">
+          <caret line="68" column="49" lean-forward="false" selection-start-line="68" selection-start-column="39" selection-end-line="68" selection-end-column="49" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/src/fund.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/qe_financial_spillover/qe_casp_simulation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="30" column="10" lean-forward="false" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>

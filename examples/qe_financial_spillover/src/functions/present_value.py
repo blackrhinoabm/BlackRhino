@@ -4,7 +4,7 @@ from bisect import bisect
 """ Get bond price from YTM """
 import numpy as np
 
-def calc_bond_price(par, T, ytm, coup, freq=2):
+def calc_bond_price(par, T, ytm, coup, freq):
     freq = float(freq)
     periods = T*freq
     coupon = coup/100.*par/freq
@@ -17,4 +17,4 @@ def calc_yield(nper, pmt, pv, fv):
     return np.rate(nper, pmt, pv, fv)
 
 # calc_yield(10, 0, -62, 100)
-# print calc_bond_price(100, 10, 0.05 , 0, 2)
+# print calc_bond_price(100, 10, 0.05 , 0, 1)

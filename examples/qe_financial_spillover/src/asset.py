@@ -3,13 +3,15 @@ import pandas as pd
 
 class Asset:
 
-    def __init__(self, identifier, m, rho, omega, face_value ):
+    def __init__(self, identifier, m, rho, omega, face_value, global_supply , price):
 
         self.identifier = identifier
         self.state_variables = {}
-        self.parameters = {"face_value": face_value , "omega" : omega , "m" : m, "rho":rho}
+        self.parameters = {"face_value": face_value , "omega" : omega , "m" : m, "rho":rho, "global_supply" : global_supply }
         self.returns = []
-        self.prices = []
+        self.prices = [price]
+        self.current_price = price
+
 
 
     def print_variables(self):
@@ -43,14 +45,14 @@ class Asset:
         # ret_str = ret_str + "  </agent>\n"
         return ret_str
 
-    def __getattr__(self, attr):
-        if (attr in self.parameters) and (attr in self.state_variables):
-            raise AttributeError('The same name exists in both parameters and state variables.')
-        else:
-            try:
-                return self.parameters[attr]
-            except:
-                try:
-                    return self.state_variables[attr]
-                except:
-                    raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
+    # def __getattr__(self, attr):
+    #     if (attr in self.parameters) and (attr in self.state_variables):
+    #         raise AttributeError('The same name exists in both parameters and state variables.')
+    #     else:
+    #         try:
+    #             return self.parameters[attr]
+    #         except:
+    #             try:
+    #                 return self.state_variables[attr]
+    #             except:
+    #                 raise AttributeError('Agent %s has no attribute "%s".' % self.identifier, attr)
