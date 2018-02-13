@@ -1,23 +1,23 @@
 import math
-import numpy
-import random
-import decimal
-import scipy.linalg
 import numpy.random as nrand
-import matplotlib.pyplot as plt
-import pandas as pd
 
-def ornstein_uhlenbeck_levels(all_r0=0.0, all_time=1000000, all_delta=0.00396825396, all_sigma=0.125, ou_a=0.0, ou_mu=0.0):
+def ornstein_uhlenbeck_levels(time=500, init_default_probability=10e-7 ,rate_of_time = 1/252, sigma=0.125,
+                              mean_reversion=0.99, long_run_average_default_probability=10e-7):
     """
-    This method returns the rate levels of a mean-reverting ornstein uhlenbeck process.
-    :param param: the model parameters object
-    :return: the interest rate levels for the Ornstein Uhlenbeck process
+    This function returns news about the as a mean-reverting ornstein uhlenbeck process.
+    :param init_default_probability: starting point of the default probability
+    :param time: total time over which the simulation takes place
+    :param rate_of_time: e.g. daily, monthly, annually (default is daily)
+    :param sigma: volatility of the stochastic processes
+    :param mean_reversion: tendency to revert to the long run average
+    :param long_run_average_default_probability:
+    :return: list : simulatated default probability simulated over time
     """
-    ou_levels = [all_r0]
-    sqrt_delta_sigma = math.sqrt(all_delta) * all_sigma
-    brownian_motion_returns = nrand.normal(loc=0, scale=sqrt_delta_sigma, size=all_time)
-    for i in range(1, all_time):
-        drift = ou_a * (ou_mu - ou_levels[i-1]) * all_delta
-        randomness = brownian_motion_returns[i - 1]
-        ou_levels.append(ou_levels[i - 1] + drift + randomness)
-    return ou_levels
+    default_probability = [init_default_probability]
+    sqrt_delta_sigma = math.sqrt(rate_of_time) * sigma
+    brownian_motion_returns = nrand.normal(loc=0, scale=sqrt_delta_sigma, size=time)
+    for t in range(1, time):
+        drift = mean_reversion * (long_run_average_default_probability - default_probability[t-1]) * rate_of_time
+        randomness = brownian_motion_returns[t - 1]
+        default_probability.append(default_probability[t - 1] + drift + randomness)
+    return default_probability
