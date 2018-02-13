@@ -1,7 +1,7 @@
 import math
 import numpy.random as nrand
 
-def ornstein_uhlenbeck_levels(time=500, init_default_probability=10e-7 ,rate_of_time = 1/252, sigma=0.125,
+def ornstein_uhlenbeck_levels(time=500, init_default_probability=10e-7 ,rate_of_time = 0.003968253968253968, sigma=0.125,
                               mean_reversion=0.99, long_run_average_default_probability=10e-7):
     """
     This function returns news about the as a mean-reverting ornstein uhlenbeck process.
