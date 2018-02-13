@@ -5,13 +5,13 @@ from functions.distribute import *
 
 import random
 
-def init_funds(identifiers_funds, thetas, phis, regions, asset_dict):
+def init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict):
     #Instantiate investor funds using the number of identifiers as range
     fund_list = []
     # Loop over number of funds
-    for ident, theta, phi  in zip(identifiers_funds, thetas, phis):
+    for ident, lambda_ , theta, phi  in zip(identifiers_funds, lambdas, thetas, phis):
         # Instantiate fund object
-        fund = Fund(ident, theta, phi)
+        fund = Fund(ident, lambda_, theta, phi)
          # Save in list
         fund_list.append(fund)
 
@@ -27,7 +27,6 @@ def init_funds(identifiers_funds, thetas, phis, regions, asset_dict):
             count_foreign += 1
 
     # Give balance sheets items to funds
-
     for asset, list in asset_dict.iteritems():
         for i in list:
 
@@ -36,21 +35,22 @@ def init_funds(identifiers_funds, thetas, phis, regions, asset_dict):
                 asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
 
                 for fund, quantity in zip(fund_list, asset_quantity):
-                    fund.assets[i.identifier] = quantity
+                # We save a list with the object and quantity inside a dictionary attached to the fund
+                    fund.assets[i.identifier] = [i, quantity]
 
             if "cash" in i.identifier:
             #check in which region we are
                 for fund in fund_list:
                     # print fund.parameters['region'], fund.identifier, i.identifier
                     if "domestic" in fund.parameters['region'] and "domestic" in i.identifier:
-                         fund.assets[i.identifier] = i.parameters['global_supply']/count_domestic
+                         fund.assets[i.identifier] = [i, i.parameters['global_supply']/count_domestic]
                     if "foreign" in fund.parameters['region'] and "foreign" in i.identifier:
-                        fund.assets[i.identifier] = i.parameters['global_supply'] / count_foreign
+                        fund.assets[i.identifier] = [i, i.parameters['global_supply'] / count_foreign]
     fund_size = 0
     # # Allocate fund size
     for fund in fund_list:
         for key, value in fund.assets.iteritems():
-            fund_size += value
+            fund_size += value[1]
         fund.liabilities = fund_size
     return fund_list
 
@@ -96,41 +96,3 @@ def init_returns(assets):
         for asset in list:
             return_ = asset.parameters['rho']
             asset.returns.append(return_)
-
-def init_portfolio_transactions(identifiers_funds, funds, asset_dict):
-
-    for fund in funds:
-        weights = fund.calc_optimal_pf(asset_dict)
-
-    # for key, list in asset_dict.iteritems():
-    #     for asset in list:
-    #         asset.parameters['global_quantity']
-
-    # fund_sizes = distribute_funds_equally(len(identifiers_funds), [global_capital / len(identifiers_funds)])
-    #
-    # print fund_sizes
-    # for fund, size in zip(fund_list, fund_sizes):
-    #     fund.assets['capital'] = size
-
-    valuation_domestic = 0
-    valuation_foreign  = 0
-
-    # valuation_b = amount_b * environment.variable_parameters['price_of_b']
-    # self.add_transaction("B", "assets", "firm-abroad", self.identifier, amount_b, 0, 0, -1, environment)
-    #
-    # # Code to see transactions and keeping track of index, value pairs
-    # # for num, line in enumerate(self.accounts):
-    # #     print("{}: {}".format(num, line))
-    #
-    # valuation_a = amount_a * environment.variable_parameters['price_of_a']
-    # self.add_transaction("A", "assets", "firm-domestic",self.identifier, amount_a, 0, 0, -1, environment)
-    # #
-    #
-    # """Be careful with the from_ agent here: environment.agents[2].identifier. Government is the third
-    # item in environment.agents list"""
-    # amount = round((self.get_account("investment_shares") - valuation_b - valuation_a)/environment.variable_parameters['price_of_bond'], 4)
-    # self.add_transaction("Risk_free", "assets", environment.agents[2].identifier ,self.identifier, amount, 0, 0, -1, environment)
-    #
-
-
-

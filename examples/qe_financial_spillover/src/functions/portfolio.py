@@ -48,16 +48,21 @@ def create_pandas(environment, exp_returns):
     return returns, cov_mat, avg_rets
 
 def optimal_portfolio(return_panda, cov_mat, avg_rets, risk_aversion):
-	P = opt.matrix( risk_aversion*cov_mat.as_matrix())
-	q = opt.matrix(-avg_rets.as_matrix())
-	G = opt.matrix(0.0, (len(q),len(q)))
-	G[::len(q)+1] = -1.0
-	h = opt.matrix(0.0, (len(q),1))
-	A = opt.matrix(1.0, (1,len(q)))
-	b = opt.matrix(1.0)
+   P = opt.matrix( risk_aversion*cov_mat.as_matrix())
+   q = opt.matrix(-avg_rets.as_matrix())
+   G = opt.matrix(0.0, (len(q),len(q)))
+   G[::len(q)+1] = -1.0
+   h = opt.matrix(0.0, (len(q),1))
+   A = opt.matrix(1.0, (1,len(q)))
+   b = opt.matrix(1.0)
 
-	solvers.options['show_progress'] = False
-	sol = solvers.qp(P, q, G, h, A, b)
-	weights = pd.Series(sol['x'], index=cov_mat.index)
-	np.set_printoptions(suppress=True)
-	return weights
+   solvers.options['show_progress'] = False
+   sol = solvers.qp(P, q, G, h, A, b)
+   weights = pd.Series(sol['x'], index=cov_mat.index)
+   np.set_printoptions(suppress=True)
+   return weights
+
+def get_realised_returns_for_assets(asset_dict, day):
+    for key, list in asset_dict.iteritems():
+        for asset in list:
+            asset.calc_realised_returns(day)
