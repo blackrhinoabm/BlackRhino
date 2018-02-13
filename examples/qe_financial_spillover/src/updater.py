@@ -16,7 +16,7 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions, ident
     1. Funds form expectation about future returns
     """
     for day in range(days-1):
-        get_realised_returns_for_assets(asset_dict, day)
+        get_realised_returns_for_assets(asset_dict, day) # function inside portfolio
 
         # show_assets(asset_dict)
         for fund in funds:
