@@ -30,9 +30,8 @@ class Fund:
 
     def update_expectation(self, assets):
         #Returns of the asset = returns from interest payment, returns from price changes, returns from principal payment
-        for id in assets:
         #1) new exp omega
-            self.exp_default_probatility[id] =exp_omega()
+
         #2) new expect price
 
         exp_omega, exp_price, exp_exchange_rate, exp_return = 0, 0, 0 ,0

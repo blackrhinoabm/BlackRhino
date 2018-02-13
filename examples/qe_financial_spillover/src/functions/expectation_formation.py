@@ -7,7 +7,7 @@ def exp_price():
 def exp_omega(funds):
 
     for fund in funds:
-        omega = omega + fund.theta ()
+        omega = omega + fund.theta
 
     return omega
 
