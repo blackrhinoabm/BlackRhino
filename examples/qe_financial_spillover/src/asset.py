@@ -12,6 +12,8 @@ class Asset:
         self.prices = [price]
         self.current_price = price
 
+        self.news_process = []
+
     def calc_realised_returns(self, day):
         """
         Saves intermediate realised return in object

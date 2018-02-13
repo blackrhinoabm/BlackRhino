@@ -27,30 +27,27 @@ def init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict):
             count_foreign += 1
 
     # Give balance sheets items to funds
-    for asset, list in asset_dict.iteritems():
-        for i in list:
+    for index, i in asset_dict.iteritems():
+         # exclude cash, because only funds in the region hold cash
+        if "cash" not in i.identifier:
+            asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
 
-            # exclude cash
-            if "cash" not in i.identifier:
-                asset_quantity =  distribute_funds_equally(len(identifiers_funds), [i.parameters['global_supply']/len(identifiers_funds)])
-
-                for fund, quantity in zip(fund_list, asset_quantity):
-                # We save a list with the object and quantity inside a dictionary attached to the fund
-                    fund.assets[i.identifier] = [i, quantity]
-
-            if "cash" in i.identifier:
-            #check in which region we are
-                for fund in fund_list:
-                    # print fund.parameters['region'], fund.identifier, i.identifier
-                    if "domestic" in fund.parameters['region'] and "domestic" in i.identifier:
-                         fund.assets[i.identifier] = [i, i.parameters['global_supply']/count_domestic]
-                    if "foreign" in fund.parameters['region'] and "foreign" in i.identifier:
-                        fund.assets[i.identifier] = [i, i.parameters['global_supply'] / count_foreign]
+            for fund, quantity in zip(fund_list, asset_quantity):
+                # We save a the object and quantity inside a dictionary attached to the fund
+                fund.assets[i] = quantity
+        if "cash" in i.identifier:
+    #         #check in which region we are
+            for fund in fund_list:
+                # print fund.parameters['region'], fund.identifier, i.identifier
+                if "domestic" in fund.parameters['region'] and "domestic" in i.identifier:
+                     fund.assets[i] =  i.parameters['global_supply']/count_domestic
+                if "foreign" in fund.parameters['region'] and "foreign" in i.identifier:
+                    fund.assets[i] =  i.parameters['global_supply'] / count_foreign
     fund_size = 0
     # # Allocate fund size
     for fund in fund_list:
         for key, value in fund.assets.iteritems():
-            fund_size += value[1]
+            fund_size += value
         fund.liabilities = fund_size
     return fund_list
 
@@ -64,35 +61,20 @@ def get_fund_size(funds):
 def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices):
     # Instantiate investor funds using the number of identifiers as range
     asset_dict = {}
-      # Loop over regions
-    for region in regions:
-        temp = {
-            region : {}
-                }
-        asset_dict.update(temp)
-
-    domestic = []
-    foreign = []
-
     for ident,  m, rho, omega, face_value, global_supply, price  in zip(identifiers_assets,  ms, rhos, omegas, face_values,global_supply, prices):
         # Instantiate fund object
-        asset = Asset(ident, m, rho, omega, face_value, global_supply, price )
-
+        asset = Asset(ident, m, rho, omega, face_value, global_supply, price)
         # Save in dict - hard coded; not elegant and problematic if there are more regions
-        if "domestic" in ident:
-            domestic.append(asset)
-        if "foreign" in ident:
-            foreign.append(asset)
+        asset_dict[ident] = asset
 
-    for key, value in  asset_dict.iteritems():
-        if "domestic" in key:
-            asset_dict[key] = domestic
-        if "foreign" in key:
-            asset_dict[key] = foreign
-    return  asset_dict
+        if "domestic"  in asset.identifier:
+            asset.parameters['region'] = "domestic"
+        if "foreign" in asset.identifier:
+            asset.parameters['region'] = "foreign"
+
+    return asset_dict
 
 def init_returns(assets):
-    for key, list in assets.iteritems():
-        for asset in list:
-            return_ = asset.parameters['rho']
-            asset.returns.append(return_)
+    for key, asset in assets.iteritems():
+        return_ = asset.parameters['rho']
+        asset.returns.append(return_)
