@@ -12,7 +12,15 @@ class Asset:
         self.prices = [price]
         self.current_price = price
 
-
+    def calc_realised_returns(self, day):
+        """
+        Saves intermediate realised return in object
+        """
+        if day ==0: #no price changes
+            if "cash" not in self.identifier:
+                self.state_variables['intermediate_return'] = self.parameters['face_value']/  ( self.prices[-1] * self.parameters['global_supply']  ) * (self.parameters['rho'] + 1 - self.parameters['m'])
+            else:
+                self.state_variables['intermediate_return'] =  0.0
 
     def print_variables(self):
         print self.state_variables

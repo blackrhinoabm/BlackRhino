@@ -6,8 +6,11 @@ Simulation parameters
 
 1.Investor funds' parameters
     identifier : identifiers of funds
-    thetas : risk aversion parameters
+    lambdas : risk aversion parameters
     regions : domestic or foreign
+    
+    For expectations:
+    tethas : default propability correction parameter  
     phi: Memory parameter determining how much weight is given to the last return observation  0 < phi < 1
     phi^p: Memory parameter determining how much weight is given to the last price observation  0 < phi^p < 1
 
@@ -21,16 +24,19 @@ Global parameters
     tau = iteration steps in price finding function of market maker
     global capital: sum of investor funds' capital 
 """
-
+"Simulation parameters"
+days = 2
 
 "Fund parameters"
 identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
 #determine number of fund agents
 number_funds = len(identifiers_funds)
 risk_aversion = 2
+correction_parameter = 0.01 # 10percent
 phi = 0.5
-thetas = (np.ones(number_funds) * risk_aversion).tolist()
+lambdas = (np.ones(number_funds) * risk_aversion).tolist()
 phis = (np.ones(number_funds) * phi).tolist()
+thetas = (np.ones(number_funds) * correction_parameter).tolist()
 
 
 regions = ["domestic", "foreign"]
@@ -41,7 +47,7 @@ number_assets = len(identifiers_assets)
 number_cash = len([i for i in identifiers_assets if "cash" in i])
 
 """Creating a list of nominal interest rate for rhos"""
-rho = 0.05/250
+rho = 0.04/250
 bond_rhos = (np.ones(number_assets - number_cash ) * rho)
 cash_rhos = np.ones(number_cash) * 0
 rhos  = np.append(bond_rhos, cash_rhos ).tolist()  # rhos are nominal interest rate paid on the face value
@@ -76,13 +82,11 @@ bond_price = (np.ones(number_assets - number_cash ) * price_zero)
 cash_price = np.ones(number_cash) * 0
 prices= np.append(bond_price, cash_price).tolist()
 
-
-
 """Creating a list of ms""" # Todo: using np array.tolist() as above
 ms = [0.95, 0.99 , 0.95, 0.99 , 0 , 0 ]  #(1 - m) fraction of principal being repaid at every iteration step; e.g. (1 - 0.99) : 1% of principal is being repaid
 
 
 "Method to call simulation"
 
-qe_casp_model(identifiers_funds, thetas, phis , regions,
+qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions,
               identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
