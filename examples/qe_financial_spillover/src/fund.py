@@ -21,21 +21,18 @@ class Fund:
         self.parameters = {"lambda": lambda_  , "theta" : theta, "phi": phi}
         self.weights = pd.Series()
 #
-# quantity = fund.assets[id]
-# exp = fund.exp[id]
-# exp_def = fund.exp_default_probatility[id]
+    # quantity = fund.assets[id]
+    # exp = fund.exp[id]
+    # exp_def = fund.exp_default_probatility[id]
 #
-# for var in [fund.assets, fund.exp, fund.exp_default_probatility]
-#     print(var[id])
-
+    # for var in [fund.assets, fund.exp, fund.exp_default_probatility]
+    #     print(var[id])
 
     def update_expectation(self, assets):
         #Returns of the asset = returns from interest payment, returns from price changes, returns from principal payment
-
         #1) new exp omega
-        self.expected_default_propability()
-        #2) new expect price
 
+        #2) new expect price
 
         exp_omega, exp_price, exp_exchange_rate, exp_return = 0, 0, 0 ,0
         # exp_weighted_moving_average(last_exp_w_ma_average, fund.parameters['phi'], variable_of_interest)
@@ -54,8 +51,6 @@ class Fund:
         print self.assets
         print self.parameters
 
-    def expected_default_propability(self):
-        pass
 
     def __str__(self):
         ret_str =  "<fund identifier=" + self.identifier + ">\n"
@@ -84,9 +79,3 @@ class Fund:
 
         return ret_str
 
-
-    # def get_asset_attribute(self, ident, attribute):
-    #     print  "get attribute", ident, attribute
-    #
-    #                 if tuple[0] == attribute:
-    #                     return tuple[1]

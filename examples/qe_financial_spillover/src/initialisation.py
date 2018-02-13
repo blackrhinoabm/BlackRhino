@@ -2,6 +2,7 @@ from fund import Fund
 from asset import Asset
 from functions import *
 from functions.distribute import *
+from. functions.stochasticprocess import ornstein_uhlenbeck_levels
 
 import random
 
@@ -78,3 +79,8 @@ def init_returns(assets):
     for key, asset in assets.iteritems():
         return_ = asset.parameters['rho']
         asset.returns.append(return_)
+
+def init_news_process(asset_dict, days):
+    for key, asset in asset_dict.iteritems():
+        if "cash" not in key:
+            asset.news_process = ornstein_uhlenbeck_levels(days)

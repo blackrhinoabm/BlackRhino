@@ -15,9 +15,12 @@ def ornstein_uhlenbeck_levels(time=500, init_default_probability=10e-7 ,rate_of_
     """
     default_probability = [init_default_probability]
     sqrt_delta_sigma = math.sqrt(rate_of_time) * sigma
+
     brownian_motion_returns = nrand.normal(loc=0, scale=sqrt_delta_sigma, size=time)
+
     for t in range(1, time):
         drift = mean_reversion * (long_run_average_default_probability - default_probability[t-1]) * rate_of_time
         randomness = brownian_motion_returns[t - 1]
         default_probability.append(default_probability[t - 1] + drift + randomness)
+
     return default_probability
