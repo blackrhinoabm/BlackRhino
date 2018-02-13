@@ -63,6 +63,5 @@ def optimal_portfolio(return_panda, cov_mat, avg_rets, risk_aversion):
    return weights
 
 def get_realised_returns_for_assets(asset_dict, day):
-    for key, list in asset_dict.iteritems():
-        for asset in list:
-            asset.calc_realised_returns(day)
+    for key, asset in asset_dict.iteritems():
+        asset.calc_realised_returns(day)

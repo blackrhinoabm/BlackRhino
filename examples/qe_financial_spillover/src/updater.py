@@ -11,7 +11,11 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions, ident
     asset_dict  = init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
     init_returns(asset_dict) # initialize returns
     funds = init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict)
-    global_capital = get_fund_size(funds)
+
+    # global_capital = get_fund_size(funds)
+
+    for fund in funds:
+        print fund
 
     # show_assets(asset_dict) # print to screen
     """
@@ -21,6 +25,6 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions, ident
     for day in range(days-1):
         get_realised_returns_for_assets(asset_dict, day)
 
-        show_assets(asset_dict)
+        # show_assets(asset_dict)
         for fund in funds:
             exp_omega, exp_price, exp_exchange_rate, exp_return = fund.update_expectation(asset_dict)
