@@ -1,5 +1,4 @@
 from initialisation import *
-from qe_financial_spillover.src.functions.show import *
 from qe_financial_spillover.src.functions.portfolio import *
 
 
@@ -11,13 +10,7 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions, ident
     asset_dict  = init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
     init_returns(asset_dict) # initialize returns
     funds = init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict)
-
-    # global_capital = get_fund_size(funds)
-
-    for fund in funds:
-        print fund
-
-    # show_assets(asset_dict) # print to screen
+    global_capital = get_fund_size(funds)
     """
     Simulation starts
     1. Funds form expectation about future returns

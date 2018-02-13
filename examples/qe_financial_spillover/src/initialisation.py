@@ -43,21 +43,20 @@ def init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict):
                      fund.assets[i] =  i.parameters['global_supply']/count_domestic
                 if "foreign" in fund.parameters['region'] and "foreign" in i.identifier:
                     fund.assets[i] =  i.parameters['global_supply'] / count_foreign
-    # fund_size = 0
-    # # # Allocate fund size
-    # for fund in fund_list:
-    #     for key, value in fund.assets.iteritems():
-    #         print key, value
-    #         fund_size += value[1][1]
-    #     fund.liabilities = fund_size
+    fund_size = 0
+    # # Allocate fund size
+    for fund in fund_list:
+        for key, value in fund.assets.iteritems():
+            fund_size += value
+        fund.liabilities = fund_size
     return fund_list
 
-# def get_fund_size(funds):
-#     global_capital = 0
-#     for fund in funds:
-#          global_capital+= fund.liabilities
-#
-#     return global_capital
+def get_fund_size(funds):
+    global_capital = 0
+    for fund in funds:
+         global_capital+= fund.liabilities
+
+    return global_capital
 
 def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices):
     # Instantiate investor funds using the number of identifiers as range

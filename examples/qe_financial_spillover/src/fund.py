@@ -11,10 +11,13 @@ class Fund:
         """
         # self.assets = { asset.identifier :  quantity   }
         # self.exp_returns = { asset.identifier : expe_returns}
-        # self.exp_default_probatility = { asset.identifier : exp_default}
-        self.identifier = identifier
+        # self.exp_default_probability = { asset.identifier : exp_default}
 
+        self.identifier = identifier
         self.assets = {}
+        self.exp_returns = {}
+        self.exp_prices = {}
+        self.exp_default_probability = {}
         self.parameters = {"lambda": lambda_  , "theta" : theta, "phi": phi}
         self.weights = pd.Series()
 #
@@ -58,11 +61,26 @@ class Fund:
         ret_str =  "<fund identifier=" + self.identifier + ">\n"
         for entry in self.parameters:
             value = self.parameters[entry]
-            ret_str = ret_str + '<parameter ' + entry  + "=" + str(value) + "></parameter >\n"
+            ret_str = ret_str + '<parameter ' + entry  + "=" + str(value) + "></parameter>\n"
 
         for entry in self.assets:
             value = self.assets[entry]
-            ret_str = ret_str + '<variable type = asset ' + entry.identifier + " quantity= " + str(value) + "></variable >\n"
+            ret_str = ret_str + '<variable type = asset ' + entry.identifier + " quantity= " + str(value) + "></variable>\n"
+
+        for entry in self.exp_default_probability:
+            value = self.exp_default_probability[entry]
+            ret_str = ret_str + '<variable type = asset ' + entry.identifier + " expected default probability= " + str(
+                value) + "></variable>\n"
+
+        for entry in self.exp_prices:
+            value = self.exp_prices[entry]
+            ret_str = ret_str + '<variable type = asset ' + entry.identifier + " expected default probability= " + str(
+                value) + "></variable>\n"
+
+        for entry in self.exp_returns:
+            value = self.exp_returns[entry]
+            ret_str = ret_str + '<variable type = asset ' + entry.identifier + " expected default probability= " + str(
+                value) + "></variable>\n"
 
         return ret_str
 
