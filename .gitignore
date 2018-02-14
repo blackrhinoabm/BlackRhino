@@ -1,3 +1,6 @@
+# Jetbrains IDEs
+/.idea
+
 # Backups #
 ###########
 .orig
@@ -52,3 +55,13 @@
 ehthumbs.db
 Thumbs.db
 examples/.idea/examples.iml
+
+#coverage and testing
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
