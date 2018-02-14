@@ -81,11 +81,16 @@ def init_returns(assets):
         return_ = asset.parameters['rho']
         asset.returns.append(return_)
 
+
+
 def init_exp_default_probabilities(assets, identifier_assets, funds):
     for fund in funds:
         for ident in identifier_assets:
             for key, value in assets.iteritems():
                     fund.exp_default_probability[ident] = value.parameters['omega']
+                # cash has 0 as  attribute
+                    if "cash" in ident:
+                        fund.exp_default_probability[ident] = 0
 
 def init_ewma_price(assets, identifier_assets, funds):
     for fund in funds:
@@ -93,6 +98,10 @@ def init_ewma_price(assets, identifier_assets, funds):
             for key, value in assets.iteritems():
                     fund.ewma_price[ident] = value.prices[-1]
                     fund.ewma_price_intermediate[ident] = 0
+                    # cash has 0 as  attribute
+                    if "cash" in ident:
+                        fund.ewma_price[ident] = 0
+                        fund.ewma_price[ident] = 0
 
 def init_news_process(asset_dict, days):
     random.seed(54)
