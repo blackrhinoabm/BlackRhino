@@ -44,7 +44,7 @@ class Fund:
 
         1) New expected default probability
         2) New expected prices
-        3)  New expected returns
+        3) New expected returns
 
         :param assets: dictionary of assets
         :param asset_identifiers: list of asset ident
@@ -53,10 +53,11 @@ class Fund:
         """
 
         for ident in asset_identifiers:
-            for key, value in assets.iteritems():
-                new_exp_omega_var = exp_omega(assets[ident].parameters['omega'], assets[ident].news_process,
-                                                   self.parameters['theta'], self.exp_default_probability[ident],
-                                                   self.parameters['std_noise'], day)
+            if not 'cash' in ident:
+                for key, value in assets.iteritems():
+                    new_exp_omega_var = exp_omega(assets[ident].parameters['omega'], assets[ident].news_process,
+                                                  self.parameters['theta'], self.exp_default_probability[ident],
+                                                  self.parameters['std_noise'], day)
             # Attach to dictionary within fund
             self.exp_default_probability[ident] = new_exp_omega_var
 

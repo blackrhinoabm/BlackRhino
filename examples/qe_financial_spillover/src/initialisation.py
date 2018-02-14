@@ -1,11 +1,11 @@
-from fund import Fund
-from asset import Asset
-from functions import *
-from functions.distribute import *
-from functions.stochasticprocess import ornstein_uhlenbeck_levels
+from qe_financial_spillover.src.fund import Fund
+from qe_financial_spillover.src.asset import Asset
+from qe_financial_spillover.src.functions import *
+from qe_financial_spillover.src.functions.distribute import *
+from qe_financial_spillover.src.functions.stochasticprocess import ornstein_uhlenbeck_levels
 import random
+import numpy as np
 
-import random
 
 def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises, asset_dict):
     #Instantiate investor funds using the number of identifiers as range
@@ -81,6 +81,14 @@ def init_returns(assets):
         return_ = asset.parameters['rho']
         asset.returns.append(return_)
 
+def init_price_history(assets, backward_simulated_time):
+    """generate price history using mean reversion process and add to assets"""
+    price_history = ornstein_uhlenbeck_levels(time=backward_simulated_time, init_level=1,
+                                                    long_run_average_level=1, sigma=0.025)
+    price_history.reverse()
+    for key, asset in assets.iteritems():
+        if not 'cash' in key:
+            asset.prices_history = price_history
 
 
 def init_exp_default_probabilities(assets, identifier_assets, funds):

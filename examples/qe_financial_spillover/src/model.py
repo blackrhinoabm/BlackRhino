@@ -1,7 +1,7 @@
 from initialisation import *
 from qe_financial_spillover.src.functions.portfolio import *
 
-def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis,  phis_p, regions, std_noises , identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices):
+def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis,  phis_p, regions, std_noises , identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices, backward_simulated_time):
     """
     Initialisation
     """
@@ -10,7 +10,7 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis,  phis_p, regio
 
     init_returns(asset_dict) # initialize returns
 
-
+    init_price_history(asset_dict, backward_simulated_time)
     init_ewma_price(asset_dict, identifiers_assets, funds)
     init_exp_default_probabilities(asset_dict, identifiers_assets, funds)
     init_news_process(asset_dict, days)
