@@ -10,6 +10,7 @@ class Asset:
         self.parameters = {"face_value": face_value , "omega" : omega , "m" : m, "rho":rho, "global_supply" : global_supply }
         self.returns = []
         self.prices = [price]
+        self.prices_intermediate = [price]
         self.current_price = price
 
         self.news_process = []

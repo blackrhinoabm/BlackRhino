@@ -2,17 +2,18 @@ from fund import Fund
 from asset import Asset
 from functions import *
 from functions.distribute import *
-from. functions.stochasticprocess import ornstein_uhlenbeck_levels
+from functions.stochasticprocess import ornstein_uhlenbeck_levels
+import random
 
 import random
 
-def init_funds(identifiers_funds, lambdas, thetas, phis, regions, asset_dict):
+def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises, asset_dict):
     #Instantiate investor funds using the number of identifiers as range
     fund_list = []
     # Loop over number of funds
-    for ident, lambda_ , theta, phi  in zip(identifiers_funds, lambdas, thetas, phis):
+    for ident, lambda_ , theta, phi , phi_p, std_noise in zip(identifiers_funds, lambdas, thetas, phis, phis_p, std_noises):
         # Instantiate fund object
-        fund = Fund(ident, lambda_, theta, phi)
+        fund = Fund(ident, lambda_, theta, phi, phi_p, std_noise)
          # Save in list
         fund_list.append(fund)
 
@@ -56,7 +57,6 @@ def get_fund_size(funds):
     global_capital = 0
     for fund in funds:
          global_capital+= fund.liabilities
-
     return global_capital
 
 def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices):
@@ -72,6 +72,7 @@ def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, glob
             asset.parameters['region'] = "domestic"
         if "foreign" in asset.identifier:
             asset.parameters['region'] = "foreign"
+        asset.prices_intermediate = 0
 
     return asset_dict
 
@@ -80,7 +81,21 @@ def init_returns(assets):
         return_ = asset.parameters['rho']
         asset.returns.append(return_)
 
+def init_exp_default_probabilities(assets, identifier_assets, funds):
+    for fund in funds:
+        for ident in identifier_assets:
+            for key, value in assets.iteritems():
+                    fund.exp_default_probability[ident] = value.parameters['omega']
+
+def init_ewma_price(assets, identifier_assets, funds):
+    for fund in funds:
+        for ident in identifier_assets:
+            for key, value in assets.iteritems():
+                    fund.ewma_price[ident] = value.prices[-1]
+                    fund.ewma_price_intermediate[ident] = 0
+
 def init_news_process(asset_dict, days):
+    random.seed(54)
     for key, asset in asset_dict.iteritems():
         if "cash" not in key:
             asset.news_process = ornstein_uhlenbeck_levels(days)

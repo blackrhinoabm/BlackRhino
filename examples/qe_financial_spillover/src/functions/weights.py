@@ -8,6 +8,7 @@ def exp_weighted_moving_average(last_exp_w_ma_average, phi, variable_of_interest
         can be anything
     return: new_exp_w_ma_average
     """
+    print phi, last_exp_w_ma_average, variable_of_interest
     new_exp_w_ma_average =  (1 - phi) * last_exp_w_ma_average + phi * variable_of_interest
     return new_exp_w_ma_average
 
