@@ -61,15 +61,18 @@ class Fund:
             self.exp_default_probability[ident] = new_exp_omega_var
 
 
+
+
         #2) new expect price
         for ident in asset_identifiers:
             for key, value in assets.iteritems():
+
                 new_exp_price_var  =  exp_price( self.ewma_price[ident],
                                                  self.ewma_price_intermediate[ident],
                                                  self.parameters['phi'],
-                                                 assets[ident].prices,
+                                                 assets[ident].current_price,
                                                  assets[ident].prices_intermediate , day)
-            print key, value.prices[-1]
+
 
 
         # exp_weighted_moving_average(last_exp_w_ma_average, fund.parameters['phi'], variable_of_interest)

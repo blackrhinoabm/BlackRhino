@@ -3,7 +3,7 @@ from math import exp, expm1
 import numpy as np
 from src.functions.weights import *
 
-def exp_price(   emwa_price, ewma_price_intermediate , phi_p, last_price , last_intermediate_price, day):
+def exp_price( emwa_price, ewma_price_intermediate , phi_p, last_price , last_intermediate_price, day):
 
     """
 
@@ -13,17 +13,18 @@ def exp_price(   emwa_price, ewma_price_intermediate , phi_p, last_price , last_
     :param phi_p: Memory parameter. If phi_p is 1, only the last observation is considered
     :return:
     """
-    emwa_price = 0
+
     exp_price_var = exp_weighted_moving_average( emwa_price, phi_p, last_price )
+
 
 def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):
     """
     Function to calculate the new expected default probability
 
-    :param omega: default probability of last period
+    :param omega: default probability of last period per asset
     :param news_process: stochastic process underlying the default probability of the asset (defined in functions.stochasticprocess)
     :param theta: asset specific correction parameter
-    :param current_exp_omega: last  expected default probability
+    :param current_exp_omega: last  expected default probability per fund
     :param std_noise: fund specific noise influencing the evaluation of news
     :param day: t
     :return: new expected default probability of the underlying asset (float)
@@ -39,7 +40,7 @@ def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):
             exp_omega_var = exp(log_omega)
             return  exp_omega_var
 
-        # If there are not more than one day (at initialisation), we take omega_0
+        # If there are not more than one day (at initialisation), we take omega_0 as expected omega
         except IndexError:
             return omega
     # return the 0 exp propability of cash
