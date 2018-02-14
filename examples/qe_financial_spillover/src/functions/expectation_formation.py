@@ -32,20 +32,15 @@ def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):
     #Fund specific noise parameter
     noise = np.random.normal(0,std_noise)
 
-    #Cash has omega zero, in that case the expected probability is 0
-    if omega !=0:
-        try:   # log of (last period expected omega) + evaluation of news +  past_error_correction
-            log_omega =  log(current_exp_omega)  +    news_process[day] - news_process[day - 1]  + noise + theta*( log(omega) - log(current_exp_omega))
-            # take the inverse exponent
-            exp_omega_var = exp(log_omega)
-            return  exp_omega_var
+    try:   # log of (last period expected omega) + evaluation of news +  past_error_correction
+        log_omega =  log(current_exp_omega) + news_process[day] - news_process[day - 1] + noise + theta*( log(omega) - log(current_exp_omega))
+        # take the inverse exponent
+        exp_omega_var = exp(log_omega)
+        return  exp_omega_var
 
-        # If there are not more than one day (at initialisation), we take omega_0 as expected omega
-        except IndexError:
-            return omega
-    # return the 0 exp propability of cash
-    if omega== 0:
-        return 0
+    # If there are not more than one day (at initialisation), we take omega_0 as expected omega
+    except IndexError:
+        return omega
 
 
 def exp_return():

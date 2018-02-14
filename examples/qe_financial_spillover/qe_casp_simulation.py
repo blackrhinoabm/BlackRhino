@@ -23,9 +23,11 @@ Global parameters
     days : time steps
     tau = iteration steps in price finding function of market maker
     global capital: sum of investor funds' capital 
+    backward_simulated_time: used to simulate historical bond prices and returns
 """
 "Simulation parameters"
 days = 2
+backward_simulated_time = 20
 
 "Fund parameters"
 identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
@@ -91,4 +93,4 @@ ms = [0.95, 0.99 , 0.95, 0.99 , 0 , 0 ]  #(1 - m) fraction of principal being re
 "Method to call simulation"
 
 qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises,
-              identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
+              identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices, backward_simulated_time)
