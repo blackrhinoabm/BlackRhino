@@ -13,7 +13,7 @@ Simulation parameters
     tethas : default propability correction parameter  
     phi: Memory parameter determining how much weight is given to the last return observation  0 < phi < 1
     phi^p: Memory parameter determining how much weight is given to the last price observation  0 < phi^p < 1
-
+    std_noise: the expected default probability has a fund-varying idiosyncratic noise component for the evaluation of news 
     
 2. Assets parameters
     identifier : identifiers of assets
@@ -32,12 +32,14 @@ identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
 #determine number of fund agents
 number_funds = len(identifiers_funds)
 risk_aversion = 2
-correction_parameter = 0.01 # 10percent
+correction_parameter = 0.01 # 1 percent
 phi = 0.5
+phi_p = 0.5
 lambdas = (np.ones(number_funds) * risk_aversion).tolist()
 phis = (np.ones(number_funds) * phi).tolist()
+phis_p = (np.ones(number_funds) * phi_p).tolist()
 thetas = (np.ones(number_funds) * correction_parameter).tolist()
-
+std_noises = [0.001, 0.002 , 0.001 , 0.004 ]  # Todo: using np array.tolist() as above
 
 regions = ["domestic", "foreign"]
 
@@ -53,7 +55,7 @@ cash_rhos = np.ones(number_cash) * 0
 rhos  = np.append(bond_rhos, cash_rhos ).tolist()  # rhos are nominal interest rate paid on the face value
 
 """Creating a list of default probabilities"""
-omega = 0.0001
+omega = 10e-7
 bond_omegas = (np.ones(number_assets - number_cash ) * omega )
 cash_omegas = np.ones(number_cash) * 0
 omegas  = np.append(bond_omegas, cash_omegas ).tolist()  # default probabilities omegas
@@ -88,5 +90,5 @@ ms = [0.95, 0.99 , 0.95, 0.99 , 0 , 0 ]  #(1 - m) fraction of principal being re
 
 "Method to call simulation"
 
-qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, regions,
+qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises,
               identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices)
