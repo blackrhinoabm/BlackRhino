@@ -17,9 +17,12 @@ class Fund:
 
         In total, there are     ;  the ewma dicts are needed to get to the expected values
 
+        2 x dictionaries  for expected returns (t & tau )
         4 x dictionaries  for expected prices (price_t & price_tau; ewma_price_t & ewma_price_tau)
-        4 x dictionaries  for expected exchange rates  ( x_t & x_tau; ewma_x_t & ewma_x_t )
-        2 x dictionaries  for expected returns (t & tau)
+        4 x dictionaries  for expected exchange rates  ( x_t & x_tau; ewma_x_t & ewma_x_tau )
+
+        4 x dictionaries  for realised return  ( x_t & x_tau; ewma_x_t & ewma_x_tau )
+
         1 x dictionary for expected default probability
 
 
@@ -27,7 +30,6 @@ class Fund:
         self.parameters = {"lambda": lambda_  , "theta" : theta, "phi": phi, "phi_p": phi_p,  "phi_x" : phi_x, "std_noise": std_noise}
         self.identifier = identifier
         self.assets = {}
-
 
         #Expectation of returns - dictionaries containing the different assets as keys, expected returns as values
         self.exp_return = {}
@@ -37,15 +39,14 @@ class Fund:
         self.exp_price_intermediate = {}
         # exponentially weighted moving average of prices; needed for calculation of new expected price
         # ( M^hat from the paper)
-        self.ewma_price = {}
-        self.ewma_price_intermediate = {}
-
+        self.ewma_price = {}  #  EWMMA_t : We have to save the ewma  separately for t and tau
+        self.ewma_price_intermediate = {}  # EWMMA_tau
 
         # Dictionary to access exchange rate expectations
         self.exp_x  = {}
         self.exp_x_intermediate = {}
-        self.ewma_x = {}
-        self.ewma_x_intermediate = {}
+        self.ewma_x = {}   #  EWMMA_t : We have to save the ewma  separately for t and tau
+        self.ewma_x_intermediate = {}  # EWMMA_tau
 
         self.exp_default_probability = {}
 
@@ -54,25 +55,28 @@ class Fund:
         # Dictionary to access realised returns per asset
         self.realised_returns = {}
         self.realised_returns_intermediate = {}
-
-        # realised returns
-
+        self.ewma_realised_returns = {}  # EWMMA_t
+        self.ewma_realised_returns_intermediate = {}   # EWMMA_tau
         # for var in [fund.assets, fund.exp, fund.exp_default_probatility]
         #     print(var[id])
 
     def update_expectation(self, assets,  exchange_rate, day):
         """
         Method to update expected asset attribute for next iteration
+
         1) New expected default probability
         2) New expected prices, exchange rates
         3) New expected returns
 
-        4) get realised returns for covariance variance matrix
-        5) calculate new ewma
+        4) Get realised returns for covariance variance matrix
+        5) Compute new ewma for returns
+        6) Use latest realised return and ewma return for covariance
+        5) Calculate new ewma covariance
         6) Plug it into portfolio optimisation
-        7) get weights
+        7) get weights  ... phew!
 
         :param assets: dictionary of assets
+        :param exchange_rate dictionary with exchange rate list
         :param day: iteration step (big loop)
         :return:
         """
@@ -104,6 +108,9 @@ class Fund:
         #
         #3) Expected returns of the asset = returns from interest payment, returns from price changes, returns from principal payment
         #   Expected returns for abroad assets include an exchange rate component
+
+            #So  I) exp_return_home_asset
+             #  II) exp_return_abroad_asset
 
         for key, value in assets.iteritems():
         #Check if assets are in the same region as fund, in that case we need expected
@@ -147,7 +154,7 @@ class Fund:
             if day == 0:
                 previous_price = value.current_price
             else:
-                previous_price = value.prices[-2]  # Which price? Tau or t ??!!!
+                previous_price = value.prices[-2]  # Which price?  t, never tau!!
 
             # First, the easy case; asset and funds are in the same region - no exchange rate effects
             if value.parameters['region'] == self.parameters['region']:
@@ -174,15 +181,32 @@ class Fund:
                 self.realised_returns_intermediate[key] = (new_re_return)
 
         # Investor funds only hold regional cash. Since we are using this dictionary for covariance-variance matrix
-        # we need to delete the abroad cash  from the books
+        # we need to delete the abroad cash from the books
         if self.parameters['region'] == "domestic":
             del self.realised_returns_intermediate["foreign_cash"]
 
         if self.parameters['region'] == "foreign":
             del self.realised_returns_intermediate["domestic_cash"]
 
+       # 5) Compute new ewma for realised returns
 
-        # weighted_returns
+        for key, value in assets.iteritems():
+            #We simplify and take the first ewma as the actual return
+            if day == 0:
+                 if key in self.realised_returns_intermediate:
+
+                    self.ewma_realised_returns_intermediate[key] = self.realised_returns_intermediate[key]
+            #
+                    new_ewma  = exp_weighted_moving_average(self.ewma_realised_returns_intermediate[key], self.parameters['phi'], self.realised_returns_intermediate[key])
+                    self.ewma_realised_returns[key] = new_ewma
+
+
+        print  self.ewma_realised_returns
+
+        # new_Covariance_(return r_domestic_low, return r_domestic_high)
+
+
+
         # covariance
         # weighted_covariance
         # portfolio

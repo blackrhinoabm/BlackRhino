@@ -23,3 +23,8 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis,  phis_p, phis_
         # while not cleared
         for fund in funds:
             fund.update_expectation(asset_dict, exchange_rate,  day)
+
+
+            #Still do:
+            # fund.get_demand(asset_dict, exchange_rate)
+
