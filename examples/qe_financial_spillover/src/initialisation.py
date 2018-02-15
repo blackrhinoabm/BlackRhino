@@ -7,13 +7,13 @@ import random
 import numpy as np
 
 
-def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises, asset_dict):
+def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, phis_x, regions, std_noises, asset_dict):
     #Instantiate investor funds using the number of identifiers as range
     fund_list = []
     # Loop over number of funds
-    for ident, lambda_ , theta, phi , phi_p, std_noise in zip(identifiers_funds, lambdas, thetas, phis, phis_p, std_noises):
+    for ident, lambda_ , theta, phi , phi_p , phi_x, std_noise in zip(identifiers_funds, lambdas, thetas, phis, phis_p, phis_x, std_noises):
         # Instantiate fund object
-        fund = Fund(ident, lambda_, theta, phi, phi_p, std_noise)
+        fund = Fund(ident, lambda_, theta, phi, phi_p, phi_x, std_noise)
          # Save in list
         fund_list.append(fund)
 
@@ -49,8 +49,10 @@ def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_no
     # # Allocate fund size
     for fund in fund_list:
         for key, value in fund.assets.iteritems():
+
             fund_size += value
         fund.liabilities = fund_size
+
     return fund_list
 
 def get_fund_size(funds):
@@ -73,6 +75,7 @@ def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, glob
         if "foreign" in asset.identifier:
             asset.parameters['region'] = "foreign"
         asset.prices_intermediate = 0
+
 
     return asset_dict
 
@@ -100,16 +103,26 @@ def init_exp_default_probabilities(assets, identifier_assets, funds):
                     if "cash" in ident:
                         fund.exp_default_probability[ident] = 0
 
-def init_ewma_price(assets, identifier_assets, funds):
+                #Also add keys, value pairs for realised returns and intermediate realised returns
+                    fund.realised_returns_intermediate[ident] =  0
+                    fund.realised_returns[ident] =  0
+
+
+def init_ewma_price(assets, identifier_assets, funds, exchange_rate):
     for fund in funds:
         for ident in identifier_assets:
             for key, value in assets.iteritems():
                     fund.ewma_price[ident] = value.prices[-1]
                     fund.ewma_price_intermediate[ident] = 0
+
                     # cash has 0 as  attribute
                     if "cash" in ident:
                         fund.ewma_price[ident] = 0
                         fund.ewma_price[ident] = 0
+
+        #Initialise ewma with the first exchange rate past into main simulation file
+        fund.ewma_x['x_domestic_to_foreign'] = exchange_rate['x_domestic_to_foreign'][-1]
+        fund.ewma_x_intermediate['x_domestic_to_foreign'] = 0
 
 def init_news_process(asset_dict, days):
     random.seed(54)
