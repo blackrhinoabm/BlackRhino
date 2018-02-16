@@ -14,11 +14,11 @@ def exp_price( mhat, phi, last_price ):
     :param phi_p: Memory parameter. If phi_p is 1, only the last observation is considered
     :return:
     """
-    exp_price_var = exp_weighted_moving_average( mhat, phi, last_price )  #Calls function from weights.py
+    exp_price_var = exp_weighted_moving_average( mhat, phi, last_price )  *  last_price  #Calls function from weights.py   Equation 1.6
     return exp_price_var
 
 
-def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):   #Equation 1.6
+def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):   #Equation 1.5
     """
     Function to calculate the new expected default probability
 
@@ -48,7 +48,7 @@ def exp_omega(omega, news_process, theta,  current_exp_omega, std_noise, day):  
 def exp_return_home_asset( ident,  rho, m, face_value, exp_omega, exp_price, actual_price, global_quantity):
     """
     Method to calculate the expected returns of home assets which go into portfolio optimisation
-    Equation 1.1
+    Equation 1.2
 
     :param ident: asset identifier
     :param rho: nominal interest rate of asset

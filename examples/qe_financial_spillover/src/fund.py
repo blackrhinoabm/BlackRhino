@@ -26,6 +26,9 @@ class Fund:
         1 x dictionary for expected default probability
 
 
+        Mhat - how to initialise? If day==0 we take the first observation as exponentially moving average?
+
+
         """
         self.parameters = {"lambda": lambda_  , "theta" : theta, "phi": phi, "phi_p": phi_p,  "phi_x" : phi_x, "std_noise": std_noise}
         self.identifier = identifier
@@ -52,7 +55,7 @@ class Fund:
 
         self.weights = pd.Series()
 
-        # Dictionary to access realised returns per asset
+        # Dictionary to access hypothetical realised returns per asset
         self.realised_returns = {}
         self.realised_returns_intermediate = {}
         self.ewma_realised_returns = {}  # EWMMA_t
@@ -62,17 +65,20 @@ class Fund:
 
     def update_expectation(self, assets,  exchange_rate, day):
         """
-        Method to update expected asset attribute for next iteration
+        Method to update expected asset attributes for the next iteration
 
-        1) New expected default probability
-        2) New expected prices, exchange rates
-        3) New expected returns
+        1) New expected default probability   Equation 1.6
+        2) New expected prices, exchange rates  Equation 1.7
+        3) New expected returns    Equation 1.1
 
-        4) Get realised returns for covariance variance matrix
-        5) Compute new ewma for returns
-        6) Use latest realised return and ewma return for covariance
-        5) Calculate new ewma covariance
-        6) Plug it into portfolio optimisation
+        4) Get realised returns for covariance variance matrix  Equation 1.3
+        5) Compute new ewma (Mhat) for realised returns   Equation 1.5
+        6) Use latest realised return and ewma mhat for covariance   Equation 1.4
+        5) Calculate new ewma covariance  Equation 1.3 continued
+
+
+
+        6) Plug it into portfolio optimisation    Equation 1.7
         7) get weights  ... phew!
 
         :param assets: dictionary of assets
@@ -84,23 +90,27 @@ class Fund:
         for key, value in assets.iteritems():
             if not 'cash' in key:
 
-                new_exp_omega_var = exp_omega(assets[key].parameters['omega'], assets[key].news_process,
+                new_exp_omega_var = exp_omega(assets[key].parameters['omega'], assets[key].news_process,   # function stored in expectation_formation.py
                                           self.parameters['theta'], self.exp_default_probability[key],
                                           self.parameters['std_noise'], day)
         # Attach to dictionary within fund
         self.exp_default_probability[key] = new_exp_omega_var
 
         #2) a ) new expected price for all assets
+
         for key, value in assets.iteritems():
-            new_exp_price_var  =  exp_price( self.ewma_price[key],
+            #Todo:  specify   assets[key].current_price  from  assets[key].prices  or  assets[key].prices_intermediate
+
+            new_exp_price_var  =  exp_price( self.ewma_price[key],     # function stored in expectation_formation.py
                                              self.parameters['phi_p'],
                                              assets[key].current_price)
             self.exp_price_intermediate[key] = new_exp_price_var
 
         #2) b) #) new expected exchange rates
+
         current_x =  exchange_rate['x_domestic_to_foreign'][-1]
 
-        new_exp_x_var = exp_price(self.ewma_x['x_domestic_to_foreign'],
+        new_exp_x_var = exp_price(self.ewma_x['x_domestic_to_foreign'],   # function stored in expectation_formation.py
                                     self.parameters['phi_x'],
                                     current_x)
 
@@ -117,7 +127,7 @@ class Fund:
         #exchange rates in the return calculation
         # First, the easy case; asset and funds are in the same region
             if value.parameters['region'] == self.parameters[ 'region']:
-                new_exp_r_var = exp_return_home_asset(key,
+                new_exp_r_var = exp_return_home_asset(key,     # function stored in expectation_formation.py
                                                         value.parameters['rho'],  # nominal interest rate of asset
                                                       value.parameters['m'],  # constant repayment parameter
                                                       value.parameters['face_value'],
@@ -145,7 +155,7 @@ class Fund:
                                                         self.exp_x_intermediate)  # expected exchange rate dictionary
                 self.exp_return_intermediate[key] = (new_exp_r_var)
 
-        #4) get realised returns for covariance variance matrix
+        #4) Get realised returns for covariance variance matrix
         # Be careful with the regions again
 
         for key, value in assets.iteritems():
@@ -188,10 +198,10 @@ class Fund:
         if self.parameters['region'] == "foreign":
             del self.realised_returns_intermediate["domestic_cash"]
 
-       # 5) Compute new ewma for realised returns
+       # 5) Compute new ewma (Mhat) for realised returns
 
         for key, value in assets.iteritems():
-            #We simplify and take the first ewma as the actual return
+            #In t=0 we simplify and take the first ewma as the actual return
             if day == 0:
                  if key in self.realised_returns_intermediate:
 
@@ -200,10 +210,11 @@ class Fund:
                     new_ewma  = exp_weighted_moving_average(self.ewma_realised_returns_intermediate[key], self.parameters['phi'], self.realised_returns_intermediate[key])
                     self.ewma_realised_returns[key] = new_ewma
 
+        #6 )  new_Covariance_(return r_domestic_low, return r_domestic_high)
+        #                    dict with Mhat_tau for every asset       dictioanryw with last observation
 
-        print  self.ewma_realised_returns
+        exp_mat, cov_mat = create_pandas(self.ewma_realised_returns_intermediate, self.realised_returns_intermediate, self.exp_return_intermediate)
 
-        # new_Covariance_(return r_domestic_low, return r_domestic_high)
 
 
 

@@ -47,7 +47,7 @@ def init_funds(identifiers_funds, lambdas, thetas, phis, phis_p, phis_x, regions
                     fund.assets[i] =  i.parameters['global_supply'] / count_foreign
     fund_size = 0
     # # Allocate fund size
-    for fund in fund_list:
+    for fund in fund_list:  # TODO Liabilities is the sum of asset_quantity * price over all assets; price of bonds is initialised with 1 and cash doesn't have a price
         for key, value in fund.assets.iteritems():
 
             fund_size += value
@@ -74,17 +74,12 @@ def init_assets(regions, identifiers_assets, ms, rhos, omegas, face_values, glob
             asset.parameters['region'] = "domestic"
         if "foreign" in asset.identifier:
             asset.parameters['region'] = "foreign"
-        asset.prices_intermediate = 0
+
 
 
     return asset_dict
 
-def init_returns(assets):
-    for key, asset in assets.iteritems():
-        return_ = asset.parameters['rho']
-        asset.returns.append(return_)
-
-def init_price_history(assets, backward_simulated_time):
+def init_price_history(assets, backward_simulated_time):  #Todo: take the same price histry for all assets? If not simulate inside loop
     """generate price history using mean reversion process and add to assets"""
     price_history = ornstein_uhlenbeck_levels(time=backward_simulated_time, init_level=1,
                                                     long_run_average_level=1, sigma=0.025)
@@ -94,38 +89,35 @@ def init_price_history(assets, backward_simulated_time):
             asset.prices_history = price_history
 
 
-def init_exp_default_probabilities(assets, identifier_assets, funds):
+def init_exp_default_probabilities(assets, funds):
     for fund in funds:
-        for ident in identifier_assets:
-            for key, value in assets.iteritems():
-                    fund.exp_default_probability[ident] = value.parameters['omega']
-                # cash has 0 as  attribute
-                    if "cash" in ident:
-                        fund.exp_default_probability[ident] = 0
+         for key, value in assets.iteritems():
+                fund.exp_default_probability[key] = value.parameters['omega']
+            # cash has 0 as  attribute
+                if "cash" in key:
+                    fund.exp_default_probability[key] = 0
 
-                #Also add keys, value pairs for realised returns and intermediate realised returns
-                    fund.realised_returns_intermediate[ident] =  0
-                    fund.realised_returns[ident] =  0
+            #Also add keys, value pairs for realised returns and intermediate realised returns
+                fund.realised_returns_intermediate[key] =  0
+                fund.realised_returns[key] =  0
 
 
-def init_ewma_price(assets, identifier_assets, funds, exchange_rate):
+def init_ewma_price(assets, funds, exchange_rate):
     for fund in funds:
-        for ident in identifier_assets:
-            for key, value in assets.iteritems():
-                    fund.ewma_price[ident] = value.prices[-1]
-                    fund.ewma_price_intermediate[ident] = 0
+        for key, value in assets.iteritems():
+            fund.ewma_price[key] = value.prices[-1]
+            fund.ewma_price_intermediate[key] = 0
 
-                    # cash has 0 as  attribute
-                    if "cash" in ident:
-                        fund.ewma_price[ident] = 0
-                        fund.ewma_price[ident] = 0
+            # cash has 0 as  attribute
+            if "cash" in key:
+                fund.ewma_price[key] = 0
+                fund.ewma_price[key] = 0
 
         #Initialise ewma with the first exchange rate past into main simulation file
         fund.ewma_x['x_domestic_to_foreign'] = exchange_rate['x_domestic_to_foreign'][-1]
         fund.ewma_x_intermediate['x_domestic_to_foreign'] = 0
 
 def init_news_process(asset_dict, days):
-    random.seed(54)
     for key, asset in asset_dict.iteritems():
         if "cash" not in key:
             asset.news_process = ornstein_uhlenbeck_levels(days)

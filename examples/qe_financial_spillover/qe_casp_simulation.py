@@ -42,7 +42,7 @@ x_foreign_to_domestic =  float(p_domestic)/float(p_foreign)
 #exchange_rate from the perspective of the domestic guy: x_f/x_d
 #exchange rates are saved in dictionaries
 
-exchange_rate = {"x_domestic_to_foreign": [x_domestic_to_foreign] }
+exchange_rate = {"x_domestic_to_foreign": [x_domestic_to_foreign] }  #  x^d   *!*( x^f / x^d )*!* = x^f
 
 "Fund parameters"
 identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
