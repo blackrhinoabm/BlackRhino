@@ -1,8 +1,8 @@
 # Jetbrains IDEs
-#/.idea
+/.idea
 
 # Misc
-#.ipynb_checkpoints/
+.ipynb_checkpoints/
 
 # Backups #
 ###########
