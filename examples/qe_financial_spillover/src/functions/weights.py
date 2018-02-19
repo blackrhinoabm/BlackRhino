@@ -29,7 +29,7 @@ def covar_between_two_variable(var1, var2, ewma1, ewma2, phi, cov_ewma, previous
     return new_weighted_covariance
 
 
-def simple_moving_average_list(data_list, window):
+def simple_moving_average_list(data , window):
     """
     Calculates Simple Moving Average from data list specifying window for moving average
 
@@ -44,7 +44,7 @@ def simple_moving_average_list(data_list, window):
     return sum(data[-window:]) / float(window)
 
 
-def ew_moving_average_list(data_list, window, weight):
+def ew_moving_average_list(data , window, weight):
     """
     Calculates exponentially moving average from data list
 

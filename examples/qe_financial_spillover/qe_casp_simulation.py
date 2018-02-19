@@ -1,7 +1,8 @@
-from src.updater import qe_casp_model
+from src.model import qe_casp_model
 import numpy as np
 """
 Simulation parameters
+
 
 
 1.Investor funds' parameters
@@ -13,6 +14,7 @@ Simulation parameters
     tethas : default propability correction parameter  
     phi: Memory parameter determining how much weight is given to the last return observation  0 < phi < 1
     phi^p: Memory parameter determining how much weight is given to the last price observation  0 < phi^p < 1
+    phi^x: Memory parameter determining how much weight is given to the last exchange rate observation  0 < phi^p < 1
     std_noise: the expected default probability has a fund-varying idiosyncratic noise component for the evaluation of news 
     
 2. Assets parameters
@@ -24,10 +26,23 @@ Global parameters
     tau = iteration steps in price finding function of market maker
     global capital: sum of investor funds' capital 
     backward_simulated_time: used to simulate historical bond prices and returns
+    xchange = foreign_price/domestic_price 
+    
 """
 "Simulation parameters"
 days = 2
 backward_simulated_time = 20
+
+#  Domestic Price
+p_domestic = 1.0
+p_foreign = 12.0
+
+x_domestic_to_foreign =  float(p_foreign)/float(p_domestic)
+x_foreign_to_domestic =  float(p_domestic)/float(p_foreign)
+#exchange_rate from the perspective of the domestic guy: x_f/x_d
+#exchange rates are saved in dictionaries
+
+exchange_rate = {"x_domestic_to_foreign": [x_domestic_to_foreign] }  #  x^d   *!*( x^f / x^d )*!* = x^f
 
 "Fund parameters"
 identifiers_funds = ["fund-1", "fund-2", "fund-3", "fund-4"]
@@ -37,16 +52,19 @@ risk_aversion = 2
 correction_parameter = 0.01 # 1 percent
 phi = 0.5
 phi_p = 0.5
+phi_x = 0.5
 lambdas = (np.ones(number_funds) * risk_aversion).tolist()
 phis = (np.ones(number_funds) * phi).tolist()
 phis_p = (np.ones(number_funds) * phi_p).tolist()
+phis_x = (np.ones(number_funds) * phi_x).tolist()
+
 thetas = (np.ones(number_funds) * correction_parameter).tolist()
 std_noises = [0.001, 0.002 , 0.001 , 0.004 ]  # Todo: using np array.tolist() as above
 
 regions = ["domestic", "foreign"]
 
 "Asset parameters"
-identifiers_assets = ["domestic_low_risk", "domestic_high_risk", "foreign_high_risk", "foreign_low_risk", " domestic_cash", "foreign_cash"]
+identifiers_assets = ["domestic_low_risk", "domestic_high_risk", "foreign_high_risk", "foreign_low_risk", "domestic_cash", "foreign_cash"]
 number_assets = len(identifiers_assets)
 number_cash = len([i for i in identifiers_assets if "cash" in i])
 
@@ -92,5 +110,5 @@ ms = [0.95, 0.99 , 0.95, 0.99 , 0 , 0 ]  #(1 - m) fraction of principal being re
 
 "Method to call simulation"
 
-qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, phis_p, regions, std_noises,
-              identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices, backward_simulated_time)
+qe_casp_model(days, identifiers_funds, lambdas, thetas, phis, phis_p, phis_x, regions, std_noises,
+              identifiers_assets, ms, rhos, omegas, face_values, global_supply, prices, backward_simulated_time, exchange_rate   )

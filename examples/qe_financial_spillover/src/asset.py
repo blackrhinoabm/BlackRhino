@@ -8,12 +8,10 @@ class Asset:
         self.identifier = identifier
         self.state_variables = {}
         self.parameters = {"face_value": face_value , "omega" : omega , "m" : m, "rho":rho, "global_supply" : global_supply }
-        self.returns = []
         self.prices_history = []
         self.prices = [price]
         self.prices_intermediate = [price]
         self.current_price = price
-
         self.news_process = []
 
     def calc_realised_returns(self, day):
@@ -25,6 +23,8 @@ class Asset:
                 self.state_variables['intermediate_return'] = self.parameters['face_value']/  ( self.prices[-1] * self.parameters['global_supply']  ) * (self.parameters['rho'] + 1 - self.parameters['m'])
             else:
                 self.state_variables['intermediate_return'] =  0.0
+
+
 
     def print_variables(self):
         print self.state_variables

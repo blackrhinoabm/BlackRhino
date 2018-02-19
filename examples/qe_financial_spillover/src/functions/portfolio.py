@@ -9,47 +9,49 @@ import cvxopt as opt
 from cvxopt import blas, solvers
 
 
-def create_pandas(environment, exp_returns):
+def create_pandas(ewma_realised_return, last_realised_return, expected_return):
+    # Creating expected return matrix
 
-    asset_names = []
+    # Making covariance matrix
     list_temp_returns = []
+    for key, value in ewma_realised_return.iteritems():
+        ewma_realised_return[key] = [value]
 
-    for i in environment.region['domestic_market']:
-        asset_names.append(str(i.identifier))
+    # For every asset key, make a list with the exp. weighted moving average and the last observation
+    # E.g.      {  "domestic_high_risk" : [ ewma  , last_observation]   }
 
-    #Create dictionary with key value pairs of asset names and returns and put in percentage terms
-    return_dict = {}
-    for i in asset_names:
-        number = environment.get_agent_by_id(i).returns
-        # Multiply with 100
-        number = [ii * 100 for ii in number]
-        return_dict[i] = number
+    # For some reason zip did not work - I had to iterate over the two dictionaries... not pretty
+    for key, value in ewma_realised_return.items():
+        for key2, value2 in  last_realised_return.items():
+            if key == key2:
+                value.append(value2)
 
-    # If we have new expected returns, we update the return vector
-    if  exp_returns!=0:
-          # Iterate over the two dictionaries
-        for (k,v), (k2,v2) in zip(return_dict.items(), exp_returns.items()):
-
-            if k == k2:
-                v.append(v2)
-    else:
-        pass
-
-    #Convert dict in list of returns to make a panda
-    for i, v in return_dict.iteritems():
+    print ewma_realised_return
+    # Now turn the dictionary into a panda
+    for i, v in ewma_realised_return.iteritems():
         list_temp_returns.append(v)
 
     data = np.asarray(list_temp_returns).T
-    asset_names = list(return_dict.keys())
-    returns = pd.DataFrame(data, columns= asset_names)
-    # print returns.head()
-    avg_rets = returns.mean()
-    cov_mat = returns.cov()
-    return returns, cov_mat, avg_rets
+    asset_names = list(ewma_realised_return.keys())
 
-def optimal_portfolio(return_panda, cov_mat, avg_rets, risk_aversion):
+    returns = pd.DataFrame(data, columns= asset_names)
+    print returns.head()
+    cov_mat = returns.cov()
+    avg_mat = returns.mean()
+
+
+
+    print avg_mat
+
+    return returns, cov_mat
+
+def optimal_portfolio(return_panda, cov_mat, exp_rets, risk_aversion):
+
    P = opt.matrix( risk_aversion*cov_mat.as_matrix())
+
+
    q = opt.matrix(-avg_rets.as_matrix())
+
    G = opt.matrix(0.0, (len(q),len(q)))
    G[::len(q)+1] = -1.0
    h = opt.matrix(0.0, (len(q),1))
