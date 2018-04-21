@@ -69,3 +69,10 @@ nosetests.xml
 coverage.xml
 *,cover
 *.iml
+*.pyc
+*.xls
+*.xlxs
+*.ipynb
+*.eps
+*.xlsx
+*.png
