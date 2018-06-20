@@ -1,4 +1,4 @@
-<agent identifier="DB">
+<agent identifier="DeutscheB">
 <parameter type="state_variables" name="equity" value="1433355000"></parameter>
  <parameter type="parameters" name="leverage" value="14.875520021209"></parameter>
  <parameter type="state_variables" name="debt" value="21321901000"></parameter>

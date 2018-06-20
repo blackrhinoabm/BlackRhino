@@ -1,4 +1,4 @@
-<agent identifier="African Bank">
+<agent identifier="AfricanB">
 <parameter type="state_variables" name="equity" value="7466274000"></parameter>
  <parameter type="parameters" name="leverage" value="6.75290472865046"></parameter>
  <parameter type="state_variables" name="debt" value="50419037000"></parameter>

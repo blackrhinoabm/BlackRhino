@@ -1,4 +1,4 @@
-<agent identifier="grindrod">
+<agent identifier="Grindrod">
 <parameter type="state_variables" name="equity" value="835546000"></parameter>
  <parameter type="parameters" name="leverage" value="12.482601795712"></parameter>
  <parameter type="state_variables" name="debt" value="10429788000"></parameter>

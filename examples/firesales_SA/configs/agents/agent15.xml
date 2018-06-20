@@ -1,4 +1,4 @@
-<agent identifier="SOCIETE">
+<agent identifier="SOCIETEG">
 <parameter type="state_variables" name="equity" value="666836000"></parameter>
  <parameter type="parameters" name="leverage" value="16.5842231073307"></parameter>
  <parameter type="state_variables" name="debt" value="11058957000"></parameter>

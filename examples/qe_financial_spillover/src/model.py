@@ -22,12 +22,19 @@ def qe_casp_model(days, identifiers_funds, lambdas, thetas, phis,  phis_p, phis_
     for day in range(days-1):
         # while not cleared
         for fund in funds:
-            fund.update_expectation(asset_dict, exchange_rate,  day)
+            fund.update_expectation(asset_dict, exchange_rate,  day)    #Equation 1.1 to 1.8
+
+            """ 2. Funds form optimal portfolios """
+
             # Todo:
             #weights = fund.pf_opt(var_covariance)
-            # demands = fund.get_demand(asset_dict, exchange_rate)   Equation 1.9 to 1.11
 
-        # lazy_wal_auctionweights, demands)   Equation 1.12 to 1.15
+            """ 3. Funds post demands """
+            # demands = fund.get_demand(asset_dict, exchange_rate)   Equation 1.9 to 1.11
+            """ 4. Incomplete walrasian auction  """
+        # lazy_wal_auction(weights, demands)   Equation 1.12 to 1.15
+        """
+        5. Trading and updating of balance sheets """
         # for fund in funds:
             # fund.update_balance_sheets  Equation 1.16 to 1.18
 

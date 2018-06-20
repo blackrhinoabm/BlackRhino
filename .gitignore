@@ -70,9 +70,14 @@ coverage.xml
 *,cover
 *.iml
 *.pyc
+*.csv
+*.xls
 *.xls
 *.xlxs
 *.ipynb
 *.eps
 *.xlsx
 *.png
+
+#Folder
+/examples/firesaleS_SA/plotting

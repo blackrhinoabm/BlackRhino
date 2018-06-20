@@ -1,4 +1,4 @@
-<agent identifier="JpM">
+<agent identifier="JPM">
 <parameter type="state_variables" name="equity" value="3246873000"></parameter>
  <parameter type="parameters" name="leverage" value="16.5663772497415"></parameter>
  <parameter type="state_variables" name="debt" value="53788923000"></parameter>

@@ -3,8 +3,6 @@ import numpy as np
 """
 Simulation parameters
 
-
-
 1.Investor funds' parameters
     identifier : identifiers of funds
     lambdas : risk aversion parameters

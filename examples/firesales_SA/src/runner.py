@@ -59,7 +59,7 @@ class Runner(BaseRunner):
     def initialize(self, environment):
         self.identifier = environment.identifier
         self.updater = Updater(environment)
-
+        self.current_step = 0
         self.num_sweeps = int(environment.static_parameters['num_sweeps'])
 
         #For measurement
@@ -106,8 +106,6 @@ class Runner(BaseRunner):
         # loop over all time steps and do the updating
         # For each update step
 
-
-
         for i in range(self.num_sweeps):
 
                 self.current_step = i
@@ -117,6 +115,7 @@ class Runner(BaseRunner):
                 self.sweep_result_list.append(self.updater.env_var_par_df)
 
         self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
-        print("Check the simulation specific output file that was written as result_all_sweeps.csv in the main folder\n***")
+        
+        print("Check the simulation specific output file that was written as result_all_sweeps.csv in the output folder\n***")
 
     # ------------------------------------------------------------------------
