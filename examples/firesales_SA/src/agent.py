@@ -335,7 +335,11 @@ class Agent(BaseAgent):
 #                self.state_variables['total_asset_sales'] = self.state_variables['total_assets'] * self.state_variables['total_asset_sales'] * self.state_variables['leverage']
     
     def calc_systemicness(self, environment, current_step, AV):        
-        self.state_variables['systemicness'] = self.state_variables["equity_losses_from_system_deleveraging"] / AV
+        if AV!= 0:
+            self.state_variables['systemicness'] = self.state_variables["equity_losses_from_system_deleveraging"] / AV
+        else: 
+            self.state_variables['systemicness'] = 0
+        
  
 
     def calc_asset_losses_from_system_deleveraging(self, environment, current_step):
