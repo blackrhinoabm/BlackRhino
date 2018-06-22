@@ -7,8 +7,3 @@
     <parameter type='shock_config' value='configs/shock/shock_config.xml'></parameter>
     <parameter type='illiquidity' value='1e-13'></parameter>
 </environment>
-
-<!-- " illiquidity is specified in mian fiale firesale.py" -->
-<!-- "    <parameter type='illiquidity' value='0.00000000000000714285714285714'></parameter>" -->
-     <!-- <parameter type='illiquidity' value='0.000000000000714285714285714'></parameter> -->
-  <!-- <parameter type='illiquidity' value='0.0000000000001'></parameter> -->

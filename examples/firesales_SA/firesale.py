@@ -43,11 +43,6 @@ if __name__ == '__main__':
     import sys
     import decimal
     
-
-# We pass in the name of the script as args[1] here:
-    print("The name of the script is"), sys.argv[0]
- 
-#
 # INITIALIZATION
 #
     environment_directory = str("configs/environment/")
