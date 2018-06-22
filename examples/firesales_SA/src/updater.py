@@ -21,6 +21,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from abm_template.src.basemodel import BaseModel
 from src.shock import Shock
+from src.measurement import reset_system_variables
+from src.measurement import calc_new_system_variables
+
 import logging
 import pandas as pd
 
@@ -109,23 +112,25 @@ class Updater(BaseModel):
                 environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
 
                 #When you add a new variable to measure stuff, add it several 
-                # times in lines 112ff(to initialize), 211 (to reset), 223 (to update) 
+                # times in lines 112ff(to initialize), reset function and update function in measurement! 
                 environment.variable_parameters['system_direct_shock'] = 0 
 
                 agent.append_results_to_dataframe(current_step)
             
             self.plug_agents_and_system_results_together(environment, current_step)
 
-            #############
+            #############  #Initial Impact
             self.do_firstround_effects(environment, current_step)
             #############
 
         else:
             logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
 
-            #########
+            #########  FEEDBACK effects
             self.do_secondround_effects(environment, current_step)
             ########
+
+
             "Uncomment the following if you want beginning and\
             end of the period (2 results per current_steps). Default leave out!)"
             # for agent in environment.agents:
@@ -137,19 +142,14 @@ class Updater(BaseModel):
 #####################################################################
     def do_firstround_effects(self, environment, current_step):
         print "1.**** UPDATER.PY*** FIRST ROUND EFFECTS FOR THIS SIMULATION:"
-        for agent in environment.agents:
-            "CHECK by printing:"
-            if agent.identifier == "SBSA":
-                print "**UPDATER.PY***TOTAL ASSETS OF ", agent.identifier, "are:", agent.state_variables['total_assets']
-
-            """First we intiliaze the shock, which
-            gets configured in the shock config file or main file,
-            check out capital buffer,
-            calculate total asset purchases for
-            each individual agent and the direct losses
-            for each agent"""
-            "Note: Use identifier to pick out one agent\
-            Alternatively, use environment.agents[0]"
+            #First we intiliaze the shock, which
+            #gets configured in the shock config file or as argument,
+            #check out capital buffer,
+            #calculate total asset purchases for
+            #each individual agent and the direct losses
+            #for each agent"""
+            #Note: Use identifier to pick out one agent\
+            #Alternatively, use environment.agents[0]"
 
         for agent in environment.agents:
             agent.initialize_shock(environment)
@@ -166,7 +166,7 @@ class Updater(BaseModel):
             agent.state_variables['cash_reserves'] = agent.check_losses_against_capital_bufffer(environment, current_step)
             agent.calc_new_equity_and_debt() 
 
-             
+            ########## METHOD FOR CASH LIQUIDITY BUFFER
             if agent.state_variables['cash_reserves'] >0:
                 #no fire-sales
                 agent.state_variables['total_asset_sales'] = 0
@@ -178,14 +178,12 @@ class Updater(BaseModel):
 
             if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']==0:
                 agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
-                print "man!"    
                 new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
                 if new_assets > 0:
                     new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
                     agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
 
             if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']>0:
-                print "huuuuuuhu", agent.state_variables['debt_paid_by_cash']
 
                 new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
                 agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
@@ -193,8 +191,7 @@ class Updater(BaseModel):
                 new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
                 agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
  
-     
- 
+    
             else:
                 pass
 
@@ -258,18 +255,16 @@ class Updater(BaseModel):
                 agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
 
             if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']>0:
-                print "huuuuuuhu", agent.state_variables['debt_paid_by_cash']
 
                 new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
                 agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
 
                 new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
                 agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
-                break #exit the loop
+                break #exit the loop, so only SBSA get's the initial impact
 
             if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']==0:
                 agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
-                print "man!"    
                 new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
                 if new_assets > 0:
                     new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
@@ -278,7 +273,6 @@ class Updater(BaseModel):
 
             else:
                 pass
-
 
             "The next method call is very important."
             "We loop over the m asset classes in"
@@ -308,56 +302,18 @@ class Updater(BaseModel):
         the product of (shock on assets * total assets)_t-1 """
 
         "reset the system values to not double count"
-        environment.variable_parameters['system_assets'] = 0
-        environment.variable_parameters['system_equity'] = 0
-        environment.variable_parameters['system_debt'] = 0
-        environment.variable_parameters['system_equity_losses'] = 0
-        environment.variable_parameters['rel_equity_losses'] = 0
-        environment.variable_parameters['system_cash_reserves'] = 0
-
-        environment.variable_parameters['system_direct_shock'] = 0
-
-
-        for agent in environment.agents:
-
-            # new total assets! (equity and debt updated under check cash buffer)
-            agent.update_balance_sheet()
-
-
-            if agent.state_variables['equity']<=0:
-                agent.state_variables['equity'] = 0
-                agent.state_variables['debt'] = 0
-                agent.state_variables['total_assets'] = 0
-            else:
-                pass   
-            environment.variable_parameters['system_direct_shock'] += agent.state_variables['direct_impact']
-            environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
-            environment.variable_parameters['system_equity'] += agent.state_variables['equity']
-            environment.variable_parameters['system_debt'] += agent.state_variables['debt']
-            environment.variable_parameters['system_equity_losses'] += agent.state_variables['equity_losses']
-            environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
-            environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
-            environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
-            environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
-
-            agent.update_results_to_dataframe(current_step)
-        
+        reset_system_variables(environment, current_step) #in measurement.py
+        calc_new_system_variables(environment, current_step) #in measurement.py
         self.plug_agents_and_system_results_together(environment, current_step)
 
         print "Now begins step %s" % (current_step +1)
 
         "This is to update the shock vector"
         for m in self.asset_sales_across_banks_per_asset_class:
-
             price_shock = self.asset_sales_across_banks_per_asset_class[m] * environment.static_parameters['illiquidity']
 
             for shock in environment.shocks:
                 shock.asset_returns[m] = price_shock
-
-            'JUST CHECKING, uncomment for printing the updated shock vector with new price effects for all m:'
-                # print shock.asset_returns[m], m
-            # if m=="m_22":
-            #         print"***UPDATER.PY*** For asset class", m, "the updated price shock is", shock.asset_returns[m] * 100, "%"
 
         "The routine from first round effect but\
          with new shock vector and balance sheets"
@@ -367,6 +323,8 @@ class Updater(BaseModel):
 
             agent.calc_equity_and_valuation_losses_leverage()
             
+
+            ########## METHOD FOR CASH LIQUIDITY BUFFER
             agent.state_variables['cash_reserves'] = agent.check_losses_against_capital_bufffer(environment, current_step)
             agent.calc_new_equity_and_debt() 
 
@@ -404,13 +362,11 @@ class Updater(BaseModel):
 
         self.add_sales_across_banks(environment)
 
-                # agent.check_accounts()
-                # print agent.state_variables['total_assets'], agent.identifier
-
+##### CALCULATE SYSTEM TOTAL ASSET SALES
+#####
         environment.variable_parameters['system_TAS'] = 0
         for i in self.asset_sales_across_banks_per_asset_class:
             environment.variable_parameters['system_TAS'] = environment.variable_parameters['system_TAS'] + self.asset_sales_across_banks_per_asset_class[i]
-
         print "***UPDATER.PY Assets whiped out by feedback effects:", environment.variable_parameters['system_TAS'], "in step:", (current_step+1)
 
         AV =0
@@ -422,7 +378,6 @@ class Updater(BaseModel):
           
 
     def add_sales_across_banks(self, environment):
-
         "This method is crucial because"
         "it is summing up the sales per asset class"
         "across banks. We need the volume of"
@@ -443,17 +398,11 @@ class Updater(BaseModel):
             "LEVERAGE IS HARD CODED PAY ATTENTION!!!!!!"
             if key != 'leverage':
                 self.asset_sales_across_banks_per_asset_class[key] = 0.0
-
                 for agent in environment.agents:
                     self.asset_sales_across_banks_per_asset_class[key] += agent.parameters[key] * agent.state_variables['total_asset_sales']
 
                     "Uncomment for CHECK: This is the sale per asset class per bank (cumulative):"
                     #print self.asset_sales_across_banks_per_asset_class[key], "for asset class", key,  "after adding", agent.identifier
-
-            "Uncomment for CHECK: This is the sale per asset class (cumulative):"
-            # if key == 'm_22':
-            #     print "***Updater.py***", key, "sales across the system are:", self.asset_sales_across_banks_per_asset_class
-
     # -----------------------------------------------------------------------
 
     def plug_agents_and_system_results_together(self, environment, current_step):
@@ -572,10 +521,3 @@ class Updater(BaseModel):
         #             if agent.identifier == "SBSA":
         #                 print asset_class, self.asset_sales_across_banks_per_asset_class[asset_class], agent.identifier
 
-        #Print method, not really necessary
-        def print_shock(self, environment):
-            for agent in environment.agents:
-                if agent.identifier == "SBSA":
-                    print "***AGENT.PY*** Shock for ", agent.identifier, "on its total asset is:", agent.state_variables['shock_for_agent'] *100, "%"
-            """Just printing first round effects to screen"""
-                #print("TOTAL ASSET SALES BY: "), agent.identifier, agent.state_variables['total_asset_sales']

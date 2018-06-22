@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from abm_template.src.basemeasurement import BaseMeasurement
-from src.updater import Updater
+ 
 # -------------------------------------------------------------------------
 #  class Measurement
 # -------------------------------------------------------------------------
@@ -94,11 +94,13 @@ class Measurement(BaseMeasurement):
     def set_csv_writer(self, csv_writer):
         super(Measurement, self).set_csv_writer(csv_writer)
 
+
+    
     # -------------------------------------------------------------------------
     # __init__(self, environment, runner)
     # Initialises the Measurements object and reads the config
     # -------------------------------------------------------------------------
-    def __init__(self, environment, runner):
+    def __init__(self, environment):
         super(Measurement, self).__init__(environment, runner)
     # -------------------------------------------------------------------------
 
@@ -209,3 +211,40 @@ class Measurement(BaseMeasurement):
 
         if ident == "AV":
             return self.runner.updater.system_vulnerability
+
+def calc_new_system_variables(environment, current_step):
+
+    for agent in environment.agents:
+
+        # new total assets! (equity and debt updated under check cash buffer)
+        agent.update_balance_sheet()
+
+
+        if agent.state_variables['equity']<=0:
+            agent.state_variables['equity'] = 0
+            agent.state_variables['debt'] = 0
+            agent.state_variables['total_assets'] = 0
+        else:
+            pass   
+        environment.variable_parameters['system_direct_shock'] += agent.state_variables['direct_impact']
+        environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
+        environment.variable_parameters['system_equity'] += agent.state_variables['equity']
+        environment.variable_parameters['system_debt'] += agent.state_variables['debt']
+        environment.variable_parameters['system_equity_losses'] += agent.state_variables['equity_losses']
+        environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
+        environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
+        environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
+        environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
+
+        agent.update_results_to_dataframe(current_step)
+
+
+def reset_system_variables(environment, current_step):
+    environment.variable_parameters['system_assets'] = 0
+    environment.variable_parameters['system_equity'] = 0
+    environment.variable_parameters['system_debt'] = 0
+    environment.variable_parameters['system_equity_losses'] = 0
+    environment.variable_parameters['rel_equity_losses'] = 0
+    environment.variable_parameters['system_cash_reserves'] = 0
+
+    environment.variable_parameters['system_direct_shock'] = 0

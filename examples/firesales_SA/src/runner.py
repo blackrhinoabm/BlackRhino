@@ -23,8 +23,6 @@ from src.updater import Updater
 from abm_template.src.baserunner import BaseRunner
 
 
-# from abm_template.src.baserunner import BaseRunner
-
 # -------------------------------------------------------------------------
 #
 # class Runner
@@ -111,11 +109,11 @@ class Runner(BaseRunner):
                 self.current_step = i
 
                 self.updater.do_update(environment, i)
-
+                
                 self.sweep_result_list.append(self.updater.env_var_par_df)
 
         self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
         
-        print("Check the simulation specific output file that was written as result_all_sweeps.csv in the output folder\n***")
+        print("Check the simulation specific output file that was written as csv in the output folder\n***")
 
     # ------------------------------------------------------------------------
