@@ -45,8 +45,10 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import sys
 
-# We pass in the name of the environment xml as args[1] here:
+# We pass in the name of the script as args[1] here:
     print("The name of the script is"), sys.argv[0]
+# This program varies shocks and illiquidity coefficient"
+# pass in asset class of initial shock, e.g. m_14
 	
 # INITIALIZATION
 #
@@ -54,20 +56,15 @@ if __name__ == '__main__':
     identifier = str("firesales")
     log_directory = str("log/")
 
-####### Logging Configuration!!!
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                        filename=log_directory + identifier + ".log", level=logging.INFO)
-    logging.info('The program starts! Logging enabled.')
+####### No logging because massive data is produced
+ 
 ############
     environment = Environment(environment_directory, identifier)
     runner = Runner(environment)
 
     #Make shocks in floating range
     shock_list = list(frange(-0.9, 0, 0.01))
-    #shock_list = [-0.1, -0.2, -0.05] 
 
- 	#Make illiquiidty parameters in floating range
-    #ill_list = list(frange(0.00000000000000714285714285714, 0.00000000714285714285714, 0.0000000001))
     rho_list = [ 0.00000000000009, 0.000000000000085,
     0.00000000000008,
     0.000000000000075,
@@ -117,63 +114,45 @@ if __name__ == '__main__':
     0.000000000001,
     0.00000000009]
 
-    #print 0.00000000000000714285714285714, ill_list, len(ill_list)
-#   vary  shocks and illiquidity coefficient"
-#  python firesale.py python firesale.py  m_14
-
 # #
 # # UPDATE STEP
 # #
     ######################!!!!!!!!!!!!!
     #choose random illiquidity parameter in interval 
-    # random.seed(2)
     # ######################!!!!!!!!!!!!!!!!!!!!!!
     # #declare number of shocks
     number_shocks = len(shock_list)
     banks = len(environment.agents)
 
     output = []
-    # mu, sigma = 3., 0.6 # mean and standard deviation
-    # mylist = np.random.lognormal(mu, sigma, number_shocks).tolist()
-    
-    
-    # illiquidity_coefficient  = random.uniform(0.00000000000000714285714285714, 0.000000000001)
-    # environment.static_parameters['illiquidity'] = illiquidity_coefficient 
-    
+        
     for index1, element1 in enumerate(rho_list):  
 
     	for index2, element2 in enumerate(shock_list):
-	    
- 	        print("**********START simulation %s") % (index2+1)
-	    
-	        environment.initialize(environment_directory, identifier)
-	        environment.shocks[0].asset_returns[sys.argv[1]] = element2
-	        environment.static_parameters['illiquidity'] = element1 
+            print("**********START simulation %s") % (index2+1)
+            environment.initialize(environment_directory, identifier)
+            if len(sys.argv)>1:
+                environment.shocks[0].asset_returns[sys.argv[1]] = element2
+    	        environment.static_parameters['illiquidity'] = element1 
+                print environment.shocks[0].asset_returns[sys.argv[1]]
+                logging.info('  STARTED with run %s',  str(index2))
+                runner.initialize(environment)
+                # do the run
+                runner.do_run(environment)
+                df_system = runner.updater.env_var_par_df
+            
+                df_asset_class = pd.DataFrame({'asset_class': [sys.argv[1]]})
+                df_shock = pd.DataFrame({'shock': [element2]})
+                df_illiquidity = pd.DataFrame({'illiquidity': [element1]})
 
-	        print environment.shocks[0].asset_returns[sys.argv[1]]
-	        logging.info('  STARTED with run %s',  str(index2))
-	        runner.initialize(environment)
-	        # do the run
-	        runner.do_run(environment)
-	        df_system = runner.updater.env_var_par_df
-	    
-	        df_asset_class = pd.DataFrame({'asset_class': [sys.argv[1]]})
-	        df_shock = pd.DataFrame({'shock': [element2]})
-	        df_illiquidity = pd.DataFrame({'illiquidity': [element1]})
+                df_all_fucking_variables = pd.concat((df_system , df_asset_class, df_shock, df_illiquidity), axis=1, ignore_index = False )
+            
+                output.append(df_all_fucking_variables)
+            else:
+                print "Can't run :( \n Please pass in key of shocked asset (m_1, .... m_23) as sys.argv[1])"
+                exit()
+        pd.concat(output, ignore_index = False).to_csv("shock_list" + str(number_shocks) + "_" + str(banks) + "_" + str(index1) + ".csv")
 
-	        df_all_fucking_variables = pd.concat((df_system , df_asset_class, df_shock, df_illiquidity), axis=1, ignore_index = False )
-	    
-	        output.append(df_all_fucking_variables)
-	    
-	        logging.info(' Run DONE')
-	        logging.info("***\nSimulation number %s had total number of %s sweeps", index2, str(runner.num_sweeps))
-	        logging.info("***\nSimulation number %s had total number of %s shocks", index2, str(number_shocks))
-
-	        logging.info("***\nThis run had the illiquidity coefficient %s " , environment.static_parameters['illiquidity'])
-
-	     
-		pd.concat(output, ignore_index = False).to_csv("shock_list" + str(number_shocks) + "_" + str(banks) + "_" + str(index1) + ".csv")
 
 	print('Program DONE! Fire-sales happend!')
-	logging.info('FINISHED Program logging for run: %s \n', environment_directory + identifier + ".xml")
-
+ 

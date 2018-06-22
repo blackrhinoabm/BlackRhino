@@ -44,7 +44,7 @@ if __name__ == '__main__':
     import decimal
     
 
-# We pass in the name of the environment xml as args[1] here:
+# We pass in the name of the script as args[1] here:
     print("The name of the script is"), sys.argv[0]
  
 #
@@ -62,10 +62,7 @@ if __name__ == '__main__':
     environment = Environment(environment_directory, identifier)
     runner = Runner(environment)
    
-    # "Choose an update way!!!\
-    # 1: 3 specific shocks:  For example to run a simulation with three individual shocks run 
-    # python firesale.py w
-    print environment.static_parameters['illiquidity']
+    print("the illiquidity paramer is"), environment.static_parameters['illiquidity']
     for i in range(int(environment.static_parameters['num_simulations'])):
 
         if i == 0:

@@ -45,8 +45,6 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import sys
 
-# We pass in the name of the environment xml as args[1] here:
-    print("The name of the script is"), sys.argv[0]
 	
 # INITIALIZATION
 #
@@ -127,17 +125,11 @@ if __name__ == '__main__':
 9.00E-12,
 9.00E-11,
  ]
-    #print 0.00000000000000714285714285714, ill_list, len(ill_list)
-#   vary  shocks and illiquidity coefficient"
-#  python firesale.py python firesale.py  m_14
-
+ 
 # #
 # # UPDATE STEP
 # #
-    ######################!!!!!!!!!!!!!
-    #choose random illiquidity parameter in interval 
-    # random.seed(2)
-    # ######################!!!!!!!!!!!!!!!!!!!!!!
+ 
     # #declare number of shocks
     number_shocks = len(shock_list)
     banks = len(environment.agents)
