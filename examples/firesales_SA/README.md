@@ -9,3 +9,5 @@ m_14 is one of 23 asset classes. It's also possible to specify shocks and simula
 
 Important: use python 2.7 and pandas <= 19.0.2 to run. 
  
+Paper:  
+
