@@ -49,7 +49,7 @@ class Environment(BaseConfig):
     static_parameters["agent_directory"] = ""  # directory containing agent xmls
     static_parameters["shock_config"] = ""  # directory containing agent xmls
     static_parameters["illiquidity"] = ""
-
+    
 
 
 

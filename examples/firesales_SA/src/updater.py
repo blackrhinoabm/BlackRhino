@@ -161,7 +161,7 @@ class Updater(BaseModel):
             Another nice feature would be to only sell marketable assets\
             but hey..time is short."
 
-            agent.calc_equity_and_valuation_losses_leverage()
+            agent.calc_equity_and_valuation_losses()
             
             agent.state_variables['cash_reserves'] = agent.check_losses_against_capital_bufffer(environment, current_step)
             agent.calc_new_equity_and_debt() 
@@ -321,7 +321,7 @@ class Updater(BaseModel):
         for agent in environment.agents:
             agent.initialize_shock(environment)
 
-            agent.calc_equity_and_valuation_losses_leverage()
+            agent.calc_equity_and_valuation_losses()
             
 
             ########## METHOD FOR CASH LIQUIDITY BUFFER
@@ -445,7 +445,7 @@ class Updater(BaseModel):
             dftemp = pd.DataFrame([temp], columns=x)
             self.env_var_par_df = pd.concat([self.env_var_par_df, dftemp], ignore_index=True)
 
-
+        #print self.env_var_par_df
         "Second, all the results for the agents. That's a bit\
         harder. We make an xlist with\
          names which later become the keys in the dictionary\
@@ -458,7 +458,8 @@ class Updater(BaseModel):
             xlist.append(x)
 
         self.all_agents_result_dictionary_with_dataframes = dict((el,0) for el in xlist)
-        # print self.all_agents_result_dictionary_with_dataframes
+         
+        #print self.all_agents_result_dictionary_with_dataframes
         "Adding all agent results"
         for key in self.all_agents_result_dictionary_with_dataframes:
             for agent in environment.agents:
@@ -466,13 +467,13 @@ class Updater(BaseModel):
                     pass
                 else:
                     self.all_agents_result_dictionary_with_dataframes.update({key:agent.identifier})
-
+        #print self.all_agents_result_dictionary_with_dataframes
         for key in self.all_agents_result_dictionary_with_dataframes:
             for agent in environment.agents:
                 try:
                     if self.all_agents_result_dictionary_with_dataframes[key] == agent.identifier:
                         self.all_agents_result_dictionary_with_dataframes.update({key:agent.results_df})
-                except TypeError:
+                except:
                     logging.info(" We are in the updater and adding results per agents (i.e. result dataframe)\
                                  so dictionary self.all_agents_result_dictionary_with_dataframes. We just added the results of %s !",  agent.identifier)
 
@@ -520,4 +521,53 @@ class Updater(BaseModel):
 
         #             if agent.identifier == "SBSA":
         #                 print asset_class, self.asset_sales_across_banks_per_asset_class[asset_class], agent.identifier
+    def do_update_leverage(self, environment, current_step, param):
+        if current_step < 1:
 
+            for agent in environment.agents:
+
+                agent.change_leverage(param) # THIS IS NEW
+                agent.initialize_total_assets()
+                agent.initialize_cash_reserves()
+
+
+
+                "Caluclate system variables before anything happens"
+                environment.variable_parameters['system_equity']  += agent.state_variables['equity']
+                environment.variable_parameters['system_equity_pre_shock']  += agent.state_variables['equity']
+                environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
+                environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
+                environment.variable_parameters['system_debt'] += agent.state_variables['debt']
+                environment.variable_parameters['system_equity_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
+
+                environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
+                environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
+                environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
+
+                #When you add a new variable to measure stuff, add it several 
+                # times in lines 112ff(to initialize), reset function and update function in measurement! 
+                environment.variable_parameters['system_direct_shock'] = 0 
+
+                agent.append_results_to_dataframe(current_step)
+            
+            self.plug_agents_and_system_results_together(environment, current_step)
+
+            #############  #Initial Impact
+            self.do_firstround_effects(environment, current_step)
+            #############
+
+        else:
+            logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
+            
+            #########  FEEDBACK effects
+            self.do_secondround_effects(environment, current_step)
+            ########
+
+
+            "Uncomment the following if you want beginning and\
+            end of the period (2 results per current_steps). Default leave out!)"
+            # for agent in environment.agents:
+            #     agent.update_results_to_dataframe(current_step)
+            #     logging.info("Updated results of %s within agent class", agent.identifier)
+
+    

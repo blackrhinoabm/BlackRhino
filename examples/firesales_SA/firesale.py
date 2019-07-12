@@ -49,6 +49,8 @@ if __name__ == '__main__':
     identifier = str("firesales")
     log_directory = str("log/")
 
+# THIS FIRESALE MODEL NEEDS 4 ARGUMENTS: 3 SHOCKS AND ONE ASSET CLASS THAT WILL BE SHOCKED
+
 ####### Logging Configuration!!!
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         filename=log_directory + identifier + ".log", level=logging.INFO)

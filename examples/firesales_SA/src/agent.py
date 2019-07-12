@@ -200,6 +200,21 @@ class Agent(BaseAgent):
     # -------------------------------------------------------------------------
     #
     # ---------------------------------------------------------------------
+    def change_leverage(self, param):
+        # if self.identifier == "SBSA":  #check SBSA
+        #     print self.state_variables['debt']
+        #     print self.state_variables['equity']
+        #     print self.parameters['leverage']
+        #     print self.state_variables['debt']/self.state_variables['equity']
+        #Before is correct
+ 
+        self.parameters['leverage']= self.parameters['leverage'] * param 
+        self.state_variables['debt'] = self.state_variables['equity'] * self.parameters['leverage']
+
+        
+        # if self.identifier == "SBSA":  #check SBSA
+        #     print 'leverage' , self.state_variables['debt'] / self.state_variables['equity'] , self.parameters['leverage'] 
+
     def initialize_total_assets(self):
         self.pre_shock_equity = self.state_variables['equity']
         self.state_variables['total_assets']  = self.state_variables['debt'] + self.state_variables['equity']
@@ -239,13 +254,10 @@ class Agent(BaseAgent):
         #     print "The shock for ", self.identifier, "TOTAL ASSET is:", self.state_variables['shock_for_agent'], "so", self.state_variables['shock_for_agent'] * 100 , "per cent"
 
     #Calculate direct losses (shock proportional to asset share times total assets)
-    def calc_equity_and_valuation_losses_leverage(self):
+    def calc_equity_and_valuation_losses(self):
         self.state_variables["equity_losses"] = self.state_variables['shock_for_agent'] * self.state_variables['total_assets']
-        self.state_variables["valuation_losses"] =  self.state_variables["equity_losses"] * self.parameters['leverage']
-
-        # if self.identifier == "SBSA":
-        #     print "***AGENT.PY***The direct losses for ", self.identifier, "are:", self.state_variables['equity_losses'], "(hit on its equity)"
-
+        self.state_variables["valuation_losses"] =  self.state_variables["equity_losses"] * self.parameters['leverage'] 
+ 
     def check_losses_against_capital_bufffer(self, environment, current_step):
         #Get the current amount of cash reserves
         

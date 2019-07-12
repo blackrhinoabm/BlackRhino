@@ -108,7 +108,9 @@ class Runner(BaseRunner):
 
                 self.current_step = i
 
-                self.updater.do_update(environment, i)
+                #DEFAULT IS DO RUN! I added leverage experiment
+                #self.updater.do_update(environment, i)
+                self.updater.do_update_leverage(environment, i, environment.static_parameters['leverage_increase'])
                 
                 self.sweep_result_list.append(self.updater.env_var_par_df)
 
