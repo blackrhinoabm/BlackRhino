@@ -98,9 +98,9 @@ class BaseConfig(object):
         Local variables: key
         """
         for key in self.static_parameters:
-            print str(key) + ": " + str(self.static_parameters[key])
+            print (str(key) + ": " + str(self.static_parameters[key]))
         for key in self.variable_parameters:
-            print str(key) + ":" + " range: " + str(self.variable_parameters[key][0]) + "-" + str(self.variable_parameters[key][1])
+            print (str(key) + ":" + " range: " + str(self.variable_parameters[key][0]) + "-" + str(self.variable_parameters[key][1]))
     # an abstract method for printing all (static and variable) parameters
     # this is for testing purposes, do not use print in production
 

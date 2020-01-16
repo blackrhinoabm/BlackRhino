@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # args = sys.argv
 
     if len(args) != 4:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/"
+        print ("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/")
         sys.exit()
 
 
