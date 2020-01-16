@@ -1,3 +1,5 @@
+<img src="https://cogeorg.github.io/images/black_rhino_logo.jpg" height="64px"/>
+
 This is the new repository for black_rhino and takes over from http://sourceforge.net/projects/oxblackrhino/?source=directory as of 2015-11-07.
 
 This new repository aims at a complete overhaul in terms of code for an agent-based model, it is implemented from the very basics to provide greater clarity and quality.
