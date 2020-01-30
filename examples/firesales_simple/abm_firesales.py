@@ -17,7 +17,7 @@ if __name__ == '__main__':
 #
 # INITIALIZATION
 #
-    environment_directory = str(args[0])
+    environment_directory = str(args[0]) #TODO could this not simply be the args above split out?
     identifier = str(args[1])
     log_directory = str(args[2])
 

@@ -215,9 +215,9 @@ class Agent(BaseAgent):
 
     def check_accounts(self):
         if self.total_assets == self.parameters['equity'] + self.parameters['debt']:
-            print "yes, great - the accounting worked for %s" %self.identifier
+            print("yes, great - the accounting worked for %s" %self.identifier)
         else:
-            print 'no.. what a bummer'
+            print('no.. what a bummer')
 
     def start_shock(self, environment):
         self.shock_for_agent = 0

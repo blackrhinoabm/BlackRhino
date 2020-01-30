@@ -101,7 +101,7 @@ class Updater(BaseModel):
 
 
         else:
-            print "Now begins step %s" % (current_step +1)
+            print("Now begins step %s" % (current_step +1))
 
             # This next code is to update the shock vector
             for m in self.asset_sales_across_banks:
@@ -113,14 +113,14 @@ class Updater(BaseModel):
             for agent in environment.agents:
                 agent.start_shock(environment)
                 agent.calc_total_asset_sales(environment, current_step)
-                print agent.TAS
+                print(agent.TAS)
 
             self.add_sales_across_banks(environment)
 
             for agent in environment.agents:
                 agent.update_balance_sheet()
 
-                print agent.total_assets, agent.identifier
+                print(agent.total_assets, agent.identifier)
 
     def add_sales_across_banks(self, environment):
 

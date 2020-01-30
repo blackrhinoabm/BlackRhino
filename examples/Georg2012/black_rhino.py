@@ -34,17 +34,16 @@ if __name__ == '__main__':
     import logging
     import networkx as nx
     
-    from environment import Environment
-    from runner import Runner
-    from measurement import Measurement
+    from src.environment import Environment
+    from src.runner import Runner
+    from src.measurement import Measurement
     
     #args=['./black_rhino.py',  "environments/", "test10",  "log/",  "measurements/"]
     args = sys.argv
     
     if len(args) != 5:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/ measurement_directory/"
+        print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/ measurement_directory/")
         sys.exit()
-
 
 #
 # INITIALIZATION
