@@ -1,0 +1,5 @@
+<measurement identifier='test_output'>
+    <parameter type='filename' value='measurements/TestMeasurement.csv'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+    <parameter type='output' column='2' header='Deposits' value='household_deposits' ></parameter>
+</measurement>

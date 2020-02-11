@@ -1,0 +1,28 @@
+<agent identifier="NEDBANK">
+<parameter type="parameters" name="equity" value="57683474000"></parameter>
+ <parameter type="state_variables" name="leverage" value="13.0199474809718"></parameter>
+ <parameter type="parameters" name="debt" value="751035802000"></parameter>
+ <parameter type="state_variables" name="m_1" value="0.0285955616497675" label="Cash and gold reserves "></parameter>
+ <parameter type="state_variables" name="m_2" value="0.0188172477090162" label="SA Interbank deposits, loans and advances "></parameter>
+ <parameter type="state_variables" name="m_3" value="0.000631117636556306" label="Rand Deposits with and loans to foreign banks"></parameter>
+ <parameter type="state_variables" name="m_4" value="0.0249438025329924" label="Loans granted under repo agreement"></parameter>
+ <parameter type="state_variables" name="m_5" value="0.0497533063014812" label="Foreign currency loans and advances d 134),"></parameter>
+ <parameter type="state_variables" name="m_6" value="0.00149673197045176" label="Redeemable preference shares"></parameter>
+ <parameter type="state_variables" name="m_7" value="0.0219668226803828" label="corporate instalment credit "></parameter>
+ <parameter type="state_variables" name="m_8" value="0.0959769861007604" label="household instalment credit "></parameter>
+ <parameter type="state_variables" name="m_9" value="0.156830846368385" label="corporate mortgage"></parameter>
+ <parameter type="state_variables" name="m_10" value="0.16592084853711" label="household mortgage"></parameter>
+ <parameter type="state_variables" name="m_11" value="0.171000878291168" label="Unsecured lending corporate"></parameter>
+ <parameter type="state_variables" name="m_12" value="0.0235206597566472" label="Unsecured lending households"></parameter>
+ <parameter type="state_variables" name="m_13" value="0.0630287511534472" label="Other credit (credit card + leasing + Overdarft + factoring debt)"></parameter>
+ <parameter type="state_variables" name="m_14" value="0.0306966603179" label="Central and provincial government bonds"></parameter>
+ <parameter type="state_variables" name="m_15" value="0.00677543635014543" label="Other public-sector bonds"></parameter>
+ <parameter type="state_variables" name="m_16" value="0.00952723423327713" label="Private sector bonds"></parameter>
+ <parameter type="state_variables" name="m_17" value="0.00289868692495953" label="Equity holdings in subsidiaries and joint ventures"></parameter>
+ <parameter type="state_variables" name="m_18" value="0.00173318732024441" label="Listed and unlisted equities"></parameter>
+ <parameter type="state_variables" name="m_19" value="0.0364260934108385" label="Securitisation/ asset-backed securities"></parameter>
+ <parameter type="state_variables" name="m_20" value="0" label="Derivative instruments"></parameter>
+ <parameter type="state_variables" name="m_21" value="0.0611938212493139" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+ <parameter type="state_variables" name="m_22" value="0.00131806428717523" label="Other investments"></parameter>
+ <parameter type="state_variables" name="m_23" value="0.0269472554517896" label="Non financial assets"></parameter>
+</agent>

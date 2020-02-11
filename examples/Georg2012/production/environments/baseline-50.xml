@@ -1,0 +1,39 @@
+<environment title='baseline-50'>
+    <!-- simulation parameters -->
+    <parameter type='numSweeps' value='400'></parameter>
+    <parameter type='numSimulations' value='4'></parameter>
+    <parameter type='numBanks' value='50'></parameter>
+    <parameter type='bankDirectory' value='banks/50/'></parameter>
+    <parameter type='graphType' value='gexf'></parameter>
+    <parameter type='contractsNetworkFile' value='networks/network-ba-50-4'></parameter>
+    <parameter type='changing' name='shockType' value='0.0' validity='0-0'></parameter>
+    <parameter type='changing' name='liquidationDiscountFactor' value='0.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='riskAversionDiscountFactor' value='0.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='riskAversionAmplificationFactor' value='0.0' validity='0-1000'></parameter>
+    <!-- parameters determining the payment flow of banks -->
+    <parameter type='changing' name='rb' value='0.02' validity='0-1000'></parameter>
+    <parameter type='changing' name='rd' value='0.04' validity='0-1000'></parameter>
+    <!-- parameters for the central bank -->
+    <parameter type='changing' name='collateralQuality' value='0.9' validity='0-1000'></parameter>
+    <!-- firm parameters-->
+    <parameter type='changing' name='successProbabilityFirms' value='0.998' validity='0-1000'></parameter>
+    <parameter type='changing' name='positiveReturnFirms' value='0.02' validity='0-1000'></parameter>
+    <parameter type='changing' name='firmLoanMaturity' value='272.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='assetNumber' value='1000.0' validity='0-1000'></parameter>
+    <!-- household parameters -->
+    <parameter type='changing' name='scaleFactorHouseholds' value='0.05' validity='0-1000'></parameter>
+    <!-- bank parameters -->
+    <parameter type='changing' name='dividendLevel' value='1.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='pBank' value='0.998' validity='0-1000'></parameter>
+    <parameter type='changing' name='rhoBank' value='0.02' validity='0-1000'></parameter>
+    <parameter type='changing' name='thetaBank' value='10.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='xiBank' value='1.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='interbankLoanMaturity' value='10.0' validity='0-1000'></parameter>
+    <!-- regulation specific parameters -->
+    <parameter type='changing' name='r' value='0.02' validity='0-1000'></parameter>
+    <parameter type='changing' name='sifiSurchargeFactor' value='1.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='liquidityCoverageRatio' value='0.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='netStableFundingRatio' value='0.0' validity='0-1000'></parameter>
+    <parameter type='changing' name='leverageRatio' value='0.03' validity='0-1000'></parameter>
+    <parameter type='changing' name='requiredCapitalRatio' value='0.08' validity='0-1000'></parameter>
+</environment>

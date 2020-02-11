@@ -1,0 +1,11 @@
+{
+  "projectPath": "/Users/Tina/git_repos/BlackRhino/examples/firesales_SA",
+  "title": "LaTeX-Plus Project",
+  "root": "firesales.tex",
+  "program": "pdflatex",
+  "latexmkOptions": "-bibtex -pdf -shell-escape",
+  "output": ".latex",
+  "openOutput": "true",
+  "postAction": "link",
+  "postPath": ""
+}

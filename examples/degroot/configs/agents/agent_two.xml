@@ -1,0 +1,3 @@
+<agent identifier='agent_two'>
+  <parameter type='static' name='starting_opinion' value='0'></parameter>
+</agent>

@@ -1,0 +1,6 @@
+<household identifier='household_test_config_id'>
+    <parameter name='labour' value='24.00'></parameter>
+    <parameter name='propensity_to_save' value='0.45'></parameter>
+    <transaction type='deposits' asset='' from='bank_test_config_id' to='household_test_config_id' amount='30' interest='0.02' maturity='0' time_of_default='-1'></transaction>
+    <transaction type='deposits' asset='' from='bank_test_config_id_second' to='household_test_config_id' amount='50' interest='0.02' maturity='0' time_of_default='-1'></transaction>
+</household>

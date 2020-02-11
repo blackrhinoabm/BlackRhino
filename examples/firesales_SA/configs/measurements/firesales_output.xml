@@ -1,0 +1,55 @@
+<measurement identifier='firesales_output'>
+    <parameter type='filename' value='measurements/Measurement_firesales.csv'></parameter>
+    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
+        <parameter type="output" column="2" header="identifier" value="identifier"></parameter>
+    <parameter type="output" column="3" header="total asset sales" value="total asset sales"></parameter>
+    <parameter type="output" column="4" header="total asset" value="total asset"></parameter>
+    <parameter type="output" column="5" header="equity" value="equity"></parameter>
+    <parameter type="output" column="6" header="agent.systemicness" value="agent.systemicness"></parameter>
+    <parameter type="output" column="7" header="CITYBANK total equity" value="CITYBANK total equity"></parameter>
+    <parameter type="output" column="8" header="CITYBANK total asset sales" value="CITYBANK total asset sales"></parameter>
+    <parameter type="output" column="9" header="CITYBANK shock on assets" value="CITYBANK shock on assets"></parameter>
+    <parameter type="output" column="10" header="DB total assets" value="DB total assets"></parameter>
+    <parameter type="output" column="11" header="DB total equity" value="DB total equity"></parameter>
+    <parameter type="output" column="12" header="DB total asset sales" value="DB total asset sales"></parameter>
+    <parameter type="output" column="13" header="DB shock on assets" value="DB shock on assets"></parameter>
+    <parameter type="output" column="14" header="grindrod total assets" value="grindrod total assets"></parameter>
+    <parameter type="output" column="15" header="grindrod total equity" value="grindrod total equity"></parameter>
+    <parameter type="output" column="16" header="grindrod total asset sales" value="grindrod total asset sales"></parameter>
+    <parameter type="output" column="17" header="grindrod shock on assets" value="grindrod shock on assets"></parameter>
+
+    <parameter type="output" column="18" header="BoC total assets" value="BoC total assets"></parameter>
+    <parameter type="output" column="19" header="BoC total equity" value="BoC total equity"></parameter>
+    <parameter type="output" column="20" header="BoC total asset sales" value="BoC total asset sales"></parameter>
+    <parameter type="output" column="21" header="BoC shock on assets" value="BoC shock on assets"></parameter>
+    <parameter type="output" column="22" header="ABSA total assets" value="ABSA total assets"></parameter>
+    <parameter type="output" column="23" header="ABSA total equity" value="ABSA total equity"></parameter>
+    <parameter type="output" column="24" header="ABSA total asset sales" value="ABSA total asset sales"></parameter>
+    <parameter type="output" column="25" header="ABSA shock on assets" value="ABSA shock on assets"></parameter>
+
+    <parameter type="output" column="26" header="SOCIETE total assets" value="SOCIETE total assets"></parameter>
+    <parameter type="output" column="27" header="SOCIETE total equity" value="SOCIETE total equity"></parameter>
+    <parameter type="output" column="28" header="SOCIETE total asset sales" value="SOCIETE total asset sales"></parameter>
+    <parameter type="output" column="29" header="SOCIETE shock on assets" value="SOCIETE shock on assets"></parameter>
+    <parameter type="output" column="30" header="HSBC total assets" value="HSBC total assets"></parameter>
+    <parameter type="output" column="31" header="HSBC total equity" value="HSBC total equity"></parameter>
+    <parameter type="output" column="32" header="HSBC total asset sales" value="HSBC total asset sales"></parameter>
+    <parameter type="output" column="33" header="HSBC shock on assets" value="HSBC shock on assets"></parameter>
+    
+    <parameter type="output" column="34" header="JPMORGAN total assets" value="JPMORGAN total assets"></parameter>
+    <parameter type="output" column="35" header="JPMORGAN total equity" value="JPMORGAN total equity"></parameter>
+    <parameter type="output" column="36" header="JPMORGAN total asset sales" value="JPMORGAN total asset sales"></parameter>
+    <parameter type="output" column="37" header="JPMORGAN shock on assets" value="JPMORGAN shock on assets"></parameter>
+
+    <parameter type="output" column="38" header="CAPITEC total assets" value="CAPITEC total assets"></parameter>
+    <parameter type="output" column="39" header="CAPITEC total equity" value="CAPITEC total equity"></parameter>
+    <parameter type="output" column="40" header="CAPITEC total asset sales" value="CAPITEC total asset sales"></parameter>
+    <parameter type="output" column="41" header="CAPITEC shock on assets" value="CAPITEC shock on assets"></parameter>
+
+    <parameter type="output" column="42" header="NEDBANK total assets" value="NEDBANK total assets"></parameter>
+    <parameter type="output" column="43" header="NEDBANK total equity" value="NEDBANK total equity"></parameter>
+    <parameter type="output" column="44" header="NEDBANK total asset sales" value="NEDBANK total asset sales"></parameter>
+    <parameter type="output" column="45" header="NEDBANK shock on assets" value="NEDBANK shock on assets"></parameter>
+
+
+</measurement>

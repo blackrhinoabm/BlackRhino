@@ -1,0 +1,5 @@
+<agent identifier='shock'>
+  <parameter type='asset' name='m_1' value='-0.25'></parameter>
+  <parameter type='asset' name='m_2' value='-0.1'></parameter>
+  <parameter type='asset' name='m_3' value='0.02'></parameter>
+</agent>

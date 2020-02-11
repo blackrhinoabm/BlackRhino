@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gexf xmlns="http://www.gexf.net/1.2draft" version="1.2">
+    <graph mode="static" defaultedgetype="directed">
+        <nodes>
+            <node id="agent_one" label="Agent One" />
+            <node id="agent_two" label="Agent Two" />
+            <node id="agent_three" label="Agent Three" />
+        </nodes>
+        <edges>
+            <edge id="0" source="agent_one" target="agent_one" weight="0.5" />
+            <edge id="1" source="agent_one" target="agent_two" weight="0.25" />
+            <edge id="2" source="agent_one" target="agent_three" weight="0.25" />
+            <edge id="3" source="agent_two" target="agent_two" weight="0.0" />
+            <edge id="4" source="agent_two" target="agent_one" weight="1.0"/>
+            <edge id="5" source="agent_two" target="agent_three" weight="0.0" />
+            <edge id="6" source="agent_three" target="agent_three" weight="1.0" />
+            <edge id="7" source="agent_three" target="agent_one" weight="0.0" />
+            <edge id="8" source="agent_three" target="agent_two" weight="0.0" />
+        </edges>
+    </graph>
+</gexf>

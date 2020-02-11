@@ -1,0 +1,4 @@
+<household identifier='household_test_config_id'>
+    <parameter name='labour' value='24.00'></parameter>
+    <parameter name='propensity_to_save' value='0.45'></parameter>
+</household>

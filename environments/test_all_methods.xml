@@ -1,0 +1,12 @@
+<environment title='tests_for_all_methods'>
+    <!-- simulation parameters -->
+    <parameter type='numSweeps' value='1'></parameter>
+    <parameter type='numSimulations' value='1'></parameter>
+    <parameter type='numBanks' value='3'></parameter>
+    <parameter type='bankDirectory' value='agents/banks/'></parameter>
+    <parameter type='firmDirectory' value='agents/firms/'></parameter>
+    <parameter type='householdDirectory' value='agents/households/'></parameter>
+    <!-- parameters determining the payment flow of banks -->
+    <parameter type='rl' value='0.06'></parameter>
+    <parameter type='rd' value='0.02'></parameter>
+</environment>

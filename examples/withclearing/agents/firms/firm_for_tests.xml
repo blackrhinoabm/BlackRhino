@@ -1,0 +1,4 @@
+<firm identifier='firm_test_config_id'>
+    <parameter name='productivity' value='1.25'></parameter>
+    <transaction type='cash' asset='' from='firm_test_config_id' to='firm_test_config_id' amount='500' interest='0.00' maturity='0' time_of_default='-1'></transaction>
+</firm>
