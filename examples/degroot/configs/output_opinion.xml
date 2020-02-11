@@ -1,7 +1,0 @@
-<measurement identifier='output_opinion'>
-    <parameter type='filename' value='measurements/Measurement_degroot_new.csv'></parameter>
-    <parameter type='output' column='1' header='Step' value='current_step'></parameter>
-    <parameter type='output' column='2' header='opinion_agent_one' value='a1_opinion_after_current_step'></parameter>
-    <parameter type='output' column='3' header='opinion_agent_two' value='a2_opinion_after_current_step'></parameter>
-    <parameter type='output' column='4' header='opinion_agent_three' value='a3_opinion_after_current_step'></parameter>
-</measurement>

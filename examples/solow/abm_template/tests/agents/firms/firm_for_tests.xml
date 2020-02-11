@@ -1,7 +1,0 @@
-<firm identifier='firm_test_config_id'>
-    <parameter name='productivity' value='1.25'></parameter>
-    <parameter name='total_factor_productivity' value='1.8'></parameter>
-    <parameter name='labour_elasticity' value='0.3'></parameter>
-    <parameter name='capital_elasticity' value='0.7'></parameter>
-    <transaction type='capital' asset='' from='firm_test_config_id' to='firm_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
-</firm>
