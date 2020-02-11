@@ -20,7 +20,6 @@ description: This website presents the Black Rhino repository.
 
 # List of links in the navigation bar
 navbar-links:
-  About Me: "aboutme"
   The team: "theteam"
   Resources:
     - Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
