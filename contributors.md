@@ -1,6 +1,6 @@
 ---
 layout: page
-title: The team
+title: Contributors
 subtitle: Overview of contributors.
 ---
 
