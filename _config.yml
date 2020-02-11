@@ -20,7 +20,7 @@ description: This website presents the Black Rhino repository.
 
 # List of links in the navigation bar
 navbar-links:
-  The team: "theteam"
+  Contributors: "contributors"
   Resources:
     - Beautiful Jekyll: "http://deanattali.com/beautiful-jekyll/"
     - Learn markdown: "http://www.markdowntutorial.com/"
