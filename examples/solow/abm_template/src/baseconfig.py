@@ -98,9 +98,9 @@ class BaseConfig(object):
         Local variables: key
         """
         for key in self.static_parameters:
-            print str(key) + ": " + str(self.static_parameters[key])
+            print(str(key) + ": " + str(self.static_parameters[key]))
         for key in self.variable_parameters:
-            print str(key) + ":" + " range: " + str(self.variable_parameters[key][0]) + "-" + str(self.variable_parameters[key][1])
+            print(str(key) + ":" + " range: " + str(self.variable_parameters[key][0]) + "-" + str(self.variable_parameters[key][1]))
     # an abstract method for printing all (static and variable) parameters
     # this is for testing purposes, do not use print in production
 
@@ -177,18 +177,18 @@ class BaseConfig(object):
                     range_from = float(subelement.attrib['range'].rsplit("-")[0])
                 except:
                     format_correct = False
-                    print "<< ERROR: range_from must be a float or int. Found: " + str(subelement.attrib['range'].rsplit("-")[0])
+                    print("<< ERROR: range_from must be a float or int. Found: " + str(subelement.attrib['range'].rsplit("-")[0]))
 
                 try:
                     range_to = float(subelement.attrib['range'].rsplit("-")[1])
                 except:
                     format_correct = False
-                    print "<< ERROR: range_to must be a float or int. Found: " + str(subelement.attrib['range'].rsplit("-")[1])
+                    print("<< ERROR: range_to must be a float or int. Found: " + str(subelement.attrib['range'].rsplit("-")[1]))
 
                 if format_correct:
                     self.variable_parameters[name] = [range_from, range_to]
                 else:
-                    print "<< ERROR: FOUND ERROR IN FILE " + config_file_name + ", ABORTING"
+                    print("<< ERROR: FOUND ERROR IN FILE " + config_file_name + ", ABORTING")
     # an abstract method for reading an xml file with config
     # and adding all the static and variable parameters
 

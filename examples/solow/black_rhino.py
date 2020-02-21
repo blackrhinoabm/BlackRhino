@@ -1,3 +1,9 @@
+import sys
+import logging
+
+from src.environment import Environment
+from src.runner import Runner
+
 #!/usr/bin/env python
 # [SublimeLinter pep8-max-line-length:300]
 # -*- coding: utf-8 -*-
@@ -24,26 +30,13 @@ The development of this software has been supported by the ERA-Net
 on Complexity through the grant RESINEE.
 """
 
-# -------------------------------------------------------------------------
-#
-#  MAIN
-#
-# -------------------------------------------------------------------------
 if __name__ == '__main__':
-
-    import sys
-    import logging
-
-    from src.environment import Environment
-    from src.runner import Runner
-
     args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
     # args = sys.argv
 
     if len(args) != 4:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/"
+        print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/")
         sys.exit()
-
 
 #
 # INITIALIZATION
@@ -52,7 +45,7 @@ if __name__ == '__main__':
     identifier = str(args[2])
     log_directory = str(args[3])
 
-    print (logging.Logger.manager.loggerDict.keys())
+    print(logging.Logger.manager.loggerDict.keys())
     # Configure logging parameters so we get output while the program runs
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         filename=log_directory + identifier + ".log", level=logging.INFO)
