@@ -55,13 +55,13 @@ class Parameters(object):
 	# print_parameters(self)
 	#-------------------------------------------------------------------------
 	def print_parameters(self):
-		print "identifier: " + self.identifier
-		print "numSweeps: " + str(self.numSweeps)
-		print "numSimulations: " + str(self.numSimulations)
-		print "numBanks: " + str(self.numBanks)
-		print "graphType: " + str(self.graphType)
+		print("identifier: " + self.identifier)
+		print("numSweeps: " + str(self.numSweeps))
+		print("numSimulations: " + str(self.numSimulations))
+		print("numBanks: " + str(self.numBanks))
+		print("graphType: " + str(self.graphType))
 		for entry in self.parameters:
-			print str(entry['type']) + " ; " + str(entry['value']) + " ; " + str(entry['validity'][0]) + "-" + str(entry['validity'][1])
+			print(str(entry['type']) + " ; " + str(entry['value']) + " ; " + str(entry['validity'][0]) + "-" + str(entry['validity'][1]))
 	#-------------------------------------------------------------------------
 
 

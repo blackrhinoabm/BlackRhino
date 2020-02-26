@@ -120,35 +120,33 @@ class State(object):
 		return text
 	#------------------------------------------------------------------------
 
-
 	#-------------------------------------------------------------------------
 	# print_state
 	#-------------------------------------------------------------------------
 	def print_state(self):
-		print "rb: " + str(self.rb)
-		print "rd: " + str(self.rd)
-		print "r: " + str(self.r)
-		print "sifiSurchargeFactor: " + str(self.sifiSurchargeFactor)
-		print "successProbabilityFirms: " + str(self.successProbabilityFirms)
-		print "positiveReturnFirms: " + str(self.positiveReturnFirms)
-		print "scaleFactorHouseholds: " + str(self.scaleFactorHouseholds)
-		print "dividendLevel: " + str(self.dividendLevel)
-		print "shockType: " + str(self.shockType)
-		print "pBank: " + str(self.pBank)
-		print "xiBank: " + str(self.xiBank)
-		print "thetaBank: " + str(self.thetaBank)
-		print "rhoBank: " + str(self.rhoBank)
-		print "gammaBank: " + str(self.gammaBank)
-		print "assetNumber: " + str(self.assetNumber)
-		print "liquidationDiscountFactor: " + str(self.liquidationDiscountFactor)
-		print "interbankLoanMaturity: " + str(self.interbankLoanMaturity)
-		print "firmLoanMaturity: " + str(self.firmLoanMaturity)
-		print "requiredCapitalRatio: " + str(self.requiredCapitalRatio)
-		print "liquidityCoverageRatio: " + str(self.liquidityCoverageRatio)
-		print "netStableFundingRatio: " + str(self.netStableFundingRatio)
-		print "leverageRatio: " + str(self.leverageRatio)
+		print("rb: " + str(self.rb))
+		print("rd: " + str(self.rd))
+		print("r: " + str(self.r))
+		print("sifiSurchargeFactor: " + str(self.sifiSurchargeFactor))
+		print("successProbabilityFirms: " + str(self.successProbabilityFirms))
+		print("positiveReturnFirms: " + str(self.positiveReturnFirms))
+		print("scaleFactorHouseholds: " + str(self.scaleFactorHouseholds))
+		print("dividendLevel: " + str(self.dividendLevel))
+		print("shockType: " + str(self.shockType))
+		print("pBank: " + str(self.pBank))
+		print("xiBank: " + str(self.xiBank))
+		print("thetaBank: " + str(self.thetaBank))
+		print("rhoBank: " + str(self.rhoBank))
+		print("gammaBank: " + str(self.gammaBank))
+		print("assetNumber: " + str(self.assetNumber))
+		print("liquidationDiscountFactor: " + str(self.liquidationDiscountFactor))
+		print("interbankLoanMaturity: " + str(self.interbankLoanMaturity))
+		print("firmLoanMaturity: " + str(self.firmLoanMaturity))
+		print("requiredCapitalRatio: " + str(self.requiredCapitalRatio))
+		print("liquidityCoverageRatio: " + str(self.liquidityCoverageRatio))
+		print("netStableFundingRatio: " + str(self.netStableFundingRatio))
+		print("leverageRatio: " + str(self.leverageRatio))
 	#-------------------------------------------------------------------------
-
 
 	#-------------------------------------------------------------------------
 	# addInsolvencyToHistory(time)

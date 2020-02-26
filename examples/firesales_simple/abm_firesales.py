@@ -17,7 +17,7 @@ if __name__ == '__main__':
 #
 # INITIALIZATION
 #
-    environment_directory = str(args[0]) #TODO could this not simply be the args above split out?
+    environment_directory = str(args[0])
     identifier = str(args[1])
     log_directory = str(args[2])
 
@@ -27,8 +27,8 @@ if __name__ == '__main__':
 #
 # UPDATE STEP
 #
-    # for i in range(int(environment.static_parameters['num_simulations'])):
-    #     environment.initialize(environment_directory, identifier)
-    #     runner.initialize(environment)
-    #     # do the run
-    #     runner.do_run(environment)
+    for i in range(int(environment.static_parameters['num_simulations'])):
+        environment.initialize(environment_directory, identifier)
+        runner.initialize(environment)
+        # do the run
+        runner.do_run(environment)

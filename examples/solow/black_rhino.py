@@ -1,5 +1,6 @@
 import sys
 import logging
+import os
 
 from src.environment import Environment
 from src.runner import Runner
@@ -46,6 +47,10 @@ if __name__ == '__main__':
     log_directory = str(args[3])
 
     print(logging.Logger.manager.loggerDict.keys())
+    # create log folder if it does not exist
+    if not os.path.exists('log'):
+        os.makedirs('log')
+
     # Configure logging parameters so we get output while the program runs
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         filename=log_directory + identifier + ".log", level=logging.INFO)
@@ -68,4 +73,7 @@ if __name__ == '__main__':
 #
 # MEASUREMENT AND LOGGING
 #
+#
+    #measurement.write_histograms(measurement_directory,  environment)
+    #logging.info('FINISHED logging for run: %s \n', environment_directory + identifier + ".xml")
 

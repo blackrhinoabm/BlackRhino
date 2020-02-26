@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:150]
-# -*- coding: utf-8 -*-
+from src.market import Market
 
 """
 black_rhino is a multi-agent simulator for financial network analysis
@@ -157,8 +155,6 @@ class Updater(BaseModel):
         starting_price = 0.0
         # We initialize the price
         price = 0.0
-        # Import market clearing class
-        from market import Market
         # Put the appropriate settings, i.e. desired identifier
         market = Market("market")
         # And we find the market price of labour
@@ -197,8 +193,7 @@ class Updater(BaseModel):
             environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
                                         ration[2]*price, random_bank.interest_rate_loans,  0, -1)
             # We print the action of selling to the screen
-            print("%s sold %d units of labour at a price %f to %s at time %d.") % (ration[0].identifier,
-                                                                                   ration[2], price, ration[1].identifier, time)
+            print("{}s sold {}d units of labour at a price {}f to {}s at time {}d.".format(ration[0].identifier, ration[2], price, ration[1].identifier, time))
         logging.info("  labour sold to firms on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
@@ -241,7 +236,7 @@ class Updater(BaseModel):
             # demand = -household.get_account("deposits")/price
             for_rationing.append([household, demand])
         # We import the market clearing class
-        from market import Market
+
         # Put the appropriate settings, i.e.
         # tolerance of error, resolution of search
         # and amplification for exponential search
@@ -280,8 +275,9 @@ class Updater(BaseModel):
             environment.new_transaction("loans", "",  random_bank.identifier, ration[1].identifier,
                                         ration[2]*price, random_bank.interest_rate_loans,  0, -1)
             # We print the action of selling to the screen
-            print("%s sold %d units of goods at a price %f to %s at time %d.") % (ration[0].identifier,
-                                                                                  ration[2], price, ration[1].identifier, time)
+            print("{}s sold {}d units of goods at a price {}f to {}s at time {}d.".format(ration[0].identifier,
+                                                                                          ration[2], price,
+                                                                                          ration[1].identifier, time))
         logging.info("  goods consumed on step: %s",  time)
         # Keep on the log with the number of step, for debugging mostly
     # -------------------------------------------------------------------------
