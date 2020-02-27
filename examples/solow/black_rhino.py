@@ -31,44 +31,46 @@ The development of this software has been supported by the ERA-Net
 on Complexity through the grant RESINEE.
 """
 
-if __name__ == '__main__':
-    args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
-    # args = sys.argv
+args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
+# args = sys.argv
 
-    if len(args) != 4:
-        print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/")
-        sys.exit()
+if len(args) != 4:
+    print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/")
+    sys.exit()
 
 #
 # INITIALIZATION
 #
-    environment_directory = str(args[1])
-    identifier = str(args[2])
-    log_directory = str(args[3])
+environment_directory = str(args[1])
+identifier = str(args[2])
+log_directory = str(args[3])
 
-    print(logging.Logger.manager.loggerDict.keys())
-    # create log folder if it does not exist
-    if not os.path.exists('log'):
-        os.makedirs('log')
+print(logging.Logger.manager.loggerDict.keys())
+# create log folder if it does not exist
+if not os.path.exists('log'):
+    os.makedirs('log')
 
-    # Configure logging parameters so we get output while the program runs
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                        filename=log_directory + identifier + ".log", level=logging.INFO)
-    logging.info('START logging for run: %s',  environment_directory + identifier + ".xml")
+# Configure logging parameters so we get output while the program runs
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                    filename=log_directory + identifier + ".log", level=logging.INFO)
+logging.info('START logging for run: %s',  environment_directory + identifier + ".xml")
 
-    environment = Environment(environment_directory,  identifier)
-    runner = Runner(environment)
+environment = Environment(environment_directory,  identifier)
+runner = Runner(environment)
 
 #
 # UPDATE STEP
 #
-    for i in range(int(environment.num_simulations)):
-        logging.info('  STARTED with run %s',  str(i))
-        environment.initialize(environment_directory,  identifier)
-        runner.initialize(environment)
-        # do the run
-        runner.do_run(environment)
-        logging.info('  DONE')
+for i in range(int(environment.num_simulations)):
+    logging.info('  STARTED with run %s',  str(i))
+    environment.initialize(environment_directory,  identifier)
+    runner.initialize(environment)
+    # do the run
+    runner.do_run(environment)
+    logging.info('  DONE')
+
+
+
 
 #
 # MEASUREMENT AND LOGGING
