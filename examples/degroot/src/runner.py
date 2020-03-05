@@ -112,7 +112,7 @@ class Runner(BaseRunner):
             self.updater.do_update(environment)
             measurement.write_to_file()
 
-        print("***\nThis run had %s sweeps and %s simulations" ) % (self.num_sweeps, environment.static_parameters['num_simulations'])
+        print("***\nThis run had {}s sweeps and {}s simulations".format(self.num_sweeps, environment.static_parameters['num_simulations']))
         print("Check the output file that was written as csv in the measurements folder\n***")
 
         # environment.print_parameters()
