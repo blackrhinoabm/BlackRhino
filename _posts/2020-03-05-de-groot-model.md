@@ -8,4 +8,4 @@ This post covers the Black Rhino the [de Groot](https://www.jstor.org/stable/228
 
 ![degroot](/img/deGrootOpinions.png)
 
-![logo](/img/hello_world.jpeg){:class="img-responsive"}
+![logo](../img/hello_world.jpeg){:class="img-responsive"}
