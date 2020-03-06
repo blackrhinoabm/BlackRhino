@@ -1,4 +1,8 @@
-# The Solow growth model
+---
+layout: post
+title: The Solow model
+subtitle: An agent-based version of the famous Solow growth model
+---
 
 This post provides an example of the Solow growth model in the Black Rhino package. It will first cover the Solow model itself and how it is implemented in Black Rhino. Then, it will cover how to use Black Rhino to actually run the model and analyse the results.
 
