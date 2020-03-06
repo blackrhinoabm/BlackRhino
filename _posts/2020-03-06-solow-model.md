@@ -113,7 +113,6 @@ Furthermore, you should import the modules to create graphs (matplotlib) and dat
 
 ```python
 import pandas as pd
-#import numpy as np
 import matplotlib.pyplot as plt
 ```
 
@@ -187,6 +186,6 @@ ax.set_ylabel('Capital', fontsize='14')
 fig.savefig('solow_capital.png')
 ```
 
-![png](..img/output_29_0.png)
+![png](../img/output_29_0.png)
 
 This was an example of how to run one configuration of this model. The Black Rhino examples/solow folder contains three seperate notebooks for each of the elements of configuring the model, running the model, and analysing the results. For more advanced use, we recommend using these notebooks to run the model.
