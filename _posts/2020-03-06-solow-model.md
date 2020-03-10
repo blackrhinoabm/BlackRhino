@@ -8,7 +8,7 @@ This post provides an example of the Solow growth model in the Black Rhino packa
 
 ## The model
 
-The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. The model contains a single equation that explains long-run economic growth as a function of capital accumulation, labour, and productivity.
+The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. The model contains a single equation that explains long-run economic output /$$Y$$ as a function of capital accumulation \$$K$$, labour \$$L$$, and productivity.
 
 $$ \alpha + 2$$
 
