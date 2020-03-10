@@ -10,11 +10,11 @@ This post provides an example of the Solow growth model in the Black Rhino packa
 
 The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. The model contains a single equation that explains long-run economic growth as a function of capital accumulation, labour, and productivity.
 
-$$Y(t) = K(t)^\alpha $$ 
+$$Y(t) = K(t)^\alpha $$
 
 The model is set within the framework of neoclassical economics. It is essentially a
 
-It attempts to explain long-run economic growth by looking at capital accumulation, labor or population growth, and increases in productivity, commonly referred to as technological progress. At its core is a neoclassical (aggregate) production function, often specified to be of Cobb–Douglas type, which enables the model "to make contact with microeconomics".[1]:26 The model was developed independently by Robert Solow and Trevor Swan in 1956,[2][3][note 1] and superseded the Keynesian Harrod–Domar model.
+It attempts to explain long-run economic growth by looking at capital accumulation, labor or population growth, and increases in productivity, commonly referred to as technological progress. At its core is a neoclassical (aggregate) production function, often specified to be of Cobb–Douglas type, which enables the model "to make contact with microeconomics".[1]:26 The model was developed independently by Robert Solow and Trevor Swan in 1956,[2][3][note 1] and superseded the Keynesian Harrod–Domar model. $$\beta$$
 
 ## Configuring the model
 
