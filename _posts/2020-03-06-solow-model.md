@@ -6,6 +6,16 @@ subtitle: An agent-based version of the famous Solow growth model
 
 This post provides an example of the Solow growth model in the Black Rhino package. It will first cover the Solow model itself and how it is implemented in Black Rhino. Then, it will cover how to use Black Rhino to actually run the model and analyse the results.
 
+## The model
+
+The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. The model contains a single equation that explains long-run economic growth as a function of capital accumulation, labour, and productivity.
+
+$$Y(t) = K(t)^\alpha $$ 
+
+The model is set within the framework of neoclassical economics. It is essentially a
+
+It attempts to explain long-run economic growth by looking at capital accumulation, labor or population growth, and increases in productivity, commonly referred to as technological progress. At its core is a neoclassical (aggregate) production function, often specified to be of Cobb–Douglas type, which enables the model "to make contact with microeconomics".[1]:26 The model was developed independently by Robert Solow and Trevor Swan in 1956,[2][3][note 1] and superseded the Keynesian Harrod–Domar model.
+
 ## Configuring the model
 
 In the Black Rhino framework, parameters are stored in xml files. Using this notebook, you can set change them. First, you need to import the elementree from the xml Python module.
