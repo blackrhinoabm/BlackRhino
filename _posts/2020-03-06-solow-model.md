@@ -8,7 +8,13 @@ This post provides an example of the Solow growth model in the Black Rhino packa
 
 ## The model
 
-The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. The model contains a single equation that explains long-run economic output /$$Y$$ as a function of capital accumulation \$$K$$, labour \$$L$$, and productivity.
+The [Solow (1956)](https://www.jstor.org/stable/pdf/1884513.pdf) growth model is a model of long-run economic growth. It explains long run economic growth as a function of capital accumulation, labour, and productivity. This is an agent-based version of that model. It contains one firm agent and one household agent. These are presentative of the broader firm and household sector. There is also a Bank agent, but it is only there as an intermediary to exchange the labour for ownership of capital (when household sells labour they get a deposit financed by the loan given to the firm, when the firm sells goods they get a deposit financed by the loan given to the household, these are netted at the end of each simulation step; conversely the imbalance between trade of labour and goods is netted and represents the ownership of firm’s capital by household).
+
+
+
+The price of the labour is found through Walrasian auction based on Cobb-Douglas production function, maximisation of profits for firms, and utility for households given by $$ln(units_consumed)+ln(25-labour_sold)$$. The details of the math involved will be found immediately below, the technical side of the simulator will be found in the sections further down. This cycle runs the number of times specified and works as the original Solow model, so that is there is growth in capital accumulated, but it’s slowing down with time. The derivation of the supply and demand functions follow, which are instrumental to the way the model works. The price of goods (p) is fixed to 10, the price of labour (w) is found through Walrasian auction, there is a capital stock (c), and at equilibrium household sells some amount of labour (l), and the firm in turns produces some amount of goods (y) and sells them at price p. The household maximises utility given as:
+
+The model contains a single equation that explains long-run economic output $$Y$$ as a function of capital accumulation $$K$$, labour $$L$$, and productivity.
 
 $$ \alpha + 2$$
 
@@ -23,6 +29,9 @@ In the Black Rhino framework, parameters are stored in xml files. Using this not
 ```python
 import xml.etree.ElementTree as ET
 ```
+
+Then, the parameters for the model need to be defined. We can’t start with zero capital because the Cobb-Douglas production function gives zero for zero capital. Therefore, the model is initialized with capital ownership of 30 monetary units (and corresponding loan/deposit structure of 30 monetary units). The household is endowed every step of the simulation with 24 units of labour. We fix the price of the good produced in the economy (perishable) to 10 units.
+
 
 Below you will find the parameter inputs for this model.  
 
