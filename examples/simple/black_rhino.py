@@ -1,3 +1,9 @@
+import sys
+import logging
+
+from src.environment import Environment
+from src.runner import Runner
+
 #!/usr/bin/env python
 # [SublimeLinter pep8-max-line-length:300]
 # -*- coding: utf-8 -*-
@@ -31,19 +37,12 @@ on Complexity through the grant RESINEE.
 # -------------------------------------------------------------------------
 if __name__ == '__main__':
 
-    import sys
-    import logging
-
-    from src.environment import Environment
-    from src.runner import Runner
-
     args = ['./black_rhino.py',  "environments/", "test_all_methods",  "log/"]
     # args = sys.argv
 
     if len(args) != 4:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/"
+        print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/")
         sys.exit()
-
 
 #
 # INITIALIZATION

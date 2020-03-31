@@ -1,47 +1,37 @@
 <img src="https://cogeorg.github.io/images/black_rhino_logo.jpg" height="64px"/>
 
-This is the new repository for black_rhino and takes over from http://sourceforge.net/projects/oxblackrhino/?source=directory as of 2015-11-07.
 
-This new repository aims at a complete overhaul in terms of code for an agent-based model, it is implemented from the very basics to provide greater clarity and quality.
+[comment]: <> (One paragraph overview of the project, TODO add link to blog?)
+**Black Rhino** is an open source easy-to-use-and-adapt 
+economic/financial network multi-agent simulation (MAS) 
+that serves two purposes. First, it can be used as a 
+practical tool to simulate and analyse a model economic 
+/ banking system. This is particularly handy for central 
+banks and policy makers, as black_rhino fills a 
+gap in the policy-toolbox. Second, it is a python module 
+that can be easily adapted, changed, and modified for 
+research purposes. It is intended to reduce the amount 
+of work necessary to write an economic or financial MAS
+ and hence allows researchers to focus on the economic 
+ questions instead of worrying about code design patterns 
+ and basic functionality. As such it may be particularly 
+ useful for both experienced researchers as well as 
+ graduate and PhD students.
 
-In particular it is based on an abstract framework for economic agent-based models found in https://github.com/cogeorg/abm_template which means it is very modular, and that it is possible to interchange parts of the models without too much overhead, as the interface should remain the same due to the constraints of the abstract classes within abm_template.
+[comment]: <> (Explain how to use the tool)
+__Getting started__
 
-__INSTALL__
+First, you **install** Black Rhino using the following command in your command shell:
 
-git clone https://github.com/cogeorg/black_rhino  
-once you have the repo, you need to clone abm_template as well (submodule)  
-git submodule update --init --recursive  
+`   git clone https://github.com/cogeorg/black_rhino`
 
-__FOLDER STRUCTURE__
+Alternatively, you can use github desktop to clone the repository on your system.
+Once you have done so, you need to clone abm_template as well (submodule). Enter the following command 
+in you command shell: 
 
-```
-+---.git    			-git structure files  
-+---abm_template		-abstract base classes (submodule from https://github.com/cogeorg/abm_template)  
-+---agents    			-config files for agents  
-|   +---banks  
-|   +---central_bank  
-|   +---firms  
-|   \---households  
-+---environments		-config files for environment  
-+---examoles            -examples of working models made along the way  
-+---log    				-log files  
-+---measurements        -config files for writing outputs  
-+---networkx			-networkx package for network capabilities  
-+---src    				-source code files  
-+---tests    			-tests for the source code, and sample configs  
-\---tools    			-specific tools  
-```
+`   git submodule update --init --recursive`
 
-__INSTRUCTIONS__
-
-__Introduction__
-
-black_rhino is an open source easy-to-use-and-adapt economic/financial network multi-agent simulation (MAS) that serves two purposes. First, it can be used as a practical tool to simulate and analyse a model economic / banking system. This is particularly handy for central banks and policy makers, as black_rhino fills a gap in the policy-toolbox. Second, and perhaps more importantly, it is a python module that can be easily adapted, changed, and modified for research purposes. It is intended to reduce the amount of work necessary to write an economic or financial MAS and hence allows researchers to focus on the economic questions instead of worrying about code design patterns and basic functionality. As such it may be particularly useful for both experienced researchers as well as graduate and PhD students.
-
-This software is intended for educational and research purposes. Despite best efforts, we cannot fully rule out the possibility of errors and bugs. A number of tests are provided together with the software that aim to minimize this risk, but the use of black_rhino is entirely at your own risk.
-
-Please note: black_rhino is published under the GNU GPL v3. If you are unsure about the implications, check the website of the Free Software Foundations.
-
+After that you are ready to start using Black Rhino.
 
 __Using black_rhino__
 
@@ -64,75 +54,24 @@ The other type of output is a log file, created in log_directory/ (typically log
 
 Note that more details about specific files within black_rhino can be found within the files themselves as docstrings and code comments, as well as within the examples/ where you can see .docx documentation files.
 
-__The Internal Organisation of black_rhino__
+__Contributing__
+You can contribute to the repository by adding new models. This works as follows. 
 
-Besides using black_rhino for financial/economic multi-agent simulations, modifying the source code will be the most common task one faces. This section outlines the internal organization of black_rhino and explains some of its design principles.
+__Disclaimer__
 
-black_rhino (other financial or economic network multi-agent simulations will be designed similarly) can be structured in five elementary building blocks.
+This software is intended for educational and research
+purposes. Despite best efforts, 
+we cannot fully rule out the possibility of errors and bugs. 
+A number of tests are provided together with the software 
+that aim to minimize this risk, but the use of black_rhino
+ is entirely at your own risk.
 
-The Environment describes the world the simulation takes place in. It is implemented in the class Environment (inherits from class BaseConfig in abm_template) and consists all the parameters that are unchanged during the run of a simulation (e.g. the simulation identifier, the number of simulations num_simulations, the number of update steps num_sweeps, the number of banks at the start of a simulation num_banks, the directory where the initial bank data can be found: bank_directory. This set of parameters is specified in the environment file $environment_directory/$environment_identifier.xml.
+Please note: black_rhino is published under the 
+GNU GPL v3. If you are unsure about 
+the implications, check the website of the Free Software Foundations.
 
-Typically, the structure of the environment file will look like this:
-```xml
-<environment identifier='tests_for_all_methods'>
-    <!-- simulation parameters -->
-    <parameter type='static' name='num_sweeps' value='50'></parameter>
-    <parameter type='static' name='num_simulations' value='1'></parameter>
-    <parameter type='static' name='num_banks' value='3'></parameter>
-    <parameter type='static' name='num_firms' value='3'></parameter>
-    <parameter type='static' name='num_households' value='3'></parameter>
-    <parameter type='static' name='bank_directory' value='tests/agents/banks/'></parameter>
-    <parameter type='static' name='firm_directory' value='tests/agents/firms/'></parameter>
-    <parameter type='static' name='household_directory' value='tests/agents/households/'></parameter>
-    <parameter type='static' name='central_bank_directory' value='tests/agents/central_bank/'></parameter>
-    <parameter type='static' name='measurement_config' value='tests/measurements/test_output.xml'></parameter>
-    <parameter type='static' name='max_leverage_ratio' value='3.0'></parameter>
-    <parameter type='shock' name='productivity' range='1000-2000'></parameter>
-    <parameter type='shock' name='labour' range='4000-5000'></parameter>
-    <parameter type='asset' name='MBS' mean='0.05' variance='0.001'></parameter>
-    <parameter type='asset' name='ABS' mean='0.07' variance='0.002'></parameter>
-    <!-- parameters determining the dynamics -->
-</environment>
-```
 
-The class Environment also contains a list parameters[] of parameters which may change during the run of a simulation. These are identified by type='changing' and the range for which a given parameter is valid is given by validity='to-from'. The class Environment includes a container that holds all the parameters needed in the course of the simulation.
 
-The Agents are described in the classes Bank, CentralBank, Household, and Firm (all those inherit from BaseAgent in abm_template). Each agent has a list accounts[] where all the transactions (which are objects of the class Transaction) an agent has performed are stored. The balance sheet of a bank is effectively expressed through the set of transactions which an agent has performed (and which are still on the agent's books at the current point in time). Agents also have their own parameters and variables, much like the Environment, the difference is that these affect only specific agents and not the whole system. Note that starting transactions can also be stored in agents' config files. This set of parameters is specified in the config file $agent_type_directory/$agent_identifier.xml.
-
-Typically, the structure of the environment file will look like this:
-```xml
-<bank identifier='bank_test_config_id'>
-    <parameter type='static' name='interest_rate_loans' value='0.004'></parameter>
-    <parameter type='static' name='interest_rate_deposits' value='0.002'></parameter>
-    <parameter type='static' name='target_leverage' value='2'></parameter>
-    <transaction type='deposits' asset='' from='household_test_config_id' to='bank_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
-    <transaction type='loans' asset='' from='bank_test_config_id' to='firm_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
-</bank>
-```
-
-```xml
-<central_bank identifier='central_bank_test_config_id'>
-    <parameter type='static' name='interest_rate_cb_loans' value='0.003'></parameter>
-</central_bank>
-```
-
-```xml
-<firm identifier='firm_test_config_id'>
-    <parameter name='productivity' value='1.25'></parameter>
-    <parameter name='total_factor_productivity' value='1.8'></parameter>
-    <parameter name='labour_elasticity' value='0.3'></parameter>
-    <parameter name='capital_elasticity' value='0.7'></parameter>
-    <transaction type='capital' asset='' from='firm_test_config_id' to='household_test_config_id' amount='30' interest='0.00' maturity='0' time_of_default='-1'></transaction>
-</firm>
-```
-
-```xml
-<household identifier='household_test_config_id'>
-    <parameter name='labour' value='24.00'></parameter>
-    <parameter name='propensity_to_save' value='0.4'></parameter>
-    <parameter name='ownership_of_banks' value='1'></parameter>
-</household>
-```
 
 The optimization behavior of agents is based on the Solow growth model, and described in principle in http://www.pitt.edu/~mgahagan/Solow.htm
 

@@ -27,8 +27,8 @@ if __name__ == '__main__':
 #
 # UPDATE STEP
 #
-    # for i in range(int(environment.static_parameters['num_simulations'])):
-    #     environment.initialize(environment_directory, identifier)
-    #     runner.initialize(environment)
-    #     # do the run
-    #     runner.do_run(environment)
+    for i in range(int(environment.static_parameters['num_simulations'])):
+        environment.initialize(environment_directory, identifier)
+        runner.initialize(environment)
+        # do the run
+        runner.do_run(environment)

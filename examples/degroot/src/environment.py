@@ -143,7 +143,6 @@ class Environment(BaseConfig):
 
             # loop over all entries in the xml file
             for subelement in element:
-
                 try:  # we see whether the value is a int
                     value = int(subelement.attrib['value'])
                     type_ = subelement.attrib['type']

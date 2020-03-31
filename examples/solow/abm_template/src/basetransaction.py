@@ -195,22 +195,22 @@ class BaseTransaction(object):
 
     @abc.abstractmethod
     def print_transaction(self):
-        print "        <transaction type='" + self.type_ + "'>"
+        print("        <transaction type='" + self.type_ + "'>")
         if self.asset != "":
-            print "            <property type='asset' value='" + self.asset + "'>"
+            print("            <property type='asset' value='" + self.asset + "'>")
         if hasattr(self.from_, "identifier"):
-            print "            <property type='from' value='" + str(self.from_.identifier) + "'></property>"
+            print("            <property type='from' value='" + str(self.from_.identifier) + "'></property>")
         else:
-            print "            <property type='from' value='" + str(self.from_) + "'></property>"
+            print("            <property type='from' value='" + str(self.from_) + "'></property>")
         if hasattr(self.to, "identifier"):
-            print "            <property type='to' value='" + str(self.to.identifier) + "'></property>"
+            print("            <property type='to' value='" + str(self.to.identifier) + "'></property>")
         else:
-            print "            <property type='to' value='" + str(self.to) + "'></property>"
-        print "            <property type='amount' value='" + str(self.amount) + "'></property>"
-        print "            <property type='interest' value='" + str(self.interest) + "'></property>"
-        print "            <property type='maturity' value='" + str(self.maturity) + "'></property>"
-        print "            <property type='time_of_default' value='" + str(self.time_of_default) + "'></property>"
-        print "        </transaction>"
+            print("            <property type='to' value='" + str(self.to) + "'></property>")
+        print("            <property type='amount' value='" + str(self.amount) + "'></property>")
+        print("            <property type='interest' value='" + str(self.interest) + "'></property>")
+        print("            <property type='maturity' value='" + str(self.maturity) + "'></property>")
+        print("            <property type='time_of_default' value='" + str(self.time_of_default) + "'></property>")
+        print("        </transaction>")
     # a standard function which prints the transaction and its properties
 
     @abc.abstractmethod

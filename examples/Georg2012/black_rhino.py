@@ -20,7 +20,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 The development of this software has been supported by the ERA-Net 
 on Complexity through the grant RESINEE.
 """
-
 #-------------------------------------------------------------------------
 #
 #  MAIN
@@ -34,17 +33,16 @@ if __name__ == '__main__':
     import logging
     import networkx as nx
     
-    from environment import Environment
-    from runner import Runner
-    from measurement import Measurement
+    from src.environment import Environment
+    from src.runner import Runner
+    from src.measurement import Measurement
     
-    #args=['./black_rhino.py',  "environments/", "test10",  "log/",  "measurements/"]
-    args = sys.argv
+    args = ['./black_rhino.py',  "environments/", "test1",  "log/",  "measurements/"]
+    #args = sys.argv
     
     if len(args) != 5:
-        print "Usage: ./black_rhino environment_directory/ environment_identifier log_directory/ measurement_directory/"
+        print("Usage: ./black_rhino environment_directory/ environment_identifier log_directory/ measurement_directory/")
         sys.exit()
-
 
 #
 # INITIALIZATION
@@ -55,14 +53,15 @@ if __name__ == '__main__':
     measurement_directory = str(args[4])
     
     # Configure logging parameters so we get output while the program runs
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',  filename = log_directory + identifier + ".log", level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+                        filename=log_directory + identifier + ".log",
+                        level=logging.INFO)
     logging.info('START logging for run: %s',  environment_directory + identifier + ".xml")
     
     environment = Environment()
     environment.initialize(environment_directory,  identifier)
     runner = Runner()
     measurement = Measurement()
-
 
 #
 # UPDATE STEP
@@ -81,9 +80,9 @@ if __name__ == '__main__':
         measurement.do_histograms()
         logging.info('  DONE')
 
-#
-# MEASUREMENT AND LOGGING
-#
-	measurement.write_histograms(measurement_directory,  environment)
-	logging.info('FINISHED logging for run: %s \n', environment_directory + identifier + ".xml")
-    
+    #
+    # MEASUREMENT AND LOGGING
+    #
+    measurement.write_histograms(measurement_directory,  environment)
+    logging.info('FINISHED logging for run: %s \n', environment_directory + identifier + ".xml")
+

@@ -250,24 +250,24 @@ class Environment(BaseConfig):
         logging.info("  environment file read: %s",  environment_filename)
 
         # then read in all the banks
-        if (self.bank_directory != ""):
-            if (self.bank_directory != "none"):  # none is used for tests only
+        if self.bank_directory != "":
+            if self.bank_directory != "none":  # none is used for tests only
                 self.initialize_banks_from_files(self.bank_directory)
                 logging.info("  banks read from directory: %s",  self.bank_directory)
         else:
             logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
         # then read in all the firms
-        if (self.firm_directory != ""):
-            if (self.firm_directory != "none"):  # none is used for tests only
+        if self.firm_directory != "":
+            if self.firm_directory != "none":  # none is used for tests only
                 self.initialize_firms_from_files(self.firm_directory)
                 logging.info("  firms read from directory: %s",  self.firm_directory)
         else:
             logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
         # then read in all the households
-        if (self.household_directory != ""):
-            if (self.household_directory != "none"):  # none is used for tests only
+        if self.household_directory != "":
+            if self.household_directory != "none":  # none is used for tests only
                 self.initialize_households_from_files(self.household_directory)
                 logging.info("  households read from directory: %s",  self.household_directory)
         else:
@@ -277,24 +277,24 @@ class Environment(BaseConfig):
         self.agents = [self.banks, self.firms, self.households]
 
         # then, initialize transactions from the config files for banks
-        if (self.bank_directory != ""):
-            if (self.bank_directory != "none"):  # none is used for tests only
+        if self.bank_directory != "":
+            if self.bank_directory != "none":  # none is used for tests only
                 self.read_transactions_for_banks(self.bank_directory)
                 logging.info("  banks' transactions read from directory: %s",  self.bank_directory)
         else:
             logging.error("ERROR: no bank_directory given in %s\n",  environment_filename)
 
         # then, initialize transactions from the config files for firms
-        if (self.firm_directory != ""):
-            if (self.firm_directory != "none"):  # none is used for tests only
+        if self.firm_directory != "":
+            if self.firm_directory != "none":  # none is used for tests only
                 self.read_transactions_for_firms(self.firm_directory)
                 logging.info("  firms' transactions read from directory: %s",  self.firm_directory)
         else:
             logging.error("ERROR: no firm_directory given in %s\n",  environment_filename)
 
         # then, initialize transactions from the config files for households
-        if (self.household_directory != ""):
-            if (self.household_directory != "none"):  # none is used for tests only
+        if self.household_directory != "":
+            if self.household_directory != "none":  # none is used for tests only
                 self.read_transactions_for_households(self.household_directory)
                 logging.info("  households read from directory: %s",  self.household_directory)
         else:
