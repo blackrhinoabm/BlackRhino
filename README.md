@@ -1,5 +1,6 @@
 <img src="https://cogeorg.github.io/images/black_rhino_logo.jpg" height="64px"/>
 
+
 [comment]: <> (One paragraph overview of the project, TODO add link to blog?)
 **Black Rhino** is an open source easy-to-use-and-adapt 
 economic/financial network multi-agent simulation (MAS) 
