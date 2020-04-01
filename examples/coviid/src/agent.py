@@ -2,24 +2,51 @@ import logging
 from xml.etree import ElementTree
 import numpy as np
 
-from abm_template.src.baseagent import BaseAgent
+from examples.coviid.src.abm_template.baseagent import BaseAgent
 
 
-class Agent(BaseAgent):
-    identifier = ""  # identifier of the specific agent
-    opinion = 0.0   # 'opinion' of the agent
-    initial_opinion = 0.0   # initial  'opinion' of the agent
+class Agent:
+    def __init__(self, identifier, status, position, transmission_rate):
+        # parameters
+        self.identifier = identifier  # identifier of the specific agent
+        self.position = position # position on the grid
+        self.neighbours = [] # grid neighbours
+        self.transmission_rate = transmission_rate
+        # state_variables
+        self.sick_days = 0
+        self.incubation_days = 0
+        self.status = status
 
-    state_variables = {}
-    parameters = {}
+    def get_parameters_from_file(self, agent_filename, environment):
+        try:
+            xmlText = open(agent_filename).read()
+            element = ElementTree.XML(xmlText)
+            # we get the identifier
+            self.identifier = element.attrib['identifier']
 
-    ''' Accounts is not used in our example, but it's in the BaseAgent
-    parent class'''
-    accounts = []
+            # and then we're only interested in <parameter> fields
+            element = element.findall('parameter')
 
-    '''The below is from an older version, where weights were stored in
-    a dictionary We are using network graphs now, so its no needed anymore
-    transition_probabilities = {}   '''
+            # loop over all <parameter> entries in the xml file
+            for subelement in element:
+                name = subelement.attrib['name']
+                value = subelement.attrib['value']
+
+                if name == 'status':
+                    self.status = value
+                elif name == 'position':
+                    self.position = list(value)
+                elif name == 'transmission_rate':
+                    self.transmission_rate = float(value)
+
+        except:
+            logging.error("    ERROR: %s could not be parsed", agent_filename)
+
+    def infect(self):
+        for neighbour in self.neighbours:
+            # only infect neighbours that are susceptible
+            if neighbour.status == 's' and np.random.random() > self.transmission_rate:
+                neighbour.status = 'i1'
 
     def __getattr__(self, attr):
         super(Agent, self).__getattr__(attr)
@@ -85,42 +112,4 @@ class Agent(BaseAgent):
     def update_maturity(self):
         super(Agent, self).update_maturity()
 
-    # -----------------------------------------------------------------------
-    # __init__  used to automatically instantiate an agent as an object when
-    # the agent class is called
-    # ------------------------------------------------------------------------
-
-    def __init__(self):
-        self.identifier = ""  # identifier of the specific agent
-        self.opinion = 0.0  # opinion of the specific agent
-        self.initial_opinion = 0
-
-    def infect(self):
-        for neighbour in self.neighbours:
-            # only infect neighbours that are susceptible
-            if neighbour.status == 's' and np.random.random() > self.transmission_rate:
-                neighbour.status = 'i1'
-
-    def get_parameters_from_file(self, agent_filename, environment):
-        try:
-            xmlText = open(agent_filename).read()
-            element = ElementTree.XML(xmlText)
-            # we get the identifier
-            self.identifier = element.attrib['identifier']
-
-            # and then we're only interested in <parameter> fields
-            element = element.findall('parameter')
-
-            # loop over all <parameter> entries in the xml file
-            for subelement in element:
-                if subelement.attrib['type'] == 'static':
-                    name = subelement.attrib['name']
-                    value = subelement.attrib['value']
-
-                    if name == 'starting_opinion':
-                        self.opinion = float(value)
-                        self.initial_opinion = float(value)
-
-        except:
-            logging.error("    ERROR: %s could not be parsed", agent_filename)
 

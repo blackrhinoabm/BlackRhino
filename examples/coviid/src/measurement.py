@@ -1,4 +1,4 @@
-from abm_template.src.basemeasurement import BaseMeasurement
+from examples.coviid.src.abm_template.basemeasurement import BaseMeasurement
 
 
 class Measurement(BaseMeasurement):

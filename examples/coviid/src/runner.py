@@ -1,13 +1,10 @@
-from src.agent import Agent
+from examples.coviid.src.agent import Agent
 from src.measurement import Measurement
 from src.updater import Updater
-from abm_template.src.baserunner import BaseRunner
+from examples.coviid.src.abm_template.baserunner import BaseRunner
 
 
-class Runner(BaseRunner):
-    identifier = ""
-    num_sweeps = 0
-
+class Runner():
     def __init__(self, environment):
         self.initialize(environment)
 
@@ -15,6 +12,22 @@ class Runner(BaseRunner):
         self.identifier = environment.identifier
         self.num_sweeps = int(environment.static_parameters['num_sweeps'])
         self.updater = Updater(environment)
+
+    def store_grid(environment):
+        grid = []
+        for r in range(environment.rows):
+            grid_row = []
+            for a in environment.agents[r]:
+                if a.status == 'i1':
+                    grid_row.append(2)
+                elif a.status == 'i2':
+                    grid_row.append(3)
+                elif a.status == 'r':
+                    grid_row.append(1)
+                else:
+                    grid_row.append(0)
+            grid.append(grid_row)
+        return grid
 
     def get_identifier(self):
         return self.identifier

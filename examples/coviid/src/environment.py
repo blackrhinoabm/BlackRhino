@@ -3,8 +3,8 @@ import logging
 import numpy as np
 
 from xml.etree import ElementTree
-from abm_template.src.baseconfig import BaseConfig
-from src.agent import Agent
+from examples.coviid.src.abm_template.baseconfig import BaseConfig
+from examples.coviid.src.agent import Agent
 
 
 class Environment(BaseConfig):
@@ -25,10 +25,7 @@ class Environment(BaseConfig):
 
     def __init__(self, environment_directory, identifier):
         self.identifier = identifier
-        self.static_parameters = {"num_simulations": 0, "num_sweeps": 0, "num_agents": 0,
-                                  "transmission_rate": 0, "days_incubation": 0, "days_with_symptoms": 0,
-                                  "agent_directory": "", "measurement_config": ""}
-
+        self.static_parameters = {}
         self.agents = []
 
         # first, read in the environment file
@@ -37,15 +34,17 @@ class Environment(BaseConfig):
         logging.info(" environment file read: %s", environment_filename)
 
         # then read in all the agents
+        self.agent_parameters = {}
         self.initialize_agents_from_files(self.static_parameters['agent_directory'])
 
         # create the grid structure
-        self.rows, self.columns = int(np.sqrt(self.static_parameters["num_agents"]))
+        self.rows = int(np.sqrt(self.static_parameters["num_agents"]))
+        self.columns = self.rows
         self.agents = []
         for c in range(self.columns):
             row = []
             for r in range(self.rows):
-                row.append(Agent(str([r, c]), 's', (c, r), self.static_parameters["transmission_rate"]))
+                row.append(Agent(str([r, c]), 's', (c, r), self.agent_parameters["transmission_rate"]))
             self.agents.append(row)
         # determine neighbours after the grid is complete
         for row, agent_set in enumerate(self.agents):
@@ -66,7 +65,7 @@ class Environment(BaseConfig):
         element = ElementTree.XML(xmlText)
         self.identifier = element.attrib['identifier']
 
-        # loop over all entries in the xml file
+        # set parameters using xml file
         for subelement in element:
             try:  # we see whether the value is a int
                 value = int(subelement.attrib['value'])
@@ -78,16 +77,20 @@ class Environment(BaseConfig):
                 type_ = subelement.attrib['type']
                 self.static_parameters[type_] = value
 
-
     def initialize_agents_from_files(self, agent_directory):
-        agent_files = os.listdir(agent_directory)
+        xmlText = open(agent_directory).read()
+        element = ElementTree.XML(xmlText)
 
-        for each_agent_file in agent_files:
-            if '.xml' in each_agent_file:
-                agent = Agent()
-                agent_filename = agent_directory + each_agent_file
-                agent.get_parameters_from_file(agent_filename, self)
-                self.agents.append(agent)
+        for subelement in element:
+            try:  # we see whether the value is a int
+                value = int(subelement.attrib['value'])
+                name = subelement.attrib['name']
+                self.agent_parameters[name] = value
+
+            except:  # if not, it is a string
+                value = float(subelement.attrib['value'])
+                name = subelement.attrib['name']
+                self.agent_parameters[name] = value
 
     def __getattr__(self, attr):
         return super(Environment, self).__getattr__(attr)

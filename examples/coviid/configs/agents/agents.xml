@@ -1,3 +1,1 @@
-<agent identifier='agent_one'>
-  <parameter type='static' name='starting_opinion' value='1'></parameter>
-</agent>
+<agents identifier="config_coviid"><parameter name="transmission_rate" type="parameter" value="0.6" /><parameter name="days_incubation" type="state_variable" value="7" /><parameter name="days_with_symptoms" type="state_variable" value="8" /></agents>

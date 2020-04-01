@@ -1,16 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-__author__ = """Co-Pierre Georg (co-pierre.georg@uct.ac.za)"""
-
 import abc
 import logging
 
-# -------------------------------------------------------------------------
-#
-#  class Agent
-#
-# -------------------------------------------------------------------------
+
 class BaseAgent(object):
     """
     Class variables: __metaclass__, identifier, parameters, state_variables
