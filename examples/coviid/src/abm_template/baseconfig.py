@@ -1,16 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-__author__ = """Co-Pierre Georg (co-pierre.georg@uct.ac.za)"""
-
 import abc
 from xml.etree import ElementTree
 
-# -------------------------------------------------------------------------
-#
-#  class Config
-#
-# -------------------------------------------------------------------------
+
 class BaseConfig(object):
     """
     Class variables: __metaclass__, identifier, static_parameters, variable_parameters

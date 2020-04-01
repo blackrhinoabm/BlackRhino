@@ -1,50 +1,39 @@
-#!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:150]
-# -*- coding: utf-8 -*-
-
-"""
-black_rhino is a multi-agent simulator for financial network analysis
-Copyright (C) 2016 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
-Pawel Fiedor (pawel@fiedor.eu)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, version 3 of the License.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
-"""
 from examples.coviid.src.abm_template.basemodel import BaseModel
 from examples.coviid.src.agent import Agent
 
 
-# -------------------------------------------------------------------------
-#  class Updater
-# -------------------------------------------------------------------------
+class Updater:
+    def __init__(self, environment):
+        self.environment = environment
+        self.new_opinion = {}
+        self.initial_opinion = {}
 
+    def do_update(self, environment):
+        # some agents are the infected
+        sick_with_symptoms = []
+        sick_without_symptoms = []
+        for row, agent_set in enumerate(environment.agents):
+            for col, agent in enumerate(agent_set):
+                if agent.status == 'i1':
+                    sick_without_symptoms.append(agent)
+                    agent.incubation_days += 1
 
-class Updater(BaseModel):
-    #
-    #
-    # VARIABLES
-    #
-    #
+                    # some agents get symptoms
+                    if agent.incubation_days > environment.agent_parameters['days_incubation']:
+                        agent.status = 'i2'
+                        sick_without_symptoms.remove(agent)
 
-    identifier = ""
-    new_opinion = {}
-    starting_opinion = {}
+                elif agent.status == 'i2':
+                    sick_with_symptoms.append(agent)
+                    agent.sick_days += 1
+                    # some agents recover
+                    if agent.sick_days > environment.agent_parameters['days_with_symptoms']:
+                        agent.status = 'r'
+                        sick_with_symptoms.remove(agent)
+        for agent in sick_without_symptoms + sick_with_symptoms:
+            agent.infect()
 
-    model_parameters = {}
-
-    #
-    #
-    # METHODS
-    #
+        environment.infection_states.append(environment.store_grid())
 
     def get_identifier(self):
         return self.identifier
@@ -69,39 +58,3 @@ class Updater(BaseModel):
 
     def set_interactions(self, values):
         super(Updater, self).set_interactions(values)
-
-    # -------------------------------------------------------------------------
-    # __init__
-    # -------------------------------------------------------------------------
-    def __init__(self, environment):
-        self.environment = environment
-        self.new_opinion = {}
-        self.initial_opinion = {}
-    # -------------------------------------------------------------------------
-
-    # -------------------------------------------------------------------------
-    # do_update
-    # -------------------------------------------------------------------------
-    def do_update(self, environment):
-
-       self.degroot_modified(environment)
-       #self.original_degroot(environment)
-
-
-    # --------------------------------------------------------------------------
-    def degroot_modified(self, environment):
-        
-        for agent in environment.agents:
-            self.new_opinion[agent.identifier] = agent.create_temp_variable(environment) 
-            self.initial_opinion[agent.identifier] = agent.initial_opinion
-              
-        for agent in environment.agents:
-            agent.opinion = float(environment.static_parameters['lambda']) * float(self.new_opinion[agent.identifier])  + (1- float(environment.static_parameters['lambda']))*self.initial_opinion[agent.identifier] 
-
-    def original_degroot(self, environment):
-
-        for agent in environment.agents:
-            self.new_opinion[agent.identifier] = agent.create_temp_variable(environment)
-
-        for agent in environment.agents:
-            agent.opinion = self.new_opinion[agent.identifier]

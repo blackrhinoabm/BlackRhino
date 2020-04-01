@@ -7,22 +7,7 @@ from examples.coviid.src.abm_template.baseconfig import BaseConfig
 from examples.coviid.src.agent import Agent
 
 
-class Environment(BaseConfig):
-    identifier = ""  # identifier of the environment
-    static_parameters = {}  # a dictionary containing all environmenet parameters
-    agents = []
-    static_parameters["lambda"] = 0  # number of simulations
-
-    static_parameters["num_simulations"] = 0  # number of simulations
-    static_parameters["num_sweeps"] = 0  # numbers of runs in a single simulation
-    static_parameters["num_agents"] = 0  # number of agents in a simulation
-    static_parameters["agent_directory"] = ""  # directory containing agent xmls
-
-    variable_parameters = {}
-    assets = {}
-
-    shocks = []
-
+class Environment:
     def __init__(self, environment_directory, identifier):
         self.identifier = identifier
         self.static_parameters = {}
@@ -59,6 +44,22 @@ class Environment(BaseConfig):
                     if n in range(self.columns):  # check if on grid
                         agent.neighbours.append(self.agents[n][col])
         self.infection_states = []
+
+    def store_grid(self):
+        grid = []
+        for r in range(self.rows):
+            grid_row = []
+            for a in self.agents[r]:
+                if a.status == 'i1':
+                    grid_row.append(2)
+                elif a.status == 'i2':
+                    grid_row.append(3)
+                elif a.status == 'r':
+                    grid_row.append(1)
+                else:
+                    grid_row.append(0)
+            grid.append(grid_row)
+        return grid
 
     def read_xml_config_file(self, env_filename):
         xmlText = open(env_filename).read()
