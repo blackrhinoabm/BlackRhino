@@ -1,5 +1,5 @@
 import logging
-import numpy as np
+import copy
 from xml.etree import ElementTree
 from examples.coviidnetwork.src.agent import Agent
 import networkx as nx
@@ -25,12 +25,12 @@ class Environment:
 
         # add status to the network structure
         for idx, agent in enumerate(self.agents):
-            self.network.nodes[idx]['status'] = 's'
+            self.network.nodes[idx]['agent'] = agent
 
         self.infection_states = []
 
     def store_network(self):
-        current_network = self.network.copy()
+        current_network = copy.deepcopy(self.network)
         return current_network
 
     def read_xml_config_file(self, env_filename):

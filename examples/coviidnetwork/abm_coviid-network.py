@@ -21,4 +21,7 @@ for i in range(runs):
 
     # save network
     for idx, network in enumerate(environment.infection_states):
+        for idx2, node in enumerate(network.nodes):
+            network.nodes[idx2]['agent'] = network.nodes[idx2]['agent'].status
+
         nx.write_graphml_lxml(network, "measurements/{}-network_time{}.graphml".format(i, idx))

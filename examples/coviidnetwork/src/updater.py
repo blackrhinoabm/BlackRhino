@@ -14,31 +14,28 @@ class Updater:
 
         for idx, agent in enumerate(environment.agents):
             if agent.status == 'i1':
-                sick_without_symptoms.append((idx, agent))
+                sick_without_symptoms.append(agent)
                 agent.incubation_days += 1
-                environment.network.nodes[idx]['status'] = 'i1'
 
                 # some agents get symptoms
                 if agent.incubation_days > environment.agent_parameters['days_incubation']:
                     agent.status = 'i2'
-                    sick_without_symptoms.remove((idx, agent))
+                    sick_without_symptoms.remove(agent)
 
             elif agent.status == 'i2':
-                sick_with_symptoms.append((idx, agent))
+                sick_with_symptoms.append(agent)
                 agent.sick_days += 1
-                environment.network.nodes[idx]['status'] = 'i2'
                 # some agents recover
                 if agent.sick_days > environment.agent_parameters['days_with_symptoms']:
                     agent.status = 'r'
-                    environment.network.nodes[idx]['status'] = 'r'
-                    sick_with_symptoms.remove((idx, agent))
+                    sick_with_symptoms.remove(agent)
 
-        for idx_agent in sick_without_symptoms + sick_with_symptoms:
+        for agent in sick_without_symptoms + sick_with_symptoms:
             # find indices from neighbour agents
-            neighbours_from_graph = [x for x in environment.network.neighbors(idx_agent[0])]
+            neighbours_from_graph = [x for x in environment.network.neighbors(agent.identifier)]
             # find the corresponding agents
             neighbours_to_infect = [environment.agents[idx] for idx in neighbours_from_graph]
-            idx_agent[1].infect(neighbours_to_infect)
+            agent.infect(neighbours_to_infect)
 
         environment.infection_states.append(environment.store_network())
 
