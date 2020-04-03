@@ -1,3 +1,1 @@
-<measurement identifier="output_coviid">
-<parameter type="filename" value="measurements/Measurement_coviid.csv" />
-<parameter column="1" header="list_of_grids" type="output" value="grids" /></measurement>
+<measurement identifier="output_coviid"><parameter type="filename" value="measurements/Measurement_coviid.csv" /><parameter column="1" header="list_of_grids" type="output" value="grids" /></measurement>
