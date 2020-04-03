@@ -13,7 +13,7 @@ class Updater:
         sick_with_symptoms = []
         sick_without_symptoms = []
         for row, agent_set in enumerate(environment.agents):
-            for col, agent in enumerate(agent_set):
+            for col, agent in enumerate(agent_set): #TODO replace this: for neighbour in nx.neighbours_of_network_agent
                 if agent.status == 'i1':
                     sick_without_symptoms.append(agent)
                     agent.incubation_days += 1
@@ -33,7 +33,7 @@ class Updater:
         for agent in sick_without_symptoms + sick_with_symptoms:
             agent.infect()
 
-        environment.infection_states.append(environment.store_grid())
+        environment.infection_states.append(environment.store_network())
 
     def get_identifier(self):
         return self.identifier

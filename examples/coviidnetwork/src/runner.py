@@ -1,7 +1,4 @@
-from examples.coviid.src.agent import Agent
-from src.measurement import Measurement
-from src.updater import Updater
-from examples.coviid.src.abm_template.baserunner import BaseRunner
+from examples.coviidnetwork.src.updater import Updater
 import numpy as np
 
 
@@ -45,14 +42,8 @@ class Runner:
     def do_run(self, environment):
         # loop over all time steps and do the updating
         # For each update step
-        #measurement = Measurement(environment, self)
-        #measurement.open_file()
-
-        # infect the middle agent
-        environment.agents[int(np.median([x for x in range(environment.rows)]))][
-            int(np.median([x for x in range(environment.columns)]))].status = 'i1'
-        # store the initial grid
-        environment.infection_states.append(environment.store_network())
+        # infect a random agent
+        environment.agents[np.random.randint(0, len(environment.agents))].status = 'i1'
 
         for i in range(self.num_sweeps): #sweeps is time periods
             self.current_step = i
