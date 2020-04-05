@@ -1,5 +1,6 @@
 from examples.coviidnetwork.src.updater import Updater
 import numpy as np
+import random
 
 
 class Runner:
@@ -39,15 +40,19 @@ class Runner:
     def set_num_sweeps(self, value):
         super(Runner, self).set_num_sweeps(value)
 
-    def do_run(self, environment):
+    def do_run(self, environment, seed=1):
         # loop over all time steps and do the updating
+        # set monte carlo seed
+        np.random.seed(seed)  # TODO necessary to do twice?
+        random.seed(seed)
         # For each update step
         # infect a random agent
-        environment.agents[np.random.randint(0, len(environment.agents))].status = 'i1'
+        random_agent_idx = np.random.randint(0, len(environment.agents))
+        environment.agents[random_agent_idx].status = 'i1'
 
         for i in range(self.num_sweeps): #sweeps is time periods
             self.current_step = i
-            self.updater.do_update(environment)
+            self.updater.do_update(environment, seed=seed)
             #measurement.write_to_file()
 
         print("***\nThis run had {}s sweeps and {}s simulations".format(self.num_sweeps, environment.static_parameters['num_simulations']))

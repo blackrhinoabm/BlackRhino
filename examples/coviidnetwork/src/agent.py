@@ -4,13 +4,19 @@ import numpy as np
 
 
 class Agent:
-    def __init__(self, identifier, status, transmission_rate):
+    def __init__(self, identifier, status, transmission_rate, prob_hospital, prob_death, prob_susceptible):
         # parameters
         self.identifier = identifier  # identifier of the specific agent
         self.transmission_rate = transmission_rate
+        self.prob_hospital = prob_hospital
+        self.prob_death = prob_death
+        self.prob_susceptible = prob_susceptible
+
         # state_variables
         self.sick_days = 0
         self.incubation_days = 0
+        self.critical_days = 0
+        self.days_recovered = 0
         self.status = status
 
     def get_parameters_from_file(self, agent_filename, environment):
@@ -39,7 +45,8 @@ class Agent:
     def infect(self, neighours):
         for neighbour in neighours:
             # only infect neighbours that are susceptible
-            if neighbour.status == 's' and np.random.random() < self.transmission_rate:
+            random_draw = np.random.random()
+            if neighbour.status == 's' and random_draw < self.transmission_rate:
                 neighbour.status = 'i1'
 
     def __getattr__(self, attr):

@@ -14,10 +14,10 @@ runs = args[3]
 # Monte Carlo Simulations
 for i in range(runs):
     # initialize environment and runner from files
-    environment = Environment(environment_directory, identifier)
+    environment = Environment(environment_directory, identifier, seed=i)
     runner = Runner(environment)
     # do the run
-    runner.do_run(environment)
+    runner.do_run(environment, seed=i)
 
     # save network
     for idx, network in enumerate(environment.infection_states):

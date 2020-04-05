@@ -3,10 +3,15 @@ import copy
 from xml.etree import ElementTree
 from examples.coviidnetwork.src.agent import Agent
 import networkx as nx
+import random
+import numpy as np
 
 
 class Environment:
-    def __init__(self, environment_directory, identifier):
+    def __init__(self, environment_directory, identifier, seed=1):
+        np.random.seed(seed)
+        random.seed(seed)
+
         self.identifier = identifier
         self.static_parameters = {}
 
@@ -20,13 +25,17 @@ class Environment:
         self.initialize_agents_from_files(self.static_parameters['agent_directory'])
 
         # create network
-        self.network = nx.erdos_renyi_graph(self.static_parameters["num_agents"], 0.15)
-        self.agents = [Agent(x, 's', self.agent_parameters["transmission_rate"]) for x in range(len(self.network.nodes))]
+        self.network = nx.erdos_renyi_graph(self.static_parameters["num_agents"], 0.01)
+        self.agents = [Agent(x, 's', self.agent_parameters["transmission_rate"],
+                             self.agent_parameters["probability_hospital"], self.agent_parameters["probability_to_die"],
+                             self.agent_parameters["probability_susceptible"]
+                             ) for x in range(len(self.network.nodes))]
 
-        # add status to the network structure
+        # add agent to the network structure
         for idx, agent in enumerate(self.agents):
             self.network.nodes[idx]['agent'] = agent
 
+        self.health_overburdened_multi = 1.0
         self.infection_states = []
 
     def store_network(self):
