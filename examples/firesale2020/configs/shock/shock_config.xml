@@ -1,0 +1,26 @@
+<!-- "     shocks are specified in main file firesale.py " -->
+<agent identifier='shock'>
+ <parameter type='asset' name='m_1' value='0'></parameter>
+ <parameter type='asset' name='m_2' value='0'></parameter>
+ <parameter type='asset' name='m_3' value='0'></parameter>
+ <parameter type='asset' name='m_4' value='0'></parameter>
+ <parameter type='asset' name='m_5' value='0'></parameter>
+ <parameter type='asset' name='m_6' value='0'></parameter>
+ <parameter type='asset' name='m_7' value='0'></parameter>
+ <parameter type='asset' name='m_8' value='0'></parameter>
+ <parameter type='asset' name='m_9' value='0'></parameter>
+ <parameter type='asset' name='m_10' value='0.0'></parameter>
+ <parameter type='asset' name='m_11' value='0'></parameter>
+ <parameter type='asset' name='m_12' value='0'></parameter>
+ <parameter type='asset' name='m_13' value='0'></parameter>
+ <parameter type='asset' name='m_14' value='-0.0'></parameter>
+ <parameter type='asset' name='m_15' value='0'></parameter>
+ <parameter type='asset' name='m_16' value='0'></parameter>
+ <parameter type='asset' name='m_17' value='0'></parameter>
+ <parameter type='asset' name='m_18' value='0'></parameter>
+ <parameter type='asset' name='m_19' value='0'></parameter>
+ <parameter type='asset' name='m_20' value='0'></parameter>
+ <parameter type='asset' name='m_21' value='0'></parameter>
+ <parameter type='asset' name='m_22' value='0'></parameter>
+ <parameter type='asset' name='m_23' value='0'></parameter>
+</agent>

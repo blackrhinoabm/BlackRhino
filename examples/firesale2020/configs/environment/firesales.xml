@@ -1,0 +1,9 @@
+<environment identifier='firesales'>
+    <!-- simulation parameters -->
+    <parameter type='num_sweeps' value='8'></parameter>
+    <parameter type='num_simulations' value='3'></parameter>
+    <parameter type='num_agents' value='29'></parameter>
+    <parameter type='agent_directory' value='configs/agents/'></parameter>
+    <parameter type='shock_config' value='configs/shock/shock_config.xml'></parameter>
+    <parameter type='illiquidity' value='1e-13'></parameter>
+</environment>
