@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
                 runner.initialize(environment) #honestly this is a bit stupid - I blame Pawel! ;)
                 # # do the run
-                # runner.do_run(environment)
+                runner.do_run(environment)
                 # df1 = runner.updater.env_var_par_df 
 
                 # results_varnames = []

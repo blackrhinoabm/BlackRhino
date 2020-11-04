@@ -569,5 +569,53 @@ class Updater(BaseModel):
             # for agent in environment.agents:
             #     agent.update_results_to_dataframe(current_step)
             #     logging.info("Updated results of %s within agent class", agent.identifier)
+    
+    def do_update_one_bank_shock(self, environment, current_step):
+
+        if current_step < 1:
+
+            for agent in environment.agents:
+                agent.initialize_total_assets()
+                agent.initialize_cash_reserves()
+
+                "Caluclate system variables before anything happens"
+                environment.variable_parameters['system_equity']  += agent.state_variables['equity']
+                environment.variable_parameters['system_equity_pre_shock']  += agent.state_variables['equity']
+                environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
+                environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
+                environment.variable_parameters['system_debt'] += agent.state_variables['debt']
+                environment.variable_parameters['system_equity_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
+
+                environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
+                environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
+                environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
+
+                #When you add a new variable to measure stuff, add it several 
+                # times in lines 112ff(to initialize), reset function and update function in measurement! 
+                environment.variable_parameters['system_direct_shock'] = 0 
+
+                agent.append_results_to_dataframe(current_step)
+            
+            self.plug_agents_and_system_results_together(environment, current_step)
+
+            #############  #Initial Impact
+            self.do_firstround_effects(environment, current_step)
+            #############
+
+        else:
+            logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
+
+            #########  FEEDBACK effects
+            self.do_secondround_effects(environment, current_step)
+            ########
+
+
+            "Uncomment the following if you want beginning and\
+            end of the period (2 results per current_steps). Default leave out!)"
+            # for agent in environment.agents:
+            #     agent.update_results_to_dataframe(current_step)
+            #     logging.info("Updated results of %s within agent class", agent.identifier)
+
+
 
     
