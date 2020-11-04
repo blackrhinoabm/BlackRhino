@@ -4,7 +4,6 @@
 
 """
 This is a minimal example.
-
 black_rhino is a multi-agent simulator for financial network analysis
 Copyright (C) 2012 Co-Pierre Georg (co-pierre.georg@keble.ox.ac.uk)
 
@@ -22,8 +21,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 The development of this software has been supported by the ERA-Net
 on Complexity through the grant RESINEE.
-
-
 """
 
 # -------------------------------------------------------------------------
