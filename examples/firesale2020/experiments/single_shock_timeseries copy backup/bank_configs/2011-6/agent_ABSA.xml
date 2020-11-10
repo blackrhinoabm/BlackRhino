@@ -1,0 +1,32 @@
+<agent identifier="ABSA"> 
+<parameter type="state_variables" name="equity" value="51936313000.0"></parameter>
+<parameter type="parameters" name="leverage" value="11.8807880336"></parameter>
+<parameter type="state_variables" name="debt" value="6.17044326e+11"></parameter>
+<parameter type="parameters" name="m_1" value="0.0269812800965" label="Cash and gold reserves "></parameter>
+<parameter type="parameters" name="m_2" value="0.0221704532768" label="SA Interbank deposits"></parameter>
+<parameter type="parameters" name="m_3" value="0.00432701311704" label="Rand Deposits with and loans to foreign banks"></parameter>
+<parameter type="parameters" name="m_4" value="0.0112135427584" label="Loans granted under repo agreement"></parameter>
+<parameter type="parameters" name="m_5" value="0.0280317409903" label="Foreign currency loans and advances"></parameter>
+<parameter type="parameters" name="m_6" value="0.00485073380427" label="Redeemable preference shares"></parameter>
+<parameter type="parameters" name="m_7" value="0.0198966968908" label="Corporate instalment credit "></parameter>
+<parameter type="parameters" name="m_8" value="0.0491750733611" label="Household instalment credit "></parameter>
+<parameter type="parameters" name="m_9" value="0.100524548962" label="Corporate mortgage"></parameter>
+<parameter type="parameters" name="m_10" value="0.341712150806" label="Household mortgage"></parameter>
+<parameter type="parameters" name="m_11" value="0.00089393468979" label="Corporate_credit_card"></parameter>
+<parameter type="parameters" name="m_12" value="0.0228981828576" label="Household_credit_card"></parameter>
+<parameter type="parameters" name="m_13" value="0.00366168145563" label="Corporate_leasing"></parameter>
+<parameter type="parameters" name="m_14" value="0.00454757704879" label="Household_leasing"></parameter>
+<parameter type="parameters" name="m_15" value="0.08178148486" label="Corporate_unsecured_lending"></parameter>
+<parameter type="parameters" name="m_16" value="0.0255810228314" label="Household_unsecured_lending"></parameter>
+<parameter type="parameters" name="m_17" value="0.0679000323057" label="Other_credit"></parameter>
+<parameter type="parameters" name="m_18" value="0.0859499388292" label="Central_and_provincial_government_bonds"></parameter>
+<parameter type="parameters" name="m_19" value="0.00170310459463" label="Other_public_sector_bonds"></parameter>
+<parameter type="parameters" name="m_20" value="0.00660975033091" label="Private_sector_bonds"></parameter>
+<parameter type="parameters" name="m_21" value="0.00168872002288" label="Equity_holdings_in_subsidiaries_and_joint_ventures"></parameter>
+<parameter type="parameters" name="m_22" value="0.00837319747904" label="Listed_and_unlisted_equities"></parameter>
+<parameter type="parameters" name="m_23" value="0.0" label="Securitisation/ asset-backed_securities"></parameter>
+<parameter type="parameters" name="m_24" value="0.0497363392306" label="Derivative instruments"></parameter>
+<parameter type="parameters" name="m_25" value="9.88070448478e-07" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+<parameter type="parameters" name="m_26" value="-0.00117398165838" label="Other investments"></parameter>
+<parameter type="parameters" name="m_27" value="0.0309647929886" label="Non financial assets"></parameter>
+</agent>

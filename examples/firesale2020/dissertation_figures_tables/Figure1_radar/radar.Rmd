@@ -1,0 +1,36 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(readxl)
+sbsaabsa<- read_xls("sbsa_absa-relabel.xls")
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(reshape2)
+library(tibble)
+
+```
+
+```{r fig.height=10, fig.width=10}
+
+sbsaabsa%>%
+ ggplot(aes(x=assets, y=portfolio weight, group=name, color=name, )) + 
+ geom_polygon(fill=NA )  +  geom_point()+ 
+ coord_polar()  + facet_wrap(~ name  ) + theme_bw() + 
+    theme(axis.text = element_text( size = 20),
+           axis.text.x = element_text( size = 20 ),#weight labels
+           axis.title = element_text( size = 20 ), #under the axis 
+           legend.position="none",
+           # The new stuff
+          strip.text = element_text(size = 20, face = "bold"))
+#ggsave("radarcharts.png")
+```
+
+ 
+ 

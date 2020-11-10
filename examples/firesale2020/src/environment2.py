@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# [SublimeLinter pep8-max-line-length:150]
 # -*- coding: utf-8 -*-
 
 
@@ -32,7 +31,7 @@ class Environment2(BaseConfig):
     static_parameters["shock_config"] = ""  # directory containing agent xmls
     static_parameters["illiquidity"] = ""
     
-    static_parameters["scenario"] = ""
+    saveparams = {} 
 
 
     variable_parameters = {}
@@ -165,6 +164,8 @@ class Environment2(BaseConfig):
         self.static_parameters["agent_directory"] = ""
         self.static_parameters["shock_config"] = ""
         self.static_parameters["illiquidity"] = ""
+
+        self.static_parameters['leverage_increase']=0
         self.agents = []
         self.shocks = []
         self.shock_measure = (0,0)

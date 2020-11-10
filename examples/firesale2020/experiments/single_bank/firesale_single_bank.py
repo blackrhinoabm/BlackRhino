@@ -1,17 +1,34 @@
 #!/usr/bin/env python
 # [SublimeLinter pep8-max-line-length:300]
 # -*- coding: utf-8 -*-
- 
-
 # -------------------------------------------------------------------------
 #
-#  MAIN
+#  MAIN  - what are loan book assets?
+# <parameter  name="m_2"  label="SA Interbank deposits"></parameter>
+# <parameter  name="m_3"  label="Rand Deposits with and loans to foreign banks"></parameter>
+# <parameter  name="m_4"  label="Loans granted under repo agreement"></parameter>
+# <parameter  name="m_5" label="Foreign currency loans and advances"></parameter>
+# <parameter  name="m_6"  label="Redeemable preference shares"></parameter>
+# <parameter  name="m_7" label="Corporate instalment credit "></parameter>
+# <parameter  name="m_8"  label="Household instalment credit "></parameter>
+# <parameter  name="m_9" label="Corporate mortgage"></parameter>
+# <parameter  name="m_10"  label="Household mortgage"></parameter>
+# <parameter  name="m_11"  label="Corporate_credit_card"></parameter>
+# <parameter  name="m_12" label="Household_credit_card"></parameter>
+# <parameter  name="m_13"  label="Corporate_leasing"></parameter>
+# <parameter  name="m_14"  label="Household_leasing"></parameter>
+# <parameter  name="m_15"  label="Corporate_unsecured_lending"></parameter>
+# <parameter  name="m_16"  label="Household_unsecured_lending"></parameter>
+# <parameter  name="m_17"  label="Other_credit"></parameter>
 #
 # -------------------------------------------------------------------------
 if __name__ == '__main__':
-    import sys
-    sys.path.append('/Users/admin/git_repos/BlackRhino/examples/firesale2020/') #change path to your project path
-
+    import time
+    start = time.time()
+    import sys, os
+    import os.path as path
+    gotoroot =  path.abspath(path.join(__file__ ,"../../../")) #this was more difficult than expected  - import module from two directories up
+    sys.path.append(gotoroot)
     from src.environment2 import Environment2
     from src.runner import Runner
     import logging
@@ -20,60 +37,91 @@ if __name__ == '__main__':
     import random
     from src.frange import frange
     import matplotlib.pyplot as plt
-    import os
     import decimal
 
-
+    #
+    # INITIALIZATION
+    home = os.getcwd()
+    environment_directory=gotoroot +  "/configs/environment/"
+    years=[ 2020]
+    months = [2]
  
-#
-# INITIALIZATION
-#
-    environment_directory = str("/Users/admin/git_repos/BlackRhino/examples/firesale2020/configs/environment/")
-    identifier = str("firesales")
-    log_directory = str("log/")
+    assets = ['m_2','m_3',"m_4","m_5","m_6","m_7","m_8",
+                'm_9','m_10',"m_11","m_12","m_13","m_14","m_15" ,'m_16',
+                'm_17', ]
 
-    years=[ 2015]
-    months = [12]
-
+    shocks=np.linspace(-0.04, -0.4, num=10).tolist() 
+    impacts=[round(num,2) for num in shocks]   #    impacts = [ -0.5,  -0.2,-0.1]
+    impacts =[-0.04, -0.1, -0.2, -0.25,  -0.3,  -0.4, -0.5]
 
     print("The time period is {} {} ".format(years,months))
-    results=[]
+    results_system_impacts = []
+    results_agents_impacts = []
+    assets_agt = []
+    assets_sys = []
+
+    #THIS WORKS FOR ONE MOMENT IN TIME!!!! 
+
     for year in years:
         for month in months:
-            agent_config_dir = "/Users/admin/git_repos/BlackRhino/examples/firesale2020/experiments/single_bank/bank_configs/"+str(year)+"-"+str(month)+"/"
 
-    ####### Logging Configuration!!!
+            for asset in assets:
+                #yeah that's a lot of loops.....
+                for impact in impacts: 
+                    agent_config_dir =  os.path.join(home,'bank_configs/',str(year)+"-"+str(month)+"/")
 
-    ############
-            environment = Environment2(environment_directory, identifier, agent_config_dir)
-            runner = Runner(environment)
+                    print(agent_config_dir)
 
-            for i in range(int(environment.static_parameters['num_simulations'])):
+            # ############
+                    identifier = str("firesales")
+                    environment = Environment2(environment_directory, identifier, agent_config_dir)
+                    runner = Runner(environment)
 
-                print("**********START simulation %s") % (i+1)
-                environment.initialize(environment_directory, identifier, agent_config_dir)
-                # environment.shocks[0].asset_returns[sys.argv[2]] = float(sys.argv[1])
+                    print("**********START simulation ")
+                    environment.initialize(environment_directory, identifier, agent_config_dir)
+                    ident = "STANDARDBANK"  #maybe pass in as sys.argv??
 
-                environment.static_parameters["scenario"] = 'single_bank'
+                    print("The shocked bank is {}".format(ident))
 
-                identifier = "STANDARD"  #maybe pass in as sys.argv??
+                    runner.initialize(environment) #honestly this is a bit stupid - I blame Pawel! ;)
+                    # # do the run
+                    environment.shocks[0].asset_returns[asset] = float(impact)
 
-                print("The scenario is {}, {}".format(environment.static_parameters["scenario"], identifier))
+                    environment.saveparams['shock']=str(impact)
+                    environment.saveparams['asset']=asset
+                    environment.saveparams['initial_shock_bank']=ident
+                    environment.saveparams['outputpath']= "./output/" +str(year)+"-"+str(month)+"/"+ asset+ '/'
+                    environment.saveparams['time']=str(year)+"-"+str(month)
+                    environment.saveparams['illiquidity'] = environment.static_parameters["illiquidity"] 
+                    print("The shock is {}".format(environment.shocks[0].asset_returns))
+                    ##########
+                    #DO THE STRESS-TEST #######
+                    runner.do_run_one_bank_shock(environment, ident) #important - check what is called here!
+                    ############ !!!!
+                    ##########
+                    df_system = runner.updater.env_var_par_df 
+                    df_agents = runner.updater.df_stacked 
+                    results_system_impacts.append(df_system)
+                    results_agents_impacts.append(df_agents)
 
-                #     print(environment.shocks[0].asset_returns[sys.argv[2]])
-                #     print(environment.shocks[0].asset_returns)
+                    results_varnames = []
+                    for i in runner.sweep_result_list[0]:
+                        results_varnames.append(i)
 
+                #write results all shocks per asset - but it's not really needed because I write all to disk in the next loop 
+                output_system_shocks_one_time_impacts=pd.concat(results_system_impacts)
+                # output_system_shocks_one_time_impacts.drop_duplicates().to_csv(environment.saveparams['outputpath']+'all_shocks_SYSTEM_oneasset.csv')
+                output_agents_shocks_one_time_impacts=pd.concat(results_agents_impacts)
+                # output_agents_shocks_one_time_impacts.drop_duplicates().to_csv(environment.saveparams['outputpath']+'all_shocks_AGENTS_oneasset.csv')
 
-                runner.initialize(environment) #honestly this is a bit stupid - I blame Pawel! ;)
-                # # do the run
-                runner.do_run(environment)
-                # df1 = runner.updater.env_var_par_df 
+                assets_sys.append(output_system_shocks_one_time_impacts)
+                assets_agt.append(output_agents_shocks_one_time_impacts)
 
-                # results_varnames = []
-                # for i in runner.sweep_result_list[0]:
-                #     results_varnames.append(i)
+            environment.saveparams['outputpath']= "./output/"+str(year)+"-"+str(month)+"/"
 
-
+            pd.concat(assets_sys).drop_duplicates().to_csv(environment.saveparams['outputpath']+'all_SYSTEM.csv')
+            pd.concat(assets_agt).drop_duplicates().to_csv(environment.saveparams['outputpath']+'all_AGENTS.csv')
+            break # Only one time point!!! 
 # Comment out below
                 #write results
                 # helper={}
@@ -85,6 +133,8 @@ if __name__ == '__main__':
                 
                 # df_all = pd.concat([df1], keys=[ float(sys.argv[1])], ignore_index = False)\
                 # .to_csv(p)
+
+                #get agent result location!
          
                 # d=pd.read_csv('results_all_agents_sweeps.csv')
                 # e=d.filter(like='systemicness') 
@@ -102,6 +152,12 @@ if __name__ == '__main__':
                 # helper['deleveraging_losses_relative_to_direct_impact']=t['system_TAS'][2:].sum()/t['system_assets'][0] *-1 *100
                 # results.append(pd.DataFrame(helper, index=[agent_config_dir[-8:-1]]))
     # pd.concat(results).to_csv('t.csv')
+
+    end = time.time()
+    hours, rem = divmod(end-start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("Done. Run time {:0>2}:{:0>2}:{:05.2f}".format(int(hours),int(minutes),seconds))
+
 
 
 

@@ -213,11 +213,13 @@ class Updater(BaseModel):
         #UNCOMMENT for checking
         #print("***Updater.py*** In Step:", (current_step+1) , "Total assets whiped out by shock:", environment.variable_parameters['system_TAS'])
 
-    def do_firstround_effects_one_bank(self, environment, current_step):
+    def do_firstround_effects_one_bank(self, environment, current_step, ident):
+        
         print("1.**** UPDATER.PY*** FIRST ROUND EFFECTS FOR THIS SIMULATION:")
+        
         for agent in environment.agents:
             "CHECK by printing:"
-            if agent.identifier == "SBSA":
+            if agent.identifier == ident:
                 print("**UPDATER.PY***TOTAL ASSETS OF ", agent.identifier, "are:", agent.state_variables['total_assets'])
 
             """First we intiliaze the shock, which
@@ -230,49 +232,53 @@ class Updater(BaseModel):
             Alternatively, use environment.agents[0]"
 
         for agent in environment.agents:
-            agent.initialize_shock(environment)
 
-            "We need to check whether the agent can absorb the\
-            shock with its cash buffer (then it won't fire-sale!)\
-            In that case we have to calculate new total assets and weights\
-            This is quite a pain but a nice simple extension to the existing model\
-            Another nice feature would be to only sell marketable assets\
-            but hey..time is short."
+            if agent.identifier == ident: # why not?
+                agent.initialize_shock(environment)
 
-            agent.calc_equity_and_valuation_losses_leverage()
-            
-            agent.state_variables['cash_reserves'] = agent.check_losses_against_capital_bufffer(environment, current_step)
-            agent.calc_new_equity_and_debt() 
-
-             
-            if agent.state_variables['cash_reserves'] >0:
-                #no fire-sales
-                agent.state_variables['total_asset_sales'] = 0
-                new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
-                new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
+                "We need to check whether the agent can absorb the\
+                shock with its cash buffer (then it won't fire-sale!)\
+                In that case we have to calculate new total assets and weights\
+                This is quite a pain but a nice simple extension to the existing model\
+                Another nice feature would be to only sell marketable assets\
+                but hey..time is short."
+                agent.calc_equity_and_valuation_losses()
                 
+                agent.state_variables['cash_reserves'] = agent.check_losses_against_capital_bufffer(environment, current_step)
+                agent.calc_new_equity_and_debt() 
 
-                agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
+                 
+                if agent.state_variables['cash_reserves'] >0:
+                    #no fire-sales
+                    agent.state_variables['total_asset_sales'] = 0
+                    new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
+                    new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
+                    
 
-            if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']>0:
+                    agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
 
-                new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
-                agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
+                if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']>0:
 
-                new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
-                agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
-                break #exit the loop, so only SBSA get's the initial impact
+                    new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
+                    agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
 
-            if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']==0:
-                agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
-                new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
-                if new_assets > 0:
                     new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
                     agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
-                break
+                    #break #exit the loop, so only SBSA get's the initial impact
+
+                if agent.state_variables['cash_reserves']==0 and agent.state_variables['debt_paid_by_cash']==0:
+                    agent.calc_total_asset_sales(environment, current_step, new_assets, agent.state_variables['debt_paid_by_cash'])
+                    new_assets = agent.state_variables['equity'] + agent.state_variables['debt']
+                    if new_assets > 0:
+                        new_cash, cash_weight_to_reallocate = agent.new_cash_weight(new_assets)
+                        agent.update_asset_weights(new_cash, cash_weight_to_reallocate, environment, current_step)
+                    # break
+
+                else:
+                    pass
 
             else:
-                pass
+                print(agent.identifier, "not shocked in first round")
 
             "The next method call is very important."
             "We loop over the m asset classes in"
@@ -476,10 +482,24 @@ class Updater(BaseModel):
                 except:
                     logging.info(" We are in the updater and adding results per agents (i.e. result dataframe)\
                                  so dictionary self.all_agents_result_dictionary_with_dataframes. We just added the results of %s !",  agent.identifier)
-
-    def write_sweep_list_of_results_to_csv(self, current_step, environment):
+    
+    def write_sweep_list_of_results_to_csv(self, environment,current_step):
         import numpy as np
-        self.env_var_par_df.to_csv("output/results_system_sweeps.csv")
+        import os
+
+        if not os.path.exists(environment.saveparams['outputpath']):
+                    os.makedirs(environment.saveparams['outputpath'])
+                
+        #add simulation specs
+        self.env_var_par_df['shock'] = environment.saveparams['shock']
+        self.env_var_par_df['asset'] = environment.saveparams['asset']
+        self.env_var_par_df['initial_shock_bank'] = environment.saveparams['initial_shock_bank']
+        self.env_var_par_df['illiquidity'] = environment.saveparams['illiquidity']
+        self.env_var_par_df['time']=environment.saveparams['time']
+        self.env_var_par_df['assets_to_pre_shock'] = self.env_var_par_df['system_assets']/ self.env_var_par_df['system_assets'][0]
+                #that is just saving the last simulation - we might need more!
+
+        self.env_var_par_df.to_csv("{}system_last_simulation.csv".format(environment.saveparams['outputpath']))
 
         resultagentlist = []
 
@@ -503,9 +523,21 @@ class Updater(BaseModel):
 
 
         "Finally we have a result dataframe we can write to csv!!"
-        df_stacked = pd.concat([r for r in resultagentlist], axis=1,  ignore_index=True)
-        df_stacked.columns = total
-        df_stacked.to_csv("results_all_agents_sweeps.csv")
+        self.df_stacked = pd.concat([r for r in resultagentlist], axis=1,  ignore_index=True)
+        self.df_stacked.columns = total
+
+        #add simulation specs
+        self.df_stacked['shock'] = environment.saveparams['shock']
+        self.df_stacked['asset'] = environment.saveparams['asset']
+        self.df_stacked['initial_shock_bank'] = environment.saveparams['initial_shock_bank']
+        self.df_stacked['illiquidity'] = environment.saveparams['illiquidity']
+        self.df_stacked['time']=environment.saveparams['time']
+
+        #that is just saving the last simulation - we might need more!
+        self.df_stacked.to_csv("{}agents_last_simulation.csv".format(environment.saveparams['outputpath']))
+
+        print(" *******************  ")
+   
 
         #  OLD CODE THROUGH WHICH I SUFFERED A GREAT DEAL - here for memorial
         #for asset_class in environment.agents[0].state_variables:
@@ -556,9 +588,7 @@ class Updater(BaseModel):
             self.do_firstround_effects(environment, current_step)
             #############
 
-        else:
-            logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
-            
+        else:            
             #########  FEEDBACK effects
             self.do_secondround_effects(environment, current_step)
             ########
@@ -570,23 +600,25 @@ class Updater(BaseModel):
             #     agent.update_results_to_dataframe(current_step)
             #     logging.info("Updated results of %s within agent class", agent.identifier)
     
-    def do_update_one_bank_shock(self, environment, current_step):
+    def do_update_one_bank(self, environment, current_step, ident):
+        
+        """Caluclate system variables before anything happens"""
 
         if current_step < 1:
 
             for agent in environment.agents:
                 agent.initialize_total_assets()
                 agent.initialize_cash_reserves()
-
-                "Caluclate system variables before anything happens"
                 environment.variable_parameters['system_equity']  += agent.state_variables['equity']
                 environment.variable_parameters['system_equity_pre_shock']  += agent.state_variables['equity']
                 environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
                 environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
+
                 environment.variable_parameters['system_debt'] += agent.state_variables['debt']
                 environment.variable_parameters['system_equity_losses'] += agent.state_variables['total_assets'] * agent.state_variables['shock_for_agent']
-
+                
                 environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
+
                 environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
                 environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
 
@@ -599,23 +631,13 @@ class Updater(BaseModel):
             self.plug_agents_and_system_results_together(environment, current_step)
 
             #############  #Initial Impact
-            self.do_firstround_effects(environment, current_step)
+            self.do_firstround_effects_one_bank(environment, current_step,ident)
             #############
 
         else:
-            logging.info('2.**** UPDATER.PY*** SECOND ROUND EFFECTS:')
-
             #########  FEEDBACK effects
             self.do_secondround_effects(environment, current_step)
             ########
-
-
-            "Uncomment the following if you want beginning and\
-            end of the period (2 results per current_steps). Default leave out!)"
-            # for agent in environment.agents:
-            #     agent.update_results_to_dataframe(current_step)
-            #     logging.info("Updated results of %s within agent class", agent.identifier)
-
 
 
     

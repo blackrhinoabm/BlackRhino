@@ -108,27 +108,26 @@ class Runner(BaseRunner):
 
                 self.current_step = i
                 #DEFAULT IS DO RUN! I added leverage experiment
-                # self.updater.do_update(environment, i)
-                self.updater.do_update_leverage(environment, i, environment.static_parameters['leverage_increase'])
+                self.updater.do_update(environment, i)
+                # self.updater.do_update_leverage(environment, i, environment.static_parameters['leverage_increase'])
                 self.sweep_result_list.append(self.updater.env_var_par_df)
 
         self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
-        
-        print("Check the simulation specific output file that was written as csv in the output folder\n***")
-    
-    def do_run_one_bank_shock(self, environment):
+
+##########################################################################################
+        ##########################################################################################
+            ##########################################################################################
+    def do_run_one_bank_shock(self, environment,ident):
         # loop over all time steps and do the updating
         # For each update step
 
         for i in range(self.num_sweeps):
-
+                print(i)
                 self.current_step = i
 
-                self.updater.do_update_one_bank_shock(environment, i)
+                self.updater.do_update_one_bank(environment, i, ident)
                 self.sweep_result_list.append(self.updater.env_var_par_df)
 
         self.updater.write_sweep_list_of_results_to_csv(environment, self.current_step)
         
-        print("Check the simulation specific output file that was written as csv in the output folder\n***")
-
     # ------------------------------------------------------------------------

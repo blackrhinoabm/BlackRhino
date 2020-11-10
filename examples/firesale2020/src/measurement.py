@@ -212,6 +212,8 @@ class Measurement(BaseMeasurement):
         if ident == "AV":
             return self.runner.updater.system_vulnerability
 
+
+
 def calc_new_system_variables(environment, current_step):
 
     for agent in environment.agents:
@@ -228,11 +230,14 @@ def calc_new_system_variables(environment, current_step):
             pass   
         environment.variable_parameters['system_direct_shock'] += agent.state_variables['direct_impact']
         environment.variable_parameters['system_assets'] += agent.state_variables['total_assets']
+
         environment.variable_parameters['system_equity'] += agent.state_variables['equity']
         environment.variable_parameters['system_debt'] += agent.state_variables['debt']
         environment.variable_parameters['system_equity_losses'] += agent.state_variables['equity_losses']
         environment.variable_parameters['system_cash_reserves'] += agent.state_variables['cash_reserves']
+        
         environment.variable_parameters['equity_to_pre_shock'] = environment.variable_parameters['system_equity'] / environment.variable_parameters['system_equity_pre_shock']
+
         environment.variable_parameters['cum_equity_losses'] = 1 - environment.variable_parameters['equity_to_pre_shock']
         environment.variable_parameters['rel_equity_losses'] = - environment.variable_parameters['system_equity_losses'] / environment.variable_parameters['system_equity_pre_shock']
 
